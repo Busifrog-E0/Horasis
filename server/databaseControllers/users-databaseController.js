@@ -1,0 +1,79 @@
+import dataHandling from './functions.js'
+
+/**
+ * @typedef {object} UserData
+ * @property {string} FullName
+ * @property {string} Username  //not shown while registering?
+ * @property {string} Email
+ * @property {string} DocId
+ * @property {string} Password
+ * @property {string} Country
+ * @property {string} City
+ * @property {string} JobTitle
+ * @property {string} Industry
+ * @property {string} CompanyName
+ * @property {string} About
+ * @property {boolean} EmailVerification
+ */
+
+
+
+/**
+ * 
+ * @param {undefined|object} Where 
+ * @param {undefined|string} NextIndex 
+ * @param {undefined|number} Limit 
+ * @param {undefined|object} orderBy 
+ * @returns {Promise<Array<UserData>>} Returns UserData
+ */
+const ReadUsers = async (Where, NextIndex, Limit, orderBy) => {
+    return dataHandling.Read('Users', undefined, NextIndex, Limit, Where, orderBy);
+}
+
+/**
+ * 
+ * @param {string} DocId 
+ * @returns {Promise<UserData>}
+ */
+const ReadOneFromUsers = async (DocId) => {
+    return dataHandling.Read('Users', DocId);
+}
+
+/**
+ * 
+ * @param {UserData|object} data
+ * @param {string} DocId 
+ * @returns {Promise<boolean>}
+ */
+const UpdateUsers = async (data, DocId) => {
+    return dataHandling.Update('Users', data, DocId);
+}
+
+
+/**
+ * 
+ * @param {UserData|object} data
+ * @param {string|undefined} DocId 
+ * @returns {Promise<string>}
+ */
+const CreateUsers = async (data, DocId = undefined) => {
+    return dataHandling.Create('Users', data, DocId);
+}
+
+/**
+ * 
+ * @param {string} DocId 
+ * @returns {Promise<boolean>}
+ */
+const RemoveUsers = async (DocId) => {
+    return dataHandling.Delete('Users', DocId);
+}
+
+
+export {
+    ReadUsers,
+    ReadOneFromUsers,
+    UpdateUsers,
+    CreateUsers,
+    RemoveUsers
+}
