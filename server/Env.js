@@ -54,6 +54,11 @@ const DO_SPACES_SECRET = process.env.DO_SPACES_SECRET;
 // @ts-ignore
 const DO_SPACES_NAME = process.env.DO_SPACES_NAME;
 
+/**
+ * @type {string}
+ */
+// @ts-ignore
+const ZeptoMailToken = process.env.ZeptoMailToken;
 
 export default {
     PORT,
@@ -65,4 +70,5 @@ export default {
     DO_SPACES_KEY,
     DO_SPACES_SECRET,
     DO_SPACES_NAME,
+    ZeptoMailToken
 }
