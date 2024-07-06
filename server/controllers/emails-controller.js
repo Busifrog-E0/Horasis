@@ -3,6 +3,7 @@ import { EmailAPI } from "./zeptomail-controller"
 /**
  * @param {import('./../databaseControllers/users-databaseController.js').UserData} UserData 
  * @param {{"name":string,"verification_link":string,"username":string}} MergeInfo 
+ * @returns {Promise<string|true>}
  */
 const AccountVerificationEmail = async (UserData, MergeInfo) => {
     // @ts-ignore
