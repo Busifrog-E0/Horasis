@@ -1,6 +1,6 @@
 import swaggerAutogen from 'swagger-autogen';
 
-//import usersDefinitions from './swaggerDocs/usersDefinitions.js';
+import usersDefinitions from './swaggerDocs/usersDefinitions.js';
 
 const doc = {
     info: {
@@ -27,7 +27,8 @@ const doc = {
         },
     },
     definitions: {
-        
+        LoginData: { Token: "string", RefreshToken: "string", CurrentUser: { Role: "User", UserId: "" } },
+        ...usersDefinitions
     }
 }
 
