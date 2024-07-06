@@ -14,7 +14,7 @@ import axios from 'axios';
  * @param {object} merge_info
  * @returns {Promise<true|string>}
  */
-const EmailAPI = async (emailid, subject, template_key, merge_info, from_address = "noreply@vitaljobs.in", bounce_address = "bounce@support.vitaljobs.in",) => {
+const EmailAPI = async (emailid, subject, template_key, merge_info, from_address = "noreply@epoqzero.com", bounce_address = "bounce@support.epoqzero.com",) => {
     const data = {
         bounce_address,
         "from": { 'address': from_address },
