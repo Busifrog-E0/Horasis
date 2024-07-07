@@ -1,9 +1,15 @@
 import e from 'express';
+import moment from 'moment-timezone';
 
 import { ReadOneFromUsers, ReadUsers, UpdateUsers, CreateUsers, RemoveUsers, } from './../databaseControllers/users-databaseController.js';
 import { AccountVerificationEmail } from './emails-controller.js';
 import { CreateEmailVerifications, ReadOneFromEmailVerifications, UpdateEmailVerifications } from '../databaseControllers/emailVerification-databaseController.js';
 import { GenerateToken } from './auth-controller.js';
+
+const ApiBaseUrl = "";
+const WebUrl = "";
+const EmailVerificationExpiryRoute = "";
+
 /**
  * @typedef {import('./../databaseControllers/users-databaseController.js').UserData} UserData 
  */
@@ -39,11 +45,16 @@ const GetUsers = async (req, res) => {
  * @param {e.Response} res 
  * @returns {Promise<e.Response<true>>}
  */
-const PostUsers = async (req, res) => {
-    req.body = UserInit(req.body);
+const PostUsersRegister = async (req, res) => {
+
+    // email already exists? - vedanth
+
+    UserInit(req.body);
+    // No docid in req.body
+    // first create doc then sent mail
     const Verification = await SendUserEmailVerification(req.body);
     if (!Verification) {
-        return res.json("Could not send Verification Mail")
+        return res.json("Could not send Verification Mail");
     };
     await CreateUsers(req.body);
     return res.json(true);
@@ -63,60 +74,53 @@ const PatchUsers = async (req, res) => {
 
 /**
  * 
- * @param {e.Request} req 
- * @param {e.Response} res 
- * @returns {Promise<e.Response<true>>}
+ * @param {UserData} UserData 
  */
-const DeleteUsers = async (req, res) => {
-    const { UserId } = req.params;
-    await RemoveUsers(UserId);
-    return res.json(true);
-}
-
-/**
- * 
- * @param {UserData} User 
- */
-const SendUserEmailVerification = async (User) => {
+const SendUserEmailVerification = async (UserData) => {
     const EmailVerification = {
-        UserId : User.DocId
+        UserId: UserData.DocId,
+        CreatedIndex: moment().valueOf(),
+        Verified: false
     }
     const EmailVerificationId = await CreateEmailVerifications(EmailVerification);
-    const VerificationLink = `/${EmailVerificationId}`;
-    const { Name } = User;
-    const VerificationNote = await AccountVerificationEmail(User, { name: Name, verification_link: VerificationLink });
-    if (VerificationNote != true) {
-        return false;
-    }
-    return true;
+    const VerificationLink = `${ApiBaseUrl}/api/users/${EmailVerification.UserId}/verify/${EmailVerificationId}`;
+    return AccountVerificationEmail(UserData, VerificationLink);
 }
 
 const VerifyUserEmail = async (req, res) => {
     const { EmailVerificationId } = req.params;
-    const {UserId} = await ReadOneFromEmailVerifications(EmailVerificationId);
-    await UpdateUsers({ EmailVerification: true }, UserId);
-    const CurrentUser = {
-        Role: 'User',
-        UserId
+    const EmailVerificationData = await ReadOneFromEmailVerifications(EmailVerificationId);
+    if (moment(EmailVerificationData.CreatedIndex).add(15, "minute").isAfter(moment())) {
+        return res.redirect(`${WebUrl}/${EmailVerificationExpiryRoute}`)
     }
-    const { Token, RefreshToken } = GenerateToken(CurrentUser);
-    // redirecting code here
-    return res.json({
-        CurrentUser,
-        Token,
-        RefreshToken
-    });
+    if (EmailVerificationData.Verified) {
+        res.redirect(WebUrl);
+    }
+    await Promise.all([
+        UpdateEmailVerifications({ "Verified": true, VerifiedIndex: moment().valueOf() }, EmailVerificationData.DocId),
+        UpdateUsers({ EmailVerification: true }, EmailVerificationData.UserId),
+    ])
+    return res.redirect(WebUrl);
 }
 
 const UserLogin = async (req, res) => {
     const { Email, Password } = req.body;
     const [User] = await ReadUsers({ Email: Email }, undefined, 1, undefined);
+    // - vedanth
+    // exist conditions first
+
+    // check email exists else route to register
+
+    // then password wrong check
+
+    // then logic
+
     if (User.Password === Password) {
         const CurrentUser = {
             Role: 'User',
-            UserId : User.DocId
+            UserId: User.DocId
         }
-        const { Token, RefreshToken } = GenerateToken(CurrentUser);
+        const { Token, RefreshToken } = await GenerateToken(CurrentUser);
 
         return res.json({
             CurrentUser,
@@ -130,17 +134,15 @@ const UserLogin = async (req, res) => {
 
 /**
  * 
- * @param {object} User 
- * @returns 
+ * @param {UserData} User 
+ * @returns {UserData}
  */
 const UserInit = (User) => {
-    return {
-        ...User,
-        EmailVerification: false
-    }
+    User.EmailVerification = false;
+    return User;
 }
 
 export {
-    GetOneFromUsers, GetUsers, PostUsers, PatchUsers, DeleteUsers,
-    UserLogin,VerifyUserEmail
+    GetOneFromUsers, GetUsers, PostUsersRegister, PatchUsers,
+    UserLogin, VerifyUserEmail
 }

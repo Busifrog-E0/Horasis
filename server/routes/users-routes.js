@@ -1,6 +1,5 @@
 import {
-    GetOneFromUsers, GetUsers, PostUsers, PatchUsers, DeleteUsers,
-    UserLogin,
+    GetOneFromUsers, PostUsersRegister, PatchUsers, UserLogin,
     VerifyUserEmail,
 } from '../controllers/users-controller.js';
 import asyncHandler from 'express-async-handler';
@@ -20,22 +19,21 @@ router.get('/users/:UserId', decodeIDToken, ensureAuthorized("User"), CheckSameU
 
 router.post('/users/register', ValidateUserRegister, SwaggerDocs.post_Users_Register,
     // @ts-ignore
-    asyncHandler(PostUsers));
+    asyncHandler(PostUsersRegister));
 
 router.post('/users/login', ValidateUserLogin, SwaggerDocs.post_Users_Login,
     // @ts-ignore
     asyncHandler(UserLogin));
 
-router.get('users/verify/:EmailVerificationId',
+// resend verfication email api - vedanth
+
+router.get('users/:UserId/verify/:EmailVerificationId',
     //@ts-ignore
-    asyncHandler(VerifyUserEmail)
-)
+    asyncHandler(VerifyUserEmail));
+
 router.patch('/users/:UserId', decodeIDToken, ensureAuthorized("User"), CheckSameUser,
     // @ts-ignore
     asyncHandler(PatchUsers));
 
-router.delete('/users/:UserId', decodeIDToken, ensureAuthorized("User"), CheckSameUser,
-    // @ts-ignore
-    asyncHandler(DeleteUsers));
 
 export default router;
