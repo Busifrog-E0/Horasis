@@ -1,0 +1,5 @@
+Discarded Codes
+
+In user-controller.js 
+    SendUserEmailVerification
+    VerifyUserEmail

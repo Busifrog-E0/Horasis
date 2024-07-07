@@ -1,6 +1,7 @@
 import {
     GetOneFromUsers, PostUsersRegister, PatchUsers, UserLogin,
     VerifyUserEmail,
+    VerifyRegistrationOTP,
 } from '../controllers/users-controller.js';
 import asyncHandler from 'express-async-handler';
 
@@ -9,7 +10,7 @@ import { decodeIDToken, ensureAuthorized } from '../middleware/auth-middleware.j
 import SwaggerDocs from '../swaggerDocs/users-swaggerDocs.js'
 import e from 'express';
 import { CheckSameUser } from '../middleware/common.js';
-import { ValidateUserLogin, ValidateUserRegister } from '../validations/users-validations.js';
+import { ValidateUserLogin, ValidateUserRegister, ValidateVerifyOTP } from '../validations/users-validations.js';
 const router = e.Router();
 router.route
 
@@ -21,15 +22,16 @@ router.post('/users/register', ValidateUserRegister, SwaggerDocs.post_Users_Regi
     // @ts-ignore
     asyncHandler(PostUsersRegister));
 
+router.post('/users/verify', ValidateVerifyOTP, SwaggerDocs.post_Users_Verify,
+    //@ts-ignore
+asyncHandler(VerifyRegistrationOTP))
+
 router.post('/users/login', ValidateUserLogin, SwaggerDocs.post_Users_Login,
     // @ts-ignore
     asyncHandler(UserLogin));
 
 // resend verfication email api - vedanth
 
-router.get('users/:UserId/verify/:EmailVerificationId',
-    //@ts-ignore
-    asyncHandler(VerifyUserEmail));
 
 router.patch('/users/:UserId', decodeIDToken, ensureAuthorized("User"), CheckSameUser,
     // @ts-ignore

@@ -2,16 +2,26 @@ import e from 'express';
 import moment from 'moment-timezone';
 
 import { ReadOneFromUsers, ReadUsers, UpdateUsers, CreateUsers, RemoveUsers, } from './../databaseControllers/users-databaseController.js';
-import { AccountVerificationEmail } from './emails-controller.js';
+import { AccountVerificationEmail, SendOTPEmail } from './emails-controller.js';
 import { CreateEmailVerifications, ReadOneFromEmailVerifications, UpdateEmailVerifications } from '../databaseControllers/emailVerification-databaseController.js';
 import { GenerateToken } from './auth-controller.js';
+import { getOTP } from './common.js';
 
+const TestUsers = [
+    "qwertyui@tgmail.com",
+]
+const MAXIMUM_RETRIES_OF_OTP = 5;
 const ApiBaseUrl = "";
 const WebUrl = "";
-const EmailVerificationExpiryRoute = "";
+const RegisterUrl = "";
+
 
 /**
  * @typedef {import('./../databaseControllers/users-databaseController.js').UserData} UserData 
+ */
+
+/**
+ * @typedef {import('./../databaseControllers/users-databaseController.js').OTPData} OTPData 
  */
 
 /**
@@ -40,6 +50,72 @@ const GetUsers = async (req, res) => {
 }
 
 /**
+ * @param {string} Email 
+ * @param {UserData} Data 
+ * @param {string} Description
+ * @param {e.Response} res 
+ * @returns {Promise<string|Error>}
+ */
+const SendRegisterOTP = async (Email, Data = {}, Description,res) => {
+    let TestUser = false;
+    if (TestUsers.includes(Email)) {
+        TestUser = true;
+    }
+    const OTP = getOTP(TestUser);
+
+    const ReturnMessage = await SendOTPEmail(Email,OTP,Data.FullName,Description)
+
+    if (ReturnMessage === true) {
+        const Now = moment();
+        const Date = Now.format("YYYY-MM-DD");
+        const Index = `${Now.valueOf()}`;
+        const data = { "OTP": OTP, "Email": Email, EmailVerified: false, Index, Date, Data, "NoOfRetries": 0, "NoOfOTPs": 0 };
+        const OTPId = await Create("OTP", data);
+        return OTPId;
+    }
+    else {
+        res.status(400);
+        throw Error(ReturnMessage);
+    }
+}
+
+/**
+ * 
+ * @param {string} OTPId 
+ * @param {string} OTP 
+ * @param {e.Response} res
+ * @returns {Promise<OTPData|Error>}
+ */
+const VerifyOTP = async (OTPId, OTP, res) => {
+    /**
+     * @type {OTPData}
+     */
+    const data = await Read("OTP", OTPId);
+    if (data === null) {
+        res.status(400);
+        throw Error("No OTP Generated");
+    }
+    else if (data.NoOfRetries >= MAXIMUM_RETRIES_OF_OTP) {
+        res.status(400);
+        throw Error("Maximum number of retries finished");
+    }
+    else if (data.OTP !== OTP) {
+        data.NoOfRetries++;
+        await Update("OTP", data, OTPId);
+        res.status(400);
+        throw Error(`OTP Incorrect. Only ${MAXIMUM_RETRIES_OF_OTP - data.NoOfRetries} tries left`);
+    }
+    else if (data.PhoneVerified) {
+        res.status(400);
+        throw Error(`OTP Already Verified.`);
+    }
+    else {
+        data.PhoneVerified = true;
+        await Update("OTP", data, OTPId);
+        return data;
+    }
+}
+/**
  * 
  * @param {e.Request} req 
  * @param {e.Response} res 
@@ -47,17 +123,35 @@ const GetUsers = async (req, res) => {
  */
 const PostUsersRegister = async (req, res) => {
 
-    // email already exists? - vedanth
+    const CheckEmailExists = await ReadUsers({ Email: req.body.Email }, undefined, 1, undefined);
+    if (CheckEmailExists.length > 0) {
+        return res.status(444).json("User with Email already exists");
+    }
+    const User = UserInit(req.body);
+    const OTPId = await SendRegisterOTP(User.Email, User, 'Verify Your Email', res);
+    return res.json(OTPId);
+}
 
-    UserInit(req.body);
-    // No docid in req.body
-    // first create doc then sent mail
-    const Verification = await SendUserEmailVerification(req.body);
-    if (!Verification) {
-        return res.json("Could not send Verification Mail");
-    };
-    await CreateUsers(req.body);
-    return res.json(true);
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ * @returns 
+ */
+const VerifyRegistrationOTP = async (req, res) => {
+    const { OTP, OTPId } = req.body;
+    const OTPData = await VerifyOTP(OTPId, OTP, res);
+    const UserId = await CreateUsers(OTPData.Data);
+    const CurrentUser = {
+        Role: "User",
+        UserId
+    }
+    const { Token, RefreshToken } = await GenerateToken(CurrentUser);
+    return res.json({
+        CurrentUser,
+        Token,
+        RefreshToken
+    })
 }
 
 /**
@@ -72,11 +166,8 @@ const PatchUsers = async (req, res) => {
     return res.json(true);
 }
 
-/**
- * 
- * @param {UserData} UserData 
- */
-const SendUserEmailVerification = async (UserData) => {
+
+/* const SendUserEmailVerification = async (UserData) => {
     const EmailVerification = {
         UserId: UserData.DocId,
         CreatedIndex: moment().valueOf(),
@@ -101,19 +192,23 @@ const VerifyUserEmail = async (req, res) => {
         UpdateUsers({ EmailVerification: true }, EmailVerificationData.UserId),
     ])
     return res.redirect(WebUrl);
-}
-
+} */
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ * @returns 
+ */
 const UserLogin = async (req, res) => {
     const { Email, Password } = req.body;
-    const [User] = await ReadUsers({ Email: Email }, undefined, 1, undefined, false);
-    // - vedanth
-    // exist conditions first
-
-    // check email exists else route to register
-
-    // then password wrong check
-
-    // then logic
+    const Users = await ReadUsers({ Email: Email }, undefined, 1, undefined, false);
+    if (Users.length === 0) {
+        res.redirect(RegisterUrl);
+    }
+    const [User] = Users
+    if (User.Password !== Password) {
+        return res.status(444).json("Invalid Credentials");
+    }
 
     if (User.Password === Password) {
         const CurrentUser = {
@@ -128,7 +223,6 @@ const UserLogin = async (req, res) => {
             RefreshToken
         });
     }
-    return res.json("Wrong Password");
 }
 
 
@@ -138,11 +232,10 @@ const UserLogin = async (req, res) => {
  * @returns {UserData}
  */
 const UserInit = (User) => {
-    User.EmailVerification = false;
     return User;
 }
 
 export {
     GetOneFromUsers, GetUsers, PostUsersRegister, PatchUsers,
-    UserLogin, VerifyUserEmail
+    UserLogin, VerifyRegistrationOTP
 }

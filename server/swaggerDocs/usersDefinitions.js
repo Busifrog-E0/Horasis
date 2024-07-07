@@ -29,8 +29,13 @@ const UserData = {
     "About": "Seasoned product manager with over 10 years of experience in the software industry.",
     "EmailVerification": false
 }
+
+const OTPVerifyData = {
+    "OTP": "123456",
+    "OTPId" : "string"
+}
 export default {
-    UserRegisterData,
+    UserRegisterData,OTPVerifyData,
     UserLoginData,
     UserData
 }
