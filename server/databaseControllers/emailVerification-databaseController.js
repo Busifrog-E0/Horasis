@@ -2,8 +2,12 @@ import dataHandling from './functions.js'
 
 /**
  * @typedef {object} EmailVerificationData
- * @property {string} Token
  * @property {string} UserId
+ * @property {number} CreatedIndex
+ * @property {number} VerifiedIndex
+ * @property {boolean} Verified
+ * @property {string} DocId
+ * 
  */
 
 
