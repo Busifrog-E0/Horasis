@@ -1,7 +1,7 @@
 import Joi from 'joi';
 import { QueryParametersSchema } from './common.js';
 
-const UserRegisterSchema = Joi.object({
+const UserSchema = Joi.object({
     FullName: Joi.string().required(),
     Email: Joi.string().email().required(),
     Password: Joi.string().min(8).required(),
@@ -16,7 +16,7 @@ const UserRegisterSchema = Joi.object({
 
 
 const ValidateUserRegister = async (req, res, next) => {
-    const Result = UserRegisterSchema.validate(req.body, { stripUnknown: true });
+    const Result = UserSchema.validate(req.body, { stripUnknown: true });
     if (Result.error) {
         const message = Result.error.details.map((detail) => detail.message).join(', ');
         return res.status(400).json(message);
@@ -47,5 +47,5 @@ const ValidateUserLogin = async (req, res, next) => {
 
 
 export {
-    ValidateUserRegister, ValidateUserLogin, 
+    ValidateUserRegister, ValidateUserLogin,
 }
