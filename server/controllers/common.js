@@ -11,7 +11,7 @@
 
 const AlertBoxObject = (Header, Message, SubscriptionButton = false, CloseButton = true, UpdateButton = false) => {
     return {
-       Header,
+        Header,
         Message,
         SubscriptionButton,
         UpdateButton,
