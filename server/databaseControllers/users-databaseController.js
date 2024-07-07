@@ -24,10 +24,20 @@ import dataHandling from './functions.js'
  * @param {undefined|string} NextIndex 
  * @param {undefined|number} Limit 
  * @param {undefined|object} orderBy 
+ * @param {boolean} RemovePassword
  * @returns {Promise<Array<UserData>>} Returns UserData
  */
-const ReadUsers = async (Where, NextIndex, Limit, orderBy) => {
-    return dataHandling.Read('Users', undefined, NextIndex, Limit, Where, orderBy);
+const ReadUsers = async (Where, NextIndex, Limit, orderBy, RemovePassword = true) => {
+    /**@type {Array<UserData>} */
+    let UserDataArray = await dataHandling.Read('Users', undefined, NextIndex, Limit, Where, orderBy);
+    if (RemovePassword) {
+        UserDataArray = UserDataArray.map(data => {
+            // @ts-ignore
+            delete data.Password;
+            return data;
+        });
+    }
+    return UserDataArray;
 }
 
 /**
@@ -35,8 +45,14 @@ const ReadUsers = async (Where, NextIndex, Limit, orderBy) => {
  * @param {string} DocId 
  * @returns {Promise<UserData>}
  */
-const ReadOneFromUsers = async (DocId) => {
-    return dataHandling.Read('Users', DocId);
+const ReadOneFromUsers = async (DocId, RemovePassword = true) => {
+    /**@type {UserData} */
+    const UserData = await dataHandling.Read('Users', DocId);
+    if (RemovePassword) {
+        // @ts-ignore
+        delete UserData.Password;
+    }
+    return UserData;
 }
 
 /**

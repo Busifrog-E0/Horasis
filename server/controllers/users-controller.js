@@ -105,7 +105,7 @@ const VerifyUserEmail = async (req, res) => {
 
 const UserLogin = async (req, res) => {
     const { Email, Password } = req.body;
-    const [User] = await ReadUsers({ Email: Email }, undefined, 1, undefined);
+    const [User] = await ReadUsers({ Email: Email }, undefined, 1, undefined, false);
     // - vedanth
     // exist conditions first
 
