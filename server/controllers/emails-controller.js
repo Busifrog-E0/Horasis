@@ -1,4 +1,3 @@
-import { getOTP } from "./common.js";
 import { EmailAPI } from "./zeptomail-controller"
 
 const TestUsers = [
