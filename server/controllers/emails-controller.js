@@ -16,6 +16,27 @@ const AccountVerificationEmail = async (UserData, verification_link) => {
     return EmailAPI(UserData.Email, "Verification Link", VerificationTemplateId, MergeInfo);
 }
 
+// Verify you email address
+/**
+ * 
+ * @param {string} Email 
+ * @param {string} OTP 
+ * @param {string} Name 
+ * @returns 
+ */
+const SendRegisterOTPEmail = async (Email, OTP, Name) => {
+    const OTPTemplateId = "2518b.7d5b154c30adb8bd.k1.0eec7d30-3ced-11ef-afa0-525400674725.19090deb483"
+    const MergeInfo = {
+        "name": Name,
+        "description": "Verify Your Email",
+        "OTP": OTP,
+        "team": "team_value",
+        "product_name": "product_name_value"
+    };
+    return EmailAPI(Email, "Verification Link", OTPTemplateId, MergeInfo);
+}
+
+
 export {
-    AccountVerificationEmail,
+    AccountVerificationEmail, SendRegisterOTPEmail
 }
