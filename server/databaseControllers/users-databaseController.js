@@ -1,6 +1,18 @@
 import dataHandling from './functions.js'
 
 /**
+ * @typedef {object} OTPData
+ * @property {UserData} Data
+ * @property {string} OTP
+ * @property {string} Date
+ * @property {number} Index
+ * @property {number} NoOfRetries
+ * @property {number} NoOfOTPs
+ * @property {number} Email
+ * @property {boolean} EmailVerified
+ */
+
+/**
  * @typedef {object} UserData
  * @property {string} FullName
  * @property {string} Username  //not shown while registering?
