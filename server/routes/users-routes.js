@@ -10,7 +10,7 @@ import { decodeIDToken, ensureAuthorized } from '../middleware/auth-middleware.j
 import SwaggerDocs from '../swaggerDocs/users-swaggerDocs.js'
 import e from 'express';
 import { CheckSameUser } from '../middleware/common.js';
-import { ValidateCheckUsername, ValidateUserLogin, ValidateUserRegister, ValidateVerifyOTP } from '../validations/users-validations.js';
+import { ValidateCheckUsername, ValidatePatchUsers, ValidateUserLogin, ValidateUserRegister, ValidateVerifyOTP } from '../validations/users-validations.js';
 const router = e.Router();
 router.route
 
@@ -30,18 +30,18 @@ router.post('/users/login', ValidateUserLogin, SwaggerDocs.post_Users_Login,
     // @ts-ignore
     asyncHandler(UserLogin));
 
-router.get('/users/checkUsername',ValidateCheckUsername,SwaggerDocs.get_Users_CheckUsername,
+router.get('/users/register/checkUsername',ValidateCheckUsername,SwaggerDocs.get_Users_CheckUsername,
     //@ts-ignore
     asyncHandler(CheckUsernameAvailability(false)));
 
-router.get('/users/edit/checkUsername', ValidateCheckUsername, SwaggerDocs.get_Users_CheckUsername,
+router.get('/users/edit/checkUsername', decodeIDToken,ensureAuthorized("User"),ValidateCheckUsername, SwaggerDocs.get_Users_CheckUsername,
     //@ts-ignore
     asyncHandler(CheckUsernameAvailability(true)));
 
 // resend verfication email api - vedanth
 
-
-router.patch('/users/:UserId', decodeIDToken, ensureAuthorized("User"), CheckSameUser,
+router.patch('/users/:UserId', decodeIDToken, ensureAuthorized("User"), ValidatePatchUsers, CheckSameUser,
+    SwaggerDocs.patch_Users_UserId,
     // @ts-ignore
     asyncHandler(PatchUsers));
 

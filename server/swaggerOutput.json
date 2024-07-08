@@ -128,6 +128,9 @@
         }
       },
       "patch": {
+        "tags": [
+          "Users"
+        ],
         "description": "",
         "parameters": [
           {
@@ -140,9 +143,19 @@
             "name": "authorization",
             "in": "header",
             "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/PatchUserData"
+            }
           }
         ],
         "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
           "401": {
             "description": "Unauthorized"
           },
@@ -248,7 +261,7 @@
         }
       }
     },
-    "/api/users/checkUsername": {
+    "/api/users/register/checkUsername": {
       "get": {
         "tags": [
           "Users"
@@ -284,6 +297,11 @@
         "description": "",
         "parameters": [
           {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
             "name": "body",
             "in": "body",
             "schema": {
@@ -300,6 +318,15 @@
         "responses": {
           "400": {
             "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "402": {
+            "description": "Payment Required"
+          },
+          "403": {
+            "description": "Forbidden"
           }
         }
       }
@@ -449,6 +476,35 @@
         "About": {
           "type": "string",
           "example": "Seasoned product manager with over 10 years of experience in the software industry."
+        }
+      }
+    },
+    "PatchUserData": {
+      "type": "object",
+      "properties": {
+        "FullName": {
+          "type": "string",
+          "example": "John Doe"
+        },
+        "Username": {
+          "type": "string",
+          "example": "johndoe"
+        },
+        "Country": {
+          "type": "string",
+          "example": "USA"
+        },
+        "CompanyName": {
+          "type": "string",
+          "example": "Tech Corp"
+        },
+        "About": {
+          "type": "string",
+          "example": "Experienced developer"
+        },
+        "JobTitle": {
+          "type": "string",
+          "example": "Software Engineer"
         }
       }
     }

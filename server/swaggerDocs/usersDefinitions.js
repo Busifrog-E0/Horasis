@@ -34,8 +34,19 @@ const OTPVerifyData = {
     "OTP": "123456",
     "OTPId" : "string"
 }
+
+const PatchUserData = {
+    FullName: "John Doe",
+    Username: "johndoe",
+    Country: "USA",
+    CompanyName: "Tech Corp",
+    About: "Experienced developer",
+    JobTitle: "Software Engineer",
+}
+
 export default {
     UserRegisterData,OTPVerifyData,
     UserLoginData,
-    UserData
+    UserData,
+    PatchUserData
 }

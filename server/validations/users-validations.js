@@ -76,8 +76,29 @@ const ValidateCheckUsername = async (req, res, next) => {
 
 }
 
+const ValidatePatchUsers = async (req, res, next) => {
+    const Result = Joi.object({
+        FullName: UserSchema.extract("FullName"),
+        Username: UserSchema.extract("Username"),
+        Country: UserSchema.extract("Country"),
+        CompanyName: UserSchema.extract("CompanyName"),
+        About: UserSchema.extract("About"),
+        JobTitle: UserSchema.extract("JobTitle"),
+    }).validate(req.body, { stripUnknown: true });
+    if (Result.error) {
+        const message = Result.error.details.map((detail) => detail.message).join(', ');
+        return res.status(400).json(message);
+    }
+    else {
+        req.body = Result.value;
+        return next();
+    }
+
+}
+
 
 export {
     ValidateUserRegister, ValidateUserLogin,
-    ValidateVerifyOTP,ValidateCheckUsername
+    ValidateVerifyOTP, ValidateCheckUsername,
+    ValidatePatchUsers
 }
