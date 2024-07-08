@@ -4,13 +4,11 @@ import moment from 'moment-timezone';
 import { ReadOneFromUsers, ReadUsers, UpdateUsers, CreateUsers, RemoveUsers, } from './../databaseControllers/users-databaseController.js';
 import { AccountVerificationEmail, SendOTPEmail } from './emails-controller.js';
 import { CreateEmailVerifications, ReadOneFromEmailVerifications, UpdateEmailVerifications } from '../databaseControllers/emailVerification-databaseController.js';
-import { GenerateToken } from './auth-controller.js';
+import { GenerateToken, SendRegisterOTP, VerifyOTP } from './auth-controller.js';
 import { getOTP } from './common.js';
 
-const TestUsers = [
-    "qwertyui@tgmail.com",
-]
-const MAXIMUM_RETRIES_OF_OTP = 5;
+
+
 const ApiBaseUrl = "";
 const WebUrl = "";
 const RegisterUrl = "";
@@ -20,9 +18,6 @@ const RegisterUrl = "";
  * @typedef {import('./../databaseControllers/users-databaseController.js').UserData} UserData 
  */
 
-/**
- * @typedef {import('./../databaseControllers/users-databaseController.js').OTPData} OTPData 
- */
 
 /**
  * 
@@ -49,72 +44,8 @@ const GetUsers = async (req, res) => {
     return res.json(data);
 }
 
-/**
- * @param {string} Email 
- * @param {UserData} Data 
- * @param {string} Description
- * @param {e.Response} res 
- * @returns {Promise<string|Error>}
- */
-const SendRegisterOTP = async (Email, Data = {}, Description,res) => {
-    let TestUser = false;
-    if (TestUsers.includes(Email)) {
-        TestUser = true;
-    }
-    const OTP = getOTP(TestUser);
 
-    const ReturnMessage = await SendOTPEmail(Email,OTP,Data.FullName,Description)
 
-    if (ReturnMessage === true) {
-        const Now = moment();
-        const Date = Now.format("YYYY-MM-DD");
-        const Index = `${Now.valueOf()}`;
-        const data = { "OTP": OTP, "Email": Email, EmailVerified: false, Index, Date, Data, "NoOfRetries": 0, "NoOfOTPs": 0 };
-        const OTPId = await Create("OTP", data);
-        return OTPId;
-    }
-    else {
-        res.status(400);
-        throw Error(ReturnMessage);
-    }
-}
-
-/**
- * 
- * @param {string} OTPId 
- * @param {string} OTP 
- * @param {e.Response} res
- * @returns {Promise<OTPData|Error>}
- */
-const VerifyOTP = async (OTPId, OTP, res) => {
-    /**
-     * @type {OTPData}
-     */
-    const data = await Read("OTP", OTPId);
-    if (data === null) {
-        res.status(400);
-        throw Error("No OTP Generated");
-    }
-    else if (data.NoOfRetries >= MAXIMUM_RETRIES_OF_OTP) {
-        res.status(400);
-        throw Error("Maximum number of retries finished");
-    }
-    else if (data.OTP !== OTP) {
-        data.NoOfRetries++;
-        await Update("OTP", data, OTPId);
-        res.status(400);
-        throw Error(`OTP Incorrect. Only ${MAXIMUM_RETRIES_OF_OTP - data.NoOfRetries} tries left`);
-    }
-    else if (data.PhoneVerified) {
-        res.status(400);
-        throw Error(`OTP Already Verified.`);
-    }
-    else {
-        data.PhoneVerified = true;
-        await Update("OTP", data, OTPId);
-        return data;
-    }
-}
 /**
  * 
  * @param {e.Request} req 
@@ -141,6 +72,7 @@ const PostUsersRegister = async (req, res) => {
 const VerifyRegistrationOTP = async (req, res) => {
     const { OTP, OTPId } = req.body;
     const OTPData = await VerifyOTP(OTPId, OTP, res);
+    //@ts-ignore
     const UserId = await CreateUsers(OTPData.Data);
     const CurrentUser = {
         Role: "User",

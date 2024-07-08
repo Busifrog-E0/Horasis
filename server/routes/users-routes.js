@@ -1,6 +1,5 @@
 import {
     GetOneFromUsers, PostUsersRegister, PatchUsers, UserLogin,
-    VerifyUserEmail,
     VerifyRegistrationOTP,
 } from '../controllers/users-controller.js';
 import asyncHandler from 'express-async-handler';
