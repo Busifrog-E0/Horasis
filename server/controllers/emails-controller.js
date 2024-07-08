@@ -1,4 +1,4 @@
-import { EmailAPI } from "./zeptomail-controller"
+import { EmailAPI } from "./zeptomail-controller.js"
 
 /**
  * @param {import('./../databaseControllers/users-databaseController.js').UserData} UserData 
@@ -40,3 +40,6 @@ const SendRegisterOTPEmail = async (Email, OTP, Name) => {
 export {
     AccountVerificationEmail, SendRegisterOTPEmail
 }
+
+// harismoylan
+// paOVSc1CFZwY3G8e
