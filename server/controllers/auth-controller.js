@@ -2,7 +2,18 @@ import e from "express";
 import jwt from "jsonwebtoken";
 import ENV from "./../Env.js";
 import dataHandling from '../databaseControllers/functions.js';
-const { Read, Create, Delete } = dataHandling;
+import { getOTP } from "./common.js";
+import { SendOTPEmail } from "./emails-controller.js";
+import moment from "moment";
+const { Read, Create, Delete,Update } = dataHandling;
+
+const TestUsers = [
+    "qwertyui@tgmail.com",
+]
+const MAXIMUM_RETRIES_OF_OTP = 5;
+/**
+ * @typedef {import("../databaseControllers/users-databaseController.js").UserData} UserData
+ */
 
 /**
  * @typedef {object} RefreshTokenData
@@ -10,6 +21,18 @@ const { Read, Create, Delete } = dataHandling;
  * @property {string} Token
  * @property {boolean} Valid
  * @property {string} DocId
+ */
+
+/**
+ * @typedef {object} OTPData
+ * @property {UserData} Data
+ * @property {string} OTP
+ * @property {string} Date
+ * @property {number} Index
+ * @property {number} NoOfRetries
+ * @property {number} NoOfOTPs
+ * @property {number} Email
+ * @property {boolean} EmailVerified
  */
 
 /**
@@ -65,5 +88,77 @@ const GenerateToken = async (SignObject) => {
     return { "Token": Token, "RefreshToken": RefreshToken };
 }
 
-export { ModelLogin, RefreshToken, GenerateToken };
+/**
+ * @param {string} Email 
+ * @param {UserData} Data 
+ * @param {string} Description
+ * @param {e.Response} res 
+ * @returns {Promise<string|Error>}
+ */
+const SendRegisterOTP = async (Email, Data, Description, res) => {
+    let TestUser = false;
+    if (TestUsers.includes(Email)) {
+        TestUser = true;
+    }
+    const OTP = getOTP(TestUser);
+
+    const ReturnMessage = await SendOTPEmail(Email, OTP, Data.FullName, Description)
+
+    if (ReturnMessage === true) {
+        const Now = moment();
+        const Date = Now.format("YYYY-MM-DD");
+        const Index = `${Now.valueOf()}`;
+        const data = { "OTP": OTP, "Email": Email, EmailVerified: false, Index, Date, Data, "NoOfRetries": 0, "NoOfOTPs": 0 };
+        const OTPId = await Create("OTP", data);
+        return OTPId;
+    }
+    else {
+        res.status(400);
+        throw Error(ReturnMessage);
+    }
+}
+
+
+/**
+ * 
+ * @param {string} OTPId 
+ * @param {string} OTP 
+ * @param {e.Response} res
+ * @returns {Promise<OTPData|Error>}
+ */
+const VerifyOTP = async (OTPId, OTP, res) => {
+    /**
+     * @type {OTPData}
+     */
+    const data = await Read("OTP", OTPId);
+    if (data === null) {
+        res.status(400);
+        throw Error("No OTP Generated");
+    }
+    else if (data.NoOfRetries >= MAXIMUM_RETRIES_OF_OTP) {
+        res.status(400);
+        throw Error("Maximum number of retries finished");
+    }
+    else if (data.OTP !== OTP) {
+        data.NoOfRetries++;
+        await Update("OTP", data, OTPId);
+        res.status(400);
+        throw Error(`OTP Incorrect. Only ${MAXIMUM_RETRIES_OF_OTP - data.NoOfRetries} tries left`);
+    }
+    else if (data.EmailVerified) {
+        res.status(400);
+        throw Error(`OTP Already Verified.`);
+    }
+    else {
+        data.EmailVerified = true;
+        await Update("OTP", data, OTPId);
+        return data;
+    }
+}
+
+
+export {
+    ModelLogin, RefreshToken, GenerateToken,
+    VerifyOTP,SendRegisterOTP
+};
 
