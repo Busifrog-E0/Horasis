@@ -3,6 +3,7 @@ import { QueryParametersSchema } from './common.js';
 
 const UserSchema = Joi.object({
     FullName: Joi.string().required(),
+    Username: Joi.string().required(),
     Email: Joi.string().email().required(),
     Password: Joi.string().min(8).required(),
     Country: Joi.string().required(),
