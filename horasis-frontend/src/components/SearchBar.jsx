@@ -1,0 +1,16 @@
+
+const SearchBar = ({ placeholder = "Search Horasis" }) => {
+
+    return (<>
+        <div className="border border-system-primary-border bg-system-secondary-bg overflow-hidden rounded-lg">
+            <div className="flex gap-0 flex-row">
+                <div className="bg-system-secondary-bg p-3 px-4 flex-1">
+                    <input className="w-full bg-system-secondary-bg italic text-system-primary-text outline-none" placeholder={placeholder}></input>
+                </div>
+                <div className="bg-system-primary-accent p-3 px-10 cursor-pointer text-system-plan3-text text-md font-semibold">Search</div>
+            </div>
+        </div>
+    </>)
+}
+
+export default SearchBar

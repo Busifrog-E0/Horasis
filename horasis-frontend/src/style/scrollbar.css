@@ -1,0 +1,64 @@
+﻿/* WebKit (Safari/Chrome) */
+::-webkit-scrollbar {
+    height: 3px;
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    /* Track color */
+}
+
+::-webkit-scrollbar-thumb {
+    background: #8c8c8c99;
+    /* Thumb color */
+    border-radius: 100px;
+
+    /* Rounded corners */
+}
+
+/*::-webkit-scrollbar-button:start:decrement,
+::-webkit-scrollbar-button:end:increment {
+    display: block;
+    height: 3px;
+    width: 10px;
+    width: 10px;*/
+/* Adjust the width as needed */
+/*background-color: #ccc;*/
+/* Button color */
+/*cursor: pointer;
+}
+
+::-webkit-scrollbar-button {
+    display: none;*/
+/* Hide the default buttons */
+/*}*/
+/* Firefox */
+::-moz-scrollbar {
+    height: 3px;
+    width: 10px;
+}
+
+/* Internet Explorer */
+::-ms-scrollbar {
+    height: 3px;
+    width: 10px;
+}
+
+/* Edge */
+::-ms-scrollbar {
+    height: 3px;
+    width: 10px;
+}
+
+/* Opera */
+::-o-scrollbar {
+    height: 3px;
+    width: 10px;
+}
+
+/* Generic */
+scrollbar {
+    height: 3px;
+    width: 10px;
+}
