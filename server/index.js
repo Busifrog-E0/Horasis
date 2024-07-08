@@ -26,7 +26,12 @@ import swaggerUi from 'swagger-ui-express';
 import swaggerFile from './swaggerOutput.json' assert { type: 'json' };
 // import { FirstSetupAdminInfo } from "./databaseControllers/admins-databaseController.js";
 import { GenerateToken } from "./controllers/auth-controller.js";
-app.use('/doc', swaggerUi.serve, swaggerUi.setup(swaggerFile))
+app.use('/doc', swaggerUi.serve, swaggerUi.setup(swaggerFile));
+
+app.use((req, res, next) => {
+    console.log(req.method, req.originalUrl);
+    return next();
+})
 
 app.use(router);
 
