@@ -1,7 +1,7 @@
 import logger from 'harislogger';
 
 import dbFile from './db.config.js';
-const db = dbFile.getClient().db("Main");
+const db = dbFile.getClient().db("Horasis");
 import { ObjectId } from 'mongodb';
 import moment from "moment-timezone";
 
