@@ -90,86 +90,11 @@
         }
       }
     },
-    "/api/admin/login": {
-      "post": {
-        "tags": [
-          "Admin",
-          "Auth"
-        ],
-        "description": "",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "Username": {
-                  "example": "any"
-                },
-                "Password": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Admin Login Data",
-            "schema": {
-              "$ref": "#/definitions/LoginData"
-            }
-          },
-          "400": {
-            "description": "Fail",
-            "schema": {
-              "type": "string",
-              "example": "Invalid Credentials",
-              "xml": {
-                "name": "main"
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/admin/banners": {
-      "patch": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "402": {
-            "description": "Payment Required"
-          },
-          "403": {
-            "description": "Forbidden"
-          }
-        }
-      },
-      "get": {
-        "description": "",
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
     "/api/users/{UserId}": {
       "get": {
+        "tags": [
+          "Users"
+        ],
         "description": "",
         "parameters": [
           {
@@ -228,33 +153,6 @@
             "description": "Forbidden"
           }
         }
-      },
-      "delete": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "UserId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "401": {
-            "description": "Unauthorized"
-          },
-          "402": {
-            "description": "Payment Required"
-          },
-          "403": {
-            "description": "Forbidden"
-          }
-        }
       }
     },
     "/api/users/register": {
@@ -273,6 +171,49 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "OTPId": {
+                  "type": "string",
+                  "example": "string"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/api/users/verify": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/OTPVerifyData"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User Data",
+            "schema": {
+              "$ref": "#/definitions/LoginData"
+            }
+          },
           "400": {
             "description": "Bad Request"
           }
@@ -307,12 +248,58 @@
         }
       }
     },
-    "/apiusers/verify/{EmailVerificationId}": {
+    "/api/users/checkUsername": {
       "get": {
+        "tags": [
+          "Users"
+        ],
         "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Username": {
+                  "type": "string",
+                  "example": "JohnDoe"
+                }
+              }
+            }
+          }
+        ],
         "responses": {
-          "default": {
-            "description": ""
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/api/users/edit/checkUsername": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Username": {
+                  "type": "string",
+                  "example": "JohnDoe"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
           }
         }
       }
@@ -356,6 +343,10 @@
           "type": "string",
           "example": "john.doe@example.com"
         },
+        "Username": {
+          "type": "string",
+          "example": "johndoe"
+        },
         "Password": {
           "type": "string",
           "example": "password123"
@@ -383,6 +374,19 @@
         "About": {
           "type": "string",
           "example": "Experienced software engineer specializing in full-stack development."
+        }
+      }
+    },
+    "OTPVerifyData": {
+      "type": "object",
+      "properties": {
+        "OTP": {
+          "type": "string",
+          "example": "123456"
+        },
+        "OTPId": {
+          "type": "string",
+          "example": "string"
         }
       }
     },
@@ -445,10 +449,6 @@
         "About": {
           "type": "string",
           "example": "Seasoned product manager with over 10 years of experience in the software industry."
-        },
-        "EmailVerification": {
-          "type": "boolean",
-          "example": false
         }
       }
     }

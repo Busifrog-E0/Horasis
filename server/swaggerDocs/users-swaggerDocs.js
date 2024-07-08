@@ -5,6 +5,11 @@ const post_Users_Register = async (req, res, next) => {
                     schema: { $ref: '#/definitions/UserRegisterData' }
         } 
     */
+    /* #swagger.responses[200] = {
+                 description: '',
+                 schema: { 'OTPId' : "string" }
+         } 
+     */
 
     next();
 }
@@ -41,11 +46,27 @@ const post_Users_Verify = async (req, res, next) => {
                     schema: { $ref: '#/definitions/OTPVerifyData' }
         } 
     */
+    /* #swagger.responses[200] = {
+             description: 'User Data',
+             schema: { $ref: '#/definitions/LoginData' }
+     } 
+ */
+    next();
+}
+
+const get_Users_CheckUsername = async (req, res, next) => {
+    // #swagger.tags = ['Users']
+    /* #swagger.parameters['body'] = {
+                    in: 'body',
+                    schema: { 'Username' : "JohnDoe" }
+        } 
+    */
+
     next();
 }
 
 export default {
-    post_Users_Register,
+    post_Users_Register,get_Users_CheckUsername,
     post_Users_Login,
     get_Users_UserId,
     post_Users_Verify
