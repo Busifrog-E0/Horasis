@@ -18,7 +18,7 @@ const ModeOfDevelopment = process.env.ModeOfDevelopment;
  * @type {string}
  */
 // @ts-ignore
-const MongoDB_Host = process.env.MongoDB_Host;
+const MongoDB_Host = ModeOfDevelopment === "Debug" ? process.env.MongoDB_Host_Production : process.env.MongoDB_Host_Debug;
 
 /**
  * @type {string}
@@ -58,7 +58,7 @@ const DO_SPACES_NAME = process.env.DO_SPACES_NAME;
  * @type {string}
  */
 // @ts-ignore
-const ZeptoMailToken = process.env.ZeptoMailToken;
+const ZeptoMailToken = ModeOfDevelopment === "Debug" ? process.env.ZeptoProductionMailToken : process.env.ZeptoDebugMailToken;
 
 export default {
     PORT,

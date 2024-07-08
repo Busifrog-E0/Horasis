@@ -1,4 +1,4 @@
-import { EmailAPI } from "./zeptomail-controller"
+import { EmailAPI } from "./zeptomail-controller.js"
 
 const TestUsers = [
     "qwertyui@tgmail.com",
@@ -62,3 +62,4 @@ const SendOTPEmail = async (Email, OTP, Name,Description) => {
 export {
     AccountVerificationEmail, SendOTPEmail
 }
+

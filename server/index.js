@@ -24,7 +24,7 @@ app.use(urlencoded({
 
 import swaggerUi from 'swagger-ui-express';
 import swaggerFile from './swaggerOutput.json' assert { type: 'json' };
-import { FirstSetupAdminInfo } from "./databaseControllers/admins-databaseController.js";
+// import { FirstSetupAdminInfo } from "./databaseControllers/admins-databaseController.js";
 import { GenerateToken } from "./controllers/auth-controller.js";
 app.use('/doc', swaggerUi.serve, swaggerUi.setup(swaggerFile))
 
@@ -36,7 +36,7 @@ app.use(router);
 
 (async () => {
     await db.init();
-    await FirstSetupAdminInfo();
+    // await FirstSetupAdminInfo();
 
 
     app.listen(PORT, (err) => {
