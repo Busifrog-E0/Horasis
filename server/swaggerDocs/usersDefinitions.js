@@ -1,6 +1,7 @@
 const UserRegisterData = {
     "FullName": "John Doe",
     "Email": "john.doe@example.com",
+    "Username" : "johndoe",
     "Password": "password123",
     "Country": "USA",
     "City": "New York",
@@ -27,7 +28,6 @@ const UserData = {
     "Industry": "Software",
     "CompanyName": "InnovateTech",
     "About": "Seasoned product manager with over 10 years of experience in the software industry.",
-    "EmailVerification": false
 }
 
 const OTPVerifyData = {

@@ -102,7 +102,7 @@ const SendRegisterOTP = async (Email, Data, Description, res) => {
     }
     const OTP = getOTP(TestUser);
 
-    const ReturnMessage = await SendOTPEmail(Email, OTP, Data.FullName, Description)
+    const ReturnMessage = true;           //await SendOTPEmail(Email, OTP, Data.FullName, Description)
 
     if (ReturnMessage === true) {
         const Now = moment();

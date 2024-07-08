@@ -157,6 +157,30 @@ const UserLogin = async (req, res) => {
     }
 }
 
+/**
+ * 
+ * @param {boolean} IsEdit 
+ * @returns 
+ */
+
+const CheckUsernameAvailability = (IsEdit) =>
+    /**
+     * 
+     * @param {e.Request} req 
+     * @param {e.Response} res 
+     * @returns 
+     */
+    async (req, res) => {
+    const CheckUserExists = await ReadUsers({ Username: req.body.Username }, undefined, 1, undefined);
+    if (CheckUserExists.length === 0) {
+        return res.json(true)
+        }
+        //@ts-ignore
+    if (IsEdit && CheckUserExists[0].DocId === req.user.UserId) {
+        return res.json(true);
+    }
+    return res.json(false);
+}
 
 /**
  * 
@@ -169,5 +193,5 @@ const UserInit = (User) => {
 
 export {
     GetOneFromUsers, GetUsers, PostUsersRegister, PatchUsers,
-    UserLogin, VerifyRegistrationOTP
+    UserLogin, VerifyRegistrationOTP,CheckUsernameAvailability
 }

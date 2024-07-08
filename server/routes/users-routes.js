@@ -1,6 +1,7 @@
 import {
     GetOneFromUsers, PostUsersRegister, PatchUsers, UserLogin,
     VerifyRegistrationOTP,
+    CheckUsernameAvailability,
 } from '../controllers/users-controller.js';
 import asyncHandler from 'express-async-handler';
 
@@ -9,7 +10,7 @@ import { decodeIDToken, ensureAuthorized } from '../middleware/auth-middleware.j
 import SwaggerDocs from '../swaggerDocs/users-swaggerDocs.js'
 import e from 'express';
 import { CheckSameUser } from '../middleware/common.js';
-import { ValidateUserLogin, ValidateUserRegister, ValidateVerifyOTP } from '../validations/users-validations.js';
+import { ValidateCheckUsername, ValidateUserLogin, ValidateUserRegister, ValidateVerifyOTP } from '../validations/users-validations.js';
 const router = e.Router();
 router.route
 
@@ -28,6 +29,14 @@ asyncHandler(VerifyRegistrationOTP))
 router.post('/users/login', ValidateUserLogin, SwaggerDocs.post_Users_Login,
     // @ts-ignore
     asyncHandler(UserLogin));
+
+router.get('/users/checkUsername',ValidateCheckUsername,SwaggerDocs.get_Users_CheckUsername,
+    //@ts-ignore
+    asyncHandler(CheckUsernameAvailability(false)));
+
+router.get('/users/edit/checkUsername', ValidateCheckUsername, SwaggerDocs.get_Users_CheckUsername,
+    //@ts-ignore
+    asyncHandler(CheckUsernameAvailability(true)));
 
 // resend verfication email api - vedanth
 
