@@ -30,11 +30,11 @@ router.post('/users/login', ValidateUserLogin, SwaggerDocs.post_Users_Login,
     // @ts-ignore
     asyncHandler(UserLogin));
 
-router.get('/users/register/checkUsername',ValidateCheckUsername,SwaggerDocs.get_Users_CheckUsername,
+router.post('/users/register/checkUsername',ValidateCheckUsername,SwaggerDocs.get_Users_CheckUsername,
     //@ts-ignore
     asyncHandler(CheckUsernameAvailability(false)));
 
-router.get('/users/edit/checkUsername', decodeIDToken,ensureAuthorized("User"),ValidateCheckUsername, SwaggerDocs.get_Users_CheckUsername,
+router.post('/users/edit/checkUsername', decodeIDToken,ensureAuthorized("User"),ValidateCheckUsername, SwaggerDocs.get_Users_CheckUsername,
     //@ts-ignore
     asyncHandler(CheckUsernameAvailability(true)));
 
