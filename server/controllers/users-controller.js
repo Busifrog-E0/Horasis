@@ -6,6 +6,8 @@ import { AccountVerificationEmail, SendOTPEmail } from './emails-controller.js';
 import { CreateEmailVerifications, ReadOneFromEmailVerifications, UpdateEmailVerifications } from '../databaseControllers/emailVerification-databaseController.js';
 import { GenerateToken, SendRegisterOTP, VerifyOTP } from './auth-controller.js';
 import { getOTP } from './common.js';
+import { ReadConnections } from '../databaseControllers/connections-databaseController.js';
+import { ReadFollows } from '../databaseControllers/follow-databaseController.js';
 
 
 
@@ -97,8 +99,9 @@ const VerifyRegistrationOTP = async (req, res) => {
  * @returns {Promise<e.Response<true>>}
  */
 const PatchUsers = async (req, res) => {
-    const UsernameCheck = await CheckUsernameExists(req.body.Username);
-    if (UsernameCheck) {
+    const CheckUserExists = await ReadUsers({ Username: req.body.Username }, undefined, 1, undefined);
+    //@ts-ignore
+    if (CheckUserExists.length > 0 && CheckUserExists[0].DocId !== req.user.UserId) {
         return res.status(444).json("Username already in use");
     }
     const { UserId } = req.params;
@@ -204,6 +207,34 @@ const CheckUsernameExists = async (Username) => {
 
 /**
  * 
+ * @param {string} UserId 
+ * @param {string} OtherUserId 
+ * @returns {Promise<import('./../databaseControllers/users-databaseController.js').OtherUserData>}
+ */
+const ViewOtherUser = async (UserId, OtherUserId) => {
+    let IsConnected = false, IsFollowing = false, IsFollowed = false;
+    const Connection = await ReadConnections({ UserIds: { $all: [UserId, OtherUserId] }, Status: "Connected" }, undefined, 1, undefined);
+    const Follows = await ReadFollows({
+        '$or': [{ FollowerId: UserId, FolloweeId: OtherUserId },
+        { FollowerId: OtherUserId, FolloweeId: UserId },
+        ]},
+        undefined, 2, undefined);
+    for (const follow of Follows) {
+        if (follow.FolloweeId === UserId) {
+            IsFollowed=true;
+        }
+        if (follow.FollowerId === UserId) {
+            IsFollowing = true;
+        }
+    }
+    if (Connection.length > 0) {
+        IsConnected = true;
+    }
+    return { IsConnected, IsFollowed, IsFollowing };
+}
+
+/**
+ * 
  * @param {UserData} User 
  * @returns {UserData}
  */
@@ -213,5 +244,6 @@ const UserInit = (User) => {
 
 export {
     GetOneFromUsers, GetUsers, PostUsersRegister, PatchUsers,
-    UserLogin, VerifyRegistrationOTP,CheckUsernameAvailability
+    UserLogin, VerifyRegistrationOTP, CheckUsernameAvailability,
+    ViewOtherUser
 }

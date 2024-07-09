@@ -21,7 +21,6 @@ const UserData = {
     "Username": "janedoe",
     "Email": "jane.doe@example.com",
     "DocId": "abc123DEF",
-    "Password": "securePassword123!",
     "Country": "Canada",
     "City": "Toronto",
     "JobTitle": "Product Manager",
@@ -43,10 +42,11 @@ const PatchUserData = {
     About: "Experienced developer",
     JobTitle: "Software Engineer",
 }
-
+const UserDataArray = [UserData]
 export default {
     UserRegisterData,OTPVerifyData,
     UserLoginData,
     UserData,
-    PatchUserData
+    PatchUserData,
+    UserDataArray
 }
