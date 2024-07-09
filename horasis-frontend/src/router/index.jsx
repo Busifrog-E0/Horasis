@@ -32,7 +32,10 @@ export const router = createBrowserRouter(
       <Route path='/' element={<AuthLayout />}>
         <Route path='/' element={<DashboardLayout />}>
           <Route path='/' element={<Activities />} />
+          <Route path="/myprofile" element={<MyProfile />} />
           <Route path='/home' element={<Home />} />
+          <Route path="/events/create/new" element={<CreateEvent />} />
+          <Route path="/analytics" element={<Analytics />} />
         </Route>
         <Route path='welcome' element={<WelcomePage />} />
       </Route>

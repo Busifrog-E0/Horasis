@@ -1,6 +1,6 @@
 import Joi from 'joi'
 
-export const UserSchema = Joi.object({
+export const registerValidation = Joi.object({
   FullName: Joi.string().required().messages({
     'string.base': 'Full Name should be a type of text',
     'string.empty': 'Full Name is required',
@@ -64,23 +64,6 @@ export const UserSchema = Joi.object({
     'string.empty': 'About is required',
     'any.required': 'About is required',
   }),
-})
+}).with('Password','ConfirmPassword')
 
-export const confirmPasswordValidation = Joi.object({
-  Password: Joi.string()
-    .min(8)
-    .required()
-    .pattern(new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])'))
-    .messages({
-      'string.base': 'Password should be a type of text',
-      'string.empty': 'Password is required',
-      'string.min': 'Password must be at least 8 characters long',
-      'string.pattern.base':
-        'Password must have at least one uppercase letter, one lowercase letter, one number, and one special character',
-      'any.required': 'Password is required',
-    }),
-  ConfirmPassword: Joi.string().valid(Joi.ref('Password')).required().messages({
-    'any.only': 'Passwords do not match',
-    'any.required': 'Confirm Password is required',
-  }),
-}).with('Password', 'ConfirmPassword')
+

@@ -8,7 +8,7 @@ import Modal from '../components/ui/Modal'
 import TextArea from '../components/ui/TextArea'
 import { postItem } from '../constants/operations'
 import { AuthContext } from '../utils/AuthProvider'
-import { confirmPasswordValidation, UserSchema } from '../utils/schema/users/userValidation'
+import { registerValidation } from '../utils/schema/users/registerValidation'
 const logoText = {
   fontSize: '1.7rem',
   fontWeight: '700',
@@ -53,7 +53,7 @@ const Register = () => {
 
   const validateSingle = (value, key, callback) => {
     setRegisterFormValue({ ...registerFormValue, ...value })
-    const { error, warning } = UserSchema.extract(key).validate(value[key], {
+    const { error, warning } = registerValidation.extract(key).validate(value[key], {
       abortEarly: false,
       stripUnknown: true,
     })
@@ -71,7 +71,7 @@ const Register = () => {
 
   const validateConfirmPassword = (value, key, callback) => {
     setRegisterFormValue({ ...registerFormValue, ...value })
-    const { error, warning } = confirmPasswordValidation.validate(
+    const { error, warning } = registerValidation.validate(
       { ...registerFormValue, ...value },
       {
         abortEarly: false,
@@ -94,7 +94,7 @@ const Register = () => {
     }
   }
   const validate = (callback) => {
-    const { error, warning } = UserSchema.validate(registerFormValue, {
+    const { error, warning } = registerValidation.validate(registerFormValue, {
       abortEarly: false,
       stripUnknown: true,
     })
@@ -118,7 +118,6 @@ const Register = () => {
       registerFormValue,
       (result) => {
         setLoading(false)
-        console.log(result)
         setOtpid(result)
         setOtpOpen(true)
       },
@@ -141,7 +140,6 @@ const Register = () => {
       },
       (result) => {
         setVerifying(false)
-        console.log(result)
         updateCurrentUser(result)
         navigate('/welcome')
       },
@@ -159,7 +157,6 @@ const Register = () => {
       'users/register/checkUsername',
       { Username: value },
       (result) => {
-        console.log(result)
         if (result === true) {
           setUsernameAvailable({
             available: result,

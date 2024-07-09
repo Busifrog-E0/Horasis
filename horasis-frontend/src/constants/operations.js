@@ -11,7 +11,7 @@ let retryCountForGet = 0
 let retryCountForDelete = 0
 const maxRetriesForRefreshToken = 3
 
-const refreshToken = async (updateCurrentUser, currentUserData) => {
+const refreshToken = async (updateCurrentUser, currentUserData,debug) => {
   let tokenToBeRefreshed = _retrieveData(CURRENTUSERDATA)
     ? JSON.parse(_retrieveData(CURRENTUSERDATA)).Token
     : null
@@ -253,7 +253,7 @@ export const getItem = async (
 ) => {
   const API_URL = debug ? DEBUG_API : PRODUCTION_API
   axios
-    .get(API_URL + 'api/' + url,data, {
+    .get(API_URL + 'api/' + url, {
       headers: {
         'Access-Control-Allow-Origin': '*',
         'Content-Type': 'application/json',
