@@ -1,10 +1,5 @@
 // rrd
-import {
-  Outlet,
-  Route,
-  createBrowserRouter,
-  createRoutesFromElements,
-} from 'react-router-dom'
+import { Outlet, Route, createBrowserRouter, createRoutesFromElements } from 'react-router-dom'
 
 // layouts
 import RootLayout from '../layouts/RootLayout'
@@ -39,6 +34,7 @@ export const router = createBrowserRouter(
           <Route path='/' element={<Activities />} />
           <Route path='/home' element={<Home />} />
         </Route>
+        <Route path='welcome' element={<WelcomePage />} />
       </Route>
       <Route path='login' element={<UnAuthLayout />}>
         <Route index element={<LogIn />} />
@@ -46,8 +42,8 @@ export const router = createBrowserRouter(
       <Route path='register' element={<UnAuthLayout />}>
         <Route index element={<Register />} />
       </Route>
-      <Route path='welcome' element={<UnAuthLayout />}>
-        <Route index element={<WelcomePage />} />
+      <Route path='confirmotp' element={<UnAuthLayout />}>
+        <Route index element={<Register />} />
       </Route>
     </Route>
   )
