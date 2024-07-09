@@ -163,6 +163,25 @@ const DeleteConnection = async (req, res) => {
     return res.json(true)
 }
 
+/**
+ * 
+ * @param {string} MyId 
+ * @param {string} TheirId 
+ */
+const ConnectionStatus = async (MyId, TheirId) => {
+    const ConnectionData = (await ReadConnections({ UserIds: { $all: [MyId, TheirId] } }, undefined, 1, undefined))[0];
+    if (!ConnectionData) {
+        return "No Connection";
+    }
+    else if (ConnectionData.Status === "Connected") {
+        return "Connected";
+    }
+    else if (ConnectionData.ReceiverId === MyId) {
+        return "Connection Received";
+    }
+    return "Connection Requested";
+}
+
 export {
     GetAUsersConnections,
     PostConnectionSend,
@@ -170,4 +189,5 @@ export {
     DeleteConnectionReject,
     DeleteConnectionCancel,
     DeleteConnection,
+    ConnectionStatus,
 }
