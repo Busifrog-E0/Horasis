@@ -97,6 +97,10 @@ const VerifyRegistrationOTP = async (req, res) => {
  * @returns {Promise<e.Response<true>>}
  */
 const PatchUsers = async (req, res) => {
+    const UsernameCheck = await CheckUsernameExists(req.body.Username);
+    if (UsernameCheck) {
+        return res.status(444).json("Username already in use");
+    }
     const { UserId } = req.params;
     await UpdateUsers(req.body, UserId);
     return res.json(true);
