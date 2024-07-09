@@ -17,7 +17,12 @@ import dataHandling from './functions.js'
  * @property {string} About
  */
 
-
+/**
+ * @typedef {object} OtherUserData
+ * @property {boolean} IsConnected
+ * @property {boolean} IsFollowed
+ * @property {boolean} IsFollowing
+ */
 
 /**
  * 
