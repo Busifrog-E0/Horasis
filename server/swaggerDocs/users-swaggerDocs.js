@@ -54,7 +54,7 @@ const post_Users_Verify = async (req, res, next) => {
     next();
 }
 
-const get_Users_CheckUsername = async (req, res, next) => {
+const post_Users_CheckUsername = async (req, res, next) => {
     // #swagger.tags = ['Users']
     /* #swagger.parameters['body'] = {
                     in: 'body',
@@ -77,7 +77,7 @@ const patch_Users_UserId = async (req, res, next) => {
 }
 
 export default {
-    post_Users_Register,get_Users_CheckUsername,
+    post_Users_Register,post_Users_CheckUsername,
     post_Users_Login,patch_Users_UserId,
     get_Users_UserId,
     post_Users_Verify
