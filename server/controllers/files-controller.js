@@ -111,8 +111,10 @@ const PostFilesUsers = async (req, res) => {
  * @param {e.Response} res 
  */
 const PostFilesAdmin = async (req, res) => {
+ 
+    const FileData8Array = new Uint8Array(req.body.FileData);
     //@ts-ignore
-    const { mime: FileType } = await fileTypeFromBuffer(req.body.FileData);
+    const { mime: FileType } = await fileTypeFromBuffer(FileData8Array);
     // @ts-ignore
     const FilePath = `${Date.now()}${req.body.FileName}`;
     SaveFileToSpaces("Admin", FilePath, req.body.FileData,FileType, res)
