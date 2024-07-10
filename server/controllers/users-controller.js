@@ -5,7 +5,7 @@ import { ReadOneFromUsers, ReadUsers, UpdateUsers, CreateUsers, RemoveUsers, } f
 import { AccountVerificationEmail, SendOTPEmail } from './emails-controller.js';
 import { CreateEmailVerifications, ReadOneFromEmailVerifications, UpdateEmailVerifications } from '../databaseControllers/emailVerification-databaseController.js';
 import { GenerateToken, SendRegisterOTP, TokenData, VerifyOTP } from './auth-controller.js';
-import { getOTP } from './common.js';
+import { GetNonEmptyFieldsPercentage, getOTP } from './common.js';
 import { ReadConnections } from '../databaseControllers/connections-databaseController.js';
 import { ReadFollows } from '../databaseControllers/follow-databaseController.js';
 import { ConnectionStatus } from './connections-controller.js';
@@ -21,16 +21,29 @@ const RegisterUrl = "";
  * @typedef {import('./../databaseControllers/users-databaseController.js').UserData} UserData 
  */
 
+/**
+ * @typedef {import('./../databaseControllers/users-databaseController.js').OtherUserData} OtherUserData
+ */
 
 /**
  * 
  * @param {e.Request} req 
  * @param {e.Response} res 
- * @returns {Promise<e.Response<UserData>>}
+ * @returns {Promise<e.Response<UserData & OtherUserData>>}
  */
 const GetOneFromUsers = async (req, res) => {
     const { UserId } = req.params;
-    const data = await ReadOneFromUsers(UserId);
+    let data = await ReadOneFromUsers(UserId);
+    const ProfileCompletionPercentage = GetNonEmptyFieldsPercentage(data);
+    //@ts-ignore
+    data.ProfileCompletionPercentage = ProfileCompletionPercentage;
+    //@ts-ignore
+    if (UserId !== req.user.UserId) {
+        //@ts-ignore
+        const OtherUser = await ViewOtherUser(req.user.UserId, UserId);
+        data = { ...data, ...OtherUser };
+    }
+    
     return res.json(data);
 }
 
@@ -38,12 +51,17 @@ const GetOneFromUsers = async (req, res) => {
  * 
  * @param {e.Request} req 
  * @param {e.Response} res 
- * @returns {Promise<e.Response<Array<UserData>>>}
+ * @returns {Promise<e.Response<Array<UserData & OtherUserData>>>}
  */
 const GetUsers = async (req, res) => {
     const { Filter, NextId, Limit, OrderBy } = req.query;
     // @ts-ignore
-    const data = await ReadUsers(Filter, NextId, Limit, OrderBy);
+    const Users = await ReadUsers(Filter, NextId, Limit, OrderBy);
+    const data = Users.map(async User => {
+        //@ts-ignore
+        const OtherUser = await ViewOtherUser(req.user.UserId, User.DocId)
+        return { ...User, ...OtherUser };
+    })
     return res.json(data);
 }
 

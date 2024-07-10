@@ -36,8 +36,24 @@ const getOTP = (TestUser = false) => {
      return "123456";
 }
 
+/**
+ * 
+ * @param {object} Data 
+ */
+const GetNonEmptyFieldsPercentage = (Data) => {
+    let NoOfFields = 0;
+    let NoOfFilledFields = 0;
+    for (const Field in Data) {
+        NoOfFields++;
+        if (Data.Field !== undefined && Data.Field !== "") {
+            NoOfFilledFields++;
+        }
+    }
+    return NoOfFilledFields / NoOfFields;
+}
 
 export {
     AlertBoxObject,
-    getOTP
+    getOTP,
+    GetNonEmptyFieldsPercentage
 }
