@@ -116,10 +116,9 @@ const PatchFollows = async (req, res) => {
  * @returns {Promise<e.Response<true>>}
  */
 const DeleteFollows = async (req, res) => {
-    const { FolloweeId } = req.body;
+    const { FolloweeId,UserId } = req.params;
     //@ts-ignore
-    const FollowerId = req.user.UserId;
-    const Follow = await ReadFollows({ FolloweeId, FollowerId }, undefined, 1, undefined);
+    const Follow = await ReadFollows({ FolloweeId, FollowerId  : UserId}, undefined, 1, undefined);
     if (Follow.length == 0) {
         return res.json("Already not following this profile")
     }
