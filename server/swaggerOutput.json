@@ -335,13 +335,69 @@
         }
       }
     },
-    "/api/followers": {
+    "/api/users/{UserId}/picture": {
+      "patch": {
+        "tags": [
+          "Users"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "UserId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "oneOf": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/LoginData"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "402": {
+            "description": "Payment Required"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      }
+    },
+    "/api/users/{UserId}/followers": {
       "get": {
         "tags": [
           "Follow"
         ],
         "description": "",
         "parameters": [
+          {
+            "name": "UserId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
           {
             "name": "authorization",
             "in": "header",
@@ -390,13 +446,19 @@
         }
       }
     },
-    "/api/followings": {
+    "/api/users/{UserId}/followings": {
       "get": {
         "tags": [
           "Follow"
         ],
         "description": "",
         "parameters": [
+          {
+            "name": "UserId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
           {
             "name": "authorization",
             "in": "header",
@@ -514,6 +576,57 @@
         "responses": {
           "400": {
             "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "402": {
+            "description": "Payment Required"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      }
+    },
+    "/api/users/{UserId}/follow/count": {
+      "get": {
+        "tags": [
+          "Follow"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "UserId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User Data",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "NoOfFollowers": {
+                  "type": "number",
+                  "example": 5
+                },
+                "NoOfFollowings": {
+                  "type": "number",
+                  "example": 5
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
           },
           "401": {
             "description": "Unauthorized"
@@ -806,51 +919,6 @@
           },
           "444": {
             "description": "Connection Closed Without Response"
-          }
-        }
-      }
-    },
-    "/api/follow/count": {
-      "get": {
-        "tags": [
-          "Follow"
-        ],
-        "description": "",
-        "parameters": [
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "User Data",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "NoOfFollowers": {
-                  "type": "number",
-                  "example": 5
-                },
-                "NoOfFollowings": {
-                  "type": "number",
-                  "example": 5
-                }
-              },
-              "xml": {
-                "name": "main"
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "402": {
-            "description": "Payment Required"
-          },
-          "403": {
-            "description": "Forbidden"
           }
         }
       }
