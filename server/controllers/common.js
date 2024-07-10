@@ -45,7 +45,7 @@ const GetNonEmptyFieldsPercentage = (Data) => {
     let NoOfFilledFields = 0;
     for (const Field in Data) {
         NoOfFields++;
-        if (Data.Field !== undefined && Data.Field !== "") {
+        if (Data[Field] !== undefined && Data[Field] !== "") {
             NoOfFilledFields++;
         }
     }
