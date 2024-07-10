@@ -185,17 +185,19 @@ const CheckUsernameAvailability = (IsEdit) =>
  * @returns {Promise<import('./../databaseControllers/users-databaseController.js').OtherUserData>}
  */
 const ViewOtherUser = async (UserId, OtherUserId) => {
-    let IsFollowing = false, IsFollowed = false;
+    let IsFollowing = false, IsFollowed = false, FollowIndex = 0;
     const Connection = await ConnectionStatus(UserId, OtherUserId);
     const Following = await ReadFollows({ FollowerId: UserId, FolloweeId: OtherUserId }, undefined, 1, undefined);
     if (Following.length > 0) {
+        FollowIndex = Following[0].CreatedIndex;
         IsFollowing = true;
     }
     const Followed = await ReadFollows({ FolloweeId: UserId, FollowerId: OtherUserId }, undefined, 1, undefined);
     if (Followed.length > 0) {
         IsFollowed = true;
+        FollowIndex = Followed[0].CreatedIndex;
     }
-    return { ConnectionStatus : Connection, IsFollowed, IsFollowing };
+    return { ConnectionStatus : Connection, IsFollowed, IsFollowing , FollowIndex };
 }
 
 /**
@@ -204,7 +206,12 @@ const ViewOtherUser = async (UserId, OtherUserId) => {
  * @returns {UserData}
  */
 const UserInit = (User) => {
-    return User;
+
+    return {
+        ...User,
+        ProfilePicture: "",
+        CoverPicture : ""
+    };
 }
 
 

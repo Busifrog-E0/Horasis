@@ -24,6 +24,7 @@ import dataHandling from './functions.js'
  * @property {string} ConnectionStatus
  * @property {boolean} IsFollowed
  * @property {boolean} IsFollowing
+ * @property {number} FollowIndex
  */
 
 /**
