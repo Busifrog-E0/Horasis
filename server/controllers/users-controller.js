@@ -56,9 +56,9 @@ const GetUsers = async (req, res) => {
  */
 const PostUsersRegister = async (req, res) => {
 
-    const UsernameCheck = await CheckUsernameExists(req.body.Username);
-    if (UsernameCheck) {
-        return res.status(444).json("Username already in use");
+    const Users = await ReadUsers({ Username: req.body.Username }, undefined, 1, undefined);
+    if (Users.length > 0) {
+        return res.status(444).json("Username already in use");;
     }
     const CheckEmailExists = await ReadUsers({ Email: req.body.Email }, undefined, 1, undefined);
     if (CheckEmailExists.length > 0) {
@@ -109,33 +109,6 @@ const PatchUsers = async (req, res) => {
     return res.json(true);
 }
 
-
-/* const SendUserEmailVerification = async (UserData) => {
-    const EmailVerification = {
-        UserId: UserData.DocId,
-        CreatedIndex: moment().valueOf(),
-        Verified: false
-    }
-    const EmailVerificationId = await CreateEmailVerifications(EmailVerification);
-    const VerificationLink = `${ApiBaseUrl}/api/users/${EmailVerification.UserId}/verify/${EmailVerificationId}`;
-    return AccountVerificationEmail(UserData, VerificationLink);
-}
-
-const VerifyUserEmail = async (req, res) => {
-    const { EmailVerificationId } = req.params;
-    const EmailVerificationData = await ReadOneFromEmailVerifications(EmailVerificationId);
-    if (moment(EmailVerificationData.CreatedIndex).add(15, "minute").isAfter(moment())) {
-        return res.redirect(`${WebUrl}/${EmailVerificationExpiryRoute}`)
-    }
-    if (EmailVerificationData.Verified) {
-        res.redirect(WebUrl);
-    }
-    await Promise.all([
-        UpdateEmailVerifications({ "Verified": true, VerifiedIndex: moment().valueOf() }, EmailVerificationData.DocId),
-        UpdateUsers({ EmailVerification: true }, EmailVerificationData.UserId),
-    ])
-    return res.redirect(WebUrl);
-} */
 /**
  * 
  * @param {e.Request} req 
@@ -144,10 +117,6 @@ const VerifyUserEmail = async (req, res) => {
  */
 const UserLogin = async (req, res) => {
     const { Email, Password } = req.body;
-    const UsernameCheck = await CheckUsernameExists(req.body.Username);
-    if (UsernameCheck) {
-        return res.status(444).json("Username already in use");
-    }
     const Users = await ReadUsers({ Email: Email }, undefined, 1, undefined, false);
     if (Users.length === 0) {
         res.redirect(RegisterUrl);
@@ -197,14 +166,6 @@ const CheckUsernameAvailability = (IsEdit) =>
     return res.json(false);
 }
 
-const CheckUsernameExists = async (Username) => {
-    const Users = await ReadUsers({ Username: Username }, undefined, 1, undefined);
-    if (Users.length > 0) {
-        return true;
-    }
-    return false;
-}
-
 /**
  * 
  * @param {string} UserId 
@@ -241,6 +202,34 @@ const ViewOtherUser = async (UserId, OtherUserId) => {
 const UserInit = (User) => {
     return User;
 }
+
+
+/* const SendUserEmailVerification = async (UserData) => {
+    const EmailVerification = {
+        UserId: UserData.DocId,
+        CreatedIndex: moment().valueOf(),
+        Verified: false
+    }
+    const EmailVerificationId = await CreateEmailVerifications(EmailVerification);
+    const VerificationLink = `${ApiBaseUrl}/api/users/${EmailVerification.UserId}/verify/${EmailVerificationId}`;
+    return AccountVerificationEmail(UserData, VerificationLink);
+}
+
+const VerifyUserEmail = async (req, res) => {
+    const { EmailVerificationId } = req.params;
+    const EmailVerificationData = await ReadOneFromEmailVerifications(EmailVerificationId);
+    if (moment(EmailVerificationData.CreatedIndex).add(15, "minute").isAfter(moment())) {
+        return res.redirect(`${WebUrl}/${EmailVerificationExpiryRoute}`)
+    }
+    if (EmailVerificationData.Verified) {
+        res.redirect(WebUrl);
+    }
+    await Promise.all([
+        UpdateEmailVerifications({ "Verified": true, VerifiedIndex: moment().valueOf() }, EmailVerificationData.DocId),
+        UpdateUsers({ EmailVerification: true }, EmailVerificationData.UserId),
+    ])
+    return res.redirect(WebUrl);
+} */
 
 export {
     GetOneFromUsers, GetUsers, PostUsersRegister, PatchUsers,
