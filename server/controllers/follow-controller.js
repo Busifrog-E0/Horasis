@@ -50,12 +50,12 @@ const GetFollows =  (IsFollowers) =>
         }
     //@ts-ignore
     const data = await ReadFollows(Filter, NextId, Limit, OrderBy);
-        const Users = data.map(async Follow => {
+        const Users = await Promise.all(data.map(async Follow => {
             const OtherUserId = Follow[OtherUser];
             const FollowUserData = await ReadOneFromUsers(OtherUserId);
             const OtherUserData = await ViewOtherUser(UserId, OtherUserId);
             return { ...FollowUserData, ...OtherUserData };
-        })
+        }));
     return res.json(Users);
 }
 

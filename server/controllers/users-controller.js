@@ -188,11 +188,11 @@ const ViewOtherUser = async (UserId, OtherUserId) => {
     let IsFollowing = false, IsFollowed = false;
     const Connection = await ConnectionStatus(UserId, OtherUserId);
     const Following = await ReadFollows({ FollowerId: UserId, FolloweeId: OtherUserId }, undefined, 1, undefined);
-    if (Following.length > 1) {
+    if (Following.length > 0) {
         IsFollowing = true;
     }
     const Followed = await ReadFollows({ FolloweeId: UserId, FollowerId: OtherUserId }, undefined, 1, undefined);
-    if (Followed.length > 1) {
+    if (Followed.length > 0) {
         IsFollowed = true;
     }
     return { ConnectionStatus : Connection, IsFollowed, IsFollowing };
