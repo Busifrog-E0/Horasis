@@ -8,9 +8,9 @@ const UserSchema = Joi.object({
     Password: Joi.string().min(8).required(),
     Country: Joi.string().required(),
     City: Joi.string().required(),
-    JobTitle: Joi.string().required(),
-    Industry: Joi.string().required(),
-    CompanyName: Joi.string().required(),
+    JobTitle: Joi.string(),
+    Industry: Joi.string(),
+    CompanyName: Joi.string(),
     About: Joi.string().max(500),
 });
 
