@@ -10,11 +10,11 @@ import { decodeIDToken, ensureAuthorized } from '../middleware/auth-middleware.j
 import SwaggerDocs from '../swaggerDocs/users-swaggerDocs.js'
 import e from 'express';
 import { CheckSameUser } from '../middleware/common.js';
-import { ValidateCheckUsername, ValidatePatchUsers, ValidateUserLogin, ValidateUserRegister, ValidateVerifyOTP } from '../validations/users-validations.js';
+import { ValidateCheckUsername, ValidatePatchUsers, ValidateUserLogin, ValidatePatchUserPictures, ValidateUserRegister, ValidateVerifyOTP } from '../validations/users-validations.js';
 const router = e.Router();
 router.route
 
-router.get('/users/:UserId', decodeIDToken, ensureAuthorized("User"), CheckSameUser, SwaggerDocs.get_Users_UserId,
+router.get('/users/:UserId', decodeIDToken, ensureAuthorized("User"), SwaggerDocs.get_Users_UserId,
     // @ts-ignore
     asyncHandler(GetOneFromUsers));
 
@@ -44,6 +44,11 @@ router.patch('/users/:UserId', decodeIDToken, ensureAuthorized("User"), Validate
     SwaggerDocs.patch_Users_UserId,
     // @ts-ignore
     asyncHandler(PatchUsers));
+
+router.patch('/users/:UserId/picture', decodeIDToken, ensureAuthorized("User"), CheckSameUser, ValidatePatchUserPictures,
+    SwaggerDocs.patch_Users_UserId_Picture,
+    //@ts-ignore
+    asyncHandler(PatchUsers))    
 
 
 export default router;

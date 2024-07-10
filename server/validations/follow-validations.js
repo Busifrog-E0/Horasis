@@ -2,7 +2,7 @@ import Joi from 'joi'
 
 const ValidateFollow = async (req, res, next) => {
     const Result = Joi.object({
-        FolloweeId : Joi.string().email().required(),
+        FolloweeId : Joi.string().required(),
     }).validate(req.body, { stripUnknown: true });
     if (Result.error) {
         const message = Result.error.details.map((detail) => detail.message).join(', ');

@@ -8,6 +8,7 @@ import authRoutes from "./auth-routes.js";
 import userRoutes from "./users-routes.js";
 import followRoutes from './follow-routes.js';
 import connectionsRoutes from './connections-routes.js';
+import filesRoutes from './files-routes.js'
 
 
 router.use("/api", authRoutes);
@@ -16,6 +17,8 @@ router.use("/api", userRoutes);
 // router.use("/api", fileRoutes);
 router.use("/api", followRoutes);
 router.use("/api", connectionsRoutes);
+router.use("/api", filesRoutes);
+
 
 
 
