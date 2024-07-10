@@ -2,6 +2,7 @@ import e from 'express';
 
 import { ReadOneFromFollows, ReadFollows, UpdateFollows, CreateFollows, RemoveFollows, GetFollowCount, } from './../databaseControllers/follow-databaseController.js';
 import { ReadOneFromUsers } from '../databaseControllers/users-databaseController.js';
+import { ViewOtherUser } from './users-controller.js';
 /**
  * @typedef {import('./../databaseControllers/follow-databaseController.js').FollowData} FollowData 
  */
@@ -35,23 +36,27 @@ const GetFollows =  (IsFollowers) =>
      */
     async (req, res) => {
         const { UserId } = req.params;
+        let OtherUser = ""
     const { Filter, NextId, Limit, OrderBy } = req.query;
         if (IsFollowers) {
             //@ts-ignore
             Filter.FolloweeId = UserId;
+            OtherUser = "FollowerId"
         }
         else {
             //@ts-ignore
             Filter.FollowerId = UserId;
+            OtherUser = "FolloweeId"
         }
     //@ts-ignore
     const data = await ReadFollows(Filter, NextId, Limit, OrderBy);
-    const promises = [];
-    for (const follow of data) {
-        promises.push(ReadOneFromUsers(follow.FollowerId))
-    }
-    const Follows = await Promise.all(promises)
-    return res.json(Follows);
+        const Users = data.map(async Follow => {
+            const OtherUserId = Follow[OtherUser];
+            const FollowUserData = await ReadOneFromUsers(OtherUserId);
+            const OtherUserData = await ViewOtherUser(UserId, OtherUserId);
+            return { ...FollowUserData, ...OtherUserData };
+        })
+    return res.json(Users);
 }
 
 /**
