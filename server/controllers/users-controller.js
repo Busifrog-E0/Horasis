@@ -4,10 +4,11 @@ import moment from 'moment-timezone';
 import { ReadOneFromUsers, ReadUsers, UpdateUsers, CreateUsers, RemoveUsers, } from './../databaseControllers/users-databaseController.js';
 import { AccountVerificationEmail, SendOTPEmail } from './emails-controller.js';
 import { CreateEmailVerifications, ReadOneFromEmailVerifications, UpdateEmailVerifications } from '../databaseControllers/emailVerification-databaseController.js';
-import { GenerateToken, SendRegisterOTP, VerifyOTP } from './auth-controller.js';
+import { GenerateToken, SendRegisterOTP, TokenData, VerifyOTP } from './auth-controller.js';
 import { getOTP } from './common.js';
 import { ReadConnections } from '../databaseControllers/connections-databaseController.js';
 import { ReadFollows } from '../databaseControllers/follow-databaseController.js';
+import { ConnectionStatus } from './connections-controller.js';
 
 
 
@@ -56,9 +57,9 @@ const GetUsers = async (req, res) => {
  */
 const PostUsersRegister = async (req, res) => {
 
-    const UsernameCheck = await CheckUsernameExists(req.body.Username);
-    if (UsernameCheck) {
-        return res.status(444).json("Username already in use");
+    const Users = await ReadUsers({ Username: req.body.Username }, undefined, 1, undefined);
+    if (Users.length > 0) {
+        return res.status(444).json("Username already in use");;
     }
     const CheckEmailExists = await ReadUsers({ Email: req.body.Email }, undefined, 1, undefined);
     if (CheckEmailExists.length > 0) {
@@ -84,12 +85,9 @@ const VerifyRegistrationOTP = async (req, res) => {
         Role: "User",
         UserId
     }
-    const { Token, RefreshToken } = await GenerateToken(CurrentUser);
-    return res.json({
-        CurrentUser,
-        Token,
-        RefreshToken
-    })
+    const LoginData = await TokenData(CurrentUser);
+
+    return res.json(LoginData);
 }
 
 /**
@@ -107,6 +105,88 @@ const PatchUsers = async (req, res) => {
     const { UserId } = req.params;
     await UpdateUsers(req.body, UserId);
     return res.json(true);
+}
+
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ * @returns 
+ */
+const UserLogin = async (req, res) => {
+    const { Email, Password } = req.body;
+    const Users = await ReadUsers({ Email: Email }, undefined, 1, undefined, false);
+    if (Users.length === 0) {
+        res.redirect(RegisterUrl);
+    }
+    const [User] = Users
+    if (User.Password !== Password) {
+        return res.status(444).json("Invalid Credentials");
+    }
+
+    if (User.Password === Password) {
+        const CurrentUser = {
+            Role: 'User',
+            UserId: User.DocId
+        }
+        const LoginData = await TokenData(CurrentUser);        
+
+        return res.json(LoginData);
+    }
+}
+
+/**
+ * 
+ * @param {boolean} IsEdit 
+ * @returns 
+ */
+
+const CheckUsernameAvailability = (IsEdit) =>
+    /**
+     * 
+     * @param {e.Request} req 
+     * @param {e.Response} res 
+     * @returns 
+     */
+    async (req, res) => {
+    const CheckUserExists = await ReadUsers({ Username: req.body.Username }, undefined, 1, undefined);
+    if (CheckUserExists.length === 0) {
+        return res.json(true)
+        }
+        //@ts-ignore
+    if (IsEdit && CheckUserExists[0].DocId === req.user.UserId) {
+        return res.json(true);
+    }
+    return res.json(false);
+}
+
+/**
+ * 
+ * @param {string} UserId 
+ * @param {string} OtherUserId 
+ * @returns {Promise<import('./../databaseControllers/users-databaseController.js').OtherUserData>}
+ */
+const ViewOtherUser = async (UserId, OtherUserId) => {
+    let IsFollowing = false, IsFollowed = false;
+    const Connection = await ConnectionStatus(UserId, OtherUserId);
+    const Following = await ReadFollows({ FollowerId: UserId, FolloweeId: OtherUserId }, undefined, 1, undefined);
+    if (Following.length > 1) {
+        IsFollowing = true;
+    }
+    const Followed = await ReadFollows({ FolloweeId: UserId, FollowerId: OtherUserId }, undefined, 1, undefined);
+    if (Followed.length > 1) {
+        IsFollowed = true;
+    }
+    return { ConnectionStatus : Connection, IsFollowed, IsFollowing };
+}
+
+/**
+ * 
+ * @param {UserData} User 
+ * @returns {UserData}
+ */
+const UserInit = (User) => {
+    return User;
 }
 
 
@@ -136,111 +216,6 @@ const VerifyUserEmail = async (req, res) => {
     ])
     return res.redirect(WebUrl);
 } */
-/**
- * 
- * @param {e.Request} req 
- * @param {e.Response} res 
- * @returns 
- */
-const UserLogin = async (req, res) => {
-    const { Email, Password } = req.body;
-    const UsernameCheck = await CheckUsernameExists(req.body.Username);
-    if (UsernameCheck) {
-        return res.status(444).json("Username already in use");
-    }
-    const Users = await ReadUsers({ Email: Email }, undefined, 1, undefined, false);
-    if (Users.length === 0) {
-        res.redirect(RegisterUrl);
-    }
-    const [User] = Users
-    if (User.Password !== Password) {
-        return res.status(444).json("Invalid Credentials");
-    }
-
-    if (User.Password === Password) {
-        const CurrentUser = {
-            Role: 'User',
-            UserId: User.DocId
-        }
-        const { Token, RefreshToken } = await GenerateToken(CurrentUser);
-
-        return res.json({
-            CurrentUser,
-            Token,
-            RefreshToken
-        });
-    }
-}
-
-/**
- * 
- * @param {boolean} IsEdit 
- * @returns 
- */
-
-const CheckUsernameAvailability = (IsEdit) =>
-    /**
-     * 
-     * @param {e.Request} req 
-     * @param {e.Response} res 
-     * @returns 
-     */
-    async (req, res) => {
-    const CheckUserExists = await ReadUsers({ Username: req.body.Username }, undefined, 1, undefined);
-    if (CheckUserExists.length === 0) {
-        return res.json(true)
-        }
-        //@ts-ignore
-    if (IsEdit && CheckUserExists[0].DocId === req.user.UserId) {
-        return res.json(true);
-    }
-    return res.json(false);
-}
-
-const CheckUsernameExists = async (Username) => {
-    const Users = await ReadUsers({ Username: Username }, undefined, 1, undefined);
-    if (Users.length > 0) {
-        return true;
-    }
-    return false;
-}
-
-/**
- * 
- * @param {string} UserId 
- * @param {string} OtherUserId 
- * @returns {Promise<import('./../databaseControllers/users-databaseController.js').OtherUserData>}
- */
-const ViewOtherUser = async (UserId, OtherUserId) => {
-    let IsConnected = false, IsFollowing = false, IsFollowed = false;
-    const Connection = await ReadConnections({ UserIds: { $all: [UserId, OtherUserId] }, Status: "Connected" }, undefined, 1, undefined);
-    const Follows = await ReadFollows({
-        '$or': [{ FollowerId: UserId, FolloweeId: OtherUserId },
-        { FollowerId: OtherUserId, FolloweeId: UserId },
-        ]},
-        undefined, 2, undefined);
-    for (const follow of Follows) {
-        if (follow.FolloweeId === UserId) {
-            IsFollowed=true;
-        }
-        if (follow.FollowerId === UserId) {
-            IsFollowing = true;
-        }
-    }
-    if (Connection.length > 0) {
-        IsConnected = true;
-    }
-    return { IsConnected, IsFollowed, IsFollowing };
-}
-
-/**
- * 
- * @param {UserData} User 
- * @returns {UserData}
- */
-const UserInit = (User) => {
-    return User;
-}
 
 export {
     GetOneFromUsers, GetUsers, PostUsersRegister, PatchUsers,

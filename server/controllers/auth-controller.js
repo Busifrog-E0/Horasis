@@ -155,10 +155,23 @@ const VerifyOTP = async (OTPId, OTP, res) => {
         return data;
     }
 }
+/** 
+ * 
+ * @param {object} CurrentUser 
+ * @returns 
+ */
+const TokenData = async (CurrentUser) => {
+    const { Token, RefreshToken } = await GenerateToken(CurrentUser);           //fn in auth
 
+    return {
+        CurrentUser,
+        Token,
+        RefreshToken
+    };
+}
 
 export {
     ModelLogin, RefreshToken, GenerateToken,
-    VerifyOTP,SendRegisterOTP
+    VerifyOTP,SendRegisterOTP,TokenData
 };
 

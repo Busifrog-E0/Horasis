@@ -10,7 +10,7 @@ const doc = {
     },
     host: "localhost:3010",
     basePath: "/",
-    schemes: ['https'],
+    schemes: ['http'],
     consumes: ['application/json'],
     produces: ['application/json'],
     tags: [

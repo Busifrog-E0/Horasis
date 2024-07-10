@@ -1,8 +1,13 @@
 import e from 'express';
 
-import { ReadOneFromFollows, ReadFollows, UpdateFollows, CreateFollows, RemoveFollows, } from './../databaseControllers/follow-databaseController.js';
+import { ReadOneFromFollows, ReadFollows, UpdateFollows, CreateFollows, RemoveFollows, GetFollowCount, } from './../databaseControllers/follow-databaseController.js';
+import { ReadOneFromUsers } from '../databaseControllers/users-databaseController.js';
 /**
  * @typedef {import('./../databaseControllers/follow-databaseController.js').FollowData} FollowData 
+ */
+
+/**
+ * @typedef {import('../databaseControllers/users-databaseController.js').UserData} UserData
  */
 
 /**
@@ -19,15 +24,51 @@ const GetOneFromFollows = async (req, res) => {
 
 /**
  * 
+ * @param {boolean} IsFollowers 
+ * @returns 
+ */
+const GetFollows =  (IsFollowers) =>
+    /**
+     * @param {e.Request} req 
+     * @param {e.Response} res 
+     * @returns 
+     */
+    async (req, res) => {
+        const { UserId } = req.params;
+    const { Filter, NextId, Limit, OrderBy } = req.query;
+        if (IsFollowers) {
+            //@ts-ignore
+            Filter.FolloweeId = UserId;
+        }
+        else {
+            //@ts-ignore
+            Filter.FollowerId = UserId;
+        }
+    //@ts-ignore
+    const data = await ReadFollows(Filter, NextId, Limit, OrderBy);
+    const promises = [];
+    for (const follow of data) {
+        promises.push(ReadOneFromUsers(follow.FollowerId))
+    }
+    const Follows = await Promise.all(promises)
+    return res.json(Follows);
+}
+
+/**
+ * 
  * @param {e.Request} req 
  * @param {e.Response} res 
- * @returns {Promise<e.Response<Array<FollowData>>>}
+ * @returns 
  */
-const GetFollows = async (req, res) => {
-    const { Filter, NextId, Limit, OrderBy } = req.query;
-    // @ts-ignore
-    const data = await ReadFollows(Filter, NextId, Limit, OrderBy);
-    return res.json(data);
+const GetFollowNumber = async (req, res) => {
+    //@ts-ignore
+    const { UserId } = req.params;
+    const Followers = await GetFollowCount({ FolloweeId: UserId });
+    const Followings = await GetFollowCount({ FollowerId: UserId });
+    return res.json({
+        NoOfFollowers: Followers,
+        NoOfFollowings : Followings
+    })
 }
 
 /**
@@ -39,6 +80,14 @@ const GetFollows = async (req, res) => {
 const PostFollows = async (req, res) => {
     //@ts-ignore
     req.body.FollowerId = req.user.UserId;
+    const { FollowerId, FolloweeId } = req.body;
+    if (FolloweeId === FollowerId) {
+        return res.status(444).json("Cannot follow yourself");
+    }
+    const Follow = await ReadFollows({ FolloweeId, FollowerId }, undefined, 1, undefined);
+    if (Follow.length > 0) {
+        return res.status(444).json("Alreadyy follows this profile");
+    }
     await CreateFollows(req.body);
     return res.json(true);
 }
@@ -76,5 +125,6 @@ const DeleteFollows = async (req, res) => {
 
 
 export {
-    GetOneFromFollows, GetFollows, PostFollows, PatchFollows, DeleteFollows
+    GetOneFromFollows, GetFollows, PostFollows, PatchFollows, DeleteFollows,
+    GetFollowNumber
 }

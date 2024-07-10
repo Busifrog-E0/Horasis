@@ -61,7 +61,9 @@ const RemoveFollows = async (DocId) => {
     return dataHandling.Delete('Follows', DocId);
 }
 
-
+const GetFollowCount = async (Where = {}) => {
+    return dataHandling.ReadCount('Follows', Where);
+}
 
 
 export {
@@ -69,5 +71,6 @@ export {
     ReadOneFromFollows,
     UpdateFollows,
     CreateFollows,
-    RemoveFollows
+    RemoveFollows,
+    GetFollowCount
 }
