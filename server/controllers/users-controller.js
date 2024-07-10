@@ -4,10 +4,11 @@ import moment from 'moment-timezone';
 import { ReadOneFromUsers, ReadUsers, UpdateUsers, CreateUsers, RemoveUsers, } from './../databaseControllers/users-databaseController.js';
 import { AccountVerificationEmail, SendOTPEmail } from './emails-controller.js';
 import { CreateEmailVerifications, ReadOneFromEmailVerifications, UpdateEmailVerifications } from '../databaseControllers/emailVerification-databaseController.js';
-import { GenerateToken, SendRegisterOTP, VerifyOTP } from './auth-controller.js';
+import { GenerateToken, SendRegisterOTP, TokenData, VerifyOTP } from './auth-controller.js';
 import { getOTP } from './common.js';
 import { ReadConnections } from '../databaseControllers/connections-databaseController.js';
 import { ReadFollows } from '../databaseControllers/follow-databaseController.js';
+import { ConnectionStatus } from './connections-controller.js';
 
 
 
@@ -84,12 +85,9 @@ const VerifyRegistrationOTP = async (req, res) => {
         Role: "User",
         UserId
     }
-    const { Token, RefreshToken } = await GenerateToken(CurrentUser);
-    return res.json({
-        CurrentUser,
-        Token,
-        RefreshToken
-    })
+    const LoginData = await TokenData(CurrentUser);
+
+    return res.json(LoginData);
 }
 
 /**
@@ -131,13 +129,9 @@ const UserLogin = async (req, res) => {
             Role: 'User',
             UserId: User.DocId
         }
-        const { Token, RefreshToken } = await GenerateToken(CurrentUser);
+        const LoginData = await TokenData(CurrentUser);        
 
-        return res.json({
-            CurrentUser,
-            Token,
-            RefreshToken
-        });
+        return res.json(LoginData);
     }
 }
 
@@ -173,25 +167,17 @@ const CheckUsernameAvailability = (IsEdit) =>
  * @returns {Promise<import('./../databaseControllers/users-databaseController.js').OtherUserData>}
  */
 const ViewOtherUser = async (UserId, OtherUserId) => {
-    let IsConnected = false, IsFollowing = false, IsFollowed = false;
-    const Connection = await ReadConnections({ UserIds: { $all: [UserId, OtherUserId] }, Status: "Connected" }, undefined, 1, undefined);
-    const Follows = await ReadFollows({
-        '$or': [{ FollowerId: UserId, FolloweeId: OtherUserId },
-        { FollowerId: OtherUserId, FolloweeId: UserId },
-        ]},
-        undefined, 2, undefined);
-    for (const follow of Follows) {
-        if (follow.FolloweeId === UserId) {
-            IsFollowed=true;
-        }
-        if (follow.FollowerId === UserId) {
-            IsFollowing = true;
-        }
+    let IsFollowing = false, IsFollowed = false;
+    const Connection = await ConnectionStatus(UserId, OtherUserId);
+    const Following = await ReadFollows({ FollowerId: UserId, FolloweeId: OtherUserId }, undefined, 1, undefined);
+    if (Following.length > 1) {
+        IsFollowing = true;
     }
-    if (Connection.length > 0) {
-        IsConnected = true;
+    const Followed = await ReadFollows({ FolloweeId: UserId, FollowerId: OtherUserId }, undefined, 1, undefined);
+    if (Followed.length > 1) {
+        IsFollowed = true;
     }
-    return { IsConnected, IsFollowed, IsFollowing };
+    return { ConnectionStatus : Connection, IsFollowed, IsFollowing };
 }
 
 /**
