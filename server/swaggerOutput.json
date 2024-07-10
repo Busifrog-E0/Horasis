@@ -553,13 +553,27 @@
             "description": "Forbidden"
           }
         }
-      },
+      }
+    },
+    "/api/users/{UserId}/follow/{FolloweeId}": {
       "delete": {
         "tags": [
           "Follow"
         ],
         "description": "",
         "parameters": [
+          {
+            "name": "UserId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "FolloweeId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
           {
             "name": "authorization",
             "in": "header",
