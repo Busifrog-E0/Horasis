@@ -48,7 +48,7 @@ router.patch('/users/:UserId', decodeIDToken, ensureAuthorized("User"), Validate
 router.patch('/users/:UserId/picture', decodeIDToken, ensureAuthorized("User"), CheckSameUser, ValidatePatchUserPictures,
     SwaggerDocs.patch_Users_UserId_Picture,
     //@ts-ignore
-asyncHandler(PatchUsers))    
+    asyncHandler(PatchUsers))    
 
 
 export default router;

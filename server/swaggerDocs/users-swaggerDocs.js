@@ -82,8 +82,8 @@ const patch_Users_UserId_Picture = async (req, res, next) => {
                     in: 'body',
                     schema: { 
                         oneOf :[
-                             {'CoverPicture' : 'string'},
-                             {'ProfilePicture' : 'string'}
+                             {$ref: '#/definitions/PatchUserData'},
+                             {$ref: '#/definitions/LoginData'}
                             ]
    }
         } 
