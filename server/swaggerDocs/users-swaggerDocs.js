@@ -80,12 +80,7 @@ const patch_Users_UserId_Picture = async (req, res, next) => {
     // #swagger.tags = ['Users']
     /* #swagger.parameters['body'] = {
                     in: 'body',
-                    schema: { 
-                        oneOf :[
-                             {$ref: '#/definitions/PatchUserData'},
-                             {$ref: '#/definitions/LoginData'}
-                            ]
-   }
+                    schema: {'CoverPicture' : 'string','ProfilePicture' : 'string'}
         } 
     */
 

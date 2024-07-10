@@ -15,6 +15,10 @@
     {
       "name": "Follow",
       "description": ""
+    },
+    {
+      "name": "Files",
+      "description": ""
     }
   ],
   "schemes": [
@@ -359,11 +363,13 @@
             "schema": {
               "type": "object",
               "properties": {
-                "oneOf": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/definitions/LoginData"
-                  }
+                "CoverPicture": {
+                  "type": "string",
+                  "example": "string"
+                },
+                "ProfilePicture": {
+                  "type": "string",
+                  "example": "string"
                 }
               }
             }
@@ -919,6 +925,152 @@
           },
           "444": {
             "description": "Connection Closed Without Response"
+          }
+        }
+      }
+    },
+    "/api/files/users": {
+      "post": {
+        "tags": [
+          "Files"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "FileName": {
+                  "type": "string",
+                  "example": "input.pdf"
+                },
+                "FileData": {
+                  "type": "array",
+                  "example": [
+                    123,
+                    456
+                  ],
+                  "items": {
+                    "type": "number"
+                  }
+                },
+                "FileFieldName": {
+                  "type": "string",
+                  "example": "ProfilePicture"
+                },
+                "FileType": {
+                  "type": "string",
+                  "example": "image/jpeg"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Files Response",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "FileUrl": {
+                  "type": "string",
+                  "example": "https://oxydebug.sgp1.cdn.digitaloceanspaces.com/Users/idName/input.pdf"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "402": {
+            "description": "Payment Required"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      }
+    },
+    "/api/files/admin": {
+      "post": {
+        "tags": [
+          "Files"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "FileName": {
+                  "type": "string",
+                  "example": "input.pdf"
+                },
+                "FileData": {
+                  "type": "array",
+                  "example": [
+                    123,
+                    456
+                  ],
+                  "items": {
+                    "type": "number"
+                  }
+                },
+                "FileType": {
+                  "type": "string",
+                  "example": "image/jpeg"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Files Response",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "FileUrl": {
+                  "type": "string",
+                  "example": "https://oxydebug.sgp1.cdn.digitaloceanspaces.com/Users/idName/input.pdf"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "402": {
+            "description": "Payment Required"
+          },
+          "403": {
+            "description": "Forbidden"
           }
         }
       }

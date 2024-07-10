@@ -21,6 +21,10 @@ const doc = {
         {
             "name": "Follow",
             "description": "", 
+        },
+        {
+            "name": "Files",
+            "description": "",
         }
     ],
     securityDefinitions: {
