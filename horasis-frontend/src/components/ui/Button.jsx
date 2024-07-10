@@ -60,6 +60,7 @@ const buttonVariants = cva(
 
 const Button = forwardRef(function Button(
   {
+
     children,
     variant,
     size,
@@ -69,6 +70,7 @@ const Button = forwardRef(function Button(
     leftIcon,
     rightIcon,
     disabled,
+    loadingTitle = 'Perfoming action',
     loading,
     ...props
   },
@@ -89,7 +91,7 @@ const Button = forwardRef(function Button(
       {/* {leftIcon ? <Icon inline={true} icon={leftIcon} height={18} /> : null} */}
       {loading ? (
         <>
-          Performing action <Spinner />
+          {loadingTitle} <Spinner />
         </>
       ) : (
         children

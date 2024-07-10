@@ -9,6 +9,7 @@ const CurrentProfileTab = () => {
   const [expand, setExpand] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [user, setUser] = useState()
+  const [followCount, setFollowCount] = useState({})
 
   const navigate = useNavigate()
   const GoToProfilePage = () => {
@@ -45,8 +46,26 @@ const CurrentProfileTab = () => {
     )
   }
 
+  const getFollowCount = () => {
+    setIsLoading(true)
+    getItem(
+      `users/${currentUserData.CurrentUser.UserIf}/follow/count`,
+      (result) => {
+        setIsLoading(false)
+        setFollowCount(result)
+      },
+      (err) => {
+        setIsLoading(false)
+        console.log(err)
+      },
+      updateCurrentUser,
+      currentUserData
+    )
+  }
+
   useEffect(() => {
     getUserDetails()
+    getFollowCount()
   }, [])
 
   return (
@@ -82,10 +101,10 @@ const CurrentProfileTab = () => {
             </div>
             <div className='flex justify-center items-center mt-2 gap-3'>
               <h4 className='font-semibold text-base text-center text-system-primary-text mt-2'>
-                1598 Following
+                {followCount && followCount.NoOfFollowings} Following
               </h4>
               <h4 className='font-semibold text-base text-center text-system-primary-text mt-2'>
-                125 Followers
+                {followCount && followCount.NoOfFollowers} Followers
               </h4>
             </div>
             <div className='p-3 pb-2 px-5 bg-system-secondary-bg rounded-lg shadow-lg'>
