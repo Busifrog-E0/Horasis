@@ -43,6 +43,8 @@ const PatchUserData = {
     JobTitle: "Software Engineer",
 }
 const UserDataArray = [UserData]
+
+
 export default {
     UserRegisterData,OTPVerifyData,
     UserLoginData,
