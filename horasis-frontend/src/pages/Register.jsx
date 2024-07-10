@@ -203,6 +203,7 @@ const Register = () => {
               onClick={() => {
                 verifyotp()
               }}
+              size='md'
               variant='black'
               width='full'
               disabled={otp === ''}
@@ -507,6 +508,7 @@ const Register = () => {
                 validate(register)
                 // setOtpOpen(true)
               }}
+              size='md'
               variant='black'
               width='full'
               disabled={!termsChecked}

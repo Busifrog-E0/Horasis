@@ -62,7 +62,7 @@ const AboutProfile = ({ user, getUserDetails, isCurrentUser }) => {
 
   const checkUsernameAvailability = async (value) => {
     postItem(
-      'users/register/checkUsername',
+      'users/edit/checkUsername',
       { Username: value },
       (result) => {
         console.log(result)

@@ -1,9 +1,9 @@
 import axios from 'axios'
 import { CURRENTUSERDATA, _retrieveData } from '../utils/LocalStorage'
 
-export const DEBUG_API = 'https://horasisdebug.epoqzero.com/'
-export const PRODUCTION_API = 'https://horasisdebug.epoqzero.com/'
-// export const PRODUCTION_API = 'https://horasis.epoqzero.com/'
+export const DEBUG_API = 'https://deploy.busifrog.com/'
+export const PRODUCTION_API = 'https://deploy.busifrog.com/'
+// export const PRODUCTION_API = 'https://horasis.busifrog.com/'
 
 let retryCountForPatch = 0
 let retryCountForPost = 0

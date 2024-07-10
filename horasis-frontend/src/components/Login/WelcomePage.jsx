@@ -23,6 +23,7 @@ const WelcomePage = () => {
                     }}
                     variant="black"
                     width="full"
+                    size='md'
                 >
                     Get started as Admin
                 </Button>
@@ -32,6 +33,7 @@ const WelcomePage = () => {
                     }}
                     variant="white"
                     width="full"
+                    size='md'
                     className="mt-2 bg-system-secondary-accent  border-none shadow-sm"
                 >
                     <p className="text-md text-center">

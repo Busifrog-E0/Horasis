@@ -159,6 +159,7 @@ const LogIn = () => {
             onClick={() => {
               validate(login)
             }}
+            size='md'
             variant='black'
             width='full'
             disabled={
