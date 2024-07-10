@@ -14,7 +14,7 @@ const decodeIDToken = (req, res, next) => {
 
     const authHeader = req.headers.authorization || " ";
     const token = authHeader.split(" ")[1];
-    console.log(req.method, req.originalUrl)
+    console.log(req.method, req.originalUrl);
     if (!token) {
         return res.status(403).send("A token is required for authentication");
     }

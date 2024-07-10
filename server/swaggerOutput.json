@@ -424,6 +424,289 @@
           }
         }
       }
+    },
+    "/api/users/{UserId}/connections": {
+      "get": {
+        "tags": [
+          "Connections"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "UserId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "NextId",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "Limit",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "Keyword",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "OrderBy",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "Filter",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "402": {
+            "description": "Payment Required"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      }
+    },
+    "/api/connections/send": {
+      "post": {
+        "tags": [
+          "Connections"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "ReceiverId": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "402": {
+            "description": "Payment Required"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "444": {
+            "description": "Connection Closed Without Response"
+          }
+        }
+      }
+    },
+    "/api/connections/accept": {
+      "patch": {
+        "tags": [
+          "Connections"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "SenderId": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "402": {
+            "description": "Payment Required"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "444": {
+            "description": "Connection Closed Without Response"
+          }
+        }
+      }
+    },
+    "/api/connections/reject": {
+      "delete": {
+        "tags": [
+          "Connections"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "SenderId": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "402": {
+            "description": "Payment Required"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "444": {
+            "description": "Connection Closed Without Response"
+          }
+        }
+      }
+    },
+    "/api/connections/cancel": {
+      "delete": {
+        "tags": [
+          "Connections"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "ReceiverId": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "402": {
+            "description": "Payment Required"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "444": {
+            "description": "Connection Closed Without Response"
+          }
+        }
+      }
+    },
+    "/api/connections": {
+      "delete": {
+        "tags": [
+          "Connections"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "UserId": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "402": {
+            "description": "Payment Required"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "444": {
+            "description": "Connection Closed Without Response"
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -543,10 +826,6 @@
           "type": "string",
           "example": "abc123DEF"
         },
-        "Password": {
-          "type": "string",
-          "example": "securePassword123!"
-        },
         "Country": {
           "type": "string",
           "example": "Canada"
@@ -599,6 +878,54 @@
         "JobTitle": {
           "type": "string",
           "example": "Software Engineer"
+        }
+      }
+    },
+    "UserDataArray": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "FullName": {
+            "type": "string",
+            "example": "Jane Doe"
+          },
+          "Username": {
+            "type": "string",
+            "example": "janedoe"
+          },
+          "Email": {
+            "type": "string",
+            "example": "jane.doe@example.com"
+          },
+          "DocId": {
+            "type": "string",
+            "example": "abc123DEF"
+          },
+          "Country": {
+            "type": "string",
+            "example": "Canada"
+          },
+          "City": {
+            "type": "string",
+            "example": "Toronto"
+          },
+          "JobTitle": {
+            "type": "string",
+            "example": "Product Manager"
+          },
+          "Industry": {
+            "type": "string",
+            "example": "Software"
+          },
+          "CompanyName": {
+            "type": "string",
+            "example": "InnovateTech"
+          },
+          "About": {
+            "type": "string",
+            "example": "Seasoned product manager with over 10 years of experience in the software industry."
+          }
         }
       }
     }
