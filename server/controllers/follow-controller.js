@@ -34,14 +34,15 @@ const GetFollows =  (IsFollowers) =>
      * @returns 
      */
     async (req, res) => {
+        const { UserId } = req.params;
     const { Filter, NextId, Limit, OrderBy } = req.query;
         if (IsFollowers) {
             //@ts-ignore
-            Filter.FolloweeId = req.user.UserId;
+            Filter.FolloweeId = UserId;
         }
         else {
             //@ts-ignore
-            Filter.FollowerId = req.user.UserId;
+            Filter.FollowerId = UserId;
         }
     //@ts-ignore
     const data = await ReadFollows(Filter, NextId, Limit, OrderBy);
@@ -61,7 +62,7 @@ const GetFollows =  (IsFollowers) =>
  */
 const GetFollowNumber = async (req, res) => {
     //@ts-ignore
-    const { UserId } = req.user;
+    const { UserId } = req.params;
     const Followers = await GetFollowCount({ FolloweeId: UserId });
     const Followings = await GetFollowCount({ FollowerId: UserId });
     return res.json({

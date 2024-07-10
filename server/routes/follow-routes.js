@@ -13,11 +13,11 @@ import { QueryParameterFormatting, ValidateGetEntity } from '../middleware/commo
 const router = e.Router();
 router.route
 
-router.get('/followers', decodeIDToken, ensureAuthorized("User"),ValidateGetEntity,QueryParameterFormatting,SwaggerDocs.get_Followers,
+router.get('/users/:UserId/followers', decodeIDToken, ensureAuthorized("User"),ValidateGetEntity,QueryParameterFormatting,SwaggerDocs.get_Followers,
     //@ts-ignore
     asyncHandler(GetFollows(true)));
 
-router.get('/followings', decodeIDToken, ensureAuthorized("User"), ValidateGetEntity, QueryParameterFormatting,SwaggerDocs.get_Followings,
+router.get('/users/:UserId/followings', decodeIDToken, ensureAuthorized("User"), ValidateGetEntity, QueryParameterFormatting,SwaggerDocs.get_Followings,
     //@ts-ignore
     asyncHandler(GetFollows(false)));    
 
@@ -29,7 +29,7 @@ router.delete('/follow',decodeIDToken,ensureAuthorized("User"),ValidateFollow,Sw
     // @ts-ignore
     asyncHandler(DeleteFollows));
 
-router.get('/follow/count', decodeIDToken, ensureAuthorized("User"),SwaggerDocs.get_Follow_Count,
+router.get('/users/:UserId/follow/count', decodeIDToken, ensureAuthorized("User"),SwaggerDocs.get_Follow_Count,
     //@ts-ignore,
     asyncHandler(GetFollowNumber))    
 
