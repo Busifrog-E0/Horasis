@@ -3,7 +3,7 @@ import Joi from "joi"
 
 const FilesSchema = Joi.object({
     FileName: Joi.string().required(),
-    FileData: Joi.array().required(),
+    FileData: Joi.binary().required(),
 })
 
 
