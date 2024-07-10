@@ -15,28 +15,28 @@ const router = e.Router();
 router.get('/users/:UserId/connections', decodeIDToken, ensureAuthorized("User"), ValidateGetEntity,
     SwaggerDocs.get_users_UserId_connections, QueryParameterFormatting, GetAUsersConnections);
 
-router.post('/connections/send', decodeIDToken, ensureAuthorized("User"),
+router.post('/connections/:ReceiverId/send', decodeIDToken, ensureAuthorized("User"),
     SwaggerDocs.post_connections_send,
     // @ts-ignore
     asyncHandler(PostConnectionSend));
 
-router.patch('/connections/accept', decodeIDToken, ensureAuthorized("User"),
+router.patch('/connections/:SenderId/accept', decodeIDToken, ensureAuthorized("User"),
     SwaggerDocs.patch_connections_accept,
     // @ts-ignore
     asyncHandler(PostConnectionAccept));
 
-router.delete('/connections/reject', decodeIDToken, ensureAuthorized("User"),
+router.delete('/connections/:SenderId/reject', decodeIDToken, ensureAuthorized("User"),
     SwaggerDocs.delete_connections_reject,
     // @ts-ignore
-    asyncHandler(PostConnectionAccept));
+    asyncHandler(DeleteConnectionReject));
 
-router.delete('/connections/cancel', decodeIDToken, ensureAuthorized("User"),
+router.delete('/connections/:ReceiverId/cancel', decodeIDToken, ensureAuthorized("User"),
     SwaggerDocs.delete_connections_cancel,
     // @ts-ignore
     asyncHandler(DeleteConnectionCancel));
 
 
-router.delete('/connections', decodeIDToken, ensureAuthorized("User"),
+router.delete('/connections/:UserId', decodeIDToken, ensureAuthorized("User"),
     SwaggerDocs.delete_connections,
     // @ts-ignore
     asyncHandler(DeleteConnection));

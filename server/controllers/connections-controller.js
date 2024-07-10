@@ -33,7 +33,7 @@ const GetAUsersConnections = async (req, res) => {
 const PostConnectionSend = async (req, res) => {
     // @ts-ignore
     const SenderId = req.user.UserId;
-    const { ReceiverId } = req.body;
+    const { ReceiverId } = req.params;
     const ConnectionData = {
         UserIds: [SenderId, ReceiverId],
         SenderId: SenderId,
@@ -76,7 +76,7 @@ const PostConnectionSend = async (req, res) => {
 const PostConnectionAccept = async (req, res) => {
     // @ts-ignore
     const ReceiverId = req.user.UserId;
-    const { SenderId } = req.body;
+    const { SenderId } = req.params;
 
     const existingConnection = await ReadConnections({ UserIds: { $all: [SenderId, ReceiverId] }, Status: "Connected" }, undefined, 1, undefined);
     if (existingConnection.length !== 0) {
@@ -104,7 +104,7 @@ const PostConnectionAccept = async (req, res) => {
 const DeleteConnectionReject = async (req, res) => {
     // @ts-ignore
     const ReceiverId = req.user.UserId;
-    const { SenderId } = req.body;
+    const { SenderId } = req.params;
 
     const existingConnection = await ReadConnections({ UserIds: { $all: [SenderId, ReceiverId] }, Status: "Connected" }, undefined, 1, undefined);
     if (existingConnection.length !== 0) {
@@ -128,7 +128,7 @@ const DeleteConnectionReject = async (req, res) => {
 const DeleteConnectionCancel = async (req, res) => {
     // @ts-ignore
     const SenderId = req.user.UserId;
-    const { ReceiverId } = req.body;
+    const { ReceiverId } = req.params;
 
     const existingConnection = await ReadConnections({ UserIds: { $all: [SenderId, ReceiverId] }, Status: "Connected" }, undefined, 1, undefined);
     if (existingConnection.length !== 0) {
@@ -153,7 +153,7 @@ const DeleteConnection = async (req, res) => {
 
     // @ts-ignore
     const MyId = req.user.UserId;
-    const { UserId } = req.body;
+    const { UserId } = req.params;
 
     const ConnectionData = (await ReadConnections({ UserIds: { $all: [MyId, UserId] }, Status: "Connected" }, undefined, 1, undefined))[0];
     if (!ConnectionData) {
