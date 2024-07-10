@@ -287,6 +287,20 @@ const ShowUserProfile = () => {
     setActiveTab(item.key)
   }
 
+  const user={
+    FullName:'Robert Oppenheimer',
+    Email:'bobopp@generalenergy.com',
+    Username:'bobopp',
+    JobTitle:'scientist',
+    CompanyName:'General Energy',
+    Country:'USA',
+    About:'Nothing'
+  }
+
+  const getUserDetails = () => {
+
+  }
+
 
   return (
     <>
@@ -335,10 +349,10 @@ const ShowUserProfile = () => {
         <div className='grid lg:grid-cols-4 gap-3 lg:gap-12 '>
           <div className='py-5 lg:py-8 px-16 bg-system-secondary-bg rounded-lg mb-3 lg:mb-8'>
             <h4 className='font-medium text-2xl text-center text-system-primary-text'>
-              Robert Oppenheimer
+             {user && user.FullName}
             </h4>
             <h4 className='font-medium text-xl text-brand-gray-dim text-center'>
-              @bobopp
+              @{user && user.Username}
             </h4>
             <div className='flex justify-center items-center mt-2 lg:mt-6 flex-col gap-2'>
               {/* <div className='w-full p-3 rounded-full bg-system-secondary-accent text-center inline-block'>
@@ -358,6 +372,96 @@ const ShowUserProfile = () => {
               </Button>
             </div>
             <h4 className='font-semibold text-xl text-system-primary-text mt-3 lg:mt-6'>About</h4>
+            <div className='mt-4 flex  flex-col gap-4'>
+                  <div className='flex items-center gap-2'>
+                    <div className='justify-end text-system-primary-accent'>
+                      <svg
+                        className='w-4 h-4 cursor-pointer'
+                        aria-hidden='true'
+                        xmlns='http://www.w3.org/2000/svg'
+                        fill='none'
+                        viewBox='0 0 20 20'
+                      >
+                        <path
+                          stroke='currentColor'
+                          strokeLinecap='round'
+                          strokeLinejoin='round'
+                          strokeWidth='2'
+                          d='M4 12.25V1m0 11.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M4 19v-2.25m6-13.5V1m0 2.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M10 19V7.75m6 4.5V1m0 11.25a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5ZM16 19v-2'
+                        />
+                      </svg>
+                    </div>
+                    <h4 className='font-medium text-xl text-brand-gray-dim'>
+                      {user && user.Email}
+                    </h4>
+                  </div>
+                  <div className='flex items-center gap-2'>
+                    <div className='justify-end text-system-primary-accent'>
+                      <svg
+                        className='w-4 h-4 cursor-pointer'
+                        aria-hidden='true'
+                        xmlns='http://www.w3.org/2000/svg'
+                        fill='none'
+                        viewBox='0 0 20 20'
+                      >
+                        <path
+                          stroke='currentColor'
+                          strokeLinecap='round'
+                          strokeLinejoin='round'
+                          strokeWidth='2'
+                          d='M4 12.25V1m0 11.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M4 19v-2.25m6-13.5V1m0 2.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M10 19V7.75m6 4.5V1m0 11.25a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5ZM16 19v-2'
+                        />
+                      </svg>
+                    </div>
+                    <h4 className='font-medium text-xl text-brand-gray-dim'>
+                      {user && user.Country}
+                    </h4>
+                  </div>
+                  <div className='flex items-center gap-2'>
+                    <div className='justify-end text-system-primary-accent'>
+                      <svg
+                        className='w-4 h-4 cursor-pointer'
+                        aria-hidden='true'
+                        xmlns='http://www.w3.org/2000/svg'
+                        fill='none'
+                        viewBox='0 0 20 20'
+                      >
+                        <path
+                          stroke='currentColor'
+                          strokeLinecap='round'
+                          strokeLinejoin='round'
+                          strokeWidth='2'
+                          d='M4 12.25V1m0 11.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M4 19v-2.25m6-13.5V1m0 2.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M10 19V7.75m6 4.5V1m0 11.25a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5ZM16 19v-2'
+                        />
+                      </svg>
+                    </div>
+                    <h4 className='font-medium text-xl text-brand-gray-dim'>
+                      {user && user.JobTitle}
+                    </h4>
+                  </div>
+                  <div className='flex items-center gap-2'>
+                    <div className='justify-end text-system-primary-accent'>
+                      <svg
+                        className='w-4 h-4 cursor-pointer'
+                        aria-hidden='true'
+                        xmlns='http://www.w3.org/2000/svg'
+                        fill='none'
+                        viewBox='0 0 20 20'
+                      >
+                        <path
+                          stroke='currentColor'
+                          strokeLinecap='round'
+                          strokeLinejoin='round'
+                          strokeWidth='2'
+                          d='M4 12.25V1m0 11.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M4 19v-2.25m6-13.5V1m0 2.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M10 19V7.75m6 4.5V1m0 11.25a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5ZM16 19v-2'
+                        />
+                      </svg>
+                    </div>
+                    <h4 className='font-medium text-xl text-brand-gray-dim'>
+                      {user && user.CompanyName}
+                    </h4>
+                  </div>
+                </div>
           </div>
 
           <div className='lg:col-span-3'>
@@ -374,34 +478,11 @@ const ShowUserProfile = () => {
     </>
   )
 }
-const AboutTab = ({ user, getUserDetails }) => {
+const AboutTab = ({ user, getUserDetails,isCurrentUser=false }) => {
   return (
     <>
-      <AboutProfile user={user} getUserDetails={getUserDetails} />
-      <div className='bg-system-secondary-bg p-4 lg:px-10 lg:py-8 rounded-lg mt-3 lg:mt-5'>
-        <div className='flex flex-row items-center justify-between pb-5 mb-5 border-b border-system-file-border'>
-          <h4 className='font-medium text-lg text-system-primary-text'>Notification</h4>
-          <h4 className='font-medium text-lg text-system-primary-accent'>ON</h4>
-        </div>
-        <div className='flex flex-row items-center justify-between'>
-          <h4 className='font-medium text-lg text-system-primary-text'>Language</h4>
-          <h4 className='font-medium text-lg text-system-primary-accent'>English</h4>
-        </div>
-      </div>
-      <div className='bg-system-secondary-bg p-4 lg:px-10 lg:py-8 rounded-lg mt-3 lg:mt-5'>
-        <div className='flex flex-row items-center justify-between pb-5 mb-5 border-b border-system-file-border'>
-          <h4 className='font-medium text-lg text-system-primary-text'>Security</h4>
-        </div>
-        <div className='flex flex-row items-center justify-between pb-5 mb-5 border-b border-system-file-border'>
-          <h4 className='font-medium text-lg text-system-primary-text'>Help & Support</h4>
-        </div>
-        <div className='flex flex-row items-center justify-between pb-5 mb-5 border-b border-system-file-border'>
-          <h4 className='font-medium text-lg text-system-primary-text'>Contact Us</h4>
-        </div>
-        <div className='flex flex-row items-center justify-between'>
-          <h4 className='font-medium text-lg text-system-primary-text'>Privacy Policy</h4>
-        </div>
-      </div>
+      <AboutProfile user={user} getUserDetails={getUserDetails} isCurrentUser={isCurrentUser} />
+   
     </>
   )
 }

@@ -121,7 +121,7 @@ const MyProfile = () => {
     {
       key: 1,
       title: 'About',
-      render: () => <AboutTab user={user} getUserDetails={getUserDetails} />,
+      render: () => <AboutTab user={user} getUserDetails={getUserDetails} isCurrentUser={true} />,
     },
     {
       key: 2,
@@ -488,10 +488,10 @@ const MyProfile = () => {
   )
 }
 
-const AboutTab = ({ user, getUserDetails }) => {
+const AboutTab = ({ user, getUserDetails,isCurrentUser }) => {
   return (
     <>
-      <AboutProfile user={user} getUserDetails={getUserDetails} />
+      <AboutProfile user={user} getUserDetails={getUserDetails} isCurrentUser={isCurrentUser} />
       <div className='bg-system-secondary-bg p-4 lg:px-10 lg:py-8 rounded-lg mt-3 lg:mt-5'>
         <div className='flex flex-row items-center justify-between pb-5 mb-5 border-b border-system-file-border'>
           <h4 className='font-medium text-lg text-system-primary-text'>Notification</h4>

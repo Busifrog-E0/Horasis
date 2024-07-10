@@ -8,7 +8,7 @@ import Button from '../ui/Button'
 import TextArea from '../ui/TextArea'
 import { updateValidation } from '../../utils/schema/users/updateValidation'
 
-const AboutProfile = ({ user,getUserDetails }) => {
+const AboutProfile = ({ user, getUserDetails, isCurrentUser }) => {
   const [isOpen, setIsOpen] = useState(false)
   const [errorObj, setErrorObj] = useState({})
   const [usernameAvailable, setUsernameAvailable] = useState()
@@ -54,7 +54,6 @@ const AboutProfile = ({ user,getUserDetails }) => {
     } else {
       setErrorObj({})
       if (callback) {
-        
         callback()
       }
     }
@@ -120,7 +119,7 @@ const AboutProfile = ({ user,getUserDetails }) => {
               <h1 className='text-system-primary-text font-medium text-lg'>Full Name</h1>
               {/* {errorObj[field] != undefined ? { borderColor: 'red' } : {}} */}
               <Input
-              className='px-4 py-3 rounded-xl'
+                className='px-4 py-3 rounded-xl'
                 width='full'
                 name='name'
                 placeholder='Ex. Saul Ramirez'
@@ -139,7 +138,7 @@ const AboutProfile = ({ user,getUserDetails }) => {
               <h1 className='text-system-primary-text font-medium text-lg'>Username</h1>
               {/* {errorObj[field] != undefined ? { borderColor: 'red' } : {}} */}
               <Input
-              className='px-4 py-3 rounded-xl'
+                className='px-4 py-3 rounded-xl'
                 width='full'
                 name='name'
                 placeholder='Ex. Saul Ramirez'
@@ -189,7 +188,7 @@ const AboutProfile = ({ user,getUserDetails }) => {
               <h1 className='text-system-primary-text font-medium text-lg'>Job Title</h1>
               {/* {errorObj[field] != undefined ? { borderColor: 'red' } : {}} */}
               <Input
-              className='px-4 py-3 rounded-xl'
+                className='px-4 py-3 rounded-xl'
                 width='full'
                 name='jobTitle'
                 placeholder='Ex. Consultant'
@@ -207,7 +206,7 @@ const AboutProfile = ({ user,getUserDetails }) => {
               <h1 className='text-system-primary-text font-medium text-lg'>Company Name</h1>
               {/* {errorObj[field] != undefined ? { borderColor: 'red' } : {}} */}
               <Input
-              className='px-4 py-3 rounded-xl'
+                className='px-4 py-3 rounded-xl'
                 width='full'
                 name='companyName'
                 placeholder='Ex. xyz Ltd.'
@@ -225,7 +224,7 @@ const AboutProfile = ({ user,getUserDetails }) => {
               <h1 className='text-system-primary-text font-medium text-lg'>Country</h1>
               {/* {errorObj[field] != undefined ? { borderColor: 'red' } : {}} */}
               <Input
-              className='px-4 py-3 rounded-xl'
+                className='px-4 py-3 rounded-xl'
                 width='full'
                 name='country'
                 placeholder='Ex. Australia'
@@ -261,7 +260,6 @@ const AboutProfile = ({ user,getUserDetails }) => {
           <div className='mt-4 flex items-end justify-end'>
             <Button
               onClick={() => {
-                
                 validate(updateProfile)
               }}
               variant='black'
@@ -273,26 +271,30 @@ const AboutProfile = ({ user,getUserDetails }) => {
         </Modal.Body>
       </Modal>
       <div className='bg-system-secondary-bg p-4 lg:px-10 lg:py-8 rounded-b-lg '>
-        <div className='flex w-full items-start justify-end text-system-primary-text'>
-          <svg
-            className='w-6 h-6 cursor-pointer'
-            aria-hidden='true'
-            xmlns='http://www.w3.org/2000/svg'
-            fill='none'
-            viewBox='0 0 20 20'
-            onClick={() => {
-              setIsOpen(true)
-            }}
-          >
-            <path
-              stroke='currentColor'
-              strokeLinecap='round'
-              strokeLinejoin='round'
-              strokeWidth='2'
-              d='M4 12.25V1m0 11.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M4 19v-2.25m6-13.5V1m0 2.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M10 19V7.75m6 4.5V1m0 11.25a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5ZM16 19v-2'
-            />
-          </svg>
-        </div>
+        {isCurrentUser ? (
+          <div className='flex w-full items-start justify-end text-system-primary-text'>
+            <svg
+              className='w-6 h-6 cursor-pointer'
+              aria-hidden='true'
+              xmlns='http://www.w3.org/2000/svg'
+              fill='none'
+              viewBox='0 0 20 20'
+              onClick={() => {
+                setIsOpen(true)
+              }}
+            >
+              <path
+                stroke='currentColor'
+                strokeLinecap='round'
+                strokeLinejoin='round'
+                strokeWidth='2'
+                d='M4 12.25V1m0 11.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M4 19v-2.25m6-13.5V1m0 2.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M10 19V7.75m6 4.5V1m0 11.25a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5ZM16 19v-2'
+              />
+            </svg>
+          </div>
+        ) : (
+          <></>
+        )}
 
         <div className='grid lg:grid-cols-4 gap-y-6'>
           <div>
