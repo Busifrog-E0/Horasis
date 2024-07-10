@@ -359,23 +359,120 @@ const MyProfile = () => {
       </div>
       <div className='p-2 lg:px-10 lg:py-6 pt-6'>
         <div className='grid lg:grid-cols-4 gap-3 lg:gap-12 '>
-          <div className='py-5 lg:py-8 px-16 bg-system-secondary-bg rounded-lg mb-3 lg:mb-8'>
-            <h4 className='font-medium text-2xl text-center text-system-primary-text'>
-              {user && user.FullName}
-            </h4>
-            <h4 className='font-medium text-xl text-brand-gray-dim text-center'>
-              @{user && user.Username}
-            </h4>
-            <div className='flex justify-center items-center mt-2 lg:mt-6'>
-              <div className='w-full p-3 rounded-full bg-system-secondary-accent text-center inline-block'>
-                <span className='text-system-primary-accent text-md font-semibold'>
-                  {currentUserData.CurrentUser.Role}
-                </span>
-              </div>
+            <div className='py-5 lg:py-8 px-16 bg-system-secondary-bg rounded-lg mb-3 lg:mb-8'>
+          {isLoading ? (
+            <Spinner />
+          ) : (
+              <>
+                <h4 className='font-medium text-2xl text-center text-system-primary-text'>
+                  {user && user.FullName}
+                </h4>
+                <h4 className='font-medium text-xl text-brand-gray-dim text-center'>
+                  @{user && user.Username}
+                </h4>
+                <div className='flex justify-center items-center mt-2 lg:mt-6'>
+                  <div className='w-full p-3 rounded-full bg-system-secondary-accent text-center inline-block'>
+                    <span className='text-system-primary-accent text-md font-semibold'>
+                      {currentUserData.CurrentUser.Role}
+                    </span>
+                  </div>
+                </div>
+                <h4 className='font-semibold text-xl text-system-primary-text mt-3 lg:mt-6'>
+                  About
+                </h4>
+                <div className='mt-4 flex  flex-col gap-4'>
+                  <div className='flex items-center gap-2'>
+                    <div className='justify-end text-system-primary-accent'>
+                      <svg
+                        className='w-4 h-4 cursor-pointer'
+                        aria-hidden='true'
+                        xmlns='http://www.w3.org/2000/svg'
+                        fill='none'
+                        viewBox='0 0 20 20'
+                      >
+                        <path
+                          stroke='currentColor'
+                          strokeLinecap='round'
+                          strokeLinejoin='round'
+                          strokeWidth='2'
+                          d='M4 12.25V1m0 11.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M4 19v-2.25m6-13.5V1m0 2.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M10 19V7.75m6 4.5V1m0 11.25a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5ZM16 19v-2'
+                        />
+                      </svg>
+                    </div>
+                    <h4 className='font-medium text-xl text-brand-gray-dim'>
+                      {user && user.Email}
+                    </h4>
+                  </div>
+                  <div className='flex items-center gap-2'>
+                    <div className='justify-end text-system-primary-accent'>
+                      <svg
+                        className='w-4 h-4 cursor-pointer'
+                        aria-hidden='true'
+                        xmlns='http://www.w3.org/2000/svg'
+                        fill='none'
+                        viewBox='0 0 20 20'
+                      >
+                        <path
+                          stroke='currentColor'
+                          strokeLinecap='round'
+                          strokeLinejoin='round'
+                          strokeWidth='2'
+                          d='M4 12.25V1m0 11.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M4 19v-2.25m6-13.5V1m0 2.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M10 19V7.75m6 4.5V1m0 11.25a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5ZM16 19v-2'
+                        />
+                      </svg>
+                    </div>
+                    <h4 className='font-medium text-xl text-brand-gray-dim'>
+                      {user && user.Country}
+                    </h4>
+                  </div>
+                  <div className='flex items-center gap-2'>
+                    <div className='justify-end text-system-primary-accent'>
+                      <svg
+                        className='w-4 h-4 cursor-pointer'
+                        aria-hidden='true'
+                        xmlns='http://www.w3.org/2000/svg'
+                        fill='none'
+                        viewBox='0 0 20 20'
+                      >
+                        <path
+                          stroke='currentColor'
+                          strokeLinecap='round'
+                          strokeLinejoin='round'
+                          strokeWidth='2'
+                          d='M4 12.25V1m0 11.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M4 19v-2.25m6-13.5V1m0 2.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M10 19V7.75m6 4.5V1m0 11.25a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5ZM16 19v-2'
+                        />
+                      </svg>
+                    </div>
+                    <h4 className='font-medium text-xl text-brand-gray-dim'>
+                      {user && user.JobTitle}
+                    </h4>
+                  </div>
+                  <div className='flex items-center gap-2'>
+                    <div className='justify-end text-system-primary-accent'>
+                      <svg
+                        className='w-4 h-4 cursor-pointer'
+                        aria-hidden='true'
+                        xmlns='http://www.w3.org/2000/svg'
+                        fill='none'
+                        viewBox='0 0 20 20'
+                      >
+                        <path
+                          stroke='currentColor'
+                          strokeLinecap='round'
+                          strokeLinejoin='round'
+                          strokeWidth='2'
+                          d='M4 12.25V1m0 11.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M4 19v-2.25m6-13.5V1m0 2.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M10 19V7.75m6 4.5V1m0 11.25a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5ZM16 19v-2'
+                        />
+                      </svg>
+                    </div>
+                    <h4 className='font-medium text-xl text-brand-gray-dim'>
+                      {user && user.CompanyName}
+                    </h4>
+                  </div>
+                </div>
+              </>
+            )}
             </div>
-            <h4 className='font-semibold text-xl text-system-primary-text mt-3 lg:mt-6'>About</h4>
-          </div>
-
           <div className='lg:col-span-3'>
             <Tab
               onTabChange={onTabChange}
@@ -391,7 +488,7 @@ const MyProfile = () => {
   )
 }
 
-const AboutTab = ({user,getUserDetails}) => {
+const AboutTab = ({ user, getUserDetails }) => {
   return (
     <>
       <AboutProfile user={user} getUserDetails={getUserDetails} />
@@ -422,7 +519,5 @@ const AboutTab = ({user,getUserDetails}) => {
     </>
   )
 }
-
-
 
 export default MyProfile

@@ -141,7 +141,7 @@ const Register = () => {
       (result) => {
         setVerifying(false)
         updateCurrentUser(result)
-        navigate('/welcome')
+        // navigate('/welcome')
       },
       (err) => {
         setVerifying(false)

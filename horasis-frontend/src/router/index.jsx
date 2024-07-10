@@ -25,6 +25,7 @@ import UniversalSearch from '../pages/UniversalSearch'
 import UniversalSearchDetails from '../pages/UniversalSearchDetails'
 import Home from '../pages/Home'
 import Register from '../pages/Register'
+import ShowUserProfile from '../pages/ShowUserProfile'
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -32,12 +33,12 @@ export const router = createBrowserRouter(
       <Route path='/' element={<AuthLayout />}>
         <Route path='/' element={<DashboardLayout />}>
           <Route path='/' element={<Activities />} />
-          <Route path="/myprofile" element={<MyProfile />} />
+          <Route path='/myprofile' element={<MyProfile />} />
+          {/* <Route path='/viewprofile/:userid' element={<ShowUserProfile />} /> */}
           <Route path='/home' element={<Home />} />
-          <Route path="/events/create/new" element={<CreateEvent />} />
-          <Route path="/analytics" element={<Analytics />} />
+          <Route path='/events/create/new' element={<CreateEvent />} />
+          <Route path='/analytics' element={<Analytics />} />
         </Route>
-        <Route path='welcome' element={<WelcomePage />} />
       </Route>
       <Route path='login' element={<UnAuthLayout />}>
         <Route index element={<LogIn />} />
@@ -45,8 +46,8 @@ export const router = createBrowserRouter(
       <Route path='register' element={<UnAuthLayout />}>
         <Route index element={<Register />} />
       </Route>
-      <Route path='confirmotp' element={<UnAuthLayout />}>
-        <Route index element={<Register />} />
+      <Route path='welcome' element={<UnAuthLayout />}>
+        <Route index element={<WelcomePage />} />
       </Route>
     </Route>
   )

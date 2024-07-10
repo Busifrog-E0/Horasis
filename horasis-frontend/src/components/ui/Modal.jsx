@@ -1,10 +1,10 @@
 import { Fragment } from "react"
 import { Dialog, Transition, TransitionChild } from "@headlessui/react"
 
-const Modal = ({ children, footer = <></>, isOpen,width }) => {
+const Modal = ({ children, footer = <></>, isOpen,maxWidth }) => {
   return (
     <Transition.Root show={isOpen} as={Fragment}>
-      <Dialog as="div" className={`relative bg-red-500 z-40 ${width?`width-[${width}%]`:''}`} onClose={() => { }}>
+      <Dialog as="div" className={`relative bg-red-500 z-40`} onClose={() => { }}>
         <TransitionChild
           as={Fragment}
           enter="ease-out duration-300"
@@ -28,7 +28,7 @@ const Modal = ({ children, footer = <></>, isOpen,width }) => {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className={`relative transform overflow-hidden rounded-lg  text-left shadow-xl transition-all sm:my-8 ${width?`max-w-${width}`:'max-w-xl'}  w-[90%] sm:w-full`}>
+              <Dialog.Panel className={`relative transform overflow-hidden rounded-lg  text-left shadow-xl transition-all sm:my-8 ${maxWidth?`${maxWidth}`:'max-w-xl'}  w-[90%] sm:w-full`}>
                 {children}
                 {footer}
               </Dialog.Panel>

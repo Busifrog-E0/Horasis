@@ -103,7 +103,7 @@ const AboutProfile = ({ user,getUserDetails }) => {
 
   return (
     <>
-      <Modal isOpen={isOpen} width={'4xl'}>
+      <Modal isOpen={isOpen} maxWidth={`max-w-4xl`}>
         <Modal.Header>
           <p className='text-lg font-medium'>Edit Profile</p>
           <button
