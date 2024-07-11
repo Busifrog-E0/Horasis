@@ -25,7 +25,7 @@ router.post('/follow',decodeIDToken,ensureAuthorized("User"),ValidateFollow,Swag
     // @ts-ignore
     asyncHandler(PostFollows));
 
-router.delete('/users/:UserId/follow/:FolloweeId',decodeIDToken,ensureAuthorized("User"),ValidateFollow,SwaggerDocs.delete_Follow,
+router.delete('/users/:UserId/follow/:FolloweeId',decodeIDToken,ensureAuthorized("User"),SwaggerDocs.delete_Follow,
     // @ts-ignore
     asyncHandler(DeleteFollows));
 
