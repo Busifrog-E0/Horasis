@@ -2,6 +2,7 @@ import {
     GetOneFromUsers, PostUsersRegister, PatchUsers, UserLogin,
     VerifyRegistrationOTP,
     CheckUsernameAvailability,
+    GetUsers,
 } from '../controllers/users-controller.js';
 import asyncHandler from 'express-async-handler';
 
@@ -9,7 +10,7 @@ import { decodeIDToken, ensureAuthorized } from '../middleware/auth-middleware.j
 // import { ValidatePostUsers, ValidateGetUsers, ValidatePatchUsers } from '../validations/users-validations.js';
 import SwaggerDocs from '../swaggerDocs/users-swaggerDocs.js'
 import e from 'express';
-import { CheckSameUser } from '../middleware/common.js';
+import { CheckSameUser, QueryParameterFormatting, ValidateGetEntity } from '../middleware/common.js';
 import { ValidateCheckUsername, ValidatePatchUsers, ValidateUserLogin, ValidatePatchUserPictures, ValidateUserRegister, ValidateVerifyOTP } from '../validations/users-validations.js';
 const router = e.Router();
 router.route
@@ -17,6 +18,16 @@ router.route
 router.get('/users/:UserId', decodeIDToken, ensureAuthorized("User"), SwaggerDocs.get_Users_UserId,
     // @ts-ignore
     asyncHandler(GetOneFromUsers));
+
+router.get('/users', decodeIDToken, ensureAuthorized("Users"), ValidateGetEntity, QueryParameterFormatting,
+    SwaggerDocs.get_Users,
+    //@ts-ignore
+    asyncHandler(GetUsers)); 
+
+router.get('/users/suggested', decodeIDToken, ensureAuthorized("Users"), ValidateGetEntity, QueryParameterFormatting,
+    SwaggerDocs.get_Users_Suggested,
+    //@ts-ignore
+    asyncHandler(GetUsers));      
 
 router.post('/users/register', ValidateUserRegister, SwaggerDocs.post_Users_Register,
     // @ts-ignore
