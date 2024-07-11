@@ -723,7 +723,7 @@
         }
       }
     },
-    "/api/connections/send": {
+    "/api/connections/{ReceiverId}/send": {
       "post": {
         "tags": [
           "Connections"
@@ -731,21 +731,15 @@
         "description": "",
         "parameters": [
           {
-            "name": "authorization",
-            "in": "header",
+            "name": "ReceiverId",
+            "in": "path",
+            "required": true,
             "type": "string"
           },
           {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "ReceiverId": {
-                  "example": "any"
-                }
-              }
-            }
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
@@ -767,7 +761,7 @@
         }
       }
     },
-    "/api/connections/accept": {
+    "/api/connections/{SenderId}/accept": {
       "patch": {
         "tags": [
           "Connections"
@@ -775,21 +769,15 @@
         "description": "",
         "parameters": [
           {
-            "name": "authorization",
-            "in": "header",
+            "name": "SenderId",
+            "in": "path",
+            "required": true,
             "type": "string"
           },
           {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "SenderId": {
-                  "example": "any"
-                }
-              }
-            }
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
@@ -811,7 +799,7 @@
         }
       }
     },
-    "/api/connections/reject": {
+    "/api/connections/{SenderId}/reject": {
       "delete": {
         "tags": [
           "Connections"
@@ -819,21 +807,15 @@
         "description": "",
         "parameters": [
           {
-            "name": "authorization",
-            "in": "header",
+            "name": "SenderId",
+            "in": "path",
+            "required": true,
             "type": "string"
           },
           {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "SenderId": {
-                  "example": "any"
-                }
-              }
-            }
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
@@ -855,7 +837,7 @@
         }
       }
     },
-    "/api/connections/cancel": {
+    "/api/connections/{ReceiverId}/cancel": {
       "delete": {
         "tags": [
           "Connections"
@@ -863,21 +845,15 @@
         "description": "",
         "parameters": [
           {
-            "name": "authorization",
-            "in": "header",
+            "name": "ReceiverId",
+            "in": "path",
+            "required": true,
             "type": "string"
           },
           {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "ReceiverId": {
-                  "example": "any"
-                }
-              }
-            }
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
@@ -899,7 +875,7 @@
         }
       }
     },
-    "/api/connections": {
+    "/api/connections/{UserId}": {
       "delete": {
         "tags": [
           "Connections"
@@ -907,21 +883,15 @@
         "description": "",
         "parameters": [
           {
-            "name": "authorization",
-            "in": "header",
+            "name": "UserId",
+            "in": "path",
+            "required": true,
             "type": "string"
           },
           {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "UserId": {
-                  "example": "any"
-                }
-              }
-            }
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
