@@ -1,4 +1,5 @@
 import { writeFileSync, readFileSync, unlinkSync } from 'fs';
+import {fileTypeFromBuffer } from 'file-type';
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -94,9 +95,12 @@ const AsyncSaveFileToSpaces = async (FirstFolderName, FilePath, FileData, Conten
  * @param {e.Response} res 
  */
 const PostFilesUsers = async (req, res) => {
+    const FileData8Array = new Uint8Array(req.body.FileData);
+    //@ts-ignore
+    const { mime: FileType } = await fileTypeFromBuffer(FileData8Array);
     // @ts-ignore
     const FilePath = `${req.user.UserId}/${req.body.FileFieldName}`;
-    SaveFileToSpaces("Users", FilePath, req.body.FileData, req.body.FileType, res)
+    SaveFileToSpaces("Users", FilePath, req.body.FileData,FileType, res)
 }
 
 
@@ -108,9 +112,13 @@ const PostFilesUsers = async (req, res) => {
  * @param {e.Response} res 
  */
 const PostFilesAdmin = async (req, res) => {
+ 
+    const FileData8Array = new Uint8Array(req.body.FileData);
+    //@ts-ignore
+    const { mime: FileType } = await fileTypeFromBuffer(FileData8Array);
     // @ts-ignore
     const FilePath = `${Date.now()}${req.body.FileName}`;
-    SaveFileToSpaces("Admin", FilePath, req.body.FileData, req.body.FileType, res)
+    SaveFileToSpaces("Admin", FilePath, req.body.FileData,FileType, res)
 }
 
 /**

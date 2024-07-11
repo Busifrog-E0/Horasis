@@ -4,7 +4,7 @@ const post_files_users = (req, res, next) => {
     // #swagger.tags = ['Files']
     /* #swagger.parameters['body'] = {
                 in: 'body',
-                schema: { "FileName": "input.pdf","FileData":[123,456],"FileFieldName":"ProfilePicture","FileType":"image/jpeg" }
+                schema: { "FileName": "input.pdf","FileData":[123,456],"FileFieldName":"ProfilePicture" }
        }
     */
     /* #swagger.responses[200] = {
@@ -20,7 +20,7 @@ const post_files_admin = (req, res, next) => {
     // #swagger.tags = ['Files']
     /* #swagger.parameters['body'] = {
                 in: 'body',
-                schema: { "FileName": "input.pdf","FileData":[123,456],"FileType":"image/jpeg" }
+                schema: { "FileName": "input.pdf","FileData":[123,456] }
        }
     */
     /* #swagger.responses[200] = {

@@ -98,8 +98,8 @@ const ValidatePatchUsers = async (req, res, next) => {
 
 const ValidatePatchUserPictures = async (req, res, next) => {
     const Result = Joi.object({
-        CoverPicture: Joi.string().uri().optional(),
-        ProfilePicture: Joi.string().uri().optional(),
+        CoverPicture: Joi.string().allow(""),
+        ProfilePicture: Joi.string().allow(""),
     }).xor('CoverPicture', 'ProfilePicture').validate(req.body, { stripUnknown: true });
     if (Result.error) {
         const message = Result.error.details.map((detail) => detail.message).join(', ');
