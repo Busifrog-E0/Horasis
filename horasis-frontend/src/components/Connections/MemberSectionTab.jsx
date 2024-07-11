@@ -17,14 +17,37 @@ const MembersSectionTab = ({ lastElement, profile }) => {
         }`}
       >
         <div className='flex items-start gap-4'>
-          <img
-            className='w-11 h-11 rounded-full'
-            src='https://flowbite.com/docs/images/people/profile-picture-1.jpg'
-            alt='Rounded avatar'
-          />
+          {profile ? (
+            <>
+              {profile.ProfilePicture ? (
+                <>
+                  <img
+                    className='w-11 h-11 rounded-full'
+                    src={profile.ProfilePicture}
+                    alt='Rounded avatar'
+                  />
+                </>
+              ) : (
+                <>
+                  <div className='w-11 h-11 rounded-full bg-brand-light-gray'></div>
+                </>
+              )}
+            </>
+          ) : (
+            <>
+              <img
+                className='w-11 h-11 rounded-full'
+                src='https://flowbite.com/docs/images/people/profile-picture-1.jpg'
+                alt='Rounded avatar'
+              />
+            </>
+          )}
 
           <div className='flex-1'>
-            <h4 className='font-semibold text-lg text-system-primary-accent cursor-pointer' onClick={goToProfile}>
+            <h4
+              className='font-semibold text-lg text-system-primary-accent cursor-pointer'
+              onClick={goToProfile}
+            >
               {profile && profile.FullName}
             </h4>
             <h4 className='font-semibold text-sm text-brand-gray-dim'>

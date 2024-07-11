@@ -262,6 +262,7 @@ const AboutProfile = ({ user, getUserDetails, isCurrentUser }) => {
               onClick={() => {
                 validate(updateProfile)
               }}
+              size='md'
               variant='black'
               // width='full'
             >

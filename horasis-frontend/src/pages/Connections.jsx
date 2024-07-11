@@ -15,7 +15,7 @@ import Spinner from '../components/ui/Spinner'
 
 const FollowingsTab = () => {
   const { updateCurrentUser, currentUserData } = useContext(AuthContext)
-  const [isLoading,setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const [followings, setFollowings] = useState([])
   const [filters, setFilters] = useState({
     OrderBy: 'Index',
@@ -39,7 +39,7 @@ const FollowingsTab = () => {
       (followings) => {
         setFollowings([...tempFollowing, ...followings])
         setIsLoading(false)
-    },
+      },
       (err) => {
         setIsLoading(false)
         console.log(err)
@@ -111,16 +111,110 @@ const FollowersTab = () => {
   return <MembersSection members={followers} />
 }
 
+const AllMembersTab = () => {
+  const { updateCurrentUser, currentUserData } = useContext(AuthContext)
+  const [isLoading, setIsLoading] = useState(false)
+  const [followers, setFollowers] = useState([])
+  const [filters, setFilters] = useState({
+    OrderBy: 'Index',
+    Keyword: '',
+    Limit: 10,
+    Keyword: '',
+  })
+
+  function filter(oby, kw, lt) {
+    var newFilter = { OrderBy: oby, Keyword: kw, Limit: lt }
+    navigate(`?${jsonToQuery(newFilter)}`)
+    setFilters(newFilter)
+  }
+
+  const getFollowers = (tempFollowers) => {
+    setIsLoading(true)
+    getItem(
+      `users?&${jsonToQuery(filters)}&NextId=${getNextId(tempFollowers)}`,
+      (followers) => {
+        setFollowers([...tempFollowers, ...followers])
+        setIsLoading(false)
+      },
+      (err) => {
+        setIsLoading(false)
+        console.log(err)
+      },
+      updateCurrentUser,
+      currentUserData
+    )
+  }
+
+  useEffect(() => {
+    getFollowers([])
+  }, [])
+  if (isLoading)
+    return (
+      <div className='bg-system-secondary-bg p-4 rounded-b-lg '>
+        <Spinner />
+      </div>
+    )
+  return <MembersSection members={followers} />
+}
+
+const ConnectionsTab = () => {
+  const { updateCurrentUser, currentUserData } = useContext(AuthContext)
+  const [isLoading, setIsLoading] = useState(false)
+  const [followers, setFollowers] = useState([])
+  const [filters, setFilters] = useState({
+    OrderBy: 'Index',
+    Keyword: '',
+    Limit: 10,
+    Keyword: '',
+  })
+
+  function filter(oby, kw, lt) {
+    var newFilter = { OrderBy: oby, Keyword: kw, Limit: lt }
+    navigate(`?${jsonToQuery(newFilter)}`)
+    setFilters(newFilter)
+  }
+
+  const getFollowers = (tempFollowers) => {
+    setIsLoading(true)
+    getItem(
+      `users?&${jsonToQuery(filters)}&NextId=${getNextId(tempFollowers)}`,
+      (followers) => {
+        setFollowers([...tempFollowers, ...followers])
+        setIsLoading(false)
+      },
+      (err) => {
+        setIsLoading(false)
+        console.log(err)
+      },
+      updateCurrentUser,
+      currentUserData
+    )
+  }
+
+  useEffect(() => {
+    getFollowers([])
+  }, [])
+  if (isLoading)
+    return (
+      <div className='bg-system-secondary-bg p-4 rounded-b-lg '>
+        <Spinner />
+      </div>
+    )
+  return <MembersSection members={[]} />
+}
+
+
+
 const tabs = () => [
   {
     key: 0,
     title: 'All Members',
-    render: () => <MembersSection />,
+    render: () => <AllMembersTab />,
   },
   {
     key: 1,
-    title: '23 Connections',
-    render: () => <MembersSection />,
+    title: 'Connections',
+    render: () => <ConnectionsTab/>,
   },
   {
     key: 2,
@@ -144,6 +238,43 @@ const Connections = () => {
     setActiveTab(item.key)
     _storeData(MAINTAB, { connections: item.key })
   }
+  const { updateCurrentUser, currentUserData } = useContext(AuthContext)
+  const [isLoading, setIsLoading] = useState(false)
+  const [suggested, setSuggested] = useState([])
+  const [filters, setFilters] = useState({
+    OrderBy: 'Index',
+    Keyword: '',
+    Limit: 10,
+    Keyword: '',
+  })
+
+  function filter(oby, kw, lt) {
+    var newFilter = { OrderBy: oby, Keyword: kw, Limit: lt }
+    navigate(`?${jsonToQuery(newFilter)}`)
+    setFilters(newFilter)
+  }
+
+  const getSuggested = (tempSuggested) => {
+    setIsLoading(true)
+    getItem(
+      `users?&${jsonToQuery(filters)}&NextId=${getNextId(tempSuggested)}`,
+      (result) => {
+        setSuggested([...tempSuggested, ...result])
+
+        setIsLoading(false)
+      },
+      (err) => {
+        setIsLoading(false)
+        console.log(err)
+      },
+      updateCurrentUser,
+      currentUserData
+    )
+  }
+
+  useEffect(() => {
+    getSuggested([])
+  }, [])
   return (
     <>
       <div className='p-2 lg:px-10 lg:py-6'>
@@ -179,8 +310,14 @@ const Connections = () => {
                 {/* arrow cursor-pointer */}
               </div>
               <div className='flex flex-col gap-4'>
-                <MemberSuggestionTab />
-                <div className='border-b border-system-file-border pb-3'>
+                {suggested.map((item, index) => {
+                  const lastElement = suggested.length === index + 1
+                  return (
+                    <MemberSuggestionTab lastElement={lastElement} key={index} profile={item} />
+                  )
+                })}
+                {/* <MemberSuggestionTab /> */}
+                {/* <div className='border-b border-system-file-border pb-3'>
                   <div className='flex items-start gap-4'>
                     <img
                       className='w-16 h-16 rounded-full'
@@ -198,9 +335,9 @@ const Connections = () => {
                     </div>
                     <Button variant='outline'>Follow</Button>
                   </div>
-                </div>
-                <MemberSuggestionTab />
-                <div className='border-b border-system-file-border pb-3'>
+                </div> */}
+                {/* <MemberSuggestionTab /> */}
+                {/* <div className='border-b border-system-file-border pb-3'>
                   <div className='flex items-start gap-4'>
                     <img
                       className='w-16 h-16 rounded-full'
@@ -218,9 +355,9 @@ const Connections = () => {
                     </div>
                     <Button variant='outline'>Follow</Button>
                   </div>
-                </div>
-                <MemberSuggestionTab />
-                <div className=''>
+                </div> */}
+                {/* <MemberSuggestionTab /> */}
+                {/* <div className=''>
                   <div className='flex items-start gap-4'>
                     <img
                       className='w-16 h-16 rounded-full'
@@ -236,7 +373,7 @@ const Connections = () => {
                     </div>
                     <Button variant='outline'>Follow</Button>
                   </div>
-                </div>
+                </div> */}
               </div>
             </div>
           </div>
