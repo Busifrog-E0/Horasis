@@ -12,7 +12,7 @@ const router = Router();
 
 
 router.post('/files/users', decodeIDToken,
-    ensureAuthorized("Admin", "Employer", "CRE", "MSI", "Manager"), ValidatePostFilesUser,
+    ensureAuthorized("User"), ValidatePostFilesUser,
      swaggerDocs.post_files_users,
     // @ts-ignore
     asyncHandler(PostFilesUsers));
