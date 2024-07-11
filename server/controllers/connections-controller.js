@@ -182,6 +182,17 @@ const ConnectionStatus = async (MyId, TheirId) => {
     return "Connection Requested";
 }
 
+const GetAUsersReceivedConnections = async (req, res) => {
+
+
+    return res.json(true);
+}
+
+const GetAUsersSentConnections = async (req, res) => {
+
+    return res.json(true);
+}
+
 export {
     GetAUsersConnections,
     PostConnectionSend,
@@ -190,4 +201,7 @@ export {
     DeleteConnectionCancel,
     DeleteConnection,
     ConnectionStatus,
+
+    GetAUsersReceivedConnections,
+    GetAUsersSentConnections,
 }

@@ -1,6 +1,8 @@
 import {
     GetAUsersConnections, PostConnectionSend, PostConnectionAccept, DeleteConnectionReject,
     DeleteConnectionCancel, DeleteConnection,
+    GetAUsersReceivedConnections,
+    GetAUsersSentConnections,
 } from '../controllers/connections-controller.js';
 import asyncHandler from 'express-async-handler';
 
@@ -40,5 +42,16 @@ router.delete('/connections/:UserId', decodeIDToken, ensureAuthorized("User"),
     SwaggerDocs.delete_connections,
     // @ts-ignore
     asyncHandler(DeleteConnection));
+
+
+router.get('/users/:UserId/connections/received', decodeIDToken, ensureAuthorized("User"), ValidateGetEntity,
+    QueryParameterFormatting, SwaggerDocs.get_users_UserId_connections,
+    GetAUsersReceivedConnections);
+
+
+router.get('/users/:UserId/connections/sent', decodeIDToken, ensureAuthorized("User"), ValidateGetEntity,
+    QueryParameterFormatting, SwaggerDocs.get_users_UserId_connections,
+    GetAUsersSentConnections);
+
 
 export default router;
