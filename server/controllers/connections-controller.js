@@ -112,7 +112,7 @@ const DeleteConnectionReject = async (req, res) => {
     }
     const ConnectionData = (await ReadConnections({ SenderId, ReceiverId, "Status": "Pending" }, undefined, 1, undefined))[0];
     if (!ConnectionData) {
-        res.status(444).json(AlertBoxObject('Invalid Request', 'No pending friend request from this user'));
+        return res.status(444).json(AlertBoxObject('Invalid Request', 'No pending friend request from this user'));
     }
     await RemoveConnections(ConnectionData.DocId);
     return res.json(true)
