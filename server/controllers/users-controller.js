@@ -57,11 +57,11 @@ const GetUsers = async (req, res) => {
     const { Filter, NextId, Limit, OrderBy } = req.query;
     // @ts-ignore
     const Users = await ReadUsers(Filter, NextId, Limit, OrderBy);
-    const data = Users.map(async User => {
+    const data = await Promise.all(Users.map(async User => {
         //@ts-ignore
         const OtherUser = await ViewOtherUser(req.user.UserId, User.DocId)
         return { ...User, ...OtherUser };
-    })
+    }))
     return res.json(data);
 }
 

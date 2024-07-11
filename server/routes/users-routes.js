@@ -19,12 +19,12 @@ router.get('/users/:UserId', decodeIDToken, ensureAuthorized("User"), SwaggerDoc
     // @ts-ignore
     asyncHandler(GetOneFromUsers));
 
-router.get('/users', decodeIDToken, ensureAuthorized("Users"), QueryParameterFormatting, ValidateGetEntity,
+router.get('/users', decodeIDToken, ensureAuthorized("User"), ValidateGetEntity, QueryParameterFormatting,
     SwaggerDocs.get_Users,
     //@ts-ignore
     asyncHandler(GetUsers)); 
 
-router.get('/users/suggested', decodeIDToken, ensureAuthorized("Users"), QueryParameterFormatting, ValidateGetEntity, 
+router.get('/users/suggested', decodeIDToken, ensureAuthorized("User"), ValidateGetEntity, QueryParameterFormatting,
     SwaggerDocs.get_Users_Suggested,
     //@ts-ignore
     asyncHandler(GetUsers));      
