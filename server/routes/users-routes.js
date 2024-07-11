@@ -24,7 +24,7 @@ router.get('/users', decodeIDToken, ensureAuthorized("User"), ValidateGetEntity,
     //@ts-ignore
     asyncHandler(GetUsers)); 
 
-router.get('/users/suggested', decodeIDToken, ensureAuthorized("User"), ValidateGetEntity, QueryParameterFormatting,
+router.get('/users/:UserId/suggested', decodeIDToken, ensureAuthorized("User"), ValidateGetEntity, QueryParameterFormatting,
     SwaggerDocs.get_Users_Suggested,
     //@ts-ignore
     asyncHandler(GetUsers));      
