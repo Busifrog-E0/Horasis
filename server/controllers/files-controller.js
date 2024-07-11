@@ -95,8 +95,9 @@ const AsyncSaveFileToSpaces = async (FirstFolderName, FilePath, FileData, Conten
  * @param {e.Response} res 
  */
 const PostFilesUsers = async (req, res) => {
+    const FileData8Array = new Uint8Array(req.body.FileData);
     //@ts-ignore
-    const { mime: FileType } = await fileTypeFromBuffer(req.body.FileData);
+    const { mime: FileType } = await fileTypeFromBuffer(FileData8Array);
     // @ts-ignore
     const FilePath = `${req.user.UserId}/${req.body.FileFieldName}`;
     SaveFileToSpaces("Users", FilePath, req.body.FileData,FileType, res)
