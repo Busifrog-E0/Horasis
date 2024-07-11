@@ -49,7 +49,7 @@ const CurrentProfileTab = () => {
   const getFollowCount = () => {
     setIsLoading(true)
     getItem(
-      `users/${currentUserData.CurrentUser.UserIf}/follow/count`,
+      `users/${currentUserData.CurrentUser.UserId}/follow/count`,
       (result) => {
         setIsLoading(false)
         setFollowCount(result)
@@ -80,11 +80,20 @@ const CurrentProfileTab = () => {
               className='flex justify-center items-center cursor-pointer'
               onClick={GoToProfilePage}
             >
-              <img
-                className='w-28 h-28 rounded-full'
-                src='https://flowbite.com/docs/images/people/profile-picture-5.jpg'
-                alt='Rounded avatar'
-              />
+              <div className='w-28 h-28 rounded-full bg-brand-light-gray'>
+                {user && user.ProfilePicture && (
+                  <img
+                    className='w-28 h-28 rounded-full'
+                    src={user.ProfilePicture}
+                    alt='Rounded avatar'
+                  />
+                )}
+                {/* <img
+                  className='w-28 h-28 rounded-full'
+                  src='https://flowbite.com/docs/images/people/profile-picture-5.jpg'
+                  alt='Rounded avatar'
+                /> */}
+              </div>
             </div>
             <h4 className='font-medium text-xl text-center text-system-primary-text mt-2'>
               {user && user.FullName}

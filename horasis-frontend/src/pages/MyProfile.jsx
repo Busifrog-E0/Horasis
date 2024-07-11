@@ -8,12 +8,14 @@ import { relativeTime } from '../utils/date'
 import DropdownMenu from '../components/ui/DropdownMenu'
 import StaggeredList from '../components/ui/StaggeredList'
 import VideoPlayer from '../components/ui/VideoPlayer'
-import { getItem } from '../constants/operations'
+import { getItem, patchItem, postItem } from '../constants/operations'
 import { AuthContext } from '../utils/AuthProvider'
 import Modal from '../components/ui/Modal'
 import Input from '../components/ui/Input'
 import Spinner from '../components/ui/Spinner'
 import AboutProfile from '../components/Profile/AboutProfile'
+import Button from '../components/ui/Button'
+import PictureUpload from '../components/Profile/PictureUpload'
 
 const MyProfile = () => {
   const [activeTab, setActiveTab] = useState(
@@ -290,7 +292,6 @@ const MyProfile = () => {
     _storeData(MAINTAB, { myprofile: item.key })
   }
   const { currentUserData, updateCurrentUser } = useContext(AuthContext)
-
   const [isLoading, setIsLoading] = useState(false)
   const [user, setUser] = useState()
   const getUserDetails = () => {
@@ -300,6 +301,11 @@ const MyProfile = () => {
       (result) => {
         setIsLoading(false)
         setUser(result)
+        if (result.ProfilePicture) {
+          setSelectedProfileImage(result.ProfilePicture)
+        } else {
+          setSelectedProfileImage(null)
+        }
       },
       (err) => {
         setIsLoading(false)
@@ -309,19 +315,141 @@ const MyProfile = () => {
       currentUserData
     )
   }
+  const [isProfilePictureOpen, setIsProfilePictureOpen] = useState(false)
 
   useEffect(() => {
     getUserDetails()
   }, [])
 
+  // profile image upload logic
+  const [selectedProfileImage, setSelectedProfileImage] = useState(null)
+  const [profileImageToUpload, setProfileImageToUpload] = useState(null)
+  const onProfileImageSelect = (imageData) => {
+    setProfileImageToUpload(imageData)
+    const tempUrl = URL.createObjectURL(new Blob([new Uint8Array(imageData.FileData)]))
+    setSelectedProfileImage(tempUrl)
+  }
+
+  const onProfileImageDelete = () => {
+    setProfileImageToUpload(null)
+    setSelectedProfileImage(null)
+  }
+
+  const onProfileImageSet = (url) => {
+    patchItem(
+      `users/${currentUserData.CurrentUser.UserId}/picture`,
+      { ProfilePicture: url },
+      (result) => {
+        if (result === true) {
+          getUserDetails()
+          setIsProfilePictureOpen(false)
+        }
+      },
+      (err) => {
+        console.log(err)
+      },
+      updateCurrentUser,
+      currentUserData
+    )
+  }
+
+  const onProfileImageUpload = () => {
+    if (profileImageToUpload) {
+      postItem(
+        'files/users',
+        profileImageToUpload,
+        (result) => {
+          onProfileImageSet(result.FileUrl)
+        },
+        (err) => {
+          console.error(err)
+        },
+        updateCurrentUser,
+        currentUserData
+      )
+    } else {
+      onProfileImageSet('')
+    }
+  }
+
+  // cover photo upload logic
+  const [selectedCoverImage, setSelectedCoverImage] = useState(null)
+  const [coverImageToUpload, setCoverImageToUpload] = useState(null)
+  const [isCoverPictureOpen, setIsCoverPictureOpen] = useState(false)
+  const onCoverImageSelect = (imageData) => {
+    setCoverImageToUpload(imageData)
+    const tempUrl = URL.createObjectURL(new Blob([new Uint8Array(imageData.FileData)]))
+    setSelectedCoverImage(tempUrl)
+  }
+  const onCoverImageDelete = () => {
+    setCoverImageToUpload(null)
+    setSelectedCoverImage(null)
+  }
+  const onCoverImageSet = (url) => {
+    patchItem(
+      `users/${currentUserData.CurrentUser.UserId}/picture`,
+      {
+        CoverPicture: url,
+      },
+      (result) => {
+        if (result === true) {
+          getUserDetails()
+          setIsCoverPictureOpen(false)
+        }
+      },
+      (err) => {
+        console.log(err)
+      },
+      updateCurrentUser,
+      currentUserData
+    )
+  }
+  const onCoverImageUpload = () => {
+    if (coverImageToUpload) {
+      postItem(
+        'files/users',
+        coverImageToUpload,
+        (result) => {
+          onCoverImageSet(result.FileUrl)
+        },
+        (err) => {
+          console.log(err)
+        },
+        updateCurrentUser,
+        currentUserData
+      )
+    } else {
+      onCoverImageSet('')
+    }
+  }
+
   return (
     <>
       <div className='p-2 lg:px-10 lg:py-6'>
         <div className='rounded-lg z-20 bg-red-400 h-40 lg:h-80 relative'>
-          <img
+          {user ? (
+            <>
+              {user.CoverPicture ? (
+                <>
+                  <img src={user.CoverPicture} className='object-cover h-full w-full rounded-lg' />
+                </>
+              ) : (
+                <>
+                  <div className='w-full h-full rounded-lg flex items-center justify-center  bg-slate-100'></div>
+                </>
+              )}
+            </>
+          ) : (
+            <>
+              <div className='w-full h-full rounded-lg flex items-center justify-center bg-slate-100'>
+                {isLoading ? <Spinner /> : <></>}
+              </div>
+            </>
+          )}
+          {/* <img
             src='https://th.bing.com/th/id/OIP.FFchRAWwk-emGNqgImzwaAHaEK?rs=1&pid=ImgDetMain'
             className='object-cover h-full w-full rounded-lg'
-          />
+          /> */}
           <div className='absolute z-20 top-0 right-0 left-0 bottom-0 flex flex-col justify-between items-start p-4 lg:px-10 lg:py-6 bg-brand-blue-transparent h-100 overflow-hidden rounded-lg'>
             <div className='flex w-full items-start justify-between'>
               <div className='flex items-center cursor-pointer' onClick={handleGoBack}>
@@ -329,6 +457,9 @@ const MyProfile = () => {
                 <h4 className='font-medium text-xl text-brand-secondary'>Back</h4>
               </div>
               <div
+              onClick={()=>{
+                setIsCoverPictureOpen(true)
+              }}
                 className={`inline-flex items-center justify-center w-12 h-12 p-3 overflow-hidden rounded-full border border-white bg-white cursor-pointer`}
               >
                 <svg
@@ -349,20 +480,127 @@ const MyProfile = () => {
             </div>
           </div>
           <div className='flex justify-center items-center cursor-pointer absolute left-5 -bottom-3 lg:left-20 lg:-bottom-8 z-30'>
-            <img
+            {user ? (
+              <>
+                {user.ProfilePicture ? (
+                  <>
+                    <div className='w-24 lg:w-60 h-24 lg:h-60 rounded-full flex items-center justify-center bg-black'>
+                      <img
+                        className='w-24 lg:w-60 h-24 lg:h-60 rounded-full'
+                        src={user.ProfilePicture}
+                        alt='Rounded avatar'
+                        onClick={() => {
+                          setIsProfilePictureOpen(true)
+                          if (user.ProfilePicture) {
+                            setSelectedProfileImage(user.ProfilePicture)
+                          } else {
+                            setSelectedProfileImage(null)
+                          }
+                        }}
+                      />
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div
+                      className='w-24 lg:w-60 h-24 lg:h-60 rounded-full flex items-center justify-center border-2 border-dashed bg-brand-light-gray'
+                      onClick={() => {
+                        setIsProfilePictureOpen(true)
+                        if (user.ProfilePicture) {
+                          setSelectedProfileImage(user.ProfilePicture)
+                        } else {
+                          setSelectedProfileImage(null)
+                        }
+                      }}
+                    ></div>
+                  </>
+                )}
+              </>
+            ) : (
+              <>
+                <div className='w-24 lg:w-60 h-24 lg:h-60 rounded-full flex items-center justify-center border-2 border-dashed bg-slate-100'>
+                  {isLoading ? <Spinner /> : <></>}
+                </div>
+              </>
+            )}
+            {/* <img
               className='w-24 lg:w-60 h-24 lg:h-60 rounded-full'
               src='https://flowbite.com/docs/images/people/profile-picture-5.jpg'
               alt='Rounded avatar'
-            />
+              onClick={() => {
+                setIsProfilePictureOpen(true)
+              }}
+            /> */}
           </div>
         </div>
       </div>
+      <Modal isOpen={isProfilePictureOpen} maxWidth='max-w-4xl'>
+        <Modal.Header>
+          <div className='p-2 flex items-center justify-between w-full'>
+            <p className='text-lg font-medium'>Profile Photo</p>
+            <button
+              onClick={() => {
+                setIsProfilePictureOpen(false)
+              }}
+            >
+              close
+            </button>
+          </div>
+        </Modal.Header>
+        <Modal.Body>
+          <p className='text-lg font-medium text-center'>
+            Your profile will be used on your profile and through out the site.
+          </p>
+
+          <div className=' flex flex-col items-center justify-center pt-10'>
+            <PictureUpload
+              isBanner={false}
+              altTitle='Profile Picture'
+              selectedImage={selectedProfileImage}
+              setSelectedImage={setSelectedProfileImage}
+              onImageSelect={onProfileImageSelect}
+              onImageDelete={onProfileImageDelete}
+              onUploadImage={onProfileImageUpload}
+            />
+          </div>
+        </Modal.Body>
+      </Modal>
+      <Modal isOpen={isCoverPictureOpen} maxWidth='max-w-4xl'>
+        <Modal.Header>
+          <div className='p-2 flex items-center justify-between w-full'>
+            <p className='text-lg font-medium'>Cover Photo</p>
+            <button
+              onClick={() => {
+                setIsCoverPictureOpen(false)
+              }}
+            >
+              close
+            </button>
+          </div>
+        </Modal.Header>
+        <Modal.Body>
+          <p className='text-lg font-medium text-center'>
+            Your cover photo will be used to customize the header of your profile.
+          </p>
+          <div className=' flex flex-col items-center justify-center pt-10'>
+            <PictureUpload
+              // isBanner={false}
+              altTitle='Cover Picture'
+              selectedImage={selectedCoverImage}
+              setSelectedImage={setSelectedCoverImage}
+              onImageSelect={onCoverImageSelect}
+              onImageDelete={onCoverImageDelete}
+              onUploadImage={onCoverImageUpload}
+            />
+          </div>
+        </Modal.Body>
+      </Modal>
       <div className='p-2 lg:px-10 lg:py-6 pt-6'>
         <div className='grid lg:grid-cols-4 gap-3 lg:gap-12 '>
-            <div className='py-5 lg:py-8 px-16 bg-system-secondary-bg rounded-lg mb-3 lg:mb-8'>
-          {isLoading ? (
-            <Spinner />
-          ) : (
+          <div className='py-5 lg:py-8 px-16 bg-system-secondary-bg rounded-lg mb-3 lg:mb-8'>
+            {isLoading ? (
+              <Spinner />
+            ) : (
               <>
                 <h4 className='font-medium text-2xl text-center text-system-primary-text'>
                   {user && user.FullName}
@@ -472,7 +710,7 @@ const MyProfile = () => {
                 </div>
               </>
             )}
-            </div>
+          </div>
           <div className='lg:col-span-3'>
             <Tab
               onTabChange={onTabChange}
@@ -488,7 +726,7 @@ const MyProfile = () => {
   )
 }
 
-const AboutTab = ({ user, getUserDetails,isCurrentUser }) => {
+const AboutTab = ({ user, getUserDetails, isCurrentUser }) => {
   return (
     <>
       <AboutProfile user={user} getUserDetails={getUserDetails} isCurrentUser={isCurrentUser} />

@@ -13,7 +13,7 @@ import { getNextId } from '../utils/URLParams'
 import { AuthContext } from '../utils/AuthProvider'
 import Spinner from '../components/ui/Spinner'
 
-const Followings = () => {
+const FollowingsTab = () => {
   const { updateCurrentUser, currentUserData } = useContext(AuthContext)
   const [isLoading,setIsLoading] = useState(false)
   const [followings, setFollowings] = useState([])
@@ -63,7 +63,7 @@ const Followings = () => {
   return <MembersSection members={followings} />
 }
 
-const Followers = () => {
+const FollowersTab = () => {
   const { updateCurrentUser, currentUserData } = useContext(AuthContext)
   const [isLoading, setIsLoading] = useState(false)
   const [followers, setFollowers] = useState([])
@@ -125,12 +125,12 @@ const tabs = () => [
   {
     key: 2,
     title: 'Following',
-    render: () => <Followings />,
+    render: () => <FollowingsTab />,
   },
   {
     key: 3,
     title: 'Followers',
-    render: () => <Followers />,
+    render: () => <FollowersTab />,
   },
 ]
 const Connections = () => {
