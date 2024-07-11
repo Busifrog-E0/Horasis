@@ -1,8 +1,7 @@
 import e from 'express';
 
 import { ReadOneFromFollows, ReadFollows, UpdateFollows, CreateFollows, RemoveFollows, GetFollowCount, } from './../databaseControllers/follow-databaseController.js';
-import { ReadOneFromUsers } from '../databaseControllers/users-databaseController.js';
-import { ViewOtherUser } from './users-controller.js';
+import { ViewOtherUserData } from './users-controller.js';
 /**
  * @typedef {import('./../databaseControllers/follow-databaseController.js').FollowData} FollowData 
  */
@@ -50,11 +49,9 @@ const GetFollows =  (IsFollowers) =>
         }
     //@ts-ignore
     const data = await ReadFollows(Filter, NextId, Limit, OrderBy);
-        const Users = await Promise.all(data.map(async Follow => {
+        const Users = await Promise.all(data.map(Follow => {
             const OtherUserId = Follow[OtherUser];
-            const FollowUserData = await ReadOneFromUsers(OtherUserId);
-            const OtherUserData = await ViewOtherUser(UserId, OtherUserId);
-            return { ...FollowUserData, ...OtherUserData };
+            return ViewOtherUserData(UserId, OtherUserId);
         }));
     return res.json(Users);
 }

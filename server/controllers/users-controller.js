@@ -33,17 +33,11 @@ const RegisterUrl = "";
  */
 const GetOneFromUsers = async (req, res) => {
     const { UserId } = req.params;
-    let data = await ReadOneFromUsers(UserId);
+    //@ts-ignore
+    let data = await ViewOtherUserData(req.user.UserId, UserId);
     const ProfileCompletionPercentage = GetNonEmptyFieldsPercentage(data);
     //@ts-ignore
     data.ProfileCompletionPercentage = ProfileCompletionPercentage;
-    //@ts-ignore
-    if (UserId !== req.user.UserId) {
-        //@ts-ignore
-        const OtherUser = await ViewOtherUser(req.user.UserId, UserId);
-        data = { ...data, ...OtherUser };
-    }
-    
     return res.json(data);
 }
 
@@ -59,7 +53,7 @@ const GetUsers = async (req, res) => {
     const Users = await ReadUsers(Filter, NextId, Limit, OrderBy);
     const data = await Promise.all(Users.map(async User => {
         //@ts-ignore
-        const OtherUser = await ViewOtherUser(req.user.UserId, User.DocId)
+        const OtherUser = await ViewOtherUserRelations(req.user.UserId, User.DocId)
         return { ...User, ...OtherUser };
     }))
     return res.json(data);
@@ -184,20 +178,46 @@ const CheckUsernameAvailability = (IsEdit) =>
  * @param {string} OtherUserId 
  * @returns {Promise<import('./../databaseControllers/users-databaseController.js').OtherUserData>}
  */
-const ViewOtherUser = async (UserId, OtherUserId) => {
-    let IsFollowing = false, IsFollowed = false, FollowIndex = 0;
-    const Connection = await ConnectionStatus(UserId, OtherUserId);
-    const Following = await ReadFollows({ FollowerId: UserId, FolloweeId: OtherUserId }, undefined, 1, undefined);
+const ViewOtherUserRelations = async (UserId, OtherUserId) => {
+    let IsFollowing = false, IsFollowed = false, FollowIndex = 0, FollowingIndex = 0, FollowedIndex = 0;
+    const PromiseData = await Promise.all([
+        ConnectionStatus(UserId, OtherUserId),
+        ReadFollows({ FollowerId: UserId, FolloweeId: OtherUserId }, undefined, 1, undefined),
+        ReadFollows({ FolloweeId: UserId, FollowerId: OtherUserId }, undefined, 1, undefined),
+    ]);
+    const Connection = PromiseData[0];
+    const Following = PromiseData[1];
+    const Followed = PromiseData[2];
     if (Following.length > 0) {
         FollowIndex = Following[0].CreatedIndex;
+        FollowingIndex = Following[0].CreatedIndex;
         IsFollowing = true;
     }
-    const Followed = await ReadFollows({ FolloweeId: UserId, FollowerId: OtherUserId }, undefined, 1, undefined);
     if (Followed.length > 0) {
         IsFollowed = true;
+        FollowedIndex = Followed[0].CreatedIndex;
         FollowIndex = Followed[0].CreatedIndex;
     }
-    return { ConnectionStatus : Connection, IsFollowed, IsFollowing , FollowIndex };
+    return {
+        ConnectionStatus: Connection.Status, IsFollowed, IsFollowing, FollowIndex,
+        // @ts-ignore
+        FollowingIndex, FollowedIndex, ConnectionIndex: Connection.ConnectionIndex,
+    };
+}
+
+
+/**
+ * 
+ * @param {string} UserId 
+ * @param {string} OtherUserId 
+ * 
+ */
+const ViewOtherUserData = async (UserId, OtherUserId) => {
+    const PromiseData = await Promise.all([
+        ReadOneFromUsers(OtherUserId),
+        ViewOtherUserRelations(UserId, OtherUserId)
+    ]);
+    return { ...PromiseData[0], ...PromiseData[1] };
 }
 
 /**
@@ -245,5 +265,5 @@ const VerifyUserEmail = async (req, res) => {
 export {
     GetOneFromUsers, GetUsers, PostUsersRegister, PatchUsers,
     UserLogin, VerifyRegistrationOTP, CheckUsernameAvailability,
-    ViewOtherUser
+    ViewOtherUserRelations, ViewOtherUserData
 }
