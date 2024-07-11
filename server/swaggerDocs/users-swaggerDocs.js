@@ -39,6 +39,26 @@ const get_Users_UserId = async (req, res, next) => {
     next();
 }
 
+const get_Users = async (req, res, next) => {
+    // #swagger.tags = ['Users']
+    /* #swagger.responses[200] = {
+                 description: 'User Data',
+                 schema: { $ref: '#/definitions/UserDataArray' }
+         } 
+     */
+    next();
+}
+
+const get_Users_Suggested = async (req, res, next) => {
+    // #swagger.tags = ['Users']
+    /* #swagger.responses[200] = {
+                 description: 'User Data',
+                 schema: { $ref: '#/definitions/UserDataArray' }
+         } 
+     */
+    next();
+}
+
 const post_Users_Verify = async (req, res, next) => {
     // #swagger.tags = ['Users']
     /* #swagger.parameters['body'] = {
@@ -90,5 +110,5 @@ export default {
     post_Users_Register,post_Users_CheckUsername,
     post_Users_Login,patch_Users_UserId,
     get_Users_UserId, patch_Users_UserId_Picture,
-    post_Users_Verify
+    post_Users_Verify,get_Users,get_Users_Suggested
 }
