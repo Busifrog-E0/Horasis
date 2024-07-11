@@ -2,7 +2,7 @@ import { useContext, useState } from 'react'
 import LoaderOverlay from '../components/Loader/LoaderOverlay'
 import LoginForm from '../components/Login/LoginForm'
 import Logo from '../components/Common/Logo'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import Input from '../components/ui/Input'
 import Button from '../components/ui/Button'
 import { AuthContext, defaultUserData } from '../utils/AuthProvider'
@@ -22,6 +22,7 @@ const branding = {
 }
 
 const LogIn = () => {
+  const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
   const [showpass, setShowpass] = useState(false)
   const { currentUserData, updateCurrentUser } = useContext(AuthContext)
@@ -169,6 +170,19 @@ const LogIn = () => {
             Login
           </Button>
         </div>
+        <div className='mt-1'>
+            <div className='text-base font-medium text-center'>
+              Don't have an account?{' '}
+              <span
+                onClick={() => {
+                  navigate('/register')
+                }}
+                className='cursor-pointer text-system-primary-accent text-lg font-medium underline'
+              >
+                Register
+              </span>
+            </div>
+          </div>
       </div>
     </div>
   )
