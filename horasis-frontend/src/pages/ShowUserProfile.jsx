@@ -196,10 +196,29 @@ const ShowUserProfile = () => {
     <>
       <div className='p-2 lg:px-10 lg:py-6'>
         <div className='rounded-lg z-20 bg-red-400 h-40 lg:h-80 relative'>
-          <img
+        {user ? (
+            <>
+              {user.CoverPicture ? (
+                <>
+                  <img src={user.CoverPicture} className='object-cover h-full w-full rounded-lg' />
+                </>
+              ) : (
+                <>
+                  <div className='w-full h-full rounded-lg flex items-center justify-center  bg-slate-100'></div>
+                </>
+              )}
+            </>
+          ) : (
+            <>
+              <div className='w-full h-full rounded-lg flex items-center justify-center bg-slate-100'>
+                {isLoading ? <Spinner /> : <></>}
+              </div>
+            </>
+          )}
+          {/* <img
             src='https://th.bing.com/th/id/OIP.FFchRAWwk-emGNqgImzwaAHaEK?rs=1&pid=ImgDetMain'
             className='object-cover h-full w-full rounded-lg'
-          />
+          /> */}
           <div className='absolute z-20 top-0 right-0 left-0 bottom-0 flex flex-col justify-between items-start p-4 lg:px-10 lg:py-6 bg-brand-blue-transparent h-100 overflow-hidden rounded-lg'>
             <div className='flex w-full items-start justify-between'>
               <div className='flex items-center cursor-pointer' onClick={handleGoBack}>
@@ -227,11 +246,54 @@ const ShowUserProfile = () => {
             </div>
           </div>
           <div className='flex justify-center items-center cursor-pointer absolute left-5 -bottom-3 lg:left-20 lg:-bottom-8 z-30'>
-            <img
+          {user ? (
+              <>
+                {user.ProfilePicture ? (
+                  <>
+                    <div className='w-24 lg:w-60 h-24 lg:h-60 rounded-full flex items-center justify-center bg-black'>
+                      <img
+                        className='w-24 lg:w-60 h-24 lg:h-60 rounded-full'
+                        src={user.ProfilePicture}
+                        alt='Rounded avatar'
+                        onClick={() => {
+                          setIsProfilePictureOpen(true)
+                          if (user.ProfilePicture) {
+                            setSelectedProfileImage(user.ProfilePicture)
+                          } else {
+                            setSelectedProfileImage(null)
+                          }
+                        }}
+                      />
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div
+                      className='w-24 lg:w-60 h-24 lg:h-60 rounded-full flex items-center justify-center border-2 border-dashed bg-brand-light-gray'
+                      onClick={() => {
+                        setIsProfilePictureOpen(true)
+                        if (user.ProfilePicture) {
+                          setSelectedProfileImage(user.ProfilePicture)
+                        } else {
+                          setSelectedProfileImage(null)
+                        }
+                      }}
+                    ></div>
+                  </>
+                )}
+              </>
+            ) : (
+              <>
+                <div className='w-24 lg:w-60 h-24 lg:h-60 rounded-full flex items-center justify-center border-2 border-dashed bg-slate-100'>
+                  {isLoading ? <Spinner /> : <></>}
+                </div>
+              </>
+            )}
+            {/* <img
               className='w-24 lg:w-60 h-24 lg:h-60 rounded-full'
               src='https://flowbite.com/docs/images/people/profile-picture-5.jpg'
               alt='Rounded avatar'
-            />
+            /> */}
           </div>
         </div>
       </div>

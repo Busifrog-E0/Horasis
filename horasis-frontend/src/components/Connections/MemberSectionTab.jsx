@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { relativeTime } from '../../utils/date'
 import DropdownMenu from '../ui/DropdownMenu'
+import UserDropDown from '../ui/UserDropDown'
 
 const MembersSectionTab = ({ lastElement, profile }) => {
   const navigate = useNavigate()
@@ -58,7 +59,7 @@ const MembersSectionTab = ({ lastElement, profile }) => {
             <h4 className='font-medium text-base text-brand-gray-dim mb-3'>
               {relativeTime(new Date().getTime())}
             </h4>
-            <DropdownMenu />
+            <UserDropDown memberProfile={profile} />
           </div>
         </div>
       </div>

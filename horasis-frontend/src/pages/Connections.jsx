@@ -133,6 +133,7 @@ const AllMembersTab = () => {
     getItem(
       `users?&${jsonToQuery(filters)}&NextId=${getNextId(tempFollowers)}`,
       (followers) => {
+        console.log('All Members')
         setFollowers([...tempFollowers, ...followers])
         setIsLoading(false)
       },
@@ -179,6 +180,7 @@ const ConnectionsTab = () => {
     getItem(
       `users?&${jsonToQuery(filters)}&NextId=${getNextId(tempFollowers)}`,
       (followers) => {
+        console.log('Connections')
         setFollowers([...tempFollowers, ...followers])
         setIsLoading(false)
       },
@@ -203,8 +205,6 @@ const ConnectionsTab = () => {
   return <MembersSection members={[]} />
 }
 
-
-
 const tabs = () => [
   {
     key: 0,
@@ -214,7 +214,7 @@ const tabs = () => [
   {
     key: 1,
     title: 'Connections',
-    render: () => <ConnectionsTab/>,
+    render: () => <ConnectionsTab />,
   },
   {
     key: 2,
@@ -227,7 +227,8 @@ const tabs = () => [
     render: () => <FollowersTab />,
   },
 ]
-const Connections = () => {
+
+const Tabs = () => {
   const [activeTab, setActiveTab] = useState(
     _retrieveData(MAINTAB) && _retrieveData(MAINTAB)['connections']
       ? Number(_retrieveData(MAINTAB)['connections'])
@@ -238,6 +239,10 @@ const Connections = () => {
     setActiveTab(item.key)
     _storeData(MAINTAB, { connections: item.key })
   }
+  return <Tab name='connections' activeTab={activeTab} onTabChange={onTabChange} tabs={tabs()} />
+}
+
+const Connections = () => {
   const { updateCurrentUser, currentUserData } = useContext(AuthContext)
   const [isLoading, setIsLoading] = useState(false)
   const [suggested, setSuggested] = useState([])
@@ -259,8 +264,8 @@ const Connections = () => {
     getItem(
       `users?&${jsonToQuery(filters)}&NextId=${getNextId(tempSuggested)}`,
       (result) => {
+        console.log('Suggested')
         setSuggested([...tempSuggested, ...result])
-
         setIsLoading(false)
       },
       (err) => {
@@ -301,7 +306,7 @@ const Connections = () => {
             <h4 className='font-medium text-2xl text-system-primary-accent mt-4 mb-3 lg:mb-6'>
               Connections
             </h4>
-            <Tab name='connections' activeTab={activeTab} onTabChange={onTabChange} tabs={tabs()} />
+            <Tabs />
           </div>
           <div>
             <div className='p-5 bg-system-secondary-bg rounded-lg'>
@@ -312,7 +317,7 @@ const Connections = () => {
               <div className='flex flex-col gap-4'>
                 {suggested.map((item, index) => {
                   const lastElement = suggested.length === index + 1
-                  if(item.DocId === currentUserData.CurrentUser.UserId) return
+                  if (item.DocId === currentUserData.CurrentUser.UserId) return
                   return (
                     <MemberSuggestionTab lastElement={lastElement} key={index} profile={item} />
                   )
