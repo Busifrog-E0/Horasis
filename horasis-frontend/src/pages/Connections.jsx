@@ -312,6 +312,7 @@ const Connections = () => {
               <div className='flex flex-col gap-4'>
                 {suggested.map((item, index) => {
                   const lastElement = suggested.length === index + 1
+                  if(item.DocId === currentUserData.CurrentUser.UserId) return
                   return (
                     <MemberSuggestionTab lastElement={lastElement} key={index} profile={item} />
                   )
