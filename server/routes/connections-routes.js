@@ -13,6 +13,19 @@ import e from 'express';
 import { QueryParameterFormatting, ValidateGetEntity } from '../middleware/common.js';
 const router = e.Router();
 
+
+router.get('/users/:UserId/connections', decodeIDToken, ensureAuthorized("User"), ValidateGetEntity,
+    SwaggerDocs.get_users_UserId_connections, QueryParameterFormatting, GetConnections,
+    GetAUsersConnections);
+
+router.get('/users/:UserId/connections/received', decodeIDToken, ensureAuthorized("User"), ValidateGetEntity,
+    QueryParameterFormatting, GetConnectionsReceived, SwaggerDocs.get_users_UserId_connections,
+    GetAUsersConnections);
+
+router.get('/users/:UserId/connections/sent', decodeIDToken, ensureAuthorized("User"), ValidateGetEntity,
+    QueryParameterFormatting, GetConnectionsSent, SwaggerDocs.get_users_UserId_connections,
+    GetAUsersConnections);
+
 router.post('/connections/:ReceiverId/send', decodeIDToken, ensureAuthorized("User"),
     SwaggerDocs.post_connections_send,
     // @ts-ignore
@@ -38,19 +51,6 @@ router.delete('/connections/:UserId', decodeIDToken, ensureAuthorized("User"),
     SwaggerDocs.delete_connections,
     // @ts-ignore
     asyncHandler(DeleteConnection));
-
-
-router.get('/users/:UserId/connections', decodeIDToken, ensureAuthorized("User"), ValidateGetEntity,
-    SwaggerDocs.get_users_UserId_connections, QueryParameterFormatting, GetConnections,
-    GetAUsersConnections);
-
-router.get('/users/:UserId/connections/received', decodeIDToken, ensureAuthorized("User"), ValidateGetEntity,
-    QueryParameterFormatting, SwaggerDocs.get_users_UserId_connections, GetConnectionsReceived,
-    GetAUsersConnections);
-
-router.get('/users/:UserId/connections/sent', decodeIDToken, ensureAuthorized("User"), ValidateGetEntity,
-    QueryParameterFormatting, SwaggerDocs.get_users_UserId_connections, GetConnectionsSent,
-    GetAUsersConnections);
 
 
 export default router;
