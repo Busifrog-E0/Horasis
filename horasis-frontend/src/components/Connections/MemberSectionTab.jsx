@@ -5,7 +5,7 @@ import { relativeTime } from '../../utils/date'
 import UserDropDown from '../ui/UserDropDown'
 import { AuthContext } from '../../utils/AuthProvider'
 
-const MembersSectionTab = ({ lastElement, profile,updateList }) => {
+const MembersSectionTab = ({ lastElement, profile, updateList, whichTime }) => {
   const { currentUserData } = useContext(AuthContext)
   const navigate = useNavigate()
   const goToProfile = () => {
@@ -16,6 +16,13 @@ const MembersSectionTab = ({ lastElement, profile,updateList }) => {
         navigate(`/ViewProfile/${profile.DocId}`)
       }
     }
+  }
+
+  const whichTimeAgo = {
+    member: 'CreatedIndex',
+    followed: 'FollowedIndex',
+    following: 'FollowingIndex',
+    connection: 'ConnectionIndex',
   }
   return (
     <>
@@ -30,7 +37,7 @@ const MembersSectionTab = ({ lastElement, profile,updateList }) => {
               {profile.ProfilePicture ? (
                 <div className='w-11 h-11 rounded-full bg-black'>
                   <img
-                    className='w-11 h-11 rounded-full'
+                    className='w-11 h-11 rounded-full object-cover'
                     src={profile.ProfilePicture}
                     alt='Rounded avatar'
                   />
@@ -66,7 +73,7 @@ const MembersSectionTab = ({ lastElement, profile,updateList }) => {
           </div>
           <div className='flex flex-col items-end'>
             <h4 className='font-medium text-base text-brand-gray-dim mb-3'>
-              {relativeTime(profile.CreatedIndex)}
+              {relativeTime(profile[whichTimeAgo[whichTime]])}
             </h4>
             <UserDropDown memberProfile={profile} updateList={updateList} />
           </div>

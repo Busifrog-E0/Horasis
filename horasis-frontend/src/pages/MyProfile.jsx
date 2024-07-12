@@ -18,10 +18,10 @@ import Button from '../components/ui/Button'
 import PictureUpload from '../components/Profile/PictureUpload'
 import avatar from '../assets/icons/avatar.svg'
 import cover from '../assets/icons/cover.svg'
-import { ConnectionsTab } from './Connections'
 import EmptyMembers from '../components/Common/EmptyMembers'
+import ConnectionsTab from '../components/Connections/Tabs/ConnectionsTab'
 
-const tabs = (user,getUserDetails) => [
+const tabs = (user, getUserDetails) => [
   {
     key: 0,
     title: 'Timeline',
@@ -42,7 +42,7 @@ const tabs = (user,getUserDetails) => [
             </div>
           </div>
         </div>
-        <EmptyMembers emptyText={"You currently have nothing on your timeline"}/>
+        <EmptyMembers emptyText={'You currently have nothing on your timeline'} />
         {/* <div className='flex flex-col gap-3'>
           <div className='p-5 bg-system-secondary-bg rounded-lg border border-system-file-border'>
             <div className='flex items-start gap-2'>
@@ -124,7 +124,7 @@ const tabs = (user,getUserDetails) => [
     title: 'Connections',
     render: () => (
       <div className='bg-system-secondary-bg p-4 lg:p-6 rounded-b-lg '>
-      <ConnectionsTab/>
+        <ConnectionsTab />
       </div>
     ),
   },
@@ -292,8 +292,6 @@ const MyProfile = () => {
     navigate(-1)
   }
 
-
-
   const onTabChange = (item) => {
     setActiveTab(item.key)
     _storeData(MAINTAB, { MyProfile: item.key })
@@ -459,7 +457,7 @@ const MyProfile = () => {
             src='https://th.bing.com/th/id/OIP.FFchRAWwk-emGNqgImzwaAHaEK?rs=1&pid=ImgDetMain'
             className='object-cover h-full w-full rounded-lg'
           /> */}
-          <div className='absolute z-20 top-0 right-0 left-0 bottom-0 flex flex-col justify-between items-start p-4 lg:px-10 lg:py-6 bg-brand-blue-transparent h-100 overflow-hidden rounded-lg'>
+          <div className='absolute z-20 top-0 right-0 left-0 bottom-0 flex flex-col justify-between items-start p-4 lg:px-10 lg:py-6  h-100 overflow-hidden rounded-lg'>
             <div className='flex w-full items-start justify-between'>
               <div className='flex items-center cursor-pointer' onClick={handleGoBack}>
                 {/* back arrow */}
@@ -732,7 +730,7 @@ const MyProfile = () => {
               onTabChange={onTabChange}
               activeTab={activeTab}
               name='MyProfile'
-              tabs={tabs(user,getUserDetails)}
+              tabs={tabs(user, getUserDetails)}
               alignment='justify-start'
             />
           </div>

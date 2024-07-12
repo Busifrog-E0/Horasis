@@ -17,7 +17,7 @@ import AboutProfile from '../components/Profile/AboutProfile'
 import Button from '../components/ui/Button'
 import avatar from '../assets/icons/avatar.svg'
 import cover from '../assets/icons/cover.svg'
-import {ConnectionsTab} from '../pages/Connections'
+
 const ShowUserProfile = () => {
   const { userid } = useParams()
   const [isLoading, setIsLoading] = useState(false)

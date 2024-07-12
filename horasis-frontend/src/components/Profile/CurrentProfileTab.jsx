@@ -87,7 +87,7 @@ const CurrentProfileTab = () => {
                     {user.ProfilePicture ? (
                       <div className='bg-black'>
                         <img
-                          className='w-28 h-28 rounded-full'
+                          className='w-28 h-28 rounded-full object-cover'
                           src={user.ProfilePicture}
                           alt='Rounded avatar'
                         />

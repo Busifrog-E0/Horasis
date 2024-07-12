@@ -77,7 +77,7 @@ const MemberSuggestionTab = ({ lastElement, profile,updateList }) => {
           {profile.ProfilePicture ? (
             <div className='w-11 h-11 rounded-full bg-black'>
               <img
-                className='w-11 h-11 rounded-full'
+                className='w-11 h-11 rounded-full object-cover'
                 src={profile.ProfilePicture}
                 alt='Rounded avatar'
               />

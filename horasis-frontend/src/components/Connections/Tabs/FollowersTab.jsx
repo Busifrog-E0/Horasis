@@ -1,0 +1,65 @@
+import { useContext, useEffect, useState } from 'react'
+import { AuthContext } from '../../../utils/AuthProvider'
+import { getItem } from '../../../constants/operations'
+import Spinner from '../../ui/Spinner'
+import MembersSection from '../MembersSection'
+import { jsonToQuery } from '../../../utils/searchParams/extractSearchParams'
+import { getNextId } from '../../../utils/URLParams'
+
+const FollowersTab = () => {
+  const { updateCurrentUser, currentUserData } = useContext(AuthContext)
+  const [isLoading, setIsLoading] = useState(false)
+  const [followers, setFollowers] = useState([])
+  const [filters, setFilters] = useState({
+    OrderBy: 'Index',
+    Keyword: '',
+    Limit: 10,
+    Keyword: '',
+  })
+
+  function filter(oby, kw, lt) {
+    var newFilter = { OrderBy: oby, Keyword: kw, Limit: lt }
+    navigate(`?${jsonToQuery(newFilter)}`)
+    setFilters(newFilter)
+  }
+
+  const getFollowers = (tempFollowers) => {
+    setIsLoading(true)
+    getItem(
+      `users/${currentUserData.CurrentUser.UserId}/followers?&${jsonToQuery(
+        filters
+      )}&NextId=${getNextId(tempFollowers)}`,
+      (followers) => {
+        console.log('Followers')
+        setFollowers([...tempFollowers, ...followers])
+        setIsLoading(false)
+      },
+      (err) => {
+        setIsLoading(false)
+        console.log(err)
+      },
+      updateCurrentUser,
+      currentUserData
+    )
+  }
+
+  useEffect(() => {
+    getFollowers([])
+  }, [])
+  if (isLoading)
+    return (
+      <div className='bg-system-secondary-bg p-4 rounded-b-lg '>
+        <Spinner />
+      </div>
+    )
+  return (
+    <MembersSection
+      members={followers}
+      emptyText='You currently have no followers.'
+      updateList={getFollowers}
+      whichTime='followed'
+    />
+  )
+}
+
+export default FollowersTab

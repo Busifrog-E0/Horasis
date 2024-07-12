@@ -3,7 +3,7 @@ import EmptyMembers from '../Common/EmptyMembers'
 import DropdownMenu from '../ui/DropdownMenu'
 import MembersSectionTab from './MemberSectionTab'
 
-const MembersSection = ({ members, emptyText, updateList }) => {
+const MembersSection = ({ members, emptyText, updateList,whichTime }) => {
   return (
     <>
       <div className='bg-system-secondary-bg p-4 rounded-b-lg '>
@@ -20,6 +20,7 @@ const MembersSection = ({ members, emptyText, updateList }) => {
                         profile={item}
                         lastElement={lastElement}
                         updateList={updateList}
+                        whichTime={whichTime}
                       />
                     )
                   })}
