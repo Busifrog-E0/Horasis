@@ -26,7 +26,13 @@ const UserDropDown = ({ memberProfile }) => {
     }
   }
   const goToProfile = () => {
-    navigate(`/ViewProfile/${profile.DocId}`)
+    if (profile) {
+      if (profile.DocId === currentUserData.CurrentUser.UserId) {
+        navigate(`/MyProfile`)
+      } else {
+        navigate(`/ViewProfile/${profile.DocId}`)
+      }
+    }
   }
 
   useEffect(() => {

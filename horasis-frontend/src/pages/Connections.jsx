@@ -60,7 +60,7 @@ const FollowingsTab = () => {
       </div>
     )
 
-  return <MembersSection members={followings} />
+  return <MembersSection members={followings} emptyText='You are not currently following anyone.' />
 }
 
 const FollowersTab = () => {
@@ -108,7 +108,7 @@ const FollowersTab = () => {
         <Spinner />
       </div>
     )
-  return <MembersSection members={followers} />
+  return <MembersSection members={followers} emptyText='You currently have no followers.' />
 }
 
 const AllMembersTab = () => {
@@ -155,13 +155,13 @@ const AllMembersTab = () => {
         <Spinner />
       </div>
     )
-  return <MembersSection members={followers} />
+  return <MembersSection members={followers} emptyText={'No members '} />
 }
 
 const ConnectionsTab = () => {
   const { updateCurrentUser, currentUserData } = useContext(AuthContext)
   const [isLoading, setIsLoading] = useState(false)
-  const [followers, setFollowers] = useState([])
+  const [connections, setConnections] = useState([])
   const [filters, setFilters] = useState({
     OrderBy: 'Index',
     Keyword: '',
@@ -175,13 +175,13 @@ const ConnectionsTab = () => {
     setFilters(newFilter)
   }
 
-  const getFollowers = (tempFollowers) => {
+  const getConnections = (tempConnections) => {
     setIsLoading(true)
     getItem(
-      `users?&${jsonToQuery(filters)}&NextId=${getNextId(tempFollowers)}`,
-      (followers) => {
+      `users/${currentUserData.CurrentUser.UserId}/connections?&${jsonToQuery(filters)}&NextId=${getNextId(tempConnections)}`,
+      (connections) => {
         console.log('Connections')
-        setFollowers([...tempFollowers, ...followers])
+        setConnections([...tempConnections, ...connections])
         setIsLoading(false)
       },
       (err) => {
@@ -194,7 +194,7 @@ const ConnectionsTab = () => {
   }
 
   useEffect(() => {
-    getFollowers([])
+    getConnections([])
   }, [])
   if (isLoading)
     return (
@@ -202,7 +202,7 @@ const ConnectionsTab = () => {
         <Spinner />
       </div>
     )
-  return <MembersSection members={[]} />
+  return <MembersSection members={connections} emptyText='You currently have no connections' />
 }
 
 const tabs = () => [
