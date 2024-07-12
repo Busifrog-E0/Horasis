@@ -1,6 +1,8 @@
 import e from 'express';
 
 import { ReadOneFromComments, ReadComments, UpdateComments, CreateComments, RemoveComments, CommentCount, } from './../databaseControllers/comments-databaseController.js';
+import { IncrementActivities, UpdateActivities } from '../databaseControllers/activities-databaseController.js';
+import { ReadOneFromUsers } from '../databaseControllers/users-databaseController.js';
 /**
  * @typedef {import('./../databaseControllers/comments-databaseController.js').CommentData} CommentData 
  */
@@ -25,8 +27,15 @@ const GetOneFromComments = async (req, res) => {
  */
 const GetComments = async (req, res) => {
     const { Filter, NextId, Limit, OrderBy } = req.query;
+    const { ParentId } = req.params;
     // @ts-ignore
-    const data = await ReadComments(Filter, NextId, Limit, OrderBy);
+    Filter.ParentId = ParentId;
+    // @ts-ignore
+    const Comments = await ReadComments(Filter, NextId, Limit, OrderBy);
+    const data = await Promise.all(Comments.map(async Comment => {
+        const User = await ReadOneFromUsers(Comment.UserId);
+        return {...Comment,User}
+    }))
     return res.json(data);
 }
 
@@ -37,6 +46,8 @@ const GetComments = async (req, res) => {
  * @returns {Promise<e.Response<true>>}
  */
 const PostComments = async (req, res) => {
+    const { ActivityId } = req.params;
+    await IncrementActivities({ NoOfComments: 1 }, ActivityId);
     await CreateComments(req.body);
     return res.json(true);
 }
@@ -60,21 +71,13 @@ const PatchComments = async (req, res) => {
  * @returns {Promise<e.Response<true>>}
  */
 const DeleteComments = async (req, res) => {
-    const { CommentId } = req.params;
+    const { CommentId,ActivityId } = req.params;
     await RemoveComments(CommentId);
+    await IncrementActivities({ NoOfComments: -1 }, ActivityId);
     return res.json(true);
 }
 
-const GetActivityCommentCount = async (ActivityId) => {
-    let NoOfComments = 0;
-    const CommentsData = await ReadComments({ ParentId: ActivityId }, undefined, -1, undefined);
-    CommentsData.forEach(async Comment => {
-        const ReplyCount = await CommentCount({ ParentId: Comment.DocId });
-        NoOfComments += ReplyCount + 1;
-    })
-    return NoOfComments;
-}
 export {
     GetOneFromComments, GetComments, PostComments, PatchComments, DeleteComments,
-    GetActivityCommentCount
+
 }

@@ -7,6 +7,7 @@ import dataHandling from './functions.js'
  * @property {string[]} ReplyIds
  * @property {string} UserId
  * @property {string} DocId
+ * @property {'Comment'|'Reply'} Type
  */
 
 
@@ -65,6 +66,7 @@ const RemoveComments = async (DocId) => {
 const CommentCount = async (Where = {}) => {
     return dataHandling.ReadCount('Comments', Where);
 }
+
 export {
     ReadComments,
     ReadOneFromComments,

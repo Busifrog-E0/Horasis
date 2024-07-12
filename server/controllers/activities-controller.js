@@ -5,7 +5,8 @@ import { GetFileFromURI } from './common.js';
 import { fileTypeFromBuffer } from 'file-type';
 import { AsyncSaveFileToSpaces, documentExtensions, mediaExtensions } from './files-controller.js';
 import { CommentCount, ReadComments } from '../databaseControllers/comments-databaseController.js';
-import { GetActivityCommentCount } from './comments-controller.js';
+import { ReadUsers } from '../databaseControllers/users-databaseController.js';
+
 /**
  * @typedef {import('../databaseControllers/activities-databaseController.js').ActivityData} ActivityData 
  */
@@ -18,9 +19,7 @@ import { GetActivityCommentCount } from './comments-controller.js';
  */
 const GetOneFromActivities = async (req, res) => {
     const { ActivityId } = req.params;
-    const Activity = await ReadOneFromActivities(ActivityId);
-    const NoOfComments = await GetActivityCommentCount(ActivityId);
-    const data = {...Activity,NoOfComments}
+    const data = await ReadOneFromActivities(ActivityId);
     return res.json(data);
 }
 
@@ -33,11 +32,7 @@ const GetOneFromActivities = async (req, res) => {
 const GetActivities = async (req, res) => {
     const { Filter, NextId, Limit, OrderBy } = req.query;
     // @ts-ignore
-    const Activities = await ReadActivities(Filter, NextId, Limit, OrderBy);
-    const data = await Promise.all(Activities.map(async Activity => {
-        const NoOfComments = await GetActivityCommentCount(Activity.DocId);
-        return { ...Activity, NoOfComments }
-    }))
+    const data = await ReadActivities(Filter, NextId, Limit, OrderBy);
     return res.json(data);
 }
 
@@ -96,17 +91,17 @@ const DeleteActivities = async (req, res) => {
 const SeperateAttachments = async (Attachments, UserId) => {
     let Documents = [], MediaFiles = [];
 
-    Attachments.forEach(File => {
+    Attachments.forEach(async File => {
         const { FileData, FileName } = File;
         const FileBuffer = new Uint8Array(FileData)
         //@ts-ignore
         const { ext, mime } = fileTypeFromBuffer(FileBuffer);
         if (documentExtensions.includes(ext)) {
-            const FileURI = AsyncSaveFileToSpaces(UserId, `doc_${FileName}`, FileData, mime)
+            const FileURI =await AsyncSaveFileToSpaces(UserId, `doc_${FileName}`, FileData, mime)
             Documents.push(FileURI);
         }
         else if (mediaExtensions.includes(ext)) {
-            const FileURI = AsyncSaveFileToSpaces(UserId, `media_${FileName}`, FileData, mime)
+            const FileURI = await AsyncSaveFileToSpaces(UserId, `media_${FileName}`, FileData, mime)
             MediaFiles.push(FileURI);
         }
         else {
@@ -120,10 +115,26 @@ const SeperateAttachments = async (Attachments, UserId) => {
 const ActivityInit = (Activity) => {
     return {
         NoOfLikes: 0,
-        ...Activity
+        ...Activity,
+        NoOfComments : 0
     }
 }
 
+const ExtractMentionedUsersFromContent = (Content) => {
+    const mentionPattern = /@(\w+)/g; 
+    const mentions = Content.match(mentionPattern);
+    let Users = [];
+    mentions.forEach(async Username => {
+        const User = await ReadUsers({ Username }, undefined, 1, undefined);
+        if (User.length > 0) {
+            Users.push({Username,UserId : User[0].DocId})
+        }
+    })
+    return Users;
+};
+
+
 export {
-    GetOneFromActivities, GetActivities, PostActivities, PatchActivities, DeleteActivities
+    GetOneFromActivities, GetActivities, PostActivities, PatchActivities, DeleteActivities,
+
 }

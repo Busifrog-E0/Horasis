@@ -8,9 +8,11 @@ import dataHandling from "./functions.js";
  * @property {string[]} Documents
  * @property {string[]} Mentions
  * @property {string[]} LikedIds
- * @property {string[]} Attatchments
+ * @property {string[]} Attachments
  * @property {number} NoOfLikes
  * @property {string} DocId
+ * @property {'Feed'|'Event'|'Discussion'} Type
+ * @property {string} ParentId
  */
 
 /**
@@ -63,4 +65,11 @@ const RemoveActivities = async (DocId) => {
   return dataHandling.Delete("Activities", DocId);
 };
 
-export { ReadActivities, ReadOneFromActivities, UpdateActivities, CreateActivities, RemoveActivities };
+const IncrementActivities = async (data,DocId) => {
+  return dataHandling.Update("Activities", data, DocId, ["$inc"]);
+}
+
+export {
+  ReadActivities, ReadOneFromActivities, UpdateActivities, CreateActivities, RemoveActivities,
+  IncrementActivities
+ };
