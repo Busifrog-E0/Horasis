@@ -21,7 +21,6 @@ app.use(urlencoded({
     extended: true
 }));
 import errorHandler from './middleware/errorHandling-middleware.js';
-app.use(errorHandler);
 
 
 import swaggerUi from 'swagger-ui-express';
@@ -37,6 +36,7 @@ app.use((req, res, next) => {
 
 app.use(router);
 
+app.use(errorHandler);
 
 
 
