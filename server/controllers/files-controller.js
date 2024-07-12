@@ -1,7 +1,14 @@
 import { writeFileSync, readFileSync, unlinkSync } from 'fs';
-import {fileTypeFromBuffer } from 'file-type';
+import { fileTypeFromBuffer } from 'file-type';
 import dotenv from 'dotenv';
 dotenv.config();
+
+const documentExtensions = [
+    'pdf'];
+
+const mediaExtensions = [
+    'jpeg', 'jpg', 'mp4', 'mkv'];
+
 
 /**
  * Converts a byte array to a file and saves it to the specified file path.
@@ -100,7 +107,7 @@ const PostFilesUsers = async (req, res) => {
     const { mime: FileType } = await fileTypeFromBuffer(FileData8Array);
     // @ts-ignore
     const FilePath = `${req.user.UserId}/${req.body.FileFieldName}`;
-    SaveFileToSpaces("Users", FilePath, req.body.FileData,FileType, res)
+    SaveFileToSpaces("Users", FilePath, req.body.FileData, FileType, res)
 }
 
 
@@ -112,13 +119,13 @@ const PostFilesUsers = async (req, res) => {
  * @param {e.Response} res 
  */
 const PostFilesAdmin = async (req, res) => {
- 
+
     const FileData8Array = new Uint8Array(req.body.FileData);
     //@ts-ignore
     const { mime: FileType } = await fileTypeFromBuffer(FileData8Array);
     // @ts-ignore
     const FilePath = `${Date.now()}${req.body.FileName}`;
-    SaveFileToSpaces("Admin", FilePath, req.body.FileData,FileType, res)
+    SaveFileToSpaces("Admin", FilePath, req.body.FileData, FileType, res)
 }
 
 /**
@@ -149,4 +156,6 @@ export {
     AsyncSaveFileToSpaces,
     getFileArrayBuffer,
     FileDelete,
+    documentExtensions,
+    mediaExtensions
 }

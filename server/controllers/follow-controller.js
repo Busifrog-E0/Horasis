@@ -27,32 +27,27 @@ const GetOneFromFollows = async (req, res) => {
  * @param {boolean} IsFollowers 
  * @returns 
  */
-const GetFollows =  (IsFollowers) =>
-    /**
-     * @param {e.Request} req 
-     * @param {e.Response} res 
-     * @returns 
-     */
-    async (req, res) => {
-        const { UserId } = req.params;
-        let OtherUser = ""
+const GetFollows = (IsFollowers) => async (/** @type {e.Request} */ req, /** @type {e.Response} */ res) => {
+    
+    const { UserId } = req.params;
+    let OtherUser = ""
     const { Filter, NextId, Limit, OrderBy } = req.query;
-        if (IsFollowers) {
-            //@ts-ignore
-            Filter.FolloweeId = UserId;
-            OtherUser = "FollowerId"
-        }
-        else {
-            //@ts-ignore
-            Filter.FollowerId = UserId;
-            OtherUser = "FolloweeId"
-        }
+    if (IsFollowers) {
+        //@ts-ignore
+        Filter.FolloweeId = UserId;
+        OtherUser = "FollowerId"
+    }
+    else {
+        //@ts-ignore
+        Filter.FollowerId = UserId;
+        OtherUser = "FolloweeId"
+    }
     //@ts-ignore
     const data = await ReadFollows(Filter, NextId, Limit, OrderBy);
-        const Users = await Promise.all(data.map(Follow => {
-            const OtherUserId = Follow[OtherUser];
-            return ViewOtherUserData(UserId, OtherUserId);
-        }));
+    const Users = await Promise.all(data.map(Follow => {
+        const OtherUserId = Follow[OtherUser];
+        return ViewOtherUserData(UserId, OtherUserId);
+    }));
     return res.json(Users);
 }
 
@@ -69,7 +64,7 @@ const GetFollowNumber = async (req, res) => {
     const Followings = await GetFollowCount({ FollowerId: UserId });
     return res.json({
         NoOfFollowers: Followers,
-        NoOfFollowings : Followings
+        NoOfFollowings: Followings
     })
 }
 
@@ -113,9 +108,9 @@ const PatchFollows = async (req, res) => {
  * @returns {Promise<e.Response<true>>}
  */
 const DeleteFollows = async (req, res) => {
-    const { FolloweeId,UserId } = req.params;
+    const { FolloweeId, UserId } = req.params;
     //@ts-ignore
-    const Follow = await ReadFollows({ FolloweeId, FollowerId  : UserId}, undefined, 1, undefined);
+    const Follow = await ReadFollows({ FolloweeId, FollowerId: UserId }, undefined, 1, undefined);
     if (Follow.length == 0) {
         return res.json("Already not following this profile")
     }
