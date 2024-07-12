@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import Button from '../ui/Button'
 import { useNavigate } from 'react-router-dom'
+import avatar from '../../assets/icons/avatar.svg'
 
 const MemberSuggestionTab = ({ lastElement, profile }) => {
   const navigate = useNavigate()
@@ -15,16 +16,19 @@ const MemberSuggestionTab = ({ lastElement, profile }) => {
       <div className={`${lastElement === true ? '' : 'border-b border-system-file-border pb-3'}`}>
         <div className='flex items-start gap-4'>
           {profile.ProfilePicture ? (
-            <>
+            <div className='w-11 h-11 rounded-full bg-black'>
               <img
                 className='w-11 h-11 rounded-full'
                 src={profile.ProfilePicture}
                 alt='Rounded avatar'
               />
-            </>
+            </div>
           ) : (
             <>
-              <div className='w-11 h-11 rounded-full bg-brand-light-gray'></div>
+              <div className='w-11 h-11 rounded-full bg-brand-light-gray'>
+              <img src={avatar} className='object-cover h-full w-full rounded-lg' />
+
+              </div>
             </>
           )}
           {/* <img

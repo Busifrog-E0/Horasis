@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom'
 import { relativeTime } from '../../utils/date'
 import DropdownMenu from '../ui/DropdownMenu'
 import UserDropDown from '../ui/UserDropDown'
+import avatar from '../../assets/icons/avatar.svg'
 
 const MembersSectionTab = ({ lastElement, profile }) => {
   const navigate = useNavigate()
@@ -21,16 +22,19 @@ const MembersSectionTab = ({ lastElement, profile }) => {
           {profile ? (
             <>
               {profile.ProfilePicture ? (
-                <>
+                <div className='w-11 h-11 rounded-full bg-black'>
                   <img
                     className='w-11 h-11 rounded-full'
                     src={profile.ProfilePicture}
                     alt='Rounded avatar'
                   />
-                </>
+                </div>
               ) : (
                 <>
-                  <div className='w-11 h-11 rounded-full bg-brand-light-gray'></div>
+                  <div className='w-11 h-11 rounded-full bg-brand-light-gray'>
+                  <img src={avatar} className='object-cover h-full w-full rounded-lg' />
+
+                  </div>
                 </>
               )}
             </>

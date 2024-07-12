@@ -15,6 +15,8 @@ import Input from '../components/ui/Input'
 import Spinner from '../components/ui/Spinner'
 import AboutProfile from '../components/Profile/AboutProfile'
 import Button from '../components/ui/Button'
+import avatar from '../assets/icons/avatar.svg'
+import cover from '../assets/icons/cover.svg'
 const ShowUserProfile = () => {
   const { userid } = useParams()
   const [isLoading, setIsLoading] = useState(false)
@@ -204,7 +206,10 @@ const ShowUserProfile = () => {
                 </>
               ) : (
                 <>
-                  <div className='w-full h-full rounded-lg flex items-center justify-center  bg-slate-100'></div>
+                  <div className='w-full h-full rounded-lg flex items-center justify-center  bg-slate-100'>
+                  <img src={cover} className='object-cover h-full w-full rounded-lg' />
+
+                  </div>
                 </>
               )}
             </>
@@ -278,7 +283,10 @@ const ShowUserProfile = () => {
                           setSelectedProfileImage(null)
                         }
                       }}
-                    ></div>
+                    >
+                  <img src={avatar} className='object-cover h-full w-full rounded-lg' />
+
+                    </div>
                   </>
                 )}
               </>
@@ -377,7 +385,7 @@ const ShowUserProfile = () => {
                       />
                     </svg>
                   </div>
-                  <h4 className='font-medium text-xl text-brand-gray-dim'>{user && user.Email}</h4>
+                  <h4 className='font-medium text-xl text-brand-gray-dim truncate'>{user && user.Email}</h4>
                 </div>
                 <div className='flex items-center gap-2'>
                   <div className='justify-end text-system-primary-accent'>
@@ -397,7 +405,7 @@ const ShowUserProfile = () => {
                       />
                     </svg>
                   </div>
-                  <h4 className='font-medium text-xl text-brand-gray-dim'>
+                  <h4 className='font-medium text-xl text-brand-gray-dim truncate'>
                     {user && user.Country}
                   </h4>
                 </div>
@@ -419,7 +427,7 @@ const ShowUserProfile = () => {
                       />
                     </svg>
                   </div>
-                  <h4 className='font-medium text-xl text-brand-gray-dim'>
+                  <h4 className='font-medium text-xl text-brand-gray-dim truncate' >
                     {user && user.JobTitle}
                   </h4>
                 </div>
@@ -441,7 +449,7 @@ const ShowUserProfile = () => {
                       />
                     </svg>
                   </div>
-                  <h4 className='font-medium text-xl text-brand-gray-dim'>
+                  <h4 className='font-medium text-xl text-brand-gray-dim truncate'>
                     {user && user.CompanyName}
                   </h4>
                 </div>

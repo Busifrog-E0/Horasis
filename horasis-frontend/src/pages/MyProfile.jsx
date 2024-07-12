@@ -16,6 +16,8 @@ import Spinner from '../components/ui/Spinner'
 import AboutProfile from '../components/Profile/AboutProfile'
 import Button from '../components/ui/Button'
 import PictureUpload from '../components/Profile/PictureUpload'
+import avatar from '../assets/icons/avatar.svg'
+import cover from '../assets/icons/cover.svg'
 
 const MyProfile = () => {
   const [activeTab, setActiveTab] = useState(
@@ -435,7 +437,9 @@ const MyProfile = () => {
                 </>
               ) : (
                 <>
-                  <div className='w-full h-full rounded-lg flex items-center justify-center  bg-slate-100'></div>
+                  <div className='w-full h-full rounded-lg flex items-center justify-center  bg-slate-100'>
+                    <img src={cover} className='object-cover h-full w-full rounded-lg' />
+                  </div>
                 </>
               )}
             </>
@@ -457,9 +461,14 @@ const MyProfile = () => {
                 <h4 className='font-medium text-xl text-brand-secondary'>Back</h4>
               </div>
               <div
-              onClick={()=>{
-                setIsCoverPictureOpen(true)
-              }}
+                onClick={() => {
+                  setIsCoverPictureOpen(true)
+                  if (user.ProfilePicture) {
+                    setSelectedCoverImage(user.CoverPicture)
+                  } else {
+                    setSelectedCoverImage(null)
+                  }
+                }}
                 className={`inline-flex items-center justify-center w-12 h-12 p-3 overflow-hidden rounded-full border border-white bg-white cursor-pointer`}
               >
                 <svg
@@ -512,7 +521,9 @@ const MyProfile = () => {
                           setSelectedProfileImage(null)
                         }
                       }}
-                    ></div>
+                    >
+                      <img src={avatar} className='object-cover h-full w-full rounded-lg' />
+                    </div>
                   </>
                 )}
               </>
@@ -637,7 +648,7 @@ const MyProfile = () => {
                         />
                       </svg>
                     </div>
-                    <h4 className='font-medium text-xl text-brand-gray-dim'>
+                    <h4 className='font-medium text-xl text-brand-gray-dim truncate'>
                       {user && user.Email}
                     </h4>
                   </div>
@@ -659,7 +670,7 @@ const MyProfile = () => {
                         />
                       </svg>
                     </div>
-                    <h4 className='font-medium text-xl text-brand-gray-dim'>
+                    <h4 className='font-medium text-xl text-brand-gray-dim truncate'>
                       {user && user.Country}
                     </h4>
                   </div>
@@ -681,7 +692,7 @@ const MyProfile = () => {
                         />
                       </svg>
                     </div>
-                    <h4 className='font-medium text-xl text-brand-gray-dim'>
+                    <h4 className='font-medium text-xl text-brand-gray-dim truncate'>
                       {user && user.JobTitle}
                     </h4>
                   </div>
@@ -703,7 +714,7 @@ const MyProfile = () => {
                         />
                       </svg>
                     </div>
-                    <h4 className='font-medium text-xl text-brand-gray-dim'>
+                    <h4 className='font-medium text-xl text-brand-gray-dim truncate'>
                       {user && user.CompanyName}
                     </h4>
                   </div>

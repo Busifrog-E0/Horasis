@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { AuthContext } from '../../utils/AuthProvider'
 import { getItem } from '../../constants/operations'
 import Spinner from '../ui/Spinner'
+import avatar from '../../assets/icons/avatar.svg'
 
 const CurrentProfileTab = () => {
   const { currentUserData, updateCurrentUser, scrollToTop } = useContext(AuthContext)
@@ -80,14 +81,33 @@ const CurrentProfileTab = () => {
               className='flex justify-center items-center cursor-pointer'
               onClick={GoToProfilePage}
             >
-              <div className='w-28 h-28 rounded-full bg-brand-light-gray'>
-                {user && user.ProfilePicture && (
+              <div className='w-28 h-28 rounded-full bg-brand-light-gray overflow-hidden'>
+                {user ? (
+                  <>
+                    {user.ProfilePicture ? (
+                      <div className='bg-black'>
+                        <img
+                          className='w-28 h-28 rounded-full'
+                          src={user.ProfilePicture}
+                          alt='Rounded avatar'
+                        />
+                      </div>
+                    ) : (
+                      <div className='bg-brand-light-gray'>
+                        <img src={avatar} className='object-cover h-full w-full rounded-lg' />
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <></>
+                )}
+                {/* {user && user.ProfilePicture && (
                   <img
                     className='w-28 h-28 rounded-full'
                     src={user.ProfilePicture}
                     alt='Rounded avatar'
                   />
-                )}
+                )} */}
                 {/* <img
                   className='w-28 h-28 rounded-full'
                   src='https://flowbite.com/docs/images/people/profile-picture-5.jpg'

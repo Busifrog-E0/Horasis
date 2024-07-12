@@ -1,6 +1,8 @@
 import { useRef } from 'react'
 import Spinner from '../ui/Spinner'
 import Button from '../ui/Button'
+import avatar from '../../assets/icons/avatar.svg'
+import cover from '../../assets/icons/cover.svg'
 
 const PictureUpload = ({
   onImageSelect,
@@ -87,7 +89,7 @@ const PictureUpload = ({
           ref={fileInputRef}
         />
         {selectedImage ? (
-          <div className=' w-full flex items-center justify-center'>
+          <div className=' w-full flex items-center justify-center'  >
             {isBanner ? (
               <>
                 {isUploading ? (
@@ -99,7 +101,8 @@ const PictureUpload = ({
                     src={selectedImage}
                     alt={altTitle}
                     // className='h-[150px] w-[320px] rounded-md object-cover'
-                    className='w-full lg:w-full h-24 lg:h-60 rounded-md object-cover'
+                    className='w-full lg:w-full h-24 lg:h-60 rounded-md object-cover cursor-pointer'
+                    onClick={handleClick}
                   />
                 )}
               </>
@@ -115,7 +118,8 @@ const PictureUpload = ({
                       src={selectedImage}
                       alt={altTitle}
                       // className='h-32 w-32 rounded-full object-cover'
-                      className='w-24 lg:w-60 h-24 lg:h-60 rounded-full object-cover'
+                      className='w-24 lg:w-60 h-24 lg:h-60 rounded-full object-cover cursor-pointer'
+                      onClick={handleClick}
                     />
                   </div>
                 )}
@@ -130,7 +134,14 @@ const PictureUpload = ({
                   <Spinner />
                 ) : (
                   // <ImagePlus className='text-border h-16 w-16' />
-                  <></>
+                  <>
+                    <img
+                      className='w-full h-full object-cover cursor-pointer'
+                      src={cover}
+                      alt='Rounded avatar'
+                      onClick={handleClick}
+                    />
+                  </>
                 )}
               </div>
             ) : (
@@ -139,7 +150,14 @@ const PictureUpload = ({
                   <Spinner />
                 ) : (
                   // <UserPlus2 className='text-border h-12 w-12' />
-                  <></>
+                  <>
+                     <img
+                    className='w-full h-full rounded-full cursor-pointer'
+                    src={avatar}
+                    alt='Rounded avatar'
+                    onClick={handleClick}
+                  />
+                  </>
                 )}
               </div>
             )}
