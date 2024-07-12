@@ -11,7 +11,7 @@ const UserSchema = Joi.object({
     JobTitle: Joi.string(),
     Industry: Joi.string(),
     CompanyName: Joi.string(),
-    About: Joi.string().max(500),
+    About: Joi.string().max(500).allow(""),
 });
 
 
