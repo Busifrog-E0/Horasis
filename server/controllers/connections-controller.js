@@ -3,6 +3,7 @@ import e from 'express';
 import { ReadOneFromConnections, ReadConnections, UpdateConnections, CreateConnections, RemoveConnections, } from './../databaseControllers/connections-databaseController.js';
 import moment from 'moment';
 import { AlertBoxObject } from './common.js';
+import { ViewOtherUserData } from './users-controller.js';
 /**
  * @typedef {import('./../databaseControllers/connections-databaseController.js').ConnectionData} ConnectionData 
  */
@@ -16,12 +17,13 @@ import { AlertBoxObject } from './common.js';
 const GetAUsersConnections = async (req, res) => {
     const { Filter, NextId, Limit, OrderBy } = req.query;
     // @ts-ignore
-    const SenderId = req.user.UserId;
-    // @ts-ignore
-    Filter.SenderId = SenderId;
+    const UserId = req.user.UserId;
     // @ts-ignore
     const data = await ReadConnections(Filter, NextId, Limit, OrderBy);
-    return res.json(data);
+
+    const UserData = await Promise.all(data.map(id => ViewOtherUserData(UserId,
+        id.UserIds.filter(element => element !== UserId)[0])));
+    return res.json(UserData);
 }
 
 /**
@@ -33,7 +35,7 @@ const GetAUsersConnections = async (req, res) => {
 const PostConnectionSend = async (req, res) => {
     // @ts-ignore
     const SenderId = req.user.UserId;
-    const { ReceiverId } = req.body;
+    const { ReceiverId } = req.params;
     const ConnectionData = {
         UserIds: [SenderId, ReceiverId],
         SenderId: SenderId,
@@ -76,7 +78,7 @@ const PostConnectionSend = async (req, res) => {
 const PostConnectionAccept = async (req, res) => {
     // @ts-ignore
     const ReceiverId = req.user.UserId;
-    const { SenderId } = req.body;
+    const { SenderId } = req.params;
 
     const existingConnection = await ReadConnections({ UserIds: { $all: [SenderId, ReceiverId] }, Status: "Connected" }, undefined, 1, undefined);
     if (existingConnection.length !== 0) {
@@ -104,7 +106,7 @@ const PostConnectionAccept = async (req, res) => {
 const DeleteConnectionReject = async (req, res) => {
     // @ts-ignore
     const ReceiverId = req.user.UserId;
-    const { SenderId } = req.body;
+    const { SenderId } = req.params;
 
     const existingConnection = await ReadConnections({ UserIds: { $all: [SenderId, ReceiverId] }, Status: "Connected" }, undefined, 1, undefined);
     if (existingConnection.length !== 0) {
@@ -112,7 +114,7 @@ const DeleteConnectionReject = async (req, res) => {
     }
     const ConnectionData = (await ReadConnections({ SenderId, ReceiverId, "Status": "Pending" }, undefined, 1, undefined))[0];
     if (!ConnectionData) {
-        res.status(444).json(AlertBoxObject('Invalid Request', 'No pending friend request from this user'));
+        return res.status(444).json(AlertBoxObject('Invalid Request', 'No pending friend request from this user'));
     }
     await RemoveConnections(ConnectionData.DocId);
     return res.json(true)
@@ -128,7 +130,7 @@ const DeleteConnectionReject = async (req, res) => {
 const DeleteConnectionCancel = async (req, res) => {
     // @ts-ignore
     const SenderId = req.user.UserId;
-    const { ReceiverId } = req.body;
+    const { ReceiverId } = req.params;
 
     const existingConnection = await ReadConnections({ UserIds: { $all: [SenderId, ReceiverId] }, Status: "Connected" }, undefined, 1, undefined);
     if (existingConnection.length !== 0) {
@@ -136,7 +138,7 @@ const DeleteConnectionCancel = async (req, res) => {
     }
     const ConnectionData = (await ReadConnections({ SenderId, ReceiverId, "Status": "Pending" }, undefined, 1, undefined))[0];
     if (!ConnectionData) {
-        res.status(444).json(AlertBoxObject('Invalid Request', 'No pending request '));
+        return res.status(444).json(AlertBoxObject('Invalid Request', 'No pending request '));
     }
     await RemoveConnections(ConnectionData.DocId);
     return res.json(true)
@@ -153,7 +155,7 @@ const DeleteConnection = async (req, res) => {
 
     // @ts-ignore
     const MyId = req.user.UserId;
-    const { UserId } = req.body;
+    const { UserId } = req.params;
 
     const ConnectionData = (await ReadConnections({ UserIds: { $all: [MyId, UserId] }, Status: "Connected" }, undefined, 1, undefined))[0];
     if (!ConnectionData) {
@@ -163,6 +165,27 @@ const DeleteConnection = async (req, res) => {
     return res.json(true)
 }
 
+
+
+/**
+ * 
+ * @param {string} MyId 
+ * @param {string} TheirId 
+ */
+const ConnectionStatus = async (MyId, TheirId) => {
+    const ConnectionData = (await ReadConnections({ UserIds: { $all: [MyId, TheirId] } }, undefined, 1, undefined))[0];
+    if (!ConnectionData) {
+        return { Status: "No Connection", ConnectionIndex: 0 };
+    }
+    else if (ConnectionData.Status === "Connected") {
+        return { Status: "Connected", ConnectionIndex: ConnectionData.AcceptedIndex };
+    }
+    else if (ConnectionData.ReceiverId === MyId) {
+        return { Status: "Connection Received", ConnectionIndex: ConnectionData.CreatedIndex };
+    }
+    return { Status: "Connection Requested", ConnectionIndex: ConnectionData.CreatedIndex };
+}
+
 export {
     GetAUsersConnections,
     PostConnectionSend,
@@ -170,4 +193,5 @@ export {
     DeleteConnectionReject,
     DeleteConnectionCancel,
     DeleteConnection,
+    ConnectionStatus,
 }

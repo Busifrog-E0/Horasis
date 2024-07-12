@@ -8,6 +8,8 @@
  * @returns 
  */
 
+import axios from "axios";
+
 
 const AlertBoxObject = (Header, Message, SubscriptionButton = false, CloseButton = true, UpdateButton = false) => {
     return {
@@ -36,8 +38,33 @@ const getOTP = (TestUser = false) => {
      return "123456";
 }
 
+/**
+ * 
+ * @param {object} Data 
+ */
+const GetNonEmptyFieldsPercentage = (Data) => {
+    let NoOfFields = 0;
+    let NoOfFilledFields = 0;
+    for (const Field in Data) {
+        NoOfFields++;
+        if (Data[Field] !== undefined && Data[Field] !== "") {
+            NoOfFilledFields++;
+        }
+    }
+    return NoOfFilledFields / NoOfFields;
+}
+
+const GetFileFromURI = async (URI) => {
+    const FileResponse = await axios.get(URI, {
+        responseType : "arraybuffer"
+    });
+    const File = Buffer.from(FileResponse.data, 'binary');
+    return File;
+}
 
 export {
     AlertBoxObject,
-    getOTP
+    getOTP,
+    GetNonEmptyFieldsPercentage,
+    GetFileFromURI
 }

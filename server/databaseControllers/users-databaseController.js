@@ -5,7 +5,7 @@ import dataHandling from './functions.js'
 /**
  * @typedef {object} UserData
  * @property {string} FullName
- * @property {string} Username  //not shown while registering?
+ * @property {string} Username  
  * @property {string} Email
  * @property {string} DocId
  * @property {string} Password
@@ -15,9 +15,20 @@ import dataHandling from './functions.js'
  * @property {string} Industry
  * @property {string} CompanyName
  * @property {string} About
+ * @property {string} ProfilePicture
+ * @property {string} CoverPicture
  */
 
-
+/**
+ * @typedef {object} OtherUserData
+ * @property {string} ConnectionStatus
+ * @property {boolean} IsFollowed
+ * @property {boolean} IsFollowing
+ * @property {number} FollowIndex
+ * @property {number} FollowingIndex
+ * @property {number} FollowedIndex
+ * @property {number} ConnectionIndex
+ */
 
 /**
  * 

@@ -21,7 +21,6 @@ const UserData = {
     "Username": "janedoe",
     "Email": "jane.doe@example.com",
     "DocId": "abc123DEF",
-    "Password": "securePassword123!",
     "Country": "Canada",
     "City": "Toronto",
     "JobTitle": "Product Manager",
@@ -34,8 +33,22 @@ const OTPVerifyData = {
     "OTP": "123456",
     "OTPId" : "string"
 }
+
+const PatchUserData = {
+    FullName: "John Doe",
+    Username: "johndoe",
+    Country: "USA",
+    CompanyName: "Tech Corp",
+    About: "Experienced developer",
+    JobTitle: "Software Engineer",
+}
+const UserDataArray = [UserData]
+
+
 export default {
     UserRegisterData,OTPVerifyData,
     UserLoginData,
-    UserData
+    UserData,
+    PatchUserData,
+    UserDataArray
 }

@@ -4,8 +4,11 @@ import moment from 'moment-timezone';
 import { ReadOneFromUsers, ReadUsers, UpdateUsers, CreateUsers, RemoveUsers, } from './../databaseControllers/users-databaseController.js';
 import { AccountVerificationEmail, SendOTPEmail } from './emails-controller.js';
 import { CreateEmailVerifications, ReadOneFromEmailVerifications, UpdateEmailVerifications } from '../databaseControllers/emailVerification-databaseController.js';
-import { GenerateToken, SendRegisterOTP, VerifyOTP } from './auth-controller.js';
-import { getOTP } from './common.js';
+import { GenerateToken, SendRegisterOTP, TokenData, VerifyOTP } from './auth-controller.js';
+import { GetNonEmptyFieldsPercentage, getOTP } from './common.js';
+import { ReadConnections } from '../databaseControllers/connections-databaseController.js';
+import { ReadFollows } from '../databaseControllers/follow-databaseController.js';
+import { ConnectionStatus } from './connections-controller.js';
 
 
 
@@ -18,16 +21,23 @@ const RegisterUrl = "";
  * @typedef {import('./../databaseControllers/users-databaseController.js').UserData} UserData 
  */
 
+/**
+ * @typedef {import('./../databaseControllers/users-databaseController.js').OtherUserData} OtherUserData
+ */
 
 /**
  * 
  * @param {e.Request} req 
  * @param {e.Response} res 
- * @returns {Promise<e.Response<UserData>>}
+ * @returns {Promise<e.Response<UserData & OtherUserData>>}
  */
 const GetOneFromUsers = async (req, res) => {
     const { UserId } = req.params;
-    const data = await ReadOneFromUsers(UserId);
+    //@ts-ignore
+    let data = await ViewOtherUserData(req.user.UserId, UserId);
+    const ProfileCompletionPercentage = GetNonEmptyFieldsPercentage(data);
+    //@ts-ignore
+    data.ProfileCompletionPercentage = ProfileCompletionPercentage;
     return res.json(data);
 }
 
@@ -35,12 +45,17 @@ const GetOneFromUsers = async (req, res) => {
  * 
  * @param {e.Request} req 
  * @param {e.Response} res 
- * @returns {Promise<e.Response<Array<UserData>>>}
+ * @returns {Promise<e.Response<Array<UserData & OtherUserData>>>}
  */
 const GetUsers = async (req, res) => {
     const { Filter, NextId, Limit, OrderBy } = req.query;
     // @ts-ignore
-    const data = await ReadUsers(Filter, NextId, Limit, OrderBy);
+    const Users = await ReadUsers(Filter, NextId, Limit, OrderBy);
+    const data = await Promise.all(Users.map(async User => {
+        //@ts-ignore
+        const OtherUser = await ViewOtherUserRelations(req.user.UserId, User.DocId)
+        return { ...User, ...OtherUser };
+    }))
     return res.json(data);
 }
 
@@ -54,6 +69,10 @@ const GetUsers = async (req, res) => {
  */
 const PostUsersRegister = async (req, res) => {
 
+    const Users = await ReadUsers({ Username: req.body.Username }, undefined, 1, undefined);
+    if (Users.length > 0) {
+        return res.status(444).json("Username already in use");;
+    }
     const CheckEmailExists = await ReadUsers({ Email: req.body.Email }, undefined, 1, undefined);
     if (CheckEmailExists.length > 0) {
         return res.status(444).json("User with Email already exists");
@@ -78,12 +97,9 @@ const VerifyRegistrationOTP = async (req, res) => {
         Role: "User",
         UserId
     }
-    const { Token, RefreshToken } = await GenerateToken(CurrentUser);
-    return res.json({
-        CurrentUser,
-        Token,
-        RefreshToken
-    })
+    const LoginData = await TokenData(CurrentUser);
+
+    return res.json(LoginData);
 }
 
 /**
@@ -93,38 +109,16 @@ const VerifyRegistrationOTP = async (req, res) => {
  * @returns {Promise<e.Response<true>>}
  */
 const PatchUsers = async (req, res) => {
+    const CheckUserExists = await ReadUsers({ Username: req.body.Username }, undefined, 1, undefined);
+    //@ts-ignore
+    if (CheckUserExists.length > 0 && CheckUserExists[0].DocId !== req.user.UserId) {
+        return res.status(444).json("Username already in use");
+    }
     const { UserId } = req.params;
     await UpdateUsers(req.body, UserId);
     return res.json(true);
 }
 
-
-/* const SendUserEmailVerification = async (UserData) => {
-    const EmailVerification = {
-        UserId: UserData.DocId,
-        CreatedIndex: moment().valueOf(),
-        Verified: false
-    }
-    const EmailVerificationId = await CreateEmailVerifications(EmailVerification);
-    const VerificationLink = `${ApiBaseUrl}/api/users/${EmailVerification.UserId}/verify/${EmailVerificationId}`;
-    return AccountVerificationEmail(UserData, VerificationLink);
-}
-
-const VerifyUserEmail = async (req, res) => {
-    const { EmailVerificationId } = req.params;
-    const EmailVerificationData = await ReadOneFromEmailVerifications(EmailVerificationId);
-    if (moment(EmailVerificationData.CreatedIndex).add(15, "minute").isAfter(moment())) {
-        return res.redirect(`${WebUrl}/${EmailVerificationExpiryRoute}`)
-    }
-    if (EmailVerificationData.Verified) {
-        res.redirect(WebUrl);
-    }
-    await Promise.all([
-        UpdateEmailVerifications({ "Verified": true, VerifiedIndex: moment().valueOf() }, EmailVerificationData.DocId),
-        UpdateUsers({ EmailVerification: true }, EmailVerificationData.UserId),
-    ])
-    return res.redirect(WebUrl);
-} */
 /**
  * 
  * @param {e.Request} req 
@@ -147,13 +141,9 @@ const UserLogin = async (req, res) => {
             Role: 'User',
             UserId: User.DocId
         }
-        const { Token, RefreshToken } = await GenerateToken(CurrentUser);
+        const LoginData = await TokenData(CurrentUser);        
 
-        return res.json({
-            CurrentUser,
-            Token,
-            RefreshToken
-        });
+        return res.json(LoginData);
     }
 }
 
@@ -184,14 +174,96 @@ const CheckUsernameAvailability = (IsEdit) =>
 
 /**
  * 
+ * @param {string} UserId 
+ * @param {string} OtherUserId 
+ * @returns {Promise<import('./../databaseControllers/users-databaseController.js').OtherUserData>}
+ */
+const ViewOtherUserRelations = async (UserId, OtherUserId) => {
+    let IsFollowing = false, IsFollowed = false, FollowIndex = 0, FollowingIndex = 0, FollowedIndex = 0;
+    const PromiseData = await Promise.all([
+        ConnectionStatus(UserId, OtherUserId),
+        ReadFollows({ FollowerId: UserId, FolloweeId: OtherUserId }, undefined, 1, undefined),
+        ReadFollows({ FolloweeId: UserId, FollowerId: OtherUserId }, undefined, 1, undefined),
+    ]);
+    const Connection = PromiseData[0];
+    const Following = PromiseData[1];
+    const Followed = PromiseData[2];
+    if (Following.length > 0) {
+        FollowIndex = Following[0].CreatedIndex;
+        FollowingIndex = Following[0].CreatedIndex;
+        IsFollowing = true;
+    }
+    if (Followed.length > 0) {
+        IsFollowed = true;
+        FollowedIndex = Followed[0].CreatedIndex;
+        FollowIndex = Followed[0].CreatedIndex;
+    }
+    return {
+        ConnectionStatus: Connection.Status, IsFollowed, IsFollowing, FollowIndex,
+        // @ts-ignore
+        FollowingIndex, FollowedIndex, ConnectionIndex: Connection.ConnectionIndex,
+    };
+}
+
+
+/**
+ * 
+ * @param {string} UserId 
+ * @param {string} OtherUserId 
+ * 
+ */
+const ViewOtherUserData = async (UserId, OtherUserId) => {
+    const PromiseData = await Promise.all([
+        ReadOneFromUsers(OtherUserId),
+        ViewOtherUserRelations(UserId, OtherUserId)
+    ]);
+    return { ...PromiseData[0], ...PromiseData[1] };
+}
+
+/**
+ * 
  * @param {UserData} User 
  * @returns {UserData}
  */
 const UserInit = (User) => {
-    return User;
+
+    return {
+        ...User,
+        ProfilePicture: "",
+        CoverPicture : ""
+    };
 }
+
+
+/* const SendUserEmailVerification = async (UserData) => {
+    const EmailVerification = {
+        UserId: UserData.DocId,
+        CreatedIndex: moment().valueOf(),
+        Verified: false
+    }
+    const EmailVerificationId = await CreateEmailVerifications(EmailVerification);
+    const VerificationLink = `${ApiBaseUrl}/api/users/${EmailVerification.UserId}/verify/${EmailVerificationId}`;
+    return AccountVerificationEmail(UserData, VerificationLink);
+}
+
+const VerifyUserEmail = async (req, res) => {
+    const { EmailVerificationId } = req.params;
+    const EmailVerificationData = await ReadOneFromEmailVerifications(EmailVerificationId);
+    if (moment(EmailVerificationData.CreatedIndex).add(15, "minute").isAfter(moment())) {
+        return res.redirect(`${WebUrl}/${EmailVerificationExpiryRoute}`)
+    }
+    if (EmailVerificationData.Verified) {
+        res.redirect(WebUrl);
+    }
+    await Promise.all([
+        UpdateEmailVerifications({ "Verified": true, VerifiedIndex: moment().valueOf() }, EmailVerificationData.DocId),
+        UpdateUsers({ EmailVerification: true }, EmailVerificationData.UserId),
+    ])
+    return res.redirect(WebUrl);
+} */
 
 export {
     GetOneFromUsers, GetUsers, PostUsersRegister, PatchUsers,
-    UserLogin, VerifyRegistrationOTP,CheckUsernameAvailability
+    UserLogin, VerifyRegistrationOTP, CheckUsernameAvailability,
+    ViewOtherUserRelations, ViewOtherUserData
 }

@@ -20,6 +20,7 @@ app.use(json());
 app.use(urlencoded({
     extended: true
 }));
+import errorHandler from './middleware/errorHandling-middleware.js';
 
 
 import swaggerUi from 'swagger-ui-express';
@@ -35,6 +36,7 @@ app.use((req, res, next) => {
 
 app.use(router);
 
+app.use(errorHandler);
 
 
 
@@ -50,7 +52,7 @@ app.use(router);
             // Role: 'Admin',
             // UserId: "Admin",
             Role: 'User',
-            UserId: "66844627f6f4a46d2792f356",
+            UserId: "668d391c8faf7d50f734eb69",
             RegistrationStatus: "",
             Subscription: null
         }
