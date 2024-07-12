@@ -1,6 +1,7 @@
 import swaggerAutogen from 'swagger-autogen';
 
 import usersDefinitions from './swaggerDocs/usersDefinitions.js';
+import activitiesDefinitions from './swaggerDocs/activitiesDefinitions.js';
 
 const doc = {
     info: {
@@ -25,6 +26,10 @@ const doc = {
         {
             "name": "Files",
             "description": "",
+        },
+        {
+            "name": "Activities",
+            "description": "",
         }
     ],
     securityDefinitions: {
@@ -36,7 +41,8 @@ const doc = {
     },
     definitions: {
         LoginData: { Token: "string", RefreshToken: "string", CurrentUser: { Role: "User", UserId: "" } },
-        ...usersDefinitions
+        ...usersDefinitions,
+        ...activitiesDefinitions
     }
 }
 

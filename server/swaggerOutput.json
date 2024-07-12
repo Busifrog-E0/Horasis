@@ -19,6 +19,10 @@
     {
       "name": "Files",
       "description": ""
+    },
+    {
+      "name": "Activities",
+      "description": ""
     }
   ],
   "schemes": [
@@ -231,13 +235,19 @@
         }
       }
     },
-    "/api/users/suggested": {
+    "/api/users/{UserId}/suggested": {
       "get": {
         "tags": [
           "Users"
         ],
         "description": "",
         "parameters": [
+          {
+            "name": "UserId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
           {
             "name": "authorization",
             "in": "header",
@@ -1085,10 +1095,6 @@
                 "FileFieldName": {
                   "type": "string",
                   "example": "ProfilePicture"
-                },
-                "FileType": {
-                  "type": "string",
-                  "example": "image/jpeg"
                 }
               }
             }
@@ -1156,10 +1162,6 @@
                   "items": {
                     "type": "number"
                   }
-                },
-                "FileType": {
-                  "type": "string",
-                  "example": "image/jpeg"
                 }
               }
             }
@@ -1184,6 +1186,209 @@
           "400": {
             "description": "Bad Request"
           },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "402": {
+            "description": "Payment Required"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      }
+    },
+    "/api/activities": {
+      "get": {
+        "tags": [
+          "Activities"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "NextId",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "Limit",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "Keyword",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "OrderBy",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Activity Data",
+            "schema": {
+              "$ref": "#/definitions/ActivityGetDataArray"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "402": {
+            "description": "Payment Required"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Activities"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/ActivityPostData"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "402": {
+            "description": "Payment Required"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      }
+    },
+    "/api/activities/{ActivityId}": {
+      "get": {
+        "tags": [
+          "Activities"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "ActivityId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Activity Data",
+            "schema": {
+              "$ref": "#/definitions/ActivityGetData"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "402": {
+            "description": "Payment Required"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Activities"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "ActivityId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Content": {
+                  "type": "string",
+                  "example": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "402": {
+            "description": "Payment Required"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Activities"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "ActivityId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
           "401": {
             "description": "Unauthorized"
           },
@@ -1413,6 +1618,202 @@
           "About": {
             "type": "string",
             "example": "Seasoned product manager with over 10 years of experience in the software industry."
+          }
+        }
+      }
+    },
+    "ActivityPostData": {
+      "type": "object",
+      "properties": {
+        "Content": {
+          "type": "string",
+          "example": "This is a sample activity content."
+        },
+        "UserId": {
+          "type": "string",
+          "example": "user123"
+        },
+        "Attachments": {
+          "type": "array",
+          "example": [
+            "https://example.com/image.jpg",
+            "https://example.com/document.pdf"
+          ],
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "ActivityGetData": {
+      "type": "object",
+      "properties": {
+        "Content": {
+          "type": "string",
+          "example": "This is a sample activity content."
+        },
+        "UserId": {
+          "type": "string",
+          "example": "user123"
+        },
+        "MediaFiles": {
+          "type": "array",
+          "example": [
+            "https://example.com/image.jpg"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
+        "Documents": {
+          "type": "array",
+          "example": [
+            "https://example.com/document.pdf"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
+        "Mentions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "Username": {
+                "type": "string",
+                "example": "user1345"
+              },
+              "UserId": {
+                "type": "string",
+                "example": "6df8f7wed689ef"
+              }
+            }
+          }
+        },
+        "LikedIds": {
+          "type": "array",
+          "example": [
+            "user987",
+            "user000"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
+        "Attachments": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "example": [],
+            "items": {}
+          }
+        },
+        "NoOfLikes": {
+          "type": "number",
+          "example": 2
+        },
+        "NoOfComments": {
+          "type": "number",
+          "example": 2
+        },
+        "DocId": {
+          "type": "string",
+          "example": "activity_1234"
+        },
+        "Type": {
+          "type": "string",
+          "example": "Feed"
+        },
+        "ParentId": {
+          "type": "string",
+          "example": "7adcadfa99asffda1b"
+        }
+      }
+    },
+    "ActivityGetDataArray": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "Content": {
+            "type": "string",
+            "example": "This is a sample activity content."
+          },
+          "UserId": {
+            "type": "string",
+            "example": "user123"
+          },
+          "MediaFiles": {
+            "type": "array",
+            "example": [
+              "https://example.com/image.jpg"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "Documents": {
+            "type": "array",
+            "example": [
+              "https://example.com/document.pdf"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "Mentions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "Username": {
+                  "type": "string",
+                  "example": "user1345"
+                },
+                "UserId": {
+                  "type": "string",
+                  "example": "6df8f7wed689ef"
+                }
+              }
+            }
+          },
+          "LikedIds": {
+            "type": "array",
+            "example": [
+              "user987",
+              "user000"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "Attachments": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "example": [],
+              "items": {}
+            }
+          },
+          "NoOfLikes": {
+            "type": "number",
+            "example": 2
+          },
+          "NoOfComments": {
+            "type": "number",
+            "example": 2
+          },
+          "DocId": {
+            "type": "string",
+            "example": "activity_1234"
+          },
+          "Type": {
+            "type": "string",
+            "example": "Feed"
+          },
+          "ParentId": {
+            "type": "string",
+            "example": "7adcadfa99asffda1b"
           }
         }
       }

@@ -10,6 +10,7 @@ import dataHandling from "./functions.js";
  * @property {string[]} LikedIds
  * @property {string[]} Attachments
  * @property {number} NoOfLikes
+ * @property {number} NoOfComments
  * @property {string} DocId
  * @property {'Feed'|'Event'|'Discussion'} Type
  * @property {string} ParentId
