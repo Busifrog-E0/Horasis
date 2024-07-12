@@ -25,6 +25,9 @@ import dataHandling from './functions.js'
  * @property {boolean} IsFollowed
  * @property {boolean} IsFollowing
  * @property {number} FollowIndex
+ * @property {number} FollowingIndex
+ * @property {number} FollowedIndex
+ * @property {number} ConnectionIndex
  */
 
 /**
