@@ -15,7 +15,7 @@ const CurrentProfileTab = () => {
   const navigate = useNavigate()
   const GoToProfilePage = () => {
     scrollToTop()
-    navigate('/myprofile')
+    navigate('/MyProfile')
   }
 
   const steps = [

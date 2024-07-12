@@ -26,7 +26,7 @@ const UserDropDown = ({ memberProfile }) => {
     }
   }
   const goToProfile = () => {
-    navigate(`/viewprofile/${profile.DocId}`)
+    navigate(`/ViewProfile/${profile.DocId}`)
   }
 
   useEffect(() => {

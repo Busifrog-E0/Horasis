@@ -1,14 +1,20 @@
+import { useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { relativeTime } from '../../utils/date'
-import DropdownMenu from '../ui/DropdownMenu'
-import UserDropDown from '../ui/UserDropDown'
 import avatar from '../../assets/icons/avatar.svg'
+import { relativeTime } from '../../utils/date'
+import UserDropDown from '../ui/UserDropDown'
+import { AuthContext } from '../../utils/AuthProvider'
 
 const MembersSectionTab = ({ lastElement, profile }) => {
+  const { currentUserData } = useContext(AuthContext)
   const navigate = useNavigate()
   const goToProfile = () => {
     if (profile) {
-      navigate(`/viewprofile/${profile.DocId}`)
+      if (profile.DocId === currentUserData.CurrentUser.UserId) {
+        navigate(`/MyProfile`)
+      } else {
+        navigate(`/ViewProfile/${profile.DocId}`)
+      }
     }
   }
   return (
@@ -32,8 +38,7 @@ const MembersSectionTab = ({ lastElement, profile }) => {
               ) : (
                 <>
                   <div className='w-11 h-11 rounded-full bg-brand-light-gray'>
-                  <img src={avatar} className='object-cover h-full w-full rounded-lg' />
-
+                    <img src={avatar} className='object-cover h-full w-full rounded-lg' />
                   </div>
                 </>
               )}

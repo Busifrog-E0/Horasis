@@ -20,7 +20,7 @@ import cover from '../assets/icons/cover.svg'
 const ShowUserProfile = () => {
   const { userid } = useParams()
   const [isLoading, setIsLoading] = useState(false)
-  const [isFollowLoading,setIsFollowLoading] = useState(false)
+  const [isFollowLoading, setIsFollowLoading] = useState(false)
   const [activeTab, setActiveTab] = useState(0)
   const navigate = useNavigate()
   const handleGoBack = () => {
@@ -198,7 +198,7 @@ const ShowUserProfile = () => {
     <>
       <div className='p-2 lg:px-10 lg:py-6'>
         <div className='rounded-lg z-20 bg-red-400 h-40 lg:h-80 relative'>
-        {user ? (
+          {user ? (
             <>
               {user.CoverPicture ? (
                 <>
@@ -207,8 +207,7 @@ const ShowUserProfile = () => {
               ) : (
                 <>
                   <div className='w-full h-full rounded-lg flex items-center justify-center  bg-slate-100'>
-                  <img src={cover} className='object-cover h-full w-full rounded-lg' />
-
+                    <img src={cover} className='object-cover h-full w-full rounded-lg' />
                   </div>
                 </>
               )}
@@ -251,7 +250,7 @@ const ShowUserProfile = () => {
             </div>
           </div>
           <div className='flex justify-center items-center cursor-pointer absolute left-5 -bottom-3 lg:left-20 lg:-bottom-8 z-30'>
-          {user ? (
+            {user ? (
               <>
                 {user.ProfilePicture ? (
                   <>
@@ -284,8 +283,7 @@ const ShowUserProfile = () => {
                         }
                       }}
                     >
-                  <img src={avatar} className='object-cover h-full w-full rounded-lg' />
-
+                      <img src={avatar} className='object-cover h-full w-full rounded-lg' />
                     </div>
                   </>
                 )}
@@ -308,161 +306,166 @@ const ShowUserProfile = () => {
       <div className='p-2 lg:px-10 lg:py-6 pt-6'>
         <div className='grid lg:grid-cols-4 gap-3 lg:gap-12 '>
           <div className='py-5 lg:py-8 px-16 bg-system-secondary-bg rounded-lg mb-3 lg:mb-8'>
-            {
-              isLoading?<Spinner/>:
-            <>
-              <h4 className='font-medium text-2xl text-center text-system-primary-text'>
-                {user && user.FullName}
-              </h4>
-              <h4 className='font-medium text-xl text-brand-gray-dim text-center'>
-                @{user && user.Username}
-              </h4>
-              <div className='flex justify-center items-center mt-2 lg:mt-6 flex-col gap-2'>
-                {/* <div className='w-full p-3 rounded-full bg-system-secondary-accent text-center inline-block'>
+            {isLoading ? (
+              <Spinner />
+            ) : (
+              <>
+                <h4 className='font-medium text-2xl text-center text-system-primary-text'>
+                  {user && user.FullName}
+                </h4>
+                <h4 className='font-medium text-xl text-brand-gray-dim text-center'>
+                  @{user && user.Username}
+                </h4>
+                <div className='flex justify-center items-center mt-2 lg:mt-6 flex-wrap sm:flex-nowrap  lg:flex-wrap xl:flex-nowrap  gap-2'>
+                  {/* <div className='w-full p-3 rounded-full bg-system-secondary-accent text-center inline-block'>
                 <span className='text-system-primary-accent text-md font-semibold'>Connect</span>
               </div> */}
 
-                <Button
-                  variant='outline'
-                  width='full'
-                  className='rounded-full font-semibold'
-                  size='md'
-                >
-                  Connect
-                </Button>
+                  <Button
+                    variant='outline'
+                    width='full'
+                    className='rounded-full font-semibold'
+                    size='md'
+                  >
+                    Connect
+                  </Button>
 
-                {user && user.IsFollowing === true ? (
-                  <>
-                    <Button
-                      variant='white'
-                      width='full'
-                      className='rounded-full font-semibold shadow-sm bg-system-secondary-accent text-system-primary-accent'
-                      size='md'
-                      onClick={() => {
-                        unFollowUser()
-                      }}
-                      loading={isFollowLoading}
-                      loadingTitle={'Unfollowing'}
-                    >
-                      Unfollow
-                    </Button>
-                  </>
-                ) : (
-                  <>
-                    <Button
-                      variant='black'
-                      width='full'
-                      className='rounded-full font-semibold'
-                      size='md'
-                      onClick={() => {
-                        followUser()
-                      }}
-                      loading={isFollowLoading}
-                      loadingTitle={"Following"}
-                    >
-                      Follow
-                    </Button>
-                  </>
-                )}
-              </div>
-              <h4 className='font-semibold text-xl text-system-primary-text mt-3 lg:mt-6'>About</h4>
-              <div className='mt-4 flex  flex-col gap-4'>
-                <div className='flex items-center gap-2'>
-                  <div className='justify-end text-system-primary-accent'>
-                    <svg
-                      className='w-4 h-4 cursor-pointer'
-                      aria-hidden='true'
-                      xmlns='http://www.w3.org/2000/svg'
-                      fill='none'
-                      viewBox='0 0 20 20'
-                    >
-                      <path
-                        stroke='currentColor'
-                        strokeLinecap='round'
-                        strokeLinejoin='round'
-                        strokeWidth='2'
-                        d='M4 12.25V1m0 11.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M4 19v-2.25m6-13.5V1m0 2.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M10 19V7.75m6 4.5V1m0 11.25a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5ZM16 19v-2'
-                      />
-                    </svg>
-                  </div>
-                  <h4 className='font-medium text-xl text-brand-gray-dim truncate'>{user && user.Email}</h4>
+                  {user && user.IsFollowing === true ? (
+                    <>
+                      <Button
+                        variant='white'
+                        width='full'
+                        className='rounded-full font-semibold shadow-sm bg-system-secondary-accent text-system-primary-accent'
+                        size='md'
+                        onClick={() => {
+                          unFollowUser()
+                        }}
+                        loading={isFollowLoading}
+                        loadingTitle={'Unfollowing'}
+                      >
+                        Unfollow
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <Button
+                        variant='black'
+                        width='full'
+                        className='rounded-full font-semibold'
+                        size='md'
+                        onClick={() => {
+                          followUser()
+                        }}
+                        loading={isFollowLoading}
+                        loadingTitle={'Following'}
+                      >
+                        Follow
+                      </Button>
+                    </>
+                  )}
                 </div>
-                <div className='flex items-center gap-2'>
-                  <div className='justify-end text-system-primary-accent'>
-                    <svg
-                      className='w-4 h-4 cursor-pointer'
-                      aria-hidden='true'
-                      xmlns='http://www.w3.org/2000/svg'
-                      fill='none'
-                      viewBox='0 0 20 20'
-                    >
-                      <path
-                        stroke='currentColor'
-                        strokeLinecap='round'
-                        strokeLinejoin='round'
-                        strokeWidth='2'
-                        d='M4 12.25V1m0 11.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M4 19v-2.25m6-13.5V1m0 2.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M10 19V7.75m6 4.5V1m0 11.25a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5ZM16 19v-2'
-                      />
-                    </svg>
+                <h4 className='font-semibold text-xl text-system-primary-text mt-3 lg:mt-6'>
+                  About
+                </h4>
+                <div className='mt-4 flex  flex-col gap-4'>
+                  <div className='flex items-center gap-2'>
+                    <div className='justify-end text-system-primary-accent'>
+                      <svg
+                        className='w-4 h-4 cursor-pointer'
+                        aria-hidden='true'
+                        xmlns='http://www.w3.org/2000/svg'
+                        fill='none'
+                        viewBox='0 0 20 20'
+                      >
+                        <path
+                          stroke='currentColor'
+                          strokeLinecap='round'
+                          strokeLinejoin='round'
+                          strokeWidth='2'
+                          d='M4 12.25V1m0 11.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M4 19v-2.25m6-13.5V1m0 2.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M10 19V7.75m6 4.5V1m0 11.25a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5ZM16 19v-2'
+                        />
+                      </svg>
+                    </div>
+                    <h4 className='font-medium text-xl text-brand-gray-dim truncate'>
+                      {user && user.Email}
+                    </h4>
                   </div>
-                  <h4 className='font-medium text-xl text-brand-gray-dim truncate'>
-                    {user && user.Country}
-                  </h4>
-                </div>
-                <div className='flex items-center gap-2'>
-                  <div className='justify-end text-system-primary-accent'>
-                    <svg
-                      className='w-4 h-4 cursor-pointer'
-                      aria-hidden='true'
-                      xmlns='http://www.w3.org/2000/svg'
-                      fill='none'
-                      viewBox='0 0 20 20'
-                    >
-                      <path
-                        stroke='currentColor'
-                        strokeLinecap='round'
-                        strokeLinejoin='round'
-                        strokeWidth='2'
-                        d='M4 12.25V1m0 11.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M4 19v-2.25m6-13.5V1m0 2.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M10 19V7.75m6 4.5V1m0 11.25a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5ZM16 19v-2'
-                      />
-                    </svg>
+                  <div className='flex items-center gap-2'>
+                    <div className='justify-end text-system-primary-accent'>
+                      <svg
+                        className='w-4 h-4 cursor-pointer'
+                        aria-hidden='true'
+                        xmlns='http://www.w3.org/2000/svg'
+                        fill='none'
+                        viewBox='0 0 20 20'
+                      >
+                        <path
+                          stroke='currentColor'
+                          strokeLinecap='round'
+                          strokeLinejoin='round'
+                          strokeWidth='2'
+                          d='M4 12.25V1m0 11.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M4 19v-2.25m6-13.5V1m0 2.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M10 19V7.75m6 4.5V1m0 11.25a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5ZM16 19v-2'
+                        />
+                      </svg>
+                    </div>
+                    <h4 className='font-medium text-xl text-brand-gray-dim truncate'>
+                      {user && user.Country}
+                    </h4>
                   </div>
-                  <h4 className='font-medium text-xl text-brand-gray-dim truncate' >
-                    {user && user.JobTitle}
-                  </h4>
-                </div>
-                <div className='flex items-center gap-2'>
-                  <div className='justify-end text-system-primary-accent'>
-                    <svg
-                      className='w-4 h-4 cursor-pointer'
-                      aria-hidden='true'
-                      xmlns='http://www.w3.org/2000/svg'
-                      fill='none'
-                      viewBox='0 0 20 20'
-                    >
-                      <path
-                        stroke='currentColor'
-                        strokeLinecap='round'
-                        strokeLinejoin='round'
-                        strokeWidth='2'
-                        d='M4 12.25V1m0 11.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M4 19v-2.25m6-13.5V1m0 2.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M10 19V7.75m6 4.5V1m0 11.25a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5ZM16 19v-2'
-                      />
-                    </svg>
+                  <div className='flex items-center gap-2'>
+                    <div className='justify-end text-system-primary-accent'>
+                      <svg
+                        className='w-4 h-4 cursor-pointer'
+                        aria-hidden='true'
+                        xmlns='http://www.w3.org/2000/svg'
+                        fill='none'
+                        viewBox='0 0 20 20'
+                      >
+                        <path
+                          stroke='currentColor'
+                          strokeLinecap='round'
+                          strokeLinejoin='round'
+                          strokeWidth='2'
+                          d='M4 12.25V1m0 11.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M4 19v-2.25m6-13.5V1m0 2.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M10 19V7.75m6 4.5V1m0 11.25a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5ZM16 19v-2'
+                        />
+                      </svg>
+                    </div>
+                    <h4 className='font-medium text-xl text-brand-gray-dim truncate'>
+                      {user && user.JobTitle}
+                    </h4>
                   </div>
-                  <h4 className='font-medium text-xl text-brand-gray-dim truncate'>
-                    {user && user.CompanyName}
-                  </h4>
+                  <div className='flex items-center gap-2'>
+                    <div className='justify-end text-system-primary-accent'>
+                      <svg
+                        className='w-4 h-4 cursor-pointer'
+                        aria-hidden='true'
+                        xmlns='http://www.w3.org/2000/svg'
+                        fill='none'
+                        viewBox='0 0 20 20'
+                      >
+                        <path
+                          stroke='currentColor'
+                          strokeLinecap='round'
+                          strokeLinejoin='round'
+                          strokeWidth='2'
+                          d='M4 12.25V1m0 11.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M4 19v-2.25m6-13.5V1m0 2.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M10 19V7.75m6 4.5V1m0 11.25a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5ZM16 19v-2'
+                        />
+                      </svg>
+                    </div>
+                    <h4 className='font-medium text-xl text-brand-gray-dim truncate'>
+                      {user && user.CompanyName}
+                    </h4>
+                  </div>
                 </div>
-              </div>
-            </>
-            }
+              </>
+            )}
           </div>
 
           <div className='lg:col-span-3'>
             <Tab
               onTabChange={onTabChange}
               activeTab={activeTab}
-              name='myprofile'
+              name='MyProfile'
               tabs={tabs()}
               alignment='justify-start'
             />

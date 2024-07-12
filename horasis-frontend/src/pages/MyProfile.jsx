@@ -19,10 +19,269 @@ import PictureUpload from '../components/Profile/PictureUpload'
 import avatar from '../assets/icons/avatar.svg'
 import cover from '../assets/icons/cover.svg'
 
+const tabs = (user,getUserDetails) => [
+  {
+    key: 0,
+    title: 'Timeline',
+    render: () => (
+      <div className='bg-system-secondary-bg p-4 lg:py-8 lg:px-12 rounded-b-lg '>
+        <div className='p-5 pr-10 bg-system-secondary-bg rounded-lg mb-3'>
+          <div className='flex items-center gap-5'>
+            <img
+              className='w-16 h-16 rounded-full'
+              src='https://flowbite.com/docs/images/people/profile-picture-5.jpg'
+              alt='Rounded avatar'
+            />
+
+            <div className='flex-1 rounded-md p-2 px-3 border border-system-file-border flex items-center justify-between bg-system-secondary-bg'>
+              <h4 className='font-medium text-xl text-brand-gray-dim italic '>
+                Share what's on your mind, Frank
+              </h4>
+            </div>
+          </div>
+        </div>
+        <div className='flex flex-col gap-3'>
+          <div className='p-5 bg-system-secondary-bg rounded-lg border border-system-file-border'>
+            <div className='flex items-start gap-2'>
+              <img
+                className='w-16 h-16 rounded-full'
+                src='https://flowbite.com/docs/images/people/profile-picture-5.jpg'
+                alt='Rounded avatar'
+              />
+
+              <div className='flex-1'>
+                <div className='flex items-start justify-between gap-10'>
+                  <h4 className='font-semibold text-xl text-system-primary-accent mt-1'>
+                    Frank-Jurgen Ritcher
+                  </h4>
+                  <h4 className='font-medium text-base text-brand-gray-dim'>
+                    {relativeTime(new Date().getTime())}
+                  </h4>
+                </div>
+                <h4 className='text-system-primary-text mt-1'>updated his profile photo</h4>
+              </div>
+            </div>
+            <div className='flex items-center justify-between gap-10 mt-8'>
+              <div className='flex flex-wrap items-start justify-between gap-10'>
+                <div className='flex items-start gap-1 cursor-pointer'>
+                  <p className='text-brand-gray-dim mt-1'>likes</p>
+                </div>
+                <div className='flex items-start gap-1 cursor-pointer'>
+                  <p className='text-brand-gray-dim mt-1'>replies</p>
+                </div>
+              </div>
+              <DropdownMenu />
+            </div>
+          </div>
+          <div className='p-5 bg-system-secondary-bg rounded-lg border border-system-file-border'>
+            <div className='flex items-start gap-2'>
+              <img
+                className='w-16 h-16 rounded-full'
+                src='https://flowbite.com/docs/images/people/profile-picture-2.jpg'
+                alt='Rounded avatar'
+              />
+
+              <div className='flex-1'>
+                <div className='flex items-start justify-between gap-10'>
+                  <h4 className='font-semibold text-xl text-system-primary-accent mt-1'>
+                    Frank-Jurgen Ritcher
+                  </h4>
+                  <h4 className='font-medium text-base text-brand-gray-dim'>
+                    {relativeTime(new Date().getTime())}
+                  </h4>
+                </div>
+              </div>
+            </div>
+            <div className='mt-5'>
+              <h4 className='text-system-primary-text font-medium text-xl'>Have a great day!</h4>
+            </div>
+            <div className='flex items-center justify-between gap-10 mt-8'>
+              <div className='flex flex-wrap items-start justify-between gap-10'>
+                <div className='flex items-start gap-1 cursor-pointer'>
+                  <p className='text-brand-gray-dim mt-1'>likes</p>
+                </div>
+                <div className='flex items-start gap-1 cursor-pointer'>
+                  <p className='text-brand-gray-dim mt-1'>replies</p>
+                </div>
+              </div>
+              <DropdownMenu />
+            </div>
+          </div>
+        </div>
+      </div>
+    ),
+  },
+  {
+    key: 1,
+    title: 'About',
+    render: () => <AboutTab user={user} getUserDetails={getUserDetails} isCurrentUser={true} />,
+  },
+  {
+    key: 2,
+    title: 'Connections',
+    render: () => (
+      <div className='bg-system-secondary-bg p-4 lg:p-6 rounded-b-lg '>
+        <MembersSection />
+      </div>
+    ),
+  },
+  // {
+  //   key: 3,
+  //   title: 'Events',
+  //   render: () => (
+  //     <div className='bg-system-secondary-bg p-4 lg:p-10 rounded-b-lg '>
+  //       <EventsList cols={4} gap='gap-1 lg:gap-x-16 lg:gap-y-10' />
+  //     </div>
+  //   ),
+  // },
+  // {
+  //   key: 4,
+  //   title: 'Videos',
+  //   render: () => (
+  //     <div className='bg-system-secondary-bg p-4 rounded-b-lg '>
+  //       <div className='grid grid-cols-2 gap-4 p-4'>
+  //         <VideoPlayer
+  //           url={'https://stor.oceansfutures.org/oceansfuture-storage/assets/wwf_fc9393fe1e.mp4'}
+  //         />
+  //         <VideoPlayer
+  //           url={'https://stor.oceansfutures.org/oceansfuture-storage/assets/wwf_fc9393fe1e.mp4'}
+  //         />
+  //       </div>
+  //     </div>
+  //   ),
+  // },
+  // {
+  //   key: 5,
+  //   title: 'Photos',
+  //   render: () => (
+  //     <div className='bg-system-secondary-bg p-4 rounded-b-lg '>
+  //       <StaggeredList />
+  //     </div>
+  //   ),
+  // },
+  // {
+  //   key: 6,
+  //   title: 'Discussions',
+  //   render: () => (
+  //     <div className='bg-system-secondary-bg p-4 lg:py-10 lg:px-12 rounded-b-lg '>
+  //       <div className='flex flex-col gap-6'>
+  //         <div className='border-b border-system-file-border pb-6'>
+  //           <div className='flex items-start gap-2'>
+  //             <div className='w-28 h-20 overflow-hidden rounded-lg'>
+  //               <img
+  //                 className='w-full h-full object-cover'
+  //                 src='https://th.bing.com/th/id/OIP.fRpB3M9oOQSmhd5hwcmHtAHaFj?w=216&h=180&c=7&r=0&o=5&pid=1.7'
+  //                 alt='Rounded avatar'
+  //               />
+  //             </div>
+
+  //             <div className='flex-1'>
+  //               <div className='flex items-start justify-between gap-10'>
+  //                 <div>
+  //                   <h4 className='font-semibold text-system-primary-text text-md'>Education</h4>
+  //                   <h4 className='text-brand-gray-dim text-sm mt-1'>
+  //                     joined the Eventorasis Global Meetingjoined the Event Horasis Global
+  //                     Meetingjoined the Event Horasis Global Meetingjoined the Event Horasis
+  //                     Global Meetingjoined the Event Horasis Global Meetingjoined the Event
+  //                     Horasis Global Meetingjoined the Event Horasis Global Meetingjoined the
+  //                     Event Horasis Global Meetingjoined the Event Horasis Global Meetingjoined
+  //                     the Event Horasis Global Meetingjoined the Event Horasis Global
+  //                     Meetingjoined the Event Horasis Global Meetingjoined the Event Horasis
+  //                     Global Meeting
+  //                   </h4>
+  //                 </div>
+  //               </div>
+  //             </div>
+  //             <div className='flex flex-col items-end justify-between gap-6'>
+  //               <h4 className='font-medium text-sm text-brand-gray-dim'>
+  //                 {relativeTime(new Date().getTime())}
+  //               </h4>
+  //               <DropdownMenu />
+  //             </div>
+  //           </div>
+  //         </div>
+  //         <div className='border-b border-system-file-border pb-6'>
+  //           <div className='flex items-start gap-2'>
+  //             <div className='w-28 h-20 overflow-hidden rounded-lg'>
+  //               <img
+  //                 className='w-full h-full object-cover'
+  //                 src='https://th.bing.com/th/id/OIP.CL6wvO0RBhLq7raz1iCn_gHaEK?rs=1&pid=ImgDetMain'
+  //                 alt='Rounded avatar'
+  //               />
+  //             </div>
+
+  //             <div className='flex-1'>
+  //               <div className='flex items-start justify-between gap-10'>
+  //                 <div>
+  //                   <h4 className='font-semibold text-system-primary-text text-md'>
+  //                     health Care
+  //                   </h4>
+  //                   <h4 className='text-brand-gray-dim text-sm mt-1'>
+  //                     joined the Eventorasis Global Meetingjoined the Event Horasis Global
+  //                     Meetingjoined the Event Horasis Global Meetingjoined the Event Horasis
+  //                     Global Meetingjoined the Event Horasis Global Meetingjoined the Event
+  //                     Horasis Global Meetingjoined the Event Horasis Global Meetingjoined the
+  //                     Event Horasis Global Meetingjoined the Event Horasis Global Meetingjoined
+  //                     the Event Horasis Global Meetingjoined the Event Horasis Global
+  //                     Meetingjoined the Event Horasis Global Meetingjoined the Event Horasis
+  //                     Global Meeting
+  //                   </h4>
+  //                 </div>
+  //               </div>
+  //             </div>
+  //             <div className='flex flex-col items-end justify-between gap-6'>
+  //               <h4 className='font-medium text-sm text-brand-gray-dim'>
+  //                 {relativeTime(new Date().getTime())}
+  //               </h4>
+  //               <DropdownMenu />
+  //             </div>
+  //           </div>
+  //         </div>
+  //       </div>
+  //     </div>
+  //   ),
+  // },
+  // {
+  //   key: 7,
+  //   title: 'Documents',
+  //   render: () => (
+  //     <div className='bg-system-secondary-bg p-4 lg:py-10 lg:px-12 rounded-b-lg '>
+  //       <div className='flex flex-col gap-6'>
+  //         <div className='border-b border-system-file-border pb-6'>
+  //           <div className='flex items-center gap-4'>
+  //             <div className='w-12 h-12 overflow-hidden rounded-lg'>
+  //               <img
+  //                 className='w-full h-full object-contain'
+  //                 src='https://th.bing.com/th/id/OIP.O-6F-svmDZRlmeu9Pyy2jQHaFV?w=273&h=197&c=7&r=0&o=5&pid=1.7'
+  //                 alt='Rounded avatar'
+  //               />
+  //             </div>
+
+  //             <div className='flex-1'>
+  //               <div className='flex items-start justify-between gap-10'>
+  //                 <div>
+  //                   <h4 className='font-semibold text-system-primary-text text-md'>image</h4>
+  //                 </div>
+  //               </div>
+  //             </div>
+  //             <div className='flex flex-col items-end justify-between gap-6'>
+  //               <h4 className='font-medium text-sm text-brand-gray-dim'>
+  //                 {relativeTime(new Date().getTime())}
+  //               </h4>
+  //               <DropdownMenu />
+  //             </div>
+  //           </div>
+  //         </div>
+  //       </div>
+  //     </div>
+  //   ),
+  // },
+]
+
 const MyProfile = () => {
   const [activeTab, setActiveTab] = useState(
-    _retrieveData(MAINTAB) && _retrieveData(MAINTAB)['myprofile']
-      ? Number(_retrieveData(MAINTAB)['myprofile'])
+    _retrieveData(MAINTAB) && _retrieveData(MAINTAB)['MyProfile']
+      ? Number(_retrieveData(MAINTAB)['MyProfile'])
       : 0
   )
   const navigate = useNavigate()
@@ -30,268 +289,11 @@ const MyProfile = () => {
     navigate(-1)
   }
 
-  const tabs = () => [
-    {
-      key: 0,
-      title: 'Timeline',
-      render: () => (
-        <div className='bg-system-secondary-bg p-4 lg:py-8 lg:px-12 rounded-b-lg '>
-          <div className='p-5 pr-10 bg-system-secondary-bg rounded-lg mb-3'>
-            <div className='flex items-center gap-5'>
-              <img
-                className='w-16 h-16 rounded-full'
-                src='https://flowbite.com/docs/images/people/profile-picture-5.jpg'
-                alt='Rounded avatar'
-              />
 
-              <div className='flex-1 rounded-md p-2 px-3 border border-system-file-border flex items-center justify-between bg-system-secondary-bg'>
-                <h4 className='font-medium text-xl text-brand-gray-dim italic '>
-                  Share what's on your mind, Frank
-                </h4>
-              </div>
-            </div>
-          </div>
-          <div className='flex flex-col gap-3'>
-            <div className='p-5 bg-system-secondary-bg rounded-lg border border-system-file-border'>
-              <div className='flex items-start gap-2'>
-                <img
-                  className='w-16 h-16 rounded-full'
-                  src='https://flowbite.com/docs/images/people/profile-picture-5.jpg'
-                  alt='Rounded avatar'
-                />
-
-                <div className='flex-1'>
-                  <div className='flex items-start justify-between gap-10'>
-                    <h4 className='font-semibold text-xl text-system-primary-accent mt-1'>
-                      Frank-Jurgen Ritcher
-                    </h4>
-                    <h4 className='font-medium text-base text-brand-gray-dim'>
-                      {relativeTime(new Date().getTime())}
-                    </h4>
-                  </div>
-                  <h4 className='text-system-primary-text mt-1'>updated his profile photo</h4>
-                </div>
-              </div>
-              <div className='flex items-center justify-between gap-10 mt-8'>
-                <div className='flex flex-wrap items-start justify-between gap-10'>
-                  <div className='flex items-start gap-1 cursor-pointer'>
-                    <p className='text-brand-gray-dim mt-1'>likes</p>
-                  </div>
-                  <div className='flex items-start gap-1 cursor-pointer'>
-                    <p className='text-brand-gray-dim mt-1'>replies</p>
-                  </div>
-                </div>
-                <DropdownMenu />
-              </div>
-            </div>
-            <div className='p-5 bg-system-secondary-bg rounded-lg border border-system-file-border'>
-              <div className='flex items-start gap-2'>
-                <img
-                  className='w-16 h-16 rounded-full'
-                  src='https://flowbite.com/docs/images/people/profile-picture-2.jpg'
-                  alt='Rounded avatar'
-                />
-
-                <div className='flex-1'>
-                  <div className='flex items-start justify-between gap-10'>
-                    <h4 className='font-semibold text-xl text-system-primary-accent mt-1'>
-                      Frank-Jurgen Ritcher
-                    </h4>
-                    <h4 className='font-medium text-base text-brand-gray-dim'>
-                      {relativeTime(new Date().getTime())}
-                    </h4>
-                  </div>
-                </div>
-              </div>
-              <div className='mt-5'>
-                <h4 className='text-system-primary-text font-medium text-xl'>Have a great day!</h4>
-              </div>
-              <div className='flex items-center justify-between gap-10 mt-8'>
-                <div className='flex flex-wrap items-start justify-between gap-10'>
-                  <div className='flex items-start gap-1 cursor-pointer'>
-                    <p className='text-brand-gray-dim mt-1'>likes</p>
-                  </div>
-                  <div className='flex items-start gap-1 cursor-pointer'>
-                    <p className='text-brand-gray-dim mt-1'>replies</p>
-                  </div>
-                </div>
-                <DropdownMenu />
-              </div>
-            </div>
-          </div>
-        </div>
-      ),
-    },
-    {
-      key: 1,
-      title: 'About',
-      render: () => <AboutTab user={user} getUserDetails={getUserDetails} isCurrentUser={true} />,
-    },
-    {
-      key: 2,
-      title: 'Connections',
-      render: () => (
-        <div className='bg-system-secondary-bg p-4 lg:p-6 rounded-b-lg '>
-          <MembersSection />
-        </div>
-      ),
-    },
-    {
-      key: 3,
-      title: 'Events',
-      render: () => (
-        <div className='bg-system-secondary-bg p-4 lg:p-10 rounded-b-lg '>
-          <EventsList cols={4} gap='gap-1 lg:gap-x-16 lg:gap-y-10' />
-        </div>
-      ),
-    },
-    {
-      key: 4,
-      title: 'Videos',
-      render: () => (
-        <div className='bg-system-secondary-bg p-4 rounded-b-lg '>
-          <div className='grid grid-cols-2 gap-4 p-4'>
-            <VideoPlayer
-              url={'https://stor.oceansfutures.org/oceansfuture-storage/assets/wwf_fc9393fe1e.mp4'}
-            />
-            <VideoPlayer
-              url={'https://stor.oceansfutures.org/oceansfuture-storage/assets/wwf_fc9393fe1e.mp4'}
-            />
-          </div>
-        </div>
-      ),
-    },
-    {
-      key: 5,
-      title: 'Photos',
-      render: () => (
-        <div className='bg-system-secondary-bg p-4 rounded-b-lg '>
-          <StaggeredList />
-        </div>
-      ),
-    },
-    {
-      key: 6,
-      title: 'Discussions',
-      render: () => (
-        <div className='bg-system-secondary-bg p-4 lg:py-10 lg:px-12 rounded-b-lg '>
-          <div className='flex flex-col gap-6'>
-            <div className='border-b border-system-file-border pb-6'>
-              <div className='flex items-start gap-2'>
-                <div className='w-28 h-20 overflow-hidden rounded-lg'>
-                  <img
-                    className='w-full h-full object-cover'
-                    src='https://th.bing.com/th/id/OIP.fRpB3M9oOQSmhd5hwcmHtAHaFj?w=216&h=180&c=7&r=0&o=5&pid=1.7'
-                    alt='Rounded avatar'
-                  />
-                </div>
-
-                <div className='flex-1'>
-                  <div className='flex items-start justify-between gap-10'>
-                    <div>
-                      <h4 className='font-semibold text-system-primary-text text-md'>Education</h4>
-                      <h4 className='text-brand-gray-dim text-sm mt-1'>
-                        joined the Eventorasis Global Meetingjoined the Event Horasis Global
-                        Meetingjoined the Event Horasis Global Meetingjoined the Event Horasis
-                        Global Meetingjoined the Event Horasis Global Meetingjoined the Event
-                        Horasis Global Meetingjoined the Event Horasis Global Meetingjoined the
-                        Event Horasis Global Meetingjoined the Event Horasis Global Meetingjoined
-                        the Event Horasis Global Meetingjoined the Event Horasis Global
-                        Meetingjoined the Event Horasis Global Meetingjoined the Event Horasis
-                        Global Meeting
-                      </h4>
-                    </div>
-                  </div>
-                </div>
-                <div className='flex flex-col items-end justify-between gap-6'>
-                  <h4 className='font-medium text-sm text-brand-gray-dim'>
-                    {relativeTime(new Date().getTime())}
-                  </h4>
-                  <DropdownMenu />
-                </div>
-              </div>
-            </div>
-            <div className='border-b border-system-file-border pb-6'>
-              <div className='flex items-start gap-2'>
-                <div className='w-28 h-20 overflow-hidden rounded-lg'>
-                  <img
-                    className='w-full h-full object-cover'
-                    src='https://th.bing.com/th/id/OIP.CL6wvO0RBhLq7raz1iCn_gHaEK?rs=1&pid=ImgDetMain'
-                    alt='Rounded avatar'
-                  />
-                </div>
-
-                <div className='flex-1'>
-                  <div className='flex items-start justify-between gap-10'>
-                    <div>
-                      <h4 className='font-semibold text-system-primary-text text-md'>
-                        health Care
-                      </h4>
-                      <h4 className='text-brand-gray-dim text-sm mt-1'>
-                        joined the Eventorasis Global Meetingjoined the Event Horasis Global
-                        Meetingjoined the Event Horasis Global Meetingjoined the Event Horasis
-                        Global Meetingjoined the Event Horasis Global Meetingjoined the Event
-                        Horasis Global Meetingjoined the Event Horasis Global Meetingjoined the
-                        Event Horasis Global Meetingjoined the Event Horasis Global Meetingjoined
-                        the Event Horasis Global Meetingjoined the Event Horasis Global
-                        Meetingjoined the Event Horasis Global Meetingjoined the Event Horasis
-                        Global Meeting
-                      </h4>
-                    </div>
-                  </div>
-                </div>
-                <div className='flex flex-col items-end justify-between gap-6'>
-                  <h4 className='font-medium text-sm text-brand-gray-dim'>
-                    {relativeTime(new Date().getTime())}
-                  </h4>
-                  <DropdownMenu />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      ),
-    },
-    {
-      key: 7,
-      title: 'Documents',
-      render: () => (
-        <div className='bg-system-secondary-bg p-4 lg:py-10 lg:px-12 rounded-b-lg '>
-          <div className='flex flex-col gap-6'>
-            <div className='border-b border-system-file-border pb-6'>
-              <div className='flex items-center gap-4'>
-                <div className='w-12 h-12 overflow-hidden rounded-lg'>
-                  <img
-                    className='w-full h-full object-contain'
-                    src='https://th.bing.com/th/id/OIP.O-6F-svmDZRlmeu9Pyy2jQHaFV?w=273&h=197&c=7&r=0&o=5&pid=1.7'
-                    alt='Rounded avatar'
-                  />
-                </div>
-
-                <div className='flex-1'>
-                  <div className='flex items-start justify-between gap-10'>
-                    <div>
-                      <h4 className='font-semibold text-system-primary-text text-md'>image</h4>
-                    </div>
-                  </div>
-                </div>
-                <div className='flex flex-col items-end justify-between gap-6'>
-                  <h4 className='font-medium text-sm text-brand-gray-dim'>
-                    {relativeTime(new Date().getTime())}
-                  </h4>
-                  <DropdownMenu />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      ),
-    },
-  ]
 
   const onTabChange = (item) => {
     setActiveTab(item.key)
-    _storeData(MAINTAB, { myprofile: item.key })
+    _storeData(MAINTAB, { MyProfile: item.key })
   }
   const { currentUserData, updateCurrentUser } = useContext(AuthContext)
   const [isLoading, setIsLoading] = useState(false)
@@ -726,8 +728,8 @@ const MyProfile = () => {
             <Tab
               onTabChange={onTabChange}
               activeTab={activeTab}
-              name='myprofile'
-              tabs={tabs()}
+              name='MyProfile'
+              tabs={tabs(user,getUserDetails)}
               alignment='justify-start'
             />
           </div>

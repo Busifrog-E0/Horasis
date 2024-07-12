@@ -7,7 +7,7 @@ const MemberSuggestionTab = ({ lastElement, profile }) => {
   const navigate = useNavigate()
   const goToProfile = () => {
     if (profile) {
-      navigate(`/viewprofile/${profile.DocId}`)
+      navigate(`/ViewProfile/${profile.DocId}`)
     }
   }
 
@@ -26,8 +26,7 @@ const MemberSuggestionTab = ({ lastElement, profile }) => {
           ) : (
             <>
               <div className='w-11 h-11 rounded-full bg-brand-light-gray'>
-              <img src={avatar} className='object-cover h-full w-full rounded-lg' />
-
+                <img src={avatar} className='object-cover h-full w-full rounded-lg' />
               </div>
             </>
           )}

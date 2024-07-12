@@ -47,10 +47,10 @@ const DashboardHeader = () => {
         </h1>
         <div className="px-5 hidden lg:flex flex-row flex-wrap gap-3 flex-1">
           <a className="cursor-pointer text-system-primary-text" onClick={() => OnClickItem("/Activities")}>Activities</a>
-          <a className="cursor-pointer text-system-primary-text" onClick={() => OnClickItem("/Events")}>Events</a>
-          <a className="cursor-pointer text-system-primary-text" onClick={() => OnClickItem("/Discussions")}>Discussions</a>
+          {/* <a className="cursor-pointer text-system-primary-text" onClick={() => OnClickItem("/Events")}>Events</a> */}
+          {/* <a className="cursor-pointer text-system-primary-text" onClick={() => OnClickItem("/Discussions")}>Discussions</a> */}
           <a className="cursor-pointer text-system-primary-text" onClick={() => OnClickItem("/Connections")}>Connections</a>
-          <a className="cursor-pointer text-system-primary-text" onClick={() => OnClickItem("/Analytics")}>Analytics</a>
+          {/* <a className="cursor-pointer text-system-primary-text" onClick={() => OnClickItem("/Analytics")}>Analytics</a> */}
 
         </div>
         <div className="flex flex-row flex-wrap gap-2">
