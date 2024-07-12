@@ -4,7 +4,8 @@ import CurrentProfileTab from "../components/Profile/CurrentProfileTab"
 import Button from "../components/ui/Button"
 import DropdownMenu from "../components/ui/DropdownMenu"
 import { relativeTime } from "../utils/date"
-
+import EmptyMembers from '../components/Common/EmptyMembers'
+import EmptyState from '../components/ui/EmptyState'
 const Activities = () => {
 
     return (<>
@@ -32,7 +33,7 @@ const Activities = () => {
 
                         </div>
                     </div>
-                    {/* <div className="flex gap-3 flex-wrap mt-5">
+                     {/* <div className="flex gap-3 flex-wrap mt-5">
                         <Button variant="redhot">
                             Join Event
                         </Button>
@@ -62,7 +63,8 @@ const Activities = () => {
                         </Button>
                     </div> */}
                     <h4 className="font-medium text-2xl text-system-primary-text mt-3 lg:mt-9 mb-4">All Updates</h4>
-                    <div className="flex flex-col gap-3">
+                    <EmptyMembers emptyText={"You don't have any updates."}/>
+                    {/* <div className="flex flex-col gap-3">
                         <div className="p-5 bg-system-secondary-bg rounded-lg">
                             <div className="flex items-start gap-2">
                                 <img className="w-16 h-16 rounded-full" src="https://flowbite.com/docs/images/people/profile-picture-1.jpg" alt="Rounded avatar" />
@@ -159,7 +161,7 @@ const Activities = () => {
                                 <DropdownMenu />
                             </div>
                         </div>
-                    </div>
+                    </div> */}
                 </div>
                 <div>
                     <div className="p-5 bg-system-secondary-bg rounded-lg">
@@ -167,7 +169,8 @@ const Activities = () => {
                             <h4 className="font-medium text-2xl text-system-primary-text">Events</h4>
                             {/* arrow cursor-pointer */}
                         </div>
-                        <div className="flex flex-col gap-4">
+                            <EmptyMembers emptyText={"No events"} />
+                        {/* <div className="flex flex-col gap-4">
                             <div className="border-b border-system-file-border pb-4">
                                 <div className="flex items-start gap-2 ">
                                     <img className="w-12 h-12 rounded-full" src="https://flowbite.com/docs/images/people/profile-picture-1.jpg" alt="Rounded avatar" />
@@ -208,14 +211,15 @@ const Activities = () => {
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div> */}
                     </div>
                     <div className="p-5 bg-system-secondary-bg rounded-lg mt-3 lg:mt-5">
                         <div className="flex items-center justify-between gap-2 mb-5">
                             <h4 className="font-medium text-2xl text-system-primary-text">Mentions</h4>
                             {/* arrow cursor-pointer */}
                         </div>
-                        <div className="flex flex-col gap-4">
+                        <EmptyMembers emptyText={"No mentions"} />
+                        {/* <div className="flex flex-col gap-4">
                             <div className="border-b border-system-file-border pb-4">
                                 <div className="flex items-start gap-2 ">
                                     <img className="w-12 h-12 rounded-full" src="https://flowbite.com/docs/images/people/profile-picture-1.jpg" alt="Rounded avatar" />
@@ -268,7 +272,7 @@ const Activities = () => {
                                     <DropdownMenu />
                                 </div>
                             </div>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
             </div>

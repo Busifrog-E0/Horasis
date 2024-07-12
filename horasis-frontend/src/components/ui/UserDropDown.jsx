@@ -1,17 +1,147 @@
 import React, { useState, useRef, useEffect, useContext } from 'react'
-import { deleteItem, getItem, postItem } from '../../constants/operations'
+import { deleteItem, getItem, patchItem, postItem } from '../../constants/operations'
 import { AuthContext } from '../../utils/AuthProvider'
 import { useNavigate } from 'react-router-dom'
 import Spinner from './Spinner'
 
-const connnectionStatus = {
-  'No Connection': 'Connect',
-  Connected: 'Remove Connection',
-  'Connection Recieved': 'Connection Received',
-  'Connection Requested': 'Cancel Request',
+const ConnectComponent = ({ profile,updateList }) => {
+  const { updateCurrentUser, currentUserData } = useContext(AuthContext)
+
+  const sendConnectionRequest = () => {
+    postItem(
+      `connections/${profile.DocId}/send`,
+      {},
+      (result) => {
+        updateList([])
+        console.log(result)
+      },
+      (err) => {
+        console.log(err)
+      },
+      updateCurrentUser,
+      currentUserData
+    )
+  }
+  const acceptConnectionRequest = () => {
+    patchItem(
+      `connections/${profile.DocId}/accept`,
+      {},
+      (result) => {
+        updateList([])
+        console.log(result)
+      },
+      (err) => {
+        console.log(err)
+      },
+      updateCurrentUser,
+      currentUserData
+    )
+  }
+  const rejectConnectionRequest = () => {
+    deleteItem(
+      `connections/${profile.DocId}/reject`,
+      (result) => {
+        updateList([])
+        console.log(result)
+      },
+      (err) => {
+        console.log(err)
+      },
+      updateCurrentUser,
+      currentUserData
+    )
+  }
+  const cancelConnectionRequest = () => {
+    deleteItem(
+      `connections/${profile.DocId}/cancel`,
+      (result) => {
+        updateList([])
+        console.log(result)
+      },
+      (err) => {
+        console.log(err)
+      },
+      updateCurrentUser,
+      currentUserData
+    )
+  }
+  const deleteConnection = () => {
+    deleteItem(
+      `connections/${profile.DocId}`,
+      (result) => {
+        updateList([])
+        console.log(result)},
+      (err) => {
+        console.log(err)
+      },
+      updateCurrentUser,
+      currentUserData
+    )
+  }
+
+  if (profile.ConnectionStatus === 'No Connection') {
+    return (
+      <span
+        className='cursor-pointer block px-4 py-2 text-sm text-brand-gray-dim hover:bg-system-primary-bg'
+        role='menuitem'
+        onClick={() => {
+          sendConnectionRequest()
+        }}
+      >
+        Connect
+      </span>
+    )
+  } else if (profile.ConnectionStatus === 'Connected') {
+    return (
+      <span
+        className='cursor-pointer block px-4 py-2 text-sm text-brand-gray-dim hover:bg-system-primary-bg'
+        role='menuitem'
+        onClick={() => {
+          deleteConnection()
+        }}
+      >
+        Remove Connection
+      </span>
+    )
+  } else if (profile.ConnectionStatus === 'Connection Received') {
+    return (
+      <>
+        <span
+          className='cursor-pointer block px-4 py-2 text-sm text-brand-gray-dim hover:bg-system-primary-bg'
+          role='menuitem'
+          onClick={() => {
+            acceptConnectionRequest()
+          }}
+        >
+          Accept Request
+        </span>
+        <span
+          className='cursor-pointer block px-4 py-2 text-sm text-brand-gray-dim hover:bg-system-primary-bg'
+          role='menuitem'
+          onClick={() => {
+            rejectConnectionRequest()
+          }}
+        >
+          Reject Request
+        </span>
+      </>
+    )
+  } else if (profile.ConnectionStatus === 'Connection Requested') {
+    return (
+      <span
+        className='cursor-pointer block px-4 py-2 text-sm text-brand-gray-dim hover:bg-system-primary-bg'
+        role='menuitem'
+        onClick={() => {
+          cancelConnectionRequest()
+        }}
+      >
+        Cancel Request
+      </span>
+    )
+  }
 }
 
-const UserDropDown = ({ memberProfile }) => {
+const UserDropDown = ({ memberProfile,updateList }) => {
   const [isOpen, setIsOpen] = useState(false)
   const navigate = useNavigate()
   const dropdownRef = useRef(null)
@@ -118,12 +248,12 @@ const UserDropDown = ({ memberProfile }) => {
             aria-orientation='vertical'
             aria-labelledby='options-menu'
           >
-            <span
+            {/* <span
               className='cursor-pointer block px-4 py-2 text-sm text-brand-gray-dim hover:bg-system-primary-bg'
               role='menuitem'
             >
-              {profile && profile.ConnectionStatus && connnectionStatus[profile.ConnectionStatus]}
-            </span>
+            </span> */}
+            {profile && profile.ConnectionStatus && <ConnectComponent profile={profile} updateList={updateList} />}
 
             {profile ? (
               <>

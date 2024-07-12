@@ -152,7 +152,7 @@ const PictureUpload = ({
                   // <UserPlus2 className='text-border h-12 w-12' />
                   <>
                      <img
-                    className='w-full h-full rounded-full cursor-pointer'
+                    className='w-full h-full rounded-full cursor-pointer object-cover'
                     src={avatar}
                     alt='Rounded avatar'
                     onClick={handleClick}

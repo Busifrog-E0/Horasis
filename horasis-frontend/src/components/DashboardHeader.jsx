@@ -54,7 +54,7 @@ const DashboardHeader = () => {
 
         </div>
         <div className="flex flex-row flex-wrap gap-2">
-          <button
+          {/* <button
             type="button"
             className="inline-flex justify-center rounded-md border-none bg-system-secondary-bg text-md px-0 font-medium text-brand-gray-dim"
             onClick={() => OnClickItem("/universal/search")}
@@ -62,7 +62,7 @@ const DashboardHeader = () => {
             Search
           </button>
           <ChatList />
-          <AlertList />
+          <AlertList /> */}
           <button
             type="button"
             className="inline-flex justify-center rounded-md border-none bg-system-secondary-bg text-md px-0 font-medium text-brand-red"

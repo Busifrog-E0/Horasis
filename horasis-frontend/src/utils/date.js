@@ -63,7 +63,7 @@ export const MONTHS_NUM = [
 export function relativeTime(UNIXtime) {
     const now = new Date()
     const date = new Date(UNIXtime)
-    const diffInMilliseconds = now - new Date(UNIXtime * 1000)
+    const diffInMilliseconds = now - new Date(UNIXtime )
 
     const seconds = Math.floor(diffInMilliseconds / 1000)
     const minutes = Math.floor(seconds / 60)

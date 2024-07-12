@@ -60,7 +60,13 @@ const FollowingsTab = () => {
       </div>
     )
 
-  return <MembersSection members={followings} emptyText='You are not currently following anyone.' />
+  return (
+    <MembersSection
+      members={followings}
+      emptyText='You are not currently following anyone.'
+      updateList={getFollowing}
+    />
+  )
 }
 
 const FollowersTab = () => {
@@ -108,7 +114,13 @@ const FollowersTab = () => {
         <Spinner />
       </div>
     )
-  return <MembersSection members={followers} emptyText='You currently have no followers.' />
+  return (
+    <MembersSection
+      members={followers}
+      emptyText='You currently have no followers.'
+      updateList={getFollowers}
+    />
+  )
 }
 
 const AllMembersTab = () => {
@@ -155,10 +167,10 @@ const AllMembersTab = () => {
         <Spinner />
       </div>
     )
-  return <MembersSection members={followers} emptyText={'No members '} />
+  return <MembersSection members={followers} emptyText={'No members '} updateList={getFollowers} />
 }
 
-const ConnectionsTab = () => {
+export const ConnectionsTab = () => {
   const { updateCurrentUser, currentUserData } = useContext(AuthContext)
   const [isLoading, setIsLoading] = useState(false)
   const [connections, setConnections] = useState([])
@@ -178,7 +190,9 @@ const ConnectionsTab = () => {
   const getConnections = (tempConnections) => {
     setIsLoading(true)
     getItem(
-      `users/${currentUserData.CurrentUser.UserId}/connections?&${jsonToQuery(filters)}&NextId=${getNextId(tempConnections)}`,
+      `users/${currentUserData.CurrentUser.UserId}/connections?&${jsonToQuery(
+        filters
+      )}&NextId=${getNextId(tempConnections)}`,
       (connections) => {
         console.log('Connections')
         setConnections([...tempConnections, ...connections])
@@ -202,7 +216,123 @@ const ConnectionsTab = () => {
         <Spinner />
       </div>
     )
-  return <MembersSection members={connections} emptyText='You currently have no connections' />
+  return (
+    <MembersSection
+      members={connections}
+      emptyText='You currently have no connections'
+      updateList={getConnections}
+    />
+  )
+}
+
+const RecievedConnectionTab = () => {
+  const { updateCurrentUser, currentUserData } = useContext(AuthContext)
+  const [isLoading, setIsLoading] = useState(false)
+  const [connections, setConnections] = useState([])
+  const [filters, setFilters] = useState({
+    OrderBy: 'Index',
+    Keyword: '',
+    Limit: 10,
+    Keyword: '',
+  })
+
+  function filter(oby, kw, lt) {
+    var newFilter = { OrderBy: oby, Keyword: kw, Limit: lt }
+    navigate(`?${jsonToQuery(newFilter)}`)
+    setFilters(newFilter)
+  }
+
+  const getConnections = (tempConnections) => {
+    setIsLoading(true)
+    getItem(
+      `users/${currentUserData.CurrentUser.UserId}/connections/received?&${jsonToQuery(
+        filters
+      )}&NextId=${getNextId(tempConnections)}`,
+      (connections) => {
+        console.log('Connections')
+        setConnections([...tempConnections, ...connections])
+        setIsLoading(false)
+      },
+      (err) => {
+        setIsLoading(false)
+        console.log(err)
+      },
+      updateCurrentUser,
+      currentUserData
+    )
+  }
+
+  useEffect(() => {
+    getConnections([])
+  }, [])
+  if (isLoading)
+    return (
+      <div className='bg-system-secondary-bg p-4 rounded-b-lg '>
+        <Spinner />
+      </div>
+    )
+  return (
+    <MembersSection
+      members={connections}
+      emptyText='You currently have no connections'
+      updateList={getConnections}
+    />
+  )
+}
+
+const SendConnectionTab = () => {
+  const { updateCurrentUser, currentUserData } = useContext(AuthContext)
+  const [isLoading, setIsLoading] = useState(false)
+  const [connections, setConnections] = useState([])
+  const [filters, setFilters] = useState({
+    OrderBy: 'Index',
+    Keyword: '',
+    Limit: 10,
+    Keyword: '',
+  })
+
+  function filter(oby, kw, lt) {
+    var newFilter = { OrderBy: oby, Keyword: kw, Limit: lt }
+    navigate(`?${jsonToQuery(newFilter)}`)
+    setFilters(newFilter)
+  }
+
+  const getConnections = (tempConnections) => {
+    setIsLoading(true)
+    getItem(
+      `users/${currentUserData.CurrentUser.UserId}/connections/sent?&${jsonToQuery(
+        filters
+      )}&NextId=${getNextId(tempConnections)}`,
+      (connections) => {
+        console.log('Connections')
+        setConnections([...tempConnections, ...connections])
+        setIsLoading(false)
+      },
+      (err) => {
+        setIsLoading(false)
+        console.log(err)
+      },
+      updateCurrentUser,
+      currentUserData
+    )
+  }
+
+  useEffect(() => {
+    getConnections([])
+  }, [])
+  if (isLoading)
+    return (
+      <div className='bg-system-secondary-bg p-4 rounded-b-lg '>
+        <Spinner />
+      </div>
+    )
+  return (
+    <MembersSection
+      members={connections}
+      emptyText='You currently have no connections'
+      updateList={getConnections}
+    />
+  )
 }
 
 const tabs = () => [
@@ -218,11 +348,21 @@ const tabs = () => [
   },
   {
     key: 2,
+    title: 'Recieved',
+    render: () => <RecievedConnectionTab />,
+  },
+  {
+    key: 3,
+    title: 'Send',
+    render: () => <SendConnectionTab />,
+  },
+  {
+    key: 4,
     title: 'Following',
     render: () => <FollowingsTab />,
   },
   {
-    key: 3,
+    key: 5,
     title: 'Followers',
     render: () => <FollowersTab />,
   },
@@ -242,7 +382,8 @@ const Tabs = () => {
   return <Tab name='connections' activeTab={activeTab} onTabChange={onTabChange} tabs={tabs()} />
 }
 
-const Connections = () => {
+const SuggestionsSection = () => {
+
   const { updateCurrentUser, currentUserData } = useContext(AuthContext)
   const [isLoading, setIsLoading] = useState(false)
   const [suggested, setSuggested] = useState([])
@@ -282,6 +423,26 @@ const Connections = () => {
   }, [])
   return (
     <>
+      {suggested.map((item, index) => {
+        const lastElement = suggested.length === index + 1
+        if (item.DocId === currentUserData.CurrentUser.UserId) return
+        return (
+          <MemberSuggestionTab
+            lastElement={lastElement}
+            key={index}
+            profile={item}
+            updateList={getSuggested}
+          />
+        )
+      })}
+    </>
+  )
+}
+
+const Connections = () => {
+
+  return (
+    <>
       <div className='p-2 lg:px-10 lg:py-6'>
         <div className='grid lg:grid-cols-4 gap-3 lg:gap-12'>
           <div className='hidden lg:block'>
@@ -315,13 +476,7 @@ const Connections = () => {
                 {/* arrow cursor-pointer */}
               </div>
               <div className='flex flex-col gap-4'>
-                {suggested.map((item, index) => {
-                  const lastElement = suggested.length === index + 1
-                  if (item.DocId === currentUserData.CurrentUser.UserId) return
-                  return (
-                    <MemberSuggestionTab lastElement={lastElement} key={index} profile={item} />
-                  )
-                })}
+              <SuggestionsSection/>
                 {/* <MemberSuggestionTab /> */}
                 {/* <div className='border-b border-system-file-border pb-3'>
                   <div className='flex items-start gap-4'>

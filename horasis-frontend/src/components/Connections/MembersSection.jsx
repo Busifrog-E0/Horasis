@@ -3,8 +3,7 @@ import EmptyMembers from '../Common/EmptyMembers'
 import DropdownMenu from '../ui/DropdownMenu'
 import MembersSectionTab from './MemberSectionTab'
 
-const MembersSection = ({ members, emptyText }) => {
-  const arr = [0, 1, 2, 3, 4]
+const MembersSection = ({ members, emptyText, updateList }) => {
   return (
     <>
       <div className='bg-system-secondary-bg p-4 rounded-b-lg '>
@@ -16,7 +15,12 @@ const MembersSection = ({ members, emptyText }) => {
                   {members.map((item, index) => {
                     let lastElement = members.length === index + 1
                     return (
-                      <MembersSectionTab key={index} profile={item} lastElement={lastElement} />
+                      <MembersSectionTab
+                        key={index}
+                        profile={item}
+                        lastElement={lastElement}
+                        updateList={updateList}
+                      />
                     )
                   })}
                 </>

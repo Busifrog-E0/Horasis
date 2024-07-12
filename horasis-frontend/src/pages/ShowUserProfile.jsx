@@ -17,6 +17,7 @@ import AboutProfile from '../components/Profile/AboutProfile'
 import Button from '../components/ui/Button'
 import avatar from '../assets/icons/avatar.svg'
 import cover from '../assets/icons/cover.svg'
+import {ConnectionsTab} from '../pages/Connections'
 const ShowUserProfile = () => {
   const { userid } = useParams()
   const [isLoading, setIsLoading] = useState(false)
@@ -31,111 +32,111 @@ const ShowUserProfile = () => {
   const [user, setUser] = useState()
 
   const tabs = () => [
+    // {
+    //   key: 0,
+    //   title: 'Timeline',
+    //   render: () => (
+    //     <div className='bg-system-secondary-bg p-4 lg:py-8 lg:px-12 rounded-b-lg '>
+    //       <div className='p-5 pr-10 bg-system-secondary-bg rounded-lg mb-3'>
+    //         <div className='flex items-center gap-5'>
+    //           <img
+    //             className='w-16 h-16 rounded-full'
+    //             src='https://flowbite.com/docs/images/people/profile-picture-5.jpg'
+    //             alt='Rounded avatar'
+    //           />
+
+    //           <div className='flex-1 rounded-md p-2 px-3 border border-system-file-border flex items-center justify-between bg-system-secondary-bg'>
+    //             <h4 className='font-medium text-xl text-brand-gray-dim italic '>
+    //               Share what's on your mind, Frank
+    //             </h4>
+    //           </div>
+    //         </div>
+    //       </div>
+    //       <div className='flex flex-col gap-3'>
+    //         <div className='p-5 bg-system-secondary-bg rounded-lg border border-system-file-border'>
+    //           <div className='flex items-start gap-2'>
+    //             <img
+    //               className='w-16 h-16 rounded-full'
+    //               src='https://flowbite.com/docs/images/people/profile-picture-5.jpg'
+    //               alt='Rounded avatar'
+    //             />
+
+    //             <div className='flex-1'>
+    //               <div className='flex items-start justify-between gap-10'>
+    //                 <h4 className='font-semibold text-xl text-system-primary-accent mt-1'>
+    //                   Frank-Jurgen Ritcher
+    //                 </h4>
+    //                 <h4 className='font-medium text-base text-brand-gray-dim'>
+    //                   {relativeTime(new Date().getTime())}
+    //                 </h4>
+    //               </div>
+    //               <h4 className='text-system-primary-text mt-1'>updated his profile photo</h4>
+    //             </div>
+    //           </div>
+    //           <div className='flex items-center justify-between gap-10 mt-8'>
+    //             <div className='flex flex-wrap items-start justify-between gap-10'>
+    //               <div className='flex items-start gap-1 cursor-pointer'>
+    //                 <p className='text-brand-gray-dim mt-1'>likes</p>
+    //               </div>
+    //               <div className='flex items-start gap-1 cursor-pointer'>
+    //                 <p className='text-brand-gray-dim mt-1'>replies</p>
+    //               </div>
+    //             </div>
+    //             <DropdownMenu />
+    //           </div>
+    //         </div>
+    //         <div className='p-5 bg-system-secondary-bg rounded-lg border border-system-file-border'>
+    //           <div className='flex items-start gap-2'>
+    //             <img
+    //               className='w-16 h-16 rounded-full'
+    //               src='https://flowbite.com/docs/images/people/profile-picture-2.jpg'
+    //               alt='Rounded avatar'
+    //             />
+
+    //             <div className='flex-1'>
+    //               <div className='flex items-start justify-between gap-10'>
+    //                 <h4 className='font-semibold text-xl text-system-primary-accent mt-1'>
+    //                   Frank-Jurgen Ritcher
+    //                 </h4>
+    //                 <h4 className='font-medium text-base text-brand-gray-dim'>
+    //                   {relativeTime(new Date().getTime())}
+    //                 </h4>
+    //               </div>
+    //             </div>
+    //           </div>
+    //           <div className='mt-5'>
+    //             <h4 className='text-system-primary-text font-medium text-xl'>Have a great day!</h4>
+    //           </div>
+    //           <div className='flex items-center justify-between gap-10 mt-8'>
+    //             <div className='flex flex-wrap items-start justify-between gap-10'>
+    //               <div className='flex items-start gap-1 cursor-pointer'>
+    //                 <p className='text-brand-gray-dim mt-1'>likes</p>
+    //               </div>
+    //               <div className='flex items-start gap-1 cursor-pointer'>
+    //                 <p className='text-brand-gray-dim mt-1'>replies</p>
+    //               </div>
+    //             </div>
+    //             <DropdownMenu />
+    //           </div>
+    //         </div>
+    //       </div>
+    //     </div>
+    //   ),
+    // },
     {
       key: 0,
-      title: 'Timeline',
-      render: () => (
-        <div className='bg-system-secondary-bg p-4 lg:py-8 lg:px-12 rounded-b-lg '>
-          <div className='p-5 pr-10 bg-system-secondary-bg rounded-lg mb-3'>
-            <div className='flex items-center gap-5'>
-              <img
-                className='w-16 h-16 rounded-full'
-                src='https://flowbite.com/docs/images/people/profile-picture-5.jpg'
-                alt='Rounded avatar'
-              />
-
-              <div className='flex-1 rounded-md p-2 px-3 border border-system-file-border flex items-center justify-between bg-system-secondary-bg'>
-                <h4 className='font-medium text-xl text-brand-gray-dim italic '>
-                  Share what's on your mind, Frank
-                </h4>
-              </div>
-            </div>
-          </div>
-          <div className='flex flex-col gap-3'>
-            <div className='p-5 bg-system-secondary-bg rounded-lg border border-system-file-border'>
-              <div className='flex items-start gap-2'>
-                <img
-                  className='w-16 h-16 rounded-full'
-                  src='https://flowbite.com/docs/images/people/profile-picture-5.jpg'
-                  alt='Rounded avatar'
-                />
-
-                <div className='flex-1'>
-                  <div className='flex items-start justify-between gap-10'>
-                    <h4 className='font-semibold text-xl text-system-primary-accent mt-1'>
-                      Frank-Jurgen Ritcher
-                    </h4>
-                    <h4 className='font-medium text-base text-brand-gray-dim'>
-                      {relativeTime(new Date().getTime())}
-                    </h4>
-                  </div>
-                  <h4 className='text-system-primary-text mt-1'>updated his profile photo</h4>
-                </div>
-              </div>
-              <div className='flex items-center justify-between gap-10 mt-8'>
-                <div className='flex flex-wrap items-start justify-between gap-10'>
-                  <div className='flex items-start gap-1 cursor-pointer'>
-                    <p className='text-brand-gray-dim mt-1'>likes</p>
-                  </div>
-                  <div className='flex items-start gap-1 cursor-pointer'>
-                    <p className='text-brand-gray-dim mt-1'>replies</p>
-                  </div>
-                </div>
-                <DropdownMenu />
-              </div>
-            </div>
-            <div className='p-5 bg-system-secondary-bg rounded-lg border border-system-file-border'>
-              <div className='flex items-start gap-2'>
-                <img
-                  className='w-16 h-16 rounded-full'
-                  src='https://flowbite.com/docs/images/people/profile-picture-2.jpg'
-                  alt='Rounded avatar'
-                />
-
-                <div className='flex-1'>
-                  <div className='flex items-start justify-between gap-10'>
-                    <h4 className='font-semibold text-xl text-system-primary-accent mt-1'>
-                      Frank-Jurgen Ritcher
-                    </h4>
-                    <h4 className='font-medium text-base text-brand-gray-dim'>
-                      {relativeTime(new Date().getTime())}
-                    </h4>
-                  </div>
-                </div>
-              </div>
-              <div className='mt-5'>
-                <h4 className='text-system-primary-text font-medium text-xl'>Have a great day!</h4>
-              </div>
-              <div className='flex items-center justify-between gap-10 mt-8'>
-                <div className='flex flex-wrap items-start justify-between gap-10'>
-                  <div className='flex items-start gap-1 cursor-pointer'>
-                    <p className='text-brand-gray-dim mt-1'>likes</p>
-                  </div>
-                  <div className='flex items-start gap-1 cursor-pointer'>
-                    <p className='text-brand-gray-dim mt-1'>replies</p>
-                  </div>
-                </div>
-                <DropdownMenu />
-              </div>
-            </div>
-          </div>
-        </div>
-      ),
-    },
-    {
-      key: 1,
       title: 'About',
       render: () => <AboutTab user={user} getUserDetails={getUserDetails} />,
     },
-    {
-      key: 2,
-      title: 'Connections',
-      render: () => (
-        <div className='bg-system-secondary-bg p-4 lg:p-6 rounded-b-lg '>
-          <MembersSection />
-        </div>
-      ),
-    },
+    // {
+    //   key: 1,
+    //   title: 'Connections',
+    //   render: () => (
+    //     <div className='bg-system-secondary-bg p-4 lg:p-6 rounded-b-lg '>
+    //       <ConnectionsTab/>
+    //     </div>
+    //   ),
+    // },
   ]
 
   const onTabChange = (item) => {
@@ -256,7 +257,7 @@ const ShowUserProfile = () => {
                   <>
                     <div className='w-24 lg:w-60 h-24 lg:h-60 rounded-full flex items-center justify-center bg-black'>
                       <img
-                        className='w-24 lg:w-60 h-24 lg:h-60 rounded-full'
+                        className='w-24 lg:w-60 h-24 lg:h-60 rounded-full object-cover'
                         src={user.ProfilePicture}
                         alt='Rounded avatar'
                         onClick={() => {

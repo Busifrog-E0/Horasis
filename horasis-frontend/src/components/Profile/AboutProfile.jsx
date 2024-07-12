@@ -155,7 +155,7 @@ const AboutProfile = ({ user, getUserDetails, isCurrentUser }) => {
               {errorObj['Username'] != undefined && (
                 <p className='text-brand-red m-0'>{errorObj['Username']}</p>
               )}
-              {usernameAvailable && (
+              {usernameAvailable && errorObj['Username'] === undefined && (
                 <p
                   className={
                     usernameAvailable.available ? 'text-brand-green m-0' : 'text-brand-red m-0'

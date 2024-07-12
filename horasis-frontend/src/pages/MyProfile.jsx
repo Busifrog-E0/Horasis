@@ -18,6 +18,8 @@ import Button from '../components/ui/Button'
 import PictureUpload from '../components/Profile/PictureUpload'
 import avatar from '../assets/icons/avatar.svg'
 import cover from '../assets/icons/cover.svg'
+import { ConnectionsTab } from './Connections'
+import EmptyMembers from '../components/Common/EmptyMembers'
 
 const tabs = (user,getUserDetails) => [
   {
@@ -40,7 +42,8 @@ const tabs = (user,getUserDetails) => [
             </div>
           </div>
         </div>
-        <div className='flex flex-col gap-3'>
+        <EmptyMembers emptyText={"You currently have nothing on your timeline"}/>
+        {/* <div className='flex flex-col gap-3'>
           <div className='p-5 bg-system-secondary-bg rounded-lg border border-system-file-border'>
             <div className='flex items-start gap-2'>
               <img
@@ -107,7 +110,7 @@ const tabs = (user,getUserDetails) => [
               <DropdownMenu />
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
     ),
   },
@@ -121,7 +124,7 @@ const tabs = (user,getUserDetails) => [
     title: 'Connections',
     render: () => (
       <div className='bg-system-secondary-bg p-4 lg:p-6 rounded-b-lg '>
-        <MembersSection />
+      <ConnectionsTab/>
       </div>
     ),
   },
@@ -497,7 +500,7 @@ const MyProfile = () => {
                   <>
                     <div className='w-24 lg:w-60 h-24 lg:h-60 rounded-full flex items-center justify-center bg-black'>
                       <img
-                        className='w-24 lg:w-60 h-24 lg:h-60 rounded-full'
+                        className='w-24 lg:w-60 h-24 lg:h-60 rounded-full object-cover'
                         src={user.ProfilePicture}
                         alt='Rounded avatar'
                         onClick={() => {

@@ -6,10 +6,16 @@
 @tailwind utilities;
 
 * {
-  /* font-size: .9rem; */
+  font-size: .9rem;
   margin: 0px;
   padding: 0px;
   box-sizing: border-box;
+}
+
+@media (min-width:1200px) {
+    *{
+      font-size: 1rem;
+    }
 }
 
 

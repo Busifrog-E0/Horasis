@@ -5,7 +5,7 @@ import { relativeTime } from '../../utils/date'
 import UserDropDown from '../ui/UserDropDown'
 import { AuthContext } from '../../utils/AuthProvider'
 
-const MembersSectionTab = ({ lastElement, profile }) => {
+const MembersSectionTab = ({ lastElement, profile,updateList }) => {
   const { currentUserData } = useContext(AuthContext)
   const navigate = useNavigate()
   const goToProfile = () => {
@@ -66,9 +66,9 @@ const MembersSectionTab = ({ lastElement, profile }) => {
           </div>
           <div className='flex flex-col items-end'>
             <h4 className='font-medium text-base text-brand-gray-dim mb-3'>
-              {relativeTime(new Date().getTime())}
+              {relativeTime(profile.CreatedIndex)}
             </h4>
-            <UserDropDown memberProfile={profile} />
+            <UserDropDown memberProfile={profile} updateList={updateList} />
           </div>
         </div>
       </div>

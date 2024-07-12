@@ -29,6 +29,7 @@ const Register = () => {
   const [showpass, setShowpass] = useState(false)
   const [showconfpass, setShowconfpass] = useState(false)
   const [errorObj, setErrorObj] = useState({})
+  const [otpError,setOtpError] = useState({})
   const [registerFormValue, setRegisterFormValue] = useState({
     FullName: '',
     Username: '',
@@ -145,6 +146,7 @@ const Register = () => {
       },
       (err) => {
         setVerifying(false)
+        setOtpError({OTPERROR:err})
         console.log(err)
       },
       updateCurrentUser,
@@ -193,10 +195,14 @@ const Register = () => {
             width='full'
             placeholder='Enter OTP recieved in registered email'
             setValue={(e) => {
+              setOtpError({})
               setOtp(e)
             }}
             type='number'
           />
+             {otpError['OTPERROR'] != undefined && (
+              <p className='text-brand-red m-0'>{otpError['OTPERROR']}</p>
+            )}
           <div className='mt-4'>
             <Button
               loading={verifying}
@@ -293,7 +299,7 @@ const Register = () => {
             {errorObj['Username'] != undefined && (
               <p className='text-brand-red m-0'>{errorObj['Username']}</p>
             )}
-            {usernameAvailable && (
+            {usernameAvailable && errorObj['Username'] === undefined && (
               <p
                 className={
                   usernameAvailable.available ? 'text-brand-green m-0' : 'text-brand-red m-0'
@@ -511,7 +517,7 @@ const Register = () => {
               size='md'
               variant='black'
               width='full'
-              disabled={!termsChecked}
+              disabled={!termsChecked || (usernameAvailable && !usernameAvailable.available)}
             >
               Register
             </Button>
