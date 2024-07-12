@@ -171,15 +171,15 @@ const DeleteConnection = async (req, res) => {
 const ConnectionStatus = async (MyId, TheirId) => {
     const ConnectionData = (await ReadConnections({ UserIds: { $all: [MyId, TheirId] } }, undefined, 1, undefined))[0];
     if (!ConnectionData) {
-        return "No Connection";
+        return { Status: "No Connection", ConnectionIndex: 0 };
     }
     else if (ConnectionData.Status === "Connected") {
-        return "Connected";
+        return { Status: "Connected", ConnectionIndex: ConnectionData.AcceptedIndex };
     }
     else if (ConnectionData.ReceiverId === MyId) {
-        return "Connection Received";
+        return { Status: "Connection Received", ConnectionIndex: ConnectionData.CreatedIndex };
     }
-    return "Connection Requested";
+    return { Status: "Connection Requested", ConnectionIndex: ConnectionData.CreatedIndex };
 }
 
 const GetAUsersReceivedConnections = async (req, res) => {
