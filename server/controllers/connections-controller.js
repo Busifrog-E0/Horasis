@@ -3,6 +3,7 @@ import e from 'express';
 import { ReadOneFromConnections, ReadConnections, UpdateConnections, CreateConnections, RemoveConnections, } from './../databaseControllers/connections-databaseController.js';
 import moment from 'moment';
 import { AlertBoxObject } from './common.js';
+import { ViewOtherUserData } from './users-controller.js';
 /**
  * @typedef {import('./../databaseControllers/connections-databaseController.js').ConnectionData} ConnectionData 
  */
@@ -16,12 +17,13 @@ import { AlertBoxObject } from './common.js';
 const GetAUsersConnections = async (req, res) => {
     const { Filter, NextId, Limit, OrderBy } = req.query;
     // @ts-ignore
-    const SenderId = req.user.UserId;
-    // @ts-ignore
-    Filter.SenderId = SenderId;
+    const UserId = req.user.UserId;
     // @ts-ignore
     const data = await ReadConnections(Filter, NextId, Limit, OrderBy);
-    return res.json(data);
+
+    const UserData = await Promise.all(data.map(id => ViewOtherUserData(UserId,
+        id.UserIds.filter(element => element !== UserId)[0])));
+    return res.json(UserData);
 }
 
 /**
@@ -163,6 +165,8 @@ const DeleteConnection = async (req, res) => {
     return res.json(true)
 }
 
+
+
 /**
  * 
  * @param {string} MyId 
@@ -182,17 +186,6 @@ const ConnectionStatus = async (MyId, TheirId) => {
     return { Status: "Connection Requested", ConnectionIndex: ConnectionData.CreatedIndex };
 }
 
-const GetAUsersReceivedConnections = async (req, res) => {
-
-
-    return res.json(true);
-}
-
-const GetAUsersSentConnections = async (req, res) => {
-
-    return res.json(true);
-}
-
 export {
     GetAUsersConnections,
     PostConnectionSend,
@@ -201,7 +194,4 @@ export {
     DeleteConnectionCancel,
     DeleteConnection,
     ConnectionStatus,
-
-    GetAUsersReceivedConnections,
-    GetAUsersSentConnections,
 }
