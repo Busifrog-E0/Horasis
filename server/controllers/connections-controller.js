@@ -138,7 +138,7 @@ const DeleteConnectionCancel = async (req, res) => {
     }
     const ConnectionData = (await ReadConnections({ SenderId, ReceiverId, "Status": "Pending" }, undefined, 1, undefined))[0];
     if (!ConnectionData) {
-        res.status(444).json(AlertBoxObject('Invalid Request', 'No pending request '));
+        return res.status(444).json(AlertBoxObject('Invalid Request', 'No pending request '));
     }
     await RemoveConnections(ConnectionData.DocId);
     return res.json(true)
