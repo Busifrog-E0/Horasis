@@ -173,6 +173,9 @@ const DeleteConnection = async (req, res) => {
  * @param {string} TheirId 
  */
 const ConnectionStatus = async (MyId, TheirId) => {
+    if (MyId === TheirId) {
+        return { Status: "No Connection", ConnectionIndex: 0 };
+    }
     const ConnectionData = (await ReadConnections({ UserIds: { $all: [MyId, TheirId] } }, undefined, 1, undefined))[0];
     if (!ConnectionData) {
         return { Status: "No Connection", ConnectionIndex: 0 };
