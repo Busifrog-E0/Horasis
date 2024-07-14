@@ -190,6 +190,7 @@ const Register = () => {
           </button>
         </Modal.Header>
         <Modal.Body>
+          <p className='text-system-secondary-text mb-2'>Please verify the OTP number received in your registered email.</p>
           <h1 className='text-system-primary-text font-medium text-lg'>OTP</h1>
           <Input
             className='py-4 rounded-xl border-2 border-system-file-border-accent'
