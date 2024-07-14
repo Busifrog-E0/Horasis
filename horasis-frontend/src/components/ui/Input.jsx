@@ -33,7 +33,7 @@ const Input = ({
 
       {icon ? (
         <div
-          className={`flex ${iconpos === "right" ? "flex-row-reverse pl-4 pr-4" : " pl-2 "} items-center bg-system-secondary-bg ${width === "full" ? "w-[100%]" : "w-max"} focus-within:border focus-within:border-system-primary-accent focus-within:bg-system-secondary-bg rounded-lg gap-x-2 border border-system-file-border`}
+          className={`flex ${iconpos === "right" ? "flex-row-reverse pl-4 pr-4" : " pl-2 "} items-center bg-system-secondary-bg ${width === "full" ? "w-[100%]" : "w-max"} focus-within:border-2 focus-within:border-system-primary-accent focus-within:bg-system-secondary-bg rounded-lg gap-x-2 border-2 border-system-file-border`}
         >
           <input
             onChange={(e) => setValue(e.target.value)}
@@ -53,7 +53,7 @@ const Input = ({
           name={name}
           value={value}
           placeholder={placeholder}
-          className={twMerge(inputVariants({ variant, size, width, withIcon, className })) + " hover:shadow-inner focus:bg-system-secondary-bg focus:border focus:border-system-primary-accent"}
+          className={twMerge(inputVariants({ variant, size, width, withIcon, className })) + " hover:shadow-inner focus:bg-system-secondary-bg focus:border-2 focus:border-system-primary-accent"}
           required={required}
           {...props}
         />
