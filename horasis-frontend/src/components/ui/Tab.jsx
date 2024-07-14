@@ -4,7 +4,7 @@ const Tab = ({ tabs, gap = 'lg:gap-4', activeTab, onTabChange = () => { }, name,
 
   const TabList = () => {
     return (
-      <div className={`flex ${alignment} ${gap}`}>
+      <div className={`flex ${alignment} ${gap} overflow-auto`}>
         {tabs.map((item, index) => {
           return (
             <p
