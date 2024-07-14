@@ -27,7 +27,7 @@ const tabs = (user, getUserDetails) => [
     title: 'Timeline',
     render: () => (
       <div className='bg-system-secondary-bg p-4 lg:py-8 lg:px-12 rounded-b-lg '>
-        <div className='p-5 pr-10 bg-system-secondary-bg rounded-lg mb-3'>
+        {/* <div className='p-5 pr-10 bg-system-secondary-bg rounded-lg mb-3'>
           <div className='flex items-center gap-5'>
             <img
               className='w-16 h-16 rounded-full'
@@ -41,7 +41,7 @@ const tabs = (user, getUserDetails) => [
               </h4>
             </div>
           </div>
-        </div>
+        </div> */}
         <EmptyMembers emptyText={'You currently have nothing on your timeline'} />
         {/* <div className='flex flex-col gap-3'>
           <div className='p-5 bg-system-secondary-bg rounded-lg border border-system-file-border'>
