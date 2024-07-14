@@ -5,9 +5,11 @@ import Spinner from '../../ui/Spinner'
 import MembersSection from '../MembersSection'
 import { jsonToQuery } from '../../../utils/searchParams/extractSearchParams'
 import { getNextId } from '../../../utils/URLParams'
+import { useToast } from '../../Toast/ToastService'
 
 const RecievedConnectionTab = () => {
   const { updateCurrentUser, currentUserData } = useContext(AuthContext)
+  const toast = useToast()
   const [isLoading, setIsLoading] = useState(false)
   const [connectionsReceived, setConnectionsRecieved] = useState([])
   const [filters, setFilters] = useState({
@@ -39,7 +41,7 @@ const RecievedConnectionTab = () => {
         console.log(err)
       },
       updateCurrentUser,
-      currentUserData
+      currentUserData,toast
     )
   }
 

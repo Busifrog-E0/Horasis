@@ -17,9 +17,11 @@ import AboutProfile from '../components/Profile/AboutProfile'
 import Button from '../components/ui/Button'
 import avatar from '../assets/icons/avatar.svg'
 import cover from '../assets/icons/cover.svg'
+import { useToast } from '../components/Toast/ToastService'
 
 const UserProfileConnectComponent = ({ profile, connectCallback = () => {}, setIsLoading }) => {
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
+	const toast = useToast()
 
 	const sendConnectionRequest = () => {
 		setIsLoading(true)
@@ -35,7 +37,8 @@ const UserProfileConnectComponent = ({ profile, connectCallback = () => {}, setI
 				console.log(err)
 			},
 			updateCurrentUser,
-			currentUserData
+			currentUserData,
+			toast
 		)
 	}
 	const acceptConnectionRequest = () => {
@@ -52,7 +55,8 @@ const UserProfileConnectComponent = ({ profile, connectCallback = () => {}, setI
 				console.log(err)
 			},
 			updateCurrentUser,
-			currentUserData
+			currentUserData,
+			toast
 		)
 	}
 	const rejectConnectionRequest = () => {
@@ -68,7 +72,8 @@ const UserProfileConnectComponent = ({ profile, connectCallback = () => {}, setI
 				console.log(err)
 			},
 			updateCurrentUser,
-			currentUserData
+			currentUserData,
+			toast
 		)
 	}
 	const cancelConnectionRequest = () => {
@@ -84,7 +89,8 @@ const UserProfileConnectComponent = ({ profile, connectCallback = () => {}, setI
 				console.log(err)
 			},
 			updateCurrentUser,
-			currentUserData
+			currentUserData,
+			toast
 		)
 	}
 	const deleteConnection = () => {
@@ -100,7 +106,8 @@ const UserProfileConnectComponent = ({ profile, connectCallback = () => {}, setI
 				console.log(err)
 			},
 			updateCurrentUser,
-			currentUserData
+			currentUserData,
+			toast
 		)
 	}
 
@@ -175,7 +182,7 @@ const UserProfileConnectComponent = ({ profile, connectCallback = () => {}, setI
 
 const UserProfileFollowComponent = ({ profile, followCallback = () => {}, setIsLoading }) => {
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
-
+	const toast = useToast()
 	const followUser = () => {
 		setIsLoading(true)
 		postItem(
@@ -191,7 +198,8 @@ const UserProfileFollowComponent = ({ profile, followCallback = () => {}, setIsL
 				setIsLoading(false)
 			},
 			updateCurrentUser,
-			currentUserData
+			currentUserData,
+			toast
 		)
 	}
 
@@ -207,7 +215,8 @@ const UserProfileFollowComponent = ({ profile, followCallback = () => {}, setIsL
 				setIsLoading(true)
 			},
 			updateCurrentUser,
-			currentUserData
+			currentUserData,
+			toast
 		)
 	}
 
@@ -256,6 +265,7 @@ const ShowUserProfile = () => {
 	}
 
 	const { currentUserData, updateCurrentUser } = useContext(AuthContext)
+	const toast = useToast()
 	const [user, setUser] = useState()
 
 	const tabs = () => [
@@ -383,7 +393,8 @@ const ShowUserProfile = () => {
 				console.log(err)
 			},
 			updateCurrentUser,
-			currentUserData
+			currentUserData,
+			toast
 		)
 	}
 

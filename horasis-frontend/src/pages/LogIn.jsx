@@ -8,6 +8,7 @@ import Button from '../components/ui/Button'
 import { AuthContext, defaultUserData } from '../utils/AuthProvider'
 import { postItem } from '../constants/operations'
 import { loginValidation } from '../utils/schema/loginValidation'
+import { useToast } from '../components/Toast/ToastService'
 const logoText = {
   fontSize: '1.7rem',
   fontWeight: '700',
@@ -26,6 +27,7 @@ const LogIn = () => {
   const [loading, setLoading] = useState(false)
   const [showpass, setShowpass] = useState(false)
   const { currentUserData, updateCurrentUser } = useContext(AuthContext)
+  const toast = useToast()
   const [errorObj, setErrorObj] = useState({})
   const [loginFormValue, setLoginFormValue] = useState({
     Email: '',
@@ -84,7 +86,7 @@ const LogIn = () => {
         })
       },
       updateCurrentUser,
-      currentUserData
+      currentUserData,toast
     )
   }
 

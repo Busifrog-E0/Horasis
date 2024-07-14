@@ -2,9 +2,11 @@ import React, { useContext, useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { deleteItem, patchItem, postItem } from '../../constants/operations'
 import { AuthContext } from '../../utils/AuthProvider'
+import { useToast } from '../Toast/ToastService'
 
 const DropdownConnectComponent = ({ profile, updateList }) => {
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
+	const toast = useToast()
 
 	const sendConnectionRequest = () => {
 		postItem(
@@ -33,7 +35,7 @@ const DropdownConnectComponent = ({ profile, updateList }) => {
 				console.log(err)
 			},
 			updateCurrentUser,
-			currentUserData
+			currentUserData,toast
 		)
 	}
 	const rejectConnectionRequest = () => {
@@ -47,7 +49,7 @@ const DropdownConnectComponent = ({ profile, updateList }) => {
 				console.log(err)
 			},
 			updateCurrentUser,
-			currentUserData
+			currentUserData,toast
 		)
 	}
 	const cancelConnectionRequest = () => {
@@ -61,7 +63,7 @@ const DropdownConnectComponent = ({ profile, updateList }) => {
 				console.log(err)
 			},
 			updateCurrentUser,
-			currentUserData
+			currentUserData,toast
 		)
 	}
 	const deleteConnection = () => {
@@ -75,7 +77,7 @@ const DropdownConnectComponent = ({ profile, updateList }) => {
 				console.log(err)
 			},
 			updateCurrentUser,
-			currentUserData
+			currentUserData,toast
 		)
 	}
 
@@ -140,7 +142,7 @@ const DropdownConnectComponent = ({ profile, updateList }) => {
 
 const DropdownFollowComponent = ({ profile, updateList }) => {
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
-
+	const toast = useToast()
 	const followUser = () => {
 		postItem(
 			'follow',
@@ -156,7 +158,7 @@ const DropdownFollowComponent = ({ profile, updateList }) => {
 				console.log(err)
 			},
 			updateCurrentUser,
-			currentUserData
+			currentUserData,toast
 		)
 	}
 
@@ -172,7 +174,7 @@ const DropdownFollowComponent = ({ profile, updateList }) => {
 				console.log(err)
 			},
 			updateCurrentUser,
-			currentUserData
+			currentUserData,toast
 		)
 	}
 	if (profile.IsFollowing) {

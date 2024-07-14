@@ -3,9 +3,11 @@ import { AuthContext } from "../../utils/AuthProvider"
 import { getItem } from "../../constants/operations"
 import avatar from '../../assets/icons/avatar.svg'
 import Input from "../ui/Input"
+import { useToast } from "../Toast/ToastService"
 
 const PostComponent = () => {
 	const { currentUserData, updateCurrentUser, scrollToTop } = useContext(AuthContext)
+	const toast = useToast()
 	const [user, setUser] = useState()
 	const getUserDetails = () => {
 		getItem(
@@ -17,7 +19,7 @@ const PostComponent = () => {
 				console.log(err)
 			},
 			updateCurrentUser,
-			currentUserData
+			currentUserData,toast
 		)
 	}
 

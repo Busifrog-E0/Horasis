@@ -20,6 +20,7 @@ import avatar from '../assets/icons/avatar.svg'
 import cover from '../assets/icons/cover.svg'
 import EmptyMembers from '../components/Common/EmptyMembers'
 import ConnectionsTab from '../components/Connections/Tabs/ConnectionsTab'
+import { useToast } from '../components/Toast/ToastService'
 
 const tabs = (user, getUserDetails) => [
   {
@@ -297,6 +298,7 @@ const MyProfile = () => {
     _storeData(MAINTAB, { MyProfile: item.key })
   }
   const { currentUserData, updateCurrentUser } = useContext(AuthContext)
+  const toast = useToast()
   const [isLoading, setIsLoading] = useState(false)
   const [user, setUser] = useState()
   const getUserDetails = () => {
@@ -317,7 +319,7 @@ const MyProfile = () => {
         console.log(err)
       },
       updateCurrentUser,
-      currentUserData
+      currentUserData,toast
     )
   }
   const [isProfilePictureOpen, setIsProfilePictureOpen] = useState(false)
@@ -354,7 +356,7 @@ const MyProfile = () => {
         console.log(err)
       },
       updateCurrentUser,
-      currentUserData
+      currentUserData,toast
     )
   }
 
@@ -370,7 +372,7 @@ const MyProfile = () => {
           console.error(err)
         },
         updateCurrentUser,
-        currentUserData
+        currentUserData,toast
       )
     } else {
       onProfileImageSet('')
@@ -406,7 +408,7 @@ const MyProfile = () => {
         console.log(err)
       },
       updateCurrentUser,
-      currentUserData
+      currentUserData,toast
     )
   }
   const onCoverImageUpload = () => {
@@ -421,7 +423,7 @@ const MyProfile = () => {
           console.log(err)
         },
         updateCurrentUser,
-        currentUserData
+        currentUserData,toast
       )
     } else {
       onCoverImageSet('')

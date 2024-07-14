@@ -4,9 +4,11 @@ import { AuthContext } from '../../utils/AuthProvider'
 import { getItem } from '../../constants/operations'
 import Spinner from '../ui/Spinner'
 import avatar from '../../assets/icons/avatar.svg'
+import { useToast } from '../Toast/ToastService'
 
 const CurrentProfileTab = () => {
 	const { currentUserData, updateCurrentUser, scrollToTop } = useContext(AuthContext)
+	const toast = useToast()
 	const [expand, setExpand] = useState(false)
 	const [isLoading, setIsLoading] = useState(false)
 	const [user, setUser] = useState()
@@ -43,7 +45,7 @@ const CurrentProfileTab = () => {
 				console.log(err)
 			},
 			updateCurrentUser,
-			currentUserData
+			currentUserData,toast
 		)
 	}
 
@@ -60,7 +62,7 @@ const CurrentProfileTab = () => {
 				console.log(err)
 			},
 			updateCurrentUser,
-			currentUserData
+			currentUserData,toast
 		)
 	}
 

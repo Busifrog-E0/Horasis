@@ -9,6 +9,7 @@ import TextArea from '../components/ui/TextArea'
 import { postItem } from '../constants/operations'
 import { AuthContext } from '../utils/AuthProvider'
 import { registerValidation } from '../utils/schema/users/registerValidation'
+import { useToast } from '../components/Toast/ToastService'
 const logoText = {
   fontSize: '1.7rem',
   fontWeight: '700',
@@ -44,7 +45,7 @@ const Register = () => {
     About: '',
   })
   const { updateCurrentUser, currentUserData } = useContext(AuthContext)
-
+  const toast = useToast()
   const [usernameAvailable, setUsernameAvailable] = useState()
   const [otpid, setOtpid] = useState('')
   const [otp, setOtp] = useState('')
@@ -127,7 +128,7 @@ const Register = () => {
         console.log(err)
       },
       updateCurrentUser,
-      currentUserData
+      currentUserData,toast
     )
   }
 
@@ -150,7 +151,7 @@ const Register = () => {
         console.log(err)
       },
       updateCurrentUser,
-      currentUserData
+      currentUserData,toast
     )
   }
 
@@ -171,7 +172,7 @@ const Register = () => {
       },
       (err) => console.log(err),
       updateCurrentUser,
-      currentUserData
+      currentUserData,toast
     )
   }
 

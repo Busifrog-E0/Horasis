@@ -7,6 +7,7 @@ import Spinner from '../ui/Spinner'
 import Button from '../ui/Button'
 import TextArea from '../ui/TextArea'
 import { updateValidation } from '../../utils/schema/users/updateValidation'
+import { useToast } from '../Toast/ToastService'
 
 const AboutProfile = ({ user, getUserDetails, isCurrentUser }) => {
   const [isOpen, setIsOpen] = useState(false)
@@ -14,6 +15,7 @@ const AboutProfile = ({ user, getUserDetails, isCurrentUser }) => {
   const [usernameAvailable, setUsernameAvailable] = useState()
   const [isLoading, setIsLoading] = useState(false)
   const { currentUserData, updateCurrentUser } = useContext(AuthContext)
+  const toast = useToast()
 
   const [updateFormValue, setUpdateFormValue] = useState({
     FullName: user?.FullName,
@@ -78,7 +80,7 @@ const AboutProfile = ({ user, getUserDetails, isCurrentUser }) => {
       },
       (err) => console.log(err),
       updateCurrentUser,
-      currentUserData
+      currentUserData,toast
     )
   }
 
@@ -96,7 +98,7 @@ const AboutProfile = ({ user, getUserDetails, isCurrentUser }) => {
         console.log(err)
       },
       updateCurrentUser,
-      currentUserData
+      currentUserData,toast
     )
   }
 

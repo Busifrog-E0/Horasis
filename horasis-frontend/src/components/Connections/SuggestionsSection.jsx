@@ -4,9 +4,11 @@ import { jsonToQuery } from "../../utils/searchParams/extractSearchParams"
 import { getNextId } from "../../utils/URLParams"
 import { getItem } from "../../constants/operations"
 import MemberSuggestionTab from "./MemberSuggestionTab"
+import { useToast } from "../Toast/ToastService"
 
 const SuggestionsSection = () => {
   const { updateCurrentUser, currentUserData } = useContext(AuthContext)
+  const toast = useToast()
   const [isLoading, setIsLoading] = useState(false)
   const [suggested, setSuggested] = useState([])
   const [filters, setFilters] = useState({
@@ -38,7 +40,7 @@ const SuggestionsSection = () => {
         console.log(err)
       },
       updateCurrentUser,
-      currentUserData
+      currentUserData,toast
     )
   }
 

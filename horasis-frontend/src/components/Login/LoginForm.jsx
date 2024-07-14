@@ -4,6 +4,7 @@ import { AuthContext } from '../../utils/AuthProvider'
 import { useState } from 'react'
 import { loginValidation } from '../../utils/schema/loginValidation'
 import LoginInputField from './LoginInputField'
+import {useToast} from '../Toast/ToastService'
 
 const SignInButtonStyle = {
   padding: '19px',
@@ -15,6 +16,7 @@ const SignInButtonStyle = {
 
 const LoginForm = ({ setLoading, activeKey }) => {
   const { updateCurrentUser, currentUserData } = useContext(AuthContext)
+  const toast = useToast()
   const [errorOj, setErrorObj] = useState({})
   const [loginFormValue, setLoginFormValue] = useState({
     Email: '',
@@ -74,7 +76,7 @@ const LoginForm = ({ setLoading, activeKey }) => {
         })
       },
       updateCurrentUser,
-      currentUserData
+      currentUserData,toast
     )
   }
 

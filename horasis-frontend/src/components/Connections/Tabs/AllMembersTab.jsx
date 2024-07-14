@@ -5,9 +5,11 @@ import Spinner from '../../ui/Spinner'
 import MembersSection from '../MembersSection'
 import { jsonToQuery } from '../../../utils/searchParams/extractSearchParams'
 import { getNextId } from '../../../utils/URLParams'
+import { useToast } from '../../Toast/ToastService'
 
 const AllMembersTab = () => {
   const { updateCurrentUser, currentUserData } = useContext(AuthContext)
+  const toast = useToast()
   const [isLoading, setIsLoading] = useState(false)
   const [members, setMembers] = useState([])
   const [filters, setFilters] = useState({
@@ -37,7 +39,7 @@ const AllMembersTab = () => {
         console.log(err)
       },
       updateCurrentUser,
-      currentUserData
+      currentUserData,toast
     )
   }
 
