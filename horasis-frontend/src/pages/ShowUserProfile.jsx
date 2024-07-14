@@ -8,7 +8,7 @@ import { relativeTime } from '../utils/date'
 import DropdownMenu from '../components/ui/DropdownMenu'
 import StaggeredList from '../components/ui/StaggeredList'
 import VideoPlayer from '../components/ui/VideoPlayer'
-import { deleteItem, getItem, postItem } from '../constants/operations'
+import { deleteItem, getItem, patchItem, postItem } from '../constants/operations'
 import { AuthContext } from '../utils/AuthProvider'
 import Modal from '../components/ui/Modal'
 import Input from '../components/ui/Input'
@@ -18,10 +18,237 @@ import Button from '../components/ui/Button'
 import avatar from '../assets/icons/avatar.svg'
 import cover from '../assets/icons/cover.svg'
 
+const UserProfileConnectComponent = ({ profile, connectCallback = () => {}, setIsLoading }) => {
+	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
+
+	const sendConnectionRequest = () => {
+		setIsLoading(true)
+		postItem(
+			`connections/${profile.DocId}/send`,
+			{},
+			(result) => {
+				connectCallback()
+				console.log(result)
+			},
+			(err) => {
+				setIsLoading(false)
+				console.log(err)
+			},
+			updateCurrentUser,
+			currentUserData
+		)
+	}
+	const acceptConnectionRequest = () => {
+		setIsLoading(true)
+		patchItem(
+			`connections/${profile.DocId}/accept`,
+			{},
+			(result) => {
+				connectCallback()
+				console.log(result)
+			},
+			(err) => {
+				setIsLoading(false)
+				console.log(err)
+			},
+			updateCurrentUser,
+			currentUserData
+		)
+	}
+	const rejectConnectionRequest = () => {
+		setIsLoading(true)
+		deleteItem(
+			`connections/${profile.DocId}/reject`,
+			(result) => {
+				connectCallback()
+				console.log(result)
+			},
+			(err) => {
+				setIsLoading(false)
+				console.log(err)
+			},
+			updateCurrentUser,
+			currentUserData
+		)
+	}
+	const cancelConnectionRequest = () => {
+		setIsLoading(true)
+		deleteItem(
+			`connections/${profile.DocId}/cancel`,
+			(result) => {
+				connectCallback()
+				console.log(result)
+			},
+			(err) => {
+				setIsLoading(false)
+				console.log(err)
+			},
+			updateCurrentUser,
+			currentUserData
+		)
+	}
+	const deleteConnection = () => {
+		setIsLoading(true)
+		deleteItem(
+			`connections/${profile.DocId}`,
+			(result) => {
+				connectCallback()
+				console.log(result)
+			},
+			(err) => {
+				setIsLoading(false)
+				console.log(err)
+			},
+			updateCurrentUser,
+			currentUserData
+		)
+	}
+
+	if (profile.ConnectionStatus === 'No Connection') {
+		return (
+			<Button
+				variant='outline'
+				width='full'
+				className='rounded-full font-semibold'
+				size='md'
+				onClick={() => {
+					sendConnectionRequest()
+				}}>
+				Connect
+			</Button>
+		)
+	} else if (profile.ConnectionStatus === 'Connected') {
+		return (
+			<Button
+				variant='white'
+				width='full'
+				className='rounded-full font-semibold shadow-sm text-system-primary-accent bg-system-secondary-accent'
+				size='md'
+				onClick={() => {
+					deleteConnection()
+				}}>
+				Remove Connection
+			</Button>
+		)
+	} else if (profile.ConnectionStatus === 'Connection Received') {
+		return (
+			<>
+				<Button
+					variant='black'
+					width='full'
+					className='rounded-full font-semibold'
+					size='md'
+					onClick={() => {
+						acceptConnectionRequest()
+					}}>
+					Accept
+				</Button>
+				<Button
+					variant='white'
+					width='full'
+					className='rounded-full font-semibold text-system-primary-accent border-none hover:bg-system-secondary-accent shadow-sm'
+					size='md'
+					onClick={() => {
+						rejectConnectionRequest()
+					}}>
+					Reject
+				</Button>
+			</>
+		)
+	} else if (profile.ConnectionStatus === 'Connection Requested') {
+		return (
+			<Button
+				variant='white'
+				width='full'
+				className='rounded-full font-semibold shadow-sm text-system-primary-accent border-none hover:bg-system-secondary-accent'
+				size='md'
+				onClick={() => {
+					cancelConnectionRequest()
+				}}>
+				Cancel Request
+			</Button>
+		)
+	} else {
+		return <></>
+	}
+}
+
+const UserProfileFollowComponent = ({ profile, followCallback = () => {}, setIsLoading }) => {
+	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
+
+	const followUser = () => {
+		setIsLoading(true)
+		postItem(
+			'follow',
+			{
+				FolloweeId: profile.DocId,
+			},
+			(result) => {
+				followCallback()
+			},
+			(err) => {
+				console.log(err)
+				setIsLoading(false)
+			},
+			updateCurrentUser,
+			currentUserData
+		)
+	}
+
+	const unFollowUser = () => {
+		setIsLoading(true)
+		deleteItem(
+			`users/${currentUserData.CurrentUser.UserId}/follow/${profile.DocId}`,
+			(result) => {
+				followCallback()
+			},
+			(err) => {
+				console.log(err)
+				setIsLoading(true)
+			},
+			updateCurrentUser,
+			currentUserData
+		)
+	}
+
+	if (profile.IsFollowing) {
+		return (
+			<>
+				<Button
+					variant='white'
+					width='full'
+					className='rounded-full font-semibold shadow-sm bg-system-secondary-accent text-system-primary-accent'
+					size='md'
+					onClick={() => {
+						unFollowUser()
+					}}>
+					Unfollow
+				</Button>
+			</>
+		)
+	} else if (!profile.IsFollowing) {
+		return (
+			<>
+				<Button
+					variant='black'
+					width='full'
+					className='rounded-full font-semibold'
+					size='md'
+					onClick={() => {
+						followUser()
+					}}>
+					Follow
+				</Button>
+			</>
+		)
+	} else {
+		return <></>
+	}
+}
+
 const ShowUserProfile = () => {
 	const { userid } = useParams()
 	const [isLoading, setIsLoading] = useState(false)
-	const [isFollowLoading, setIsFollowLoading] = useState(false)
 	const [activeTab, setActiveTab] = useState(0)
 	const navigate = useNavigate()
 	const handleGoBack = () => {
@@ -143,52 +370,17 @@ const ShowUserProfile = () => {
 		setActiveTab(item.key)
 	}
 
-	const getUserDetails = (setLoading) => {
-		setLoading(true)
+	const getUserDetails = () => {
+		setIsLoading(true)
 		getItem(
 			`users/${userid}`,
 			(result) => {
-				setLoading(false)
+				setIsLoading(false)
 				setUser(result)
 			},
 			(err) => {
-				setLoading(false)
+				setIsLoading(false)
 				console.log(err)
-			},
-			updateCurrentUser,
-			currentUserData
-		)
-	}
-
-	const followUser = () => {
-		setIsFollowLoading(true)
-		postItem(
-			'follow',
-			{
-				FolloweeId: userid,
-			},
-			(result) => {
-				getUserDetails(setIsFollowLoading)
-			},
-			(err) => {
-				console.log(err)
-				setIsFollowLoading(false)
-			},
-			updateCurrentUser,
-			currentUserData
-		)
-	}
-
-	const unFollowUser = () => {
-		setIsFollowLoading(true)
-		deleteItem(
-			`users/${currentUserData.CurrentUser.UserId}/follow/${userid}`,
-			(result) => {
-				getUserDetails(setIsFollowLoading)
-			},
-			(err) => {
-				console.log(err)
-				setIsFollowLoading(true)
 			},
 			updateCurrentUser,
 			currentUserData
@@ -196,7 +388,7 @@ const ShowUserProfile = () => {
 	}
 
 	useEffect(() => {
-		getUserDetails(setIsLoading)
+		getUserDetails()
 	}, [])
 
 	return (
@@ -228,30 +420,12 @@ const ShowUserProfile = () => {
             src='https://th.bing.com/th/id/OIP.FFchRAWwk-emGNqgImzwaAHaEK?rs=1&pid=ImgDetMain'
             className='object-cover h-full w-full rounded-lg'
           /> */}
-					<div className='absolute z-20 top-0 right-0 left-0 bottom-0 flex flex-col justify-between items-start p-4 lg:px-10 lg:py-6 bg-brand-blue-transparent h-100 overflow-hidden rounded-lg'>
+					<div className='absolute z-20 top-0 right-0 left-0 bottom-0 flex flex-col justify-between items-start p-4 lg:px-10 lg:py-6 h-100 overflow-hidden rounded-lg'>
 						<div className='flex w-full items-start justify-between'>
 							<div className='flex items-center cursor-pointer' onClick={handleGoBack}>
 								{/* back arrow */}
 								<h4 className='font-medium text-xl text-brand-secondary'>Back</h4>
 							</div>
-							{/* <div
-                className={`inline-flex items-center justify-center w-12 h-12 p-3 overflow-hidden rounded-full border border-white bg-white cursor-pointer`}
-              >
-                <svg
-                  aria-hidden='true'
-                  xmlns='http://www.w3.org/2000/svg'
-                  fill='none'
-                  viewBox='0 0 20 20'
-                >
-                  <path
-                    stroke='currentColor'
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    strokeWidth='2'
-                    d='M4 12.25V1m0 11.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M4 19v-2.25m6-13.5V1m0 2.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M10 19V7.75m6 4.5V1m0 11.25a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5ZM16 19v-2'
-                  />
-                </svg>
-              </div> */}
 						</div>
 					</div>
 					<div className='flex justify-center items-center cursor-pointer absolute left-5 -bottom-3 lg:left-20 lg:-bottom-8 z-30'>
@@ -316,43 +490,20 @@ const ShowUserProfile = () => {
 							<>
 								<h4 className='font-medium text-2xl text-center text-system-primary-text'>{user && user.FullName}</h4>
 								<h4 className='font-medium text-xl text-brand-gray-dim text-center'>@{user && user.Username}</h4>
-								<div className='flex justify-center items-center mt-2 lg:mt-6 flex-wrap sm:flex-nowrap  lg:flex-wrap xl:flex-nowrap  gap-2'>
-									{/* <div className='w-full p-3 rounded-full bg-system-secondary-accent text-center inline-block'>
-                <span className='text-system-primary-accent text-md font-semibold'>Connect</span>
-              </div> */}
-
-									<Button variant='outline' width='full' className='rounded-full font-semibold' size='md'>
-										Connect
-									</Button>
-
-									{user && user.IsFollowing === true ? (
-										<>
-											<Button
-												variant='white'
-												width='full'
-												className='rounded-full font-semibold shadow-sm bg-system-secondary-accent text-system-primary-accent'
-												size='md'
-												onClick={() => {
-													unFollowUser()
-												}}
-												disabled={isFollowLoading}>
-												{isFollowLoading ? 'Unfollowing...' : 'Unfollow'}
-											</Button>
-										</>
-									) : (
-										<>
-											<Button
-												variant='black'
-												width='full'
-												className='rounded-full font-semibold'
-												size='md'
-												onClick={() => {
-													followUser()
-												}}
-												disabled={isFollowLoading}>
-												{isFollowLoading ? 'Following...' : 'Follow'}
-											</Button>
-										</>
+								<div className='flex justify-center items-center mt-2 lg:mt-6 flex-wrap sm:flex-nowrap  lg:flex-wrap gap-2'>
+									{user && user.ConnectionStatus && (
+										<UserProfileConnectComponent
+											profile={user}
+											connectCallback={getUserDetails}
+											setIsLoading={setIsLoading}
+										/>
+									)}
+									{user && (
+										<UserProfileFollowComponent
+											profile={user}
+											followCallback={getUserDetails}
+											setIsLoading={setIsLoading}
+										/>
 									)}
 								</div>
 								<h4 className='font-semibold text-xl text-system-primary-text mt-3 lg:mt-6'>About</h4>
