@@ -4,12 +4,12 @@ const Tab = ({ tabs, gap = 'lg:gap-4', activeTab, onTabChange = () => { }, name,
 
   const TabList = () => {
     return (
-      <div className={`flex ${alignment} ${gap} overflow-auto`}>
+      <div className={`flex ${alignment} ${gap} overflow-x-auto`}>
         {tabs.map((item, index) => {
           return (
             <p
               key={index}
-              className={`p-4 font-medium cursor-pointer text-xs lg:text-lg
+              className={`py-4 px-4 font-medium cursor-pointer text-xs lg:text-lg min-w-max
               ${activeTab === index
                   ? "rounded-t-lg text-system-primary-accent bg-system-secondary-bg "
                   : "text-brand-gray-dim"
@@ -34,7 +34,7 @@ const Tab = ({ tabs, gap = 'lg:gap-4', activeTab, onTabChange = () => { }, name,
 
   return (
     <div className="">
-      <div className="hidden lg:block">
+      <div className="block">
         <TabList
           activeTab={activeTab}
           tablist={tabs}
