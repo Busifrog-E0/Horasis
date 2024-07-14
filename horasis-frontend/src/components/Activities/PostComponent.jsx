@@ -16,7 +16,7 @@ const PostComponent = () => {
 				setUser(result)
 			},
 			(err) => {
-				console.log(err)
+				// console.log(err)
 			},
 			updateCurrentUser,
 			currentUserData,toast

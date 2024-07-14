@@ -38,7 +38,7 @@ const FollowingsTab = () => {
       },
       (err) => {
         setIsLoading(false)
-        console.log(err)
+        // console.log(err)
       },
       updateCurrentUser,
       currentUserData,toast

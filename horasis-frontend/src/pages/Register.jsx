@@ -125,7 +125,7 @@ const Register = () => {
       },
       (err) => {
         setLoading(false)
-        console.log(err)
+        // console.log(err)
       },
       updateCurrentUser,
       currentUserData,toast
@@ -148,7 +148,7 @@ const Register = () => {
       (err) => {
         setVerifying(false)
         setOtpError({OTPERROR:err})
-        console.log(err)
+        // console.log(err)
       },
       updateCurrentUser,
       currentUserData,toast

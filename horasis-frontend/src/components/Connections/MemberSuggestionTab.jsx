@@ -30,7 +30,7 @@ const MemberSuggestionTab = ({ lastElement, profile, updateList }) => {
 			},
 			(err) => {
 				setLoading(false)
-				console.log(err)
+				// console.log(err)
 			},
 			updateCurrentUser,
 			currentUserData,
@@ -49,7 +49,7 @@ const MemberSuggestionTab = ({ lastElement, profile, updateList }) => {
 				// getUserDetails(setIsFollowLoading)
 			},
 			(err) => {
-				console.log(err)
+				// console.log(err)
 			},
 			updateCurrentUser,
 			currentUserData,
@@ -65,7 +65,7 @@ const MemberSuggestionTab = ({ lastElement, profile, updateList }) => {
 				// getUserDetails(setIsFollowLoading)
 			},
 			(err) => {
-				console.log(err)
+				// console.log(err)
 			},
 			updateCurrentUser,
 			currentUserData,

@@ -78,7 +78,9 @@ const AboutProfile = ({ user, getUserDetails, isCurrentUser }) => {
         }
         // setUsernameAvailable(result)
       },
-      (err) => console.log(err),
+      (err) => {
+        // console.log(err)
+      },
       updateCurrentUser,
       currentUserData,toast
     )
@@ -95,7 +97,7 @@ const AboutProfile = ({ user, getUserDetails, isCurrentUser }) => {
       },
       (err) => {
         setIsLoading(false)
-        console.log(err)
+        // console.log(err)
       },
       updateCurrentUser,
       currentUserData,toast

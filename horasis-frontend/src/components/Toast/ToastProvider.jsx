@@ -4,6 +4,7 @@ import ToastContext from './ToastService'
 const ToastProvider = ({ children }) => {
 	const [toasts, setToasts] = useState([])
 	const open = (type, title, message, timeout = 2000) => {
+		console.log('opened	')
 		const id = Date.now()
 		setToasts((toasts) => [...toasts, { id, type, title, message }])
 		setTimeout(() => close(id), timeout)

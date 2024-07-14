@@ -34,7 +34,7 @@ const UserProfileConnectComponent = ({ profile, connectCallback = () => {}, setI
 			},
 			(err) => {
 				setIsLoading(false)
-				console.log(err)
+				// console.log(err)
 			},
 			updateCurrentUser,
 			currentUserData,
@@ -52,7 +52,7 @@ const UserProfileConnectComponent = ({ profile, connectCallback = () => {}, setI
 			},
 			(err) => {
 				setIsLoading(false)
-				console.log(err)
+				// console.log(err)
 			},
 			updateCurrentUser,
 			currentUserData,
@@ -69,7 +69,7 @@ const UserProfileConnectComponent = ({ profile, connectCallback = () => {}, setI
 			},
 			(err) => {
 				setIsLoading(false)
-				console.log(err)
+				// console.log(err)
 			},
 			updateCurrentUser,
 			currentUserData,
@@ -86,7 +86,7 @@ const UserProfileConnectComponent = ({ profile, connectCallback = () => {}, setI
 			},
 			(err) => {
 				setIsLoading(false)
-				console.log(err)
+				// console.log(err)
 			},
 			updateCurrentUser,
 			currentUserData,
@@ -103,7 +103,7 @@ const UserProfileConnectComponent = ({ profile, connectCallback = () => {}, setI
 			},
 			(err) => {
 				setIsLoading(false)
-				console.log(err)
+				// console.log(err)
 			},
 			updateCurrentUser,
 			currentUserData,
@@ -194,7 +194,7 @@ const UserProfileFollowComponent = ({ profile, followCallback = () => {}, setIsL
 				followCallback()
 			},
 			(err) => {
-				console.log(err)
+				// console.log(err)
 				setIsLoading(false)
 			},
 			updateCurrentUser,
@@ -211,7 +211,7 @@ const UserProfileFollowComponent = ({ profile, followCallback = () => {}, setIsL
 				followCallback()
 			},
 			(err) => {
-				console.log(err)
+				// console.log(err)
 				setIsLoading(true)
 			},
 			updateCurrentUser,
@@ -390,7 +390,7 @@ const ShowUserProfile = () => {
 			},
 			(err) => {
 				setIsLoading(false)
-				console.log(err)
+				// console.log(err)
 			},
 			updateCurrentUser,
 			currentUserData,

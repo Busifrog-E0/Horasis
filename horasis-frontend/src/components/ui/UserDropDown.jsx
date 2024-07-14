@@ -17,10 +17,10 @@ const DropdownConnectComponent = ({ profile, updateList }) => {
 				console.log(result)
 			},
 			(err) => {
-				console.log(err)
+				// console.log(err)
 			},
 			updateCurrentUser,
-			currentUserData
+			currentUserData,toast
 		)
 	}
 	const acceptConnectionRequest = () => {
@@ -32,7 +32,7 @@ const DropdownConnectComponent = ({ profile, updateList }) => {
 				console.log(result)
 			},
 			(err) => {
-				console.log(err)
+				// console.log(err)
 			},
 			updateCurrentUser,
 			currentUserData,toast
@@ -46,7 +46,7 @@ const DropdownConnectComponent = ({ profile, updateList }) => {
 				console.log(result)
 			},
 			(err) => {
-				console.log(err)
+				// console.log(err)
 			},
 			updateCurrentUser,
 			currentUserData,toast
@@ -60,7 +60,7 @@ const DropdownConnectComponent = ({ profile, updateList }) => {
 				console.log(result)
 			},
 			(err) => {
-				console.log(err)
+				// console.log(err)
 			},
 			updateCurrentUser,
 			currentUserData,toast
@@ -74,7 +74,7 @@ const DropdownConnectComponent = ({ profile, updateList }) => {
 				console.log(result)
 			},
 			(err) => {
-				console.log(err)
+				// console.log(err)
 			},
 			updateCurrentUser,
 			currentUserData,toast
@@ -155,7 +155,7 @@ const DropdownFollowComponent = ({ profile, updateList }) => {
 				}
 			},
 			(err) => {
-				console.log(err)
+				// console.log(err)
 			},
 			updateCurrentUser,
 			currentUserData,toast
@@ -171,7 +171,7 @@ const DropdownFollowComponent = ({ profile, updateList }) => {
 				}
 			},
 			(err) => {
-				console.log(err)
+				// console.log(err)
 			},
 			updateCurrentUser,
 			currentUserData,toast

@@ -118,9 +118,12 @@ export const postItem = async (
 					// await apiCallback()
 					await postItem(url, data, successCallback, errorCallback, updateCurrentUser, currentUserData, toast, debug)
 				} else if (err.response.status === 444) {
+					if (typeof err.response.data === 'string') {
+						toast.open('error', 'Error', err.response.data)
+					} else {
+						toast.open('error', err.response.data.Header, err.response.data.Message)
+					}
 					errorCallback(err.response.data)
-
-					toast.open('error', 'Error', err.response.data)
 				} else {
 					errorCallback(err.response.data)
 				}
@@ -166,7 +169,11 @@ export const patchItem = async (
 					patchItem(url, data, successCallback, errorCallback, updateCurrentUser, currentUserData, toast, debug)
 				} else if (err.response.status === 444) {
 					errorCallback(err.response.data)
-					toast.open('error', 'Error', err.response.data)
+					if (typeof err.response.data === 'string') {
+						toast.open('error', 'Error', err.response.data)
+					} else {
+						toast.open('error', err.response.data.Header, err.response.data.Message)
+					}
 				} else {
 					errorCallback(err.response.data)
 				}
@@ -212,7 +219,11 @@ export const deleteItem = async (
 					deleteItem(url, successCallback, errorCallback, updateCurrentUser, currentUserData, toast, debug)
 				} else if (err.response.status === 444) {
 					errorCallback(err.response.data)
-					toast.open('error', 'Error', err.response.data)
+					if (typeof err.response.data === 'string') {
+						toast.open('error', 'Error', err.response.data)
+					} else {
+						toast.open('error', err.response.data.Header, err.response.data.Message)
+					}
 				} else {
 					errorCallback(err.response.data)
 				}
@@ -257,7 +268,11 @@ export const getItem = async (
 					getItem(url, successCallback, errorCallback, updateCurrentUser, currentUserData, toast, debug)
 				} else if (err.response.status === 444) {
 					errorCallback(err.response.data)
-					toast.open('error', 'Error', err.response.data)
+					if (typeof err.response.data === 'string') {
+						toast.open('error', 'Error', err.response.data)
+					} else {
+						toast.open('error', err.response.data.Header, err.response.data.Message)
+					}
 				} else {
 					errorCallback(err.response.data)
 				}

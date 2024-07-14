@@ -316,7 +316,7 @@ const MyProfile = () => {
       },
       (err) => {
         setIsLoading(false)
-        console.log(err)
+        // console.log(err)
       },
       updateCurrentUser,
       currentUserData,toast
@@ -353,7 +353,7 @@ const MyProfile = () => {
         }
       },
       (err) => {
-        console.log(err)
+        // console.log(err)
       },
       updateCurrentUser,
       currentUserData,toast
@@ -405,7 +405,7 @@ const MyProfile = () => {
         }
       },
       (err) => {
-        console.log(err)
+        // console.log(err)
       },
       updateCurrentUser,
       currentUserData,toast
@@ -420,7 +420,7 @@ const MyProfile = () => {
           onCoverImageSet(result.FileUrl)
         },
         (err) => {
-          console.log(err)
+          // console.log(err)
         },
         updateCurrentUser,
         currentUserData,toast
