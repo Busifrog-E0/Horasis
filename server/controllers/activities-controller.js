@@ -4,6 +4,7 @@ import { ReadOneFromActivities, ReadActivities, UpdateActivities, CreateActiviti
 import { fileTypeFromBuffer } from 'file-type';
 import { AsyncSaveFileToSpaces, documentExtensions, mediaExtensions } from './files-controller.js';
 import { ReadUsers } from '../databaseControllers/users-databaseController.js';
+import { AlertBoxObject } from './common.js';
 
 /**
  * @typedef {import('../databaseControllers/activities-databaseController.js').ActivityData} ActivityData 
@@ -51,7 +52,7 @@ const PostActivities = async (req, res) => {
     const [AttachmentsLinksObject, Mentions] = await Promise.all(promises);
 
     if (!AttachmentsLinksObject) {
-        return res.status(444).json("Cannot Upload this file");
+        return res.status(444).json(AlertBoxObject("Cannot Upload File", " The file(s) cannot be uploaded"));
     }
 
     req.body = ActivityInit(req.body);
@@ -157,7 +158,7 @@ const LikeAnActivity = async (req, res) => {
     const { UserId, ActivityId } = req.params;
     const {LikedIds,DocId} = await ReadOneFromActivities(ActivityId);
     if (LikedIds.includes(UserId)) {
-        return res.status(444).json("Already Liked this post");
+        return res.status(444).json(AlertBoxObject("Already Liked this post", "You have already liked this post"));
     }
     LikedIds.push(UserId);
     await UpdateAndIncrementActivities({ LikedIds }, { NoOfLikes: 1 }, DocId);
@@ -174,7 +175,7 @@ const DislikeAnActivity = async (req, res) => {
     const { UserId, ActivityId } = req.params;
     const { LikedIds, DocId } = await ReadOneFromActivities(ActivityId);
     if (!LikedIds.includes(UserId)) {
-        return res.status(444).json("Not Liked this post");
+        return res.status(444).json(AlertBoxObject("Not Liked this post", "You have not liked this post"));
     }
     const NewLikedIds = LikedIds.filter(Id => Id != UserId);
     await UpdateAndIncrementActivities({ LikedIds : NewLikedIds }, { NoOfLikes: -1 }, DocId);

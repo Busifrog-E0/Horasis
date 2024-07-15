@@ -2,6 +2,7 @@ import e from 'express';
 
 import { ReadOneFromFollows, ReadFollows, UpdateFollows, CreateFollows, RemoveFollows, GetFollowCount, } from './../databaseControllers/follow-databaseController.js';
 import { ViewOtherUserData } from './users-controller.js';
+import { AlertBoxObject } from './common.js';
 /**
  * @typedef {import('./../databaseControllers/follow-databaseController.js').FollowData} FollowData 
  */
@@ -79,11 +80,11 @@ const PostFollows = async (req, res) => {
     req.body.FollowerId = req.user.UserId;
     const { FollowerId, FolloweeId } = req.body;
     if (FolloweeId === FollowerId) {
-        return res.status(444).json("Cannot follow yourself");
+        return res.status(444).json(AlertBoxObject("Cannot follow yourself","You cannot follow yourself"));
     }
     const Follow = await ReadFollows({ FolloweeId, FollowerId }, undefined, 1, undefined);
     if (Follow.length > 0) {
-        return res.status(444).json("Alreadyy follows this profile");
+        return res.status(444).json(AlertBoxObject("Already follows this profile", "You already follow this profile"));
     }
     await CreateFollows(req.body);
     return res.json(true);
@@ -112,7 +113,7 @@ const DeleteFollows = async (req, res) => {
     //@ts-ignore
     const Follow = await ReadFollows({ FolloweeId, FollowerId: UserId }, undefined, 1, undefined);
     if (Follow.length == 0) {
-        return res.json("Already not following this profile")
+        return res.status(444).json(AlertBoxObject("Not following this profile", "You are already not following this profile"));
     }
     await RemoveFollows(Follow[0].DocId);
     return res.json(true);
