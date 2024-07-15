@@ -1,6 +1,6 @@
 import e from 'express';
 
-import { ReadOneFromConnections, ReadConnections, UpdateConnections, CreateConnections, RemoveConnections, } from './../databaseControllers/connections-databaseController.js';
+import { ReadOneFromConnections, ReadConnections, UpdateConnections, CreateConnections, RemoveConnections, GetConnectionsCount, } from './../databaseControllers/connections-databaseController.js';
 import moment from 'moment';
 import { AlertBoxObject } from './common.js';
 import { ViewOtherUserData } from './users-controller.js';
@@ -169,6 +169,27 @@ const DeleteConnection = async (req, res) => {
 
 /**
  * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ * @returns 
+ */
+const GetConnectionsNumber = async (req, res) => {
+    //@ts-ignore
+    const { UserId } = req.params;
+    return res.json(await GetConnectionsCount({ UserIds: UserId }))
+}
+
+
+
+
+
+
+
+
+
+
+/**
+ * 
  * @param {string} MyId 
  * @param {string} TheirId 
  */
@@ -196,5 +217,7 @@ export {
     DeleteConnectionReject,
     DeleteConnectionCancel,
     DeleteConnection,
+    GetConnectionsNumber,
+
     ConnectionStatus,
 }

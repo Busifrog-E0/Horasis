@@ -64,11 +64,21 @@ const RemoveConnections = async (DocId) => {
     return dataHandling.Delete('Connections', DocId);
 }
 
+/**
+ * 
+ * @param {object} Where 
+ * @returns {Promise<number>}
+ */
+const GetConnectionsCount = async (Where = {}) => {
+    return dataHandling.ReadCount('Connections', Where);
+}
+
 
 export {
     ReadConnections,
     ReadOneFromConnections,
     UpdateConnections,
     CreateConnections,
-    RemoveConnections
+    RemoveConnections,
+    GetConnectionsCount,
 }
