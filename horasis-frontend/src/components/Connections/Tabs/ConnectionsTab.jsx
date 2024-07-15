@@ -32,7 +32,7 @@ const ConnectionsTab = () => {
         filters
       )}&NextId=${getNextId(tempConnections)}`,
       (connections) => {
-        console.log('Connections')
+        // console.log('Connections')
         setConnections([...tempConnections, ...connections])
         setIsLoading(false)
       },

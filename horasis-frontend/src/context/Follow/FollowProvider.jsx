@@ -10,7 +10,6 @@ const FollowProvider = ({ children }) => {
 
 	const [followCount, setFollowCount] = useState()
 	const followUser = (userId, followCallback = () => {}, setLoading = () => {}) => {
-		console.log('follow from context')
 		setLoading(true)
 		postItem(
 			'follow',
@@ -31,7 +30,6 @@ const FollowProvider = ({ children }) => {
 	}
 
 	const unFollowUser = (userId, unFollowCallback = () => {}, setLoading = () => {}) => {
-		console.log('unfollow from context')
 		setLoading(true)
 		deleteItem(
 			`users/${currentUserData.CurrentUser.UserId}/follow/${userId}`,
@@ -51,7 +49,6 @@ const FollowProvider = ({ children }) => {
 	}
 
 	const getFollowCount = (setLoading = () => {}) => {
-		console.log('followcount from context')
 		setLoading(true)
 		getItem(
 			`users/${currentUserData.CurrentUser.UserId}/follow/count`,

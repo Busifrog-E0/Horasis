@@ -32,7 +32,7 @@ const SendConnectionTab = () => {
         filters
       )}&NextId=${getNextId(tempConnectionSend)}`,
       (connectionsSend) => {
-        console.log('Connections Send')
+        // console.log('Connections Send')
         setConnectionsSend([...tempConnectionSend, ...connectionsSend])
         setIsLoading(false)
       },

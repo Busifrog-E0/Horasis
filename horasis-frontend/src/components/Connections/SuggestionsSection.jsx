@@ -31,7 +31,7 @@ const SuggestionsSection = () => {
         filters
       )}&NextId=${getNextId(tempSuggested)}`,
       (result) => {
-        console.log('Suggested')
+        // console.log('Suggested')
         setSuggested([...tempSuggested, ...result])
         setIsLoading(false)
       },

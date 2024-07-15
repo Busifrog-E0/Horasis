@@ -24,7 +24,6 @@ const PostComponent = () => {
 	}
 
 	useEffect(() => {
-    console.log('rendered')
 		getUserDetails()
 	}, [])
 	return (

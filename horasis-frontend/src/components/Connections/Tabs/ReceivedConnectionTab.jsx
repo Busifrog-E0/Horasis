@@ -32,7 +32,7 @@ const RecievedConnectionTab = () => {
         filters
       )}&NextId=${getNextId(tempConnectionsReceived)}`,
       (connectionsReceived) => {
-        console.log('Connections Received')
+        // console.log('Connections Received')
         setConnectionsRecieved([...tempConnectionsReceived, ...connectionsReceived])
         setIsLoading(false)
       },

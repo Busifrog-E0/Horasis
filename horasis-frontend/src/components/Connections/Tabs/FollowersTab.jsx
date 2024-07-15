@@ -32,7 +32,7 @@ const FollowersTab = () => {
         filters
       )}&NextId=${getNextId(tempFollowers)}`,
       (followers) => {
-        console.log('Followers')
+        // console.log('Followers')
         setFollowers([...tempFollowers, ...followers])
         setIsLoading(false)
       },

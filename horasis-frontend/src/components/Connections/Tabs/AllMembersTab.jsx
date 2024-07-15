@@ -30,7 +30,7 @@ const AllMembersTab = () => {
     getItem(
       `users?&${jsonToQuery(filters)}&NextId=${getNextId(tempMembers)}`,
       (members) => {
-        console.log('All Members')
+        // console.log('All Members')
         setMembers([...tempMembers, ...members])
         setIsLoading(false)
       },
