@@ -19,6 +19,7 @@ const FollowProvider = ({ children }) => {
 					followCallback()
 					getFollowCount()
 				}
+				setLoading(false)
 			},
 			(err) => {
 				setLoading(false)
@@ -38,6 +39,7 @@ const FollowProvider = ({ children }) => {
 					unFollowCallback()
 					getFollowCount()
 				}
+				setLoading(false)
 			},
 			(err) => {
 				setLoading(true)

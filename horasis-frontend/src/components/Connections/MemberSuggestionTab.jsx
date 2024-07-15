@@ -6,6 +6,7 @@ import { deleteItem, postItem } from '../../constants/operations'
 import { AuthContext } from '../../utils/AuthProvider'
 import { useToast } from '../Toast/ToastService'
 import { useFollow } from '../../context/Follow/FollowService'
+import Spinner from '../ui/Spinner'
 
 const MemberSuggestionTab = ({ lastElement, profile, updateList }) => {
 	const navigate = useNavigate()
@@ -15,12 +16,9 @@ const MemberSuggestionTab = ({ lastElement, profile, updateList }) => {
 		}
 	}
 
-
 	const { followUser, unFollowUser } = useFollow()
-
-	
-
-
+	const [loading, setLoading] = useState(false)
+	// if (loading) return <Spinner />
 
 	return (
 		<>
@@ -55,32 +53,47 @@ const MemberSuggestionTab = ({ lastElement, profile, updateList }) => {
 							@{profile && profile.Username}, {profile && profile.JobTitle} {profile && profile.Country}
 						</h4>
 					</div>
-					{profile.IsFollowing === true ? (
-						<>
-							<Button
-								variant='outline'
-								onClick={() => {
-									unFollowUser(profile.DocId, () => {
-										updateList([])
-									})
-								}}>
-								Unfollow
-							</Button>
-						</>
+					{loading ? (
+						<Button variant='outline'>
+							<Spinner />
+						</Button>
 					) : (
 						<>
-							<Button
-								variant='outline'
-								onClick={() => {
-									followUser(profile.DocId, () => {
-										updateList([])
-									})
-								}}>
-								Follow
-							</Button>
+							{profile.IsFollowing === true ? (
+								<>
+									<Button
+										variant='outline'
+										onClick={() => {
+											unFollowUser(
+												profile.DocId,
+												() => {
+													updateList([])
+												},
+												setLoading
+											)
+										}}>
+										Unfollow
+									</Button>
+								</>
+							) : (
+								<>
+									<Button
+										variant='outline'
+										onClick={() => {
+											followUser(
+												profile.DocId,
+												() => {
+													updateList([])
+												},
+												setLoading
+											)
+										}}>
+										Follow
+									</Button>
+								</>
+							)}
 						</>
 					)}
-				
 				</div>
 			</div>
 		</>
