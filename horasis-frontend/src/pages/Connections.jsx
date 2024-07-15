@@ -52,7 +52,7 @@ const Connections = () => {
   const [filters, setFilters] = useState({
     OrderBy: 'Index',
     Keyword: '',
-    Limit: 2,
+    Limit: 10,
     Keyword: '',
   })
   const [activeTab, setActiveTab] = useState(
