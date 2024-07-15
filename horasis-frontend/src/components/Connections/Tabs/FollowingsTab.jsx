@@ -1,7 +1,7 @@
 import Spinner from "../../ui/Spinner"
 import MembersSection from "../MembersSection"
 
-const FollowingsTab = ({ isLoading, setIsLoading, data, setData, getAllData }) => {
+const FollowingsTab = ({ isLoading, setIsLoading, data, setData, getAllData, fetchMore, isLoadingMore, pageDisabled }) => {
 
   if (isLoading)
     return (
@@ -16,6 +16,9 @@ const FollowingsTab = ({ isLoading, setIsLoading, data, setData, getAllData }) =
       emptyText='You are not currently following anyone.'
       updateList={getAllData}
       whichTime='following'
+      fetchMore={fetchMore}
+      isLoadingMore={isLoadingMore}
+      pageDisabled={pageDisabled}
     />
   )
 }

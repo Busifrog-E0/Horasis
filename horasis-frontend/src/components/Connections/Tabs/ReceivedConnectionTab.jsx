@@ -1,7 +1,7 @@
 import Spinner from '../../ui/Spinner'
 import MembersSection from '../MembersSection'
 
-const RecievedConnectionTab = ({ isLoading, setIsLoading, data, setData, getAllData }) => {
+const RecievedConnectionTab = ({ isLoading, setIsLoading, data, setData, getAllData, fetchMore, isLoadingMore, pageDisabled }) => {
 
   if (isLoading)
     return (
@@ -15,6 +15,9 @@ const RecievedConnectionTab = ({ isLoading, setIsLoading, data, setData, getAllD
       emptyText='You currently have no connections'
       updateList={getAllData}
       whichTime='connection'
+      fetchMore={fetchMore}
+      isLoadingMore={isLoadingMore}
+      pageDisabled={pageDisabled}
     />
   )
 }

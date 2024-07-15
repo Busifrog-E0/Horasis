@@ -1,7 +1,7 @@
 import Spinner from '../../ui/Spinner'
 import MembersSection from '../MembersSection'
 
-const AllMembersTab = ({ isLoading, setIsLoading, data, setData, getAllData }) => {
+const AllMembersTab = ({ isLoading, setIsLoading, data, setData, getAllData, fetchMore, isLoadingMore, pageDisabled }) => {
   // function filter(oby, kw, lt) {
   //   var newFilter = { OrderBy: oby, Keyword: kw, Limit: lt }
   //   navigate(`?${jsonToQuery(newFilter)}`)
@@ -20,6 +20,9 @@ const AllMembersTab = ({ isLoading, setIsLoading, data, setData, getAllData }) =
       emptyText={'No members '}
       updateList={getAllData}
       whichTime='member'
+      fetchMore={fetchMore}
+      isLoadingMore={isLoadingMore}
+      pageDisabled={pageDisabled}
     />
   )
 }

@@ -78,56 +78,63 @@ const Connections = () => {
     {
       key: 0,
       title: 'All Members',
-      render: () => <AllMembersTab data={members} getAllData={getAllMembers} isLoading={isLoading} setData={setMembers} setIsLoading={setIsLoading} />,
+      render: () => <AllMembersTab data={members} getAllData={getAllMembers} isLoading={isLoading} setData={setMembers} setIsLoading={setIsLoading}
+        fetchMore={fetchMore} isLoadingMore={isLoadingMore} pageDisabled={pageDisabled}
+      />,
     },
     {
       key: 1,
       title: 'Connections',
-      render: () => <ConnectionsTab data={connections} getAllData={getConnections} isLoading={isLoading} setData={setConnections} setIsLoading={setIsLoading} />,
+      render: () => <ConnectionsTab data={connections} getAllData={getConnections} isLoading={isLoading} setData={setConnections} setIsLoading={setIsLoading}
+        fetchMore={fetchMore} isLoadingMore={isLoadingMore} pageDisabled={pageDisabled} />,
     },
     {
       key: 2,
       title: 'Recieved',
-      render: () => <RecievedConnectionTab data={connectionsReceived} getAllData={getConnectionRecieved} isLoading={isLoading} setData={setConnectionsRecieved} setIsLoading={setIsLoading} />,
+      render: () => <RecievedConnectionTab data={connectionsReceived} getAllData={getConnectionRecieved} isLoading={isLoading} setData={setConnectionsRecieved} setIsLoading={setIsLoading}
+        fetchMore={fetchMore} isLoadingMore={isLoadingMore} pageDisabled={pageDisabled} />,
     },
     {
       key: 3,
       title: 'Send',
-      render: () => <SendConnectionTab data={connectionsSend} getAllData={getConnectionsSend} isLoading={isLoading} setData={setConnectionsSend} setIsLoading={setIsLoading} />,
+      render: () => <SendConnectionTab data={connectionsSend} getAllData={getConnectionsSend} isLoading={isLoading} setData={setConnectionsSend} setIsLoading={setIsLoading}
+        fetchMore={fetchMore} isLoadingMore={isLoadingMore} pageDisabled={pageDisabled} />,
     },
     {
       key: 4,
       title: 'Following',
-      render: () => <FollowingsTab data={followings} getAllData={getFollowing} isLoading={isLoading} setData={setFollowings} setIsLoading={setIsLoading} />,
+      render: () => <FollowingsTab data={followings} getAllData={getFollowing} isLoading={isLoading} setData={setFollowings} setIsLoading={setIsLoading}
+        fetchMore={fetchMore} isLoadingMore={isLoadingMore} pageDisabled={pageDisabled} />,
     },
     {
       key: 5,
       title: 'Followers',
-      render: () => <FollowersTab data={followers} getAllData={getFollowers} isLoading={isLoading} setData={setFollowers} setIsLoading={setIsLoading} />,
+      render: () => <FollowersTab data={followers} getAllData={getFollowers} isLoading={isLoading} setData={setFollowers} setIsLoading={setIsLoading}
+        fetchMore={fetchMore} isLoadingMore={isLoadingMore} pageDisabled={pageDisabled} />,
     },
   ]
 
 
   const getAllMembers = (tempMembers) => {
-    fetchData(`users?&${jsonToQuery(filters)}`, tempMembers, setMembers);
+    getData(`users?&${jsonToQuery(filters)}`, tempMembers, setMembers);
   }
   const getConnections = (tempConnections) => {
-    fetchData(`users/${currentUserData.CurrentUser.UserId}/connections?${jsonToQuery(filters)}`, tempConnections, setConnections);
+    getData(`users/${currentUserData.CurrentUser.UserId}/connections?${jsonToQuery(filters)}`, tempConnections, setConnections);
   }
   const getFollowers = (tempFollowers) => {
-    fetchData(`users/${currentUserData.CurrentUser.UserId}/followers?${jsonToQuery(filters)}`, tempFollowers, setFollowers);
+    getData(`users/${currentUserData.CurrentUser.UserId}/followers?${jsonToQuery(filters)}`, tempFollowers, setFollowers);
   }
   const getFollowing = (tempFollowing) => {
-    fetchData(`users/${currentUserData.CurrentUser.UserId}/followings?${jsonToQuery(filters)}`, tempFollowing, setFollowings);
+    getData(`users/${currentUserData.CurrentUser.UserId}/followings?${jsonToQuery(filters)}`, tempFollowing, setFollowings);
   }
   const getConnectionRecieved = (tempConnectionsReceived) => {
-    fetchData(`users/${currentUserData.CurrentUser.UserId}/connections/received?${jsonToQuery(filters)}`, tempConnectionsReceived, setConnectionsRecieved);
+    getData(`users/${currentUserData.CurrentUser.UserId}/connections/received?${jsonToQuery(filters)}`, tempConnectionsReceived, setConnectionsRecieved);
   }
   const getConnectionsSend = (tempConnectionSend) => {
-    fetchData(`users/${currentUserData.CurrentUser.UserId}/connections/sent?${jsonToQuery(filters)}`, tempConnectionSend, setConnectionsSend);
+    getData(`users/${currentUserData.CurrentUser.UserId}/connections/sent?${jsonToQuery(filters)}`, tempConnectionSend, setConnectionsSend);
   }
 
-  const fetchData = (endpoint, tempData, setData) => {
+  const getData = (endpoint, tempData, setData) => {
     setLoadingCom(tempData, true)
     getItem(
       `${endpoint}&NextId=${getNextId(tempData)}`,
@@ -145,7 +152,7 @@ const Connections = () => {
     );
   }
 
-  const hasAnyLeft = (endpoint, tempData, setData) => {
+  const hasAnyLeft = (endpoint, tempData) => {
     getItem(
       `${endpoint}?NextId=${getNextId(tempData)}&${jsonToQuery({ ...filters, Limit: 1 })}`,
       (data) => {
@@ -164,88 +171,63 @@ const Connections = () => {
       toast
     );
   }
-
-  const fetchMore = () => {
+  const fetchData = (initialRender = false) => {
     switch (activeTab) {
       case 0:
-        getAllMembers(members);
+        getAllMembers(initialRender ? [] : members);
         break;
       case 1:
-        getConnections(connections);
+        getConnections(initialRender ? [] : connections);
         break;
       case 2:
-        getConnectionRecieved(connectionsReceived);
+        getConnectionRecieved(initialRender ? [] : connectionsReceived);
         break;
       case 3:
-        getConnectionsSend(connectionsSend);
+        getConnectionsSend(initialRender ? [] : connectionsSend);
         break;
       case 4:
-        getFollowing(followings);
+        getFollowing(initialRender ? [] : followings);
         break;
       case 5:
-        getFollowers(followers);
+        getFollowers(initialRender ? [] : followers);
         break;
       default:
         break;
     }
   }
 
-  const fetch = () => {
-    switch (activeTab) {
-      case 0:
-        getAllMembers([]);
-        break;
-      case 1:
-        getConnections([]);
-        break;
-      case 2:
-        getConnectionRecieved([]);
-        break;
-      case 3:
-        getConnectionsSend([]);
-        break;
-      case 4:
-        getFollowing([]);
-        break;
-      case 5:
-        getFollowers([]);
-        break;
-      default:
-        break;
-    }
-  }
+  const fetch = () => fetchData(true);
+  const fetchMore = () => fetchData(false);
 
   useEffect(() => {
     switch (activeTab) {
       case 0:
         if (members.length > 0)
-          hasAnyLeft(`users`, members, setMembers);
+          hasAnyLeft(`users`, members);
         break;
       case 1:
         if (connections.length > 0)
-          hasAnyLeft(`users/${currentUserData.CurrentUser.UserId}/connections`, connections, setConnections);
+          hasAnyLeft(`users/${currentUserData.CurrentUser.UserId}/connections`, connections);
         break;
       case 2:
         if (connectionsReceived.length > 0)
-          hasAnyLeft(`users/${currentUserData.CurrentUser.UserId}/connections/received`, connectionsReceived, setConnectionsRecieved);
+          hasAnyLeft(`users/${currentUserData.CurrentUser.UserId}/connections/received`, connectionsReceived);
         break;
       case 3:
         if (connectionsSend.length > 0)
-          hasAnyLeft(`users/${currentUserData.CurrentUser.UserId}/connections/sent`, connectionsSend, setConnectionsSend);
+          hasAnyLeft(`users/${currentUserData.CurrentUser.UserId}/connections/sent`, connectionsSend);
         break;
       case 4:
         if (followings.length > 0)
-          hasAnyLeft(`users/${currentUserData.CurrentUser.UserId}/followings`, followings, setFollowings);
+          hasAnyLeft(`users/${currentUserData.CurrentUser.UserId}/followings`, followings);
         break;
       case 5:
         if (followers.length > 0)
-          hasAnyLeft(`users/${currentUserData.CurrentUser.UserId}/followers`, followers, setFollowers);
+          hasAnyLeft(`users/${currentUserData.CurrentUser.UserId}/followers`, followers);
         break;
       default:
         break;
     }
-
-
   }, [members, connections, followers, followings, connectionsReceived, connectionsSend])
 
   useEffect(() => {
@@ -273,11 +255,6 @@ const Connections = () => {
             <h4 className='font-medium text-2xl text-system-primary-accent mt-4 mb-3 lg:mb-6'>Connections</h4>
             {/* <Tabs tabs={tabs} /> */}
             <Tab name='connections' activeTab={activeTab} onTabChange={onTabChange} tabs={tabs()} />
-            {!pageDisabled &&
-              <p className='text-system-primary-accent cursor-pointer' onClick={() => {
-                fetchMore()
-              }}>Load More</p>
-            }
 
           </div>
           <div>

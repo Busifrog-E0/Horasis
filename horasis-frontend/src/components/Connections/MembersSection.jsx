@@ -1,9 +1,10 @@
 import { relativeTime } from '../../utils/date'
 import EmptyMembers from '../Common/EmptyMembers'
 import DropdownMenu from '../ui/DropdownMenu'
+import Spinner from '../ui/Spinner'
 import MembersSectionTab from './MemberSectionTab'
 
-const MembersSection = ({ members, emptyText, updateList,whichTime }) => {
+const MembersSection = ({ members, emptyText, updateList, whichTime, isLoadingMore, pageDisabled, fetchMore }) => {
   return (
     <>
       <div className='bg-system-secondary-bg p-4 rounded-b-lg '>
@@ -35,6 +36,16 @@ const MembersSection = ({ members, emptyText, updateList,whichTime }) => {
             <></>
           )}
         </div>
+
+        {isLoadingMore && <div className='bg-system-secondary-bg p-4 rounded-b-lg '>
+          <Spinner />
+        </div>}
+        {!pageDisabled &&
+          <p className='text-system-primary-accent cursor-pointer' onClick={() => {
+            fetchMore()
+          }}>Load More</p>
+        }
+
       </div>
     </>
   )
