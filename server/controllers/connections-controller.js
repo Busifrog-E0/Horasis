@@ -23,7 +23,7 @@ const GetAUsersConnections = async (req, res) => {
     const data = await ReadConnections(Filter, NextId, Limit, OrderBy);
 
     const UserData = await Promise.all(data.map(id => ViewOtherUserData(UserId,
-        id.UserIds.filter(element => element !== UserId)[0])));
+        id.UserIds.filter(element => element !== UserId)[0], id)));
     return res.json(UserData);
 }
 

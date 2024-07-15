@@ -217,14 +217,14 @@ const ViewOtherUserRelations = async (UserId, OtherUserId) => {
  * 
  * @param {string} UserId 
  * @param {string} OtherUserId 
- * 
+ * @param {object} NextIdObject  
  */
-const ViewOtherUserData = async (UserId, OtherUserId) => {
+const ViewOtherUserData = async (UserId, OtherUserId, NextIdObject = {}) => {
     const PromiseData = await Promise.all([
         ReadOneFromUsers(OtherUserId),
         ViewOtherUserRelations(UserId, OtherUserId)
     ]);
-    return { ...PromiseData[0], ...PromiseData[1] };
+    return { ...PromiseData[0], ...PromiseData[1], NextId: NextIdObject.NextId };
 }
 
 /**
