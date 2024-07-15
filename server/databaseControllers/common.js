@@ -44,7 +44,7 @@ const UserDetailsinFollow = async () => {
     await VersionUpdate(ReadFollows, update, { UserDetails: { '$exists': false } });
 }
 
-UserDetailsinFollow()
+//UserDetailsinFollow()
 
 function Shuffle(array) {
     let m = array.length, t, i;
