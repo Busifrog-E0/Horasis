@@ -2,6 +2,7 @@
 
 const post_files_users = (req, res, next) => {
     // #swagger.tags = ['Files']
+    /* #swagger.security = [{ "BearerAuth": [] }] */
     /* #swagger.parameters['body'] = {
                 in: 'body',
                 schema: { "FileName": "input.pdf","FileData":[123,456],"FileFieldName":"ProfilePicture" }
@@ -18,6 +19,7 @@ const post_files_users = (req, res, next) => {
 
 const post_files_admin = (req, res, next) => {
     // #swagger.tags = ['Files']
+    /* #swagger.security = [{ "BearerAuth": [] }] */
     /* #swagger.parameters['body'] = {
                 in: 'body',
                 schema: { "FileName": "input.pdf","FileData":[123,456] }

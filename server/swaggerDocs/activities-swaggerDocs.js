@@ -1,4 +1,5 @@
 const post_Activities = async (req, res, next) => {
+    /* #swagger.security = [{ "BearerAuth": [] }] */
     // #swagger.tags = ['Activities']
     /* #swagger.parameters['body'] = {
                in: 'body',
@@ -9,6 +10,7 @@ const post_Activities = async (req, res, next) => {
 }
 
 const patch_Activities = async (req, res, next) => {
+    /* #swagger.security = [{ "BearerAuth": [] }] */
     // #swagger.tags = ['Activities']
     /* #swagger.parameters['body'] = {
                    in: 'body',
@@ -19,6 +21,7 @@ const patch_Activities = async (req, res, next) => {
 }
 
 const get_Activities = async (req, res, next) => {
+    /* #swagger.security = [{ "BearerAuth": [] }] */
     // #swagger.tags = ['Activities']
     /* #swagger.responses[200] = {
                  description: 'Activity Data',
@@ -29,6 +32,7 @@ const get_Activities = async (req, res, next) => {
 }
 
 const get_Activities_ActivityId = async (req, res, next) => {
+    /* #swagger.security = [{ "BearerAuth": [] }] */
     // #swagger.tags = ['Activities']
     /* #swagger.responses[200] = {
                  description: 'Activity Data',
@@ -39,13 +43,26 @@ const get_Activities_ActivityId = async (req, res, next) => {
 }
 
 const delete_Activities_ActivityId = async (req, res, next) => {
+    /* #swagger.security = [{ "BearerAuth": [] }] */
+    // #swagger.tags = ['Activities']
+    next();
+}
+
+const patch_Activities_ActivityId_Like = async (req, res, next) => {
+    /* #swagger.security = [{ "BearerAuth": [] }] */
+    // #swagger.tags = ['Activities']
+    next();
+}
+
+const patch_Activities_ActivityId_Dislike = async (req, res, next) => {
+    /* #swagger.security = [{ "BearerAuth": [] }] */
     // #swagger.tags = ['Activities']
     next();
 }
 
 export default {
-    post_Activities,
-    patch_Activities,
+    post_Activities,patch_Activities_ActivityId_Like,
+    patch_Activities,patch_Activities_ActivityId_Dislike,
     get_Activities,
     get_Activities_ActivityId,
     delete_Activities_ActivityId

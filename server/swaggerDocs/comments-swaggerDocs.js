@@ -1,5 +1,6 @@
 const post_Comments = async (req, res, next) => {
     // #swagger.tags = ['Comments']
+    /* #swagger.security = [{ "BearerAuth": [] }] */
     /* #swagger.parameters['body'] = {
                in: 'body',
                schema: { Content: 'This is a comment.',ParentId: "asdfadfadfa", UserId: 'user123' }
@@ -11,6 +12,7 @@ const post_Comments = async (req, res, next) => {
 
 const get_Comments = async (req, res, next) => {
     // #swagger.tags = ['Comments']
+    /* #swagger.security = [{ "BearerAuth": [] }] */
     /* #swagger.responses[200] = {
                  description: 'User Data',
                  schema: { $ref: '#/definitions/CommentDataArray' }
@@ -21,6 +23,7 @@ const get_Comments = async (req, res, next) => {
 
 const get_Comments_CommentId = async (req, res, next) => {
     // #swagger.tags = ['Comments']
+    /* #swagger.security = [{ "BearerAuth": [] }] */
     /* #swagger.responses[200] = {
                  description: 'User Data',
                  schema: { $ref: '#/definitions/CommentData' }
@@ -31,6 +34,7 @@ const get_Comments_CommentId = async (req, res, next) => {
 
 const delete_Comments_CommentId = async (req, res, next) => {
     // #swagger.tags = ['Comments']
+    /* #swagger.security = [{ "BearerAuth": [] }] */
 
     next();
 }
