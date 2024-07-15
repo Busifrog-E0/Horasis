@@ -1166,6 +1166,9 @@
     },
     "/api/users/{UserId}/connections/count": {
       "get": {
+        "tags": [
+          "Connections"
+        ],
         "description": "",
         "parameters": [
           {
@@ -1182,7 +1185,14 @@
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "User Data",
+            "schema": {
+              "type": "number",
+              "example": 5,
+              "xml": {
+                "name": "main"
+              }
+            }
           },
           "401": {
             "description": "Unauthorized"

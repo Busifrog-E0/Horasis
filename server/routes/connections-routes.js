@@ -53,7 +53,7 @@ router.delete('/connections/:UserId', decodeIDToken, ensureAuthorized("User"),
 
 router.get('/users/:UserId/connections/count', decodeIDToken, ensureAuthorized("User"), SwaggerDocs.get_Connections_Count,
     //@ts-ignore,
-    asyncHandler(GetConnectionsNumber))
+    asyncHandler(GetConnectionsNumber));
 
 
 export default router;

@@ -4,6 +4,7 @@ import { ReadOneFromConnections, ReadConnections, UpdateConnections, CreateConne
 import moment from 'moment';
 import { AlertBoxObject } from './common.js';
 import { ViewOtherUserData } from './users-controller.js';
+import { ReadOneFromUsers, ReadUsers } from '../databaseControllers/users-databaseController.js';
 /**
  * @typedef {import('./../databaseControllers/connections-databaseController.js').ConnectionData} ConnectionData 
  */
@@ -52,6 +53,8 @@ const PostConnectionSend = async (req, res) => {
         ReadConnections({ UserIds: { $all: [SenderId, ReceiverId] }, Status: "Connected" }, undefined, 1, undefined),
         ReadConnections({ SenderId, ReceiverId, Status: "Pending" }, undefined, 1, undefined),
         ReadConnections({ ReceiverId: SenderId, SenderId: ReceiverId, Status: "Pending" }, undefined, 1, undefined),
+        ReadOneFromUsers(SenderId),
+        ReadOneFromUsers(ReceiverId),
     ]);
     const existingConnection = PromiseData[0];
     if (existingConnection.length !== 0) {
@@ -65,6 +68,8 @@ const PostConnectionSend = async (req, res) => {
     if (pendingReceivedRequest.length !== 0) {
         return res.status(444).json(AlertBoxObject('Request Already Received', 'Friend request already received and pending'));
     }
+
+    ConnectionData.UserDetails = [PromiseData[3], PromiseData[4]];
     await CreateConnections(ConnectionData);
     return res.json(true);
 }

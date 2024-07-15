@@ -1,8 +1,11 @@
 import dataHandling from './functions.js'
 
+/**@typedef {import('./users-databaseController.js').UserData} UserData*/
+
 /**
  * @typedef {object} ConnectionData
  * @property {[string,string]} UserIds
+ * @property {[UserData,UserData]} UserDetails
  * @property {string} SenderId
  * @property {string} ReceiverId
  * @property {number} CreatedIndex
