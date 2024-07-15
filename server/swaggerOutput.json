@@ -1597,7 +1597,73 @@
         ]
       }
     },
-    "/api/activites/{ParentId}/comments/": {
+    "/api/activities/{ActivityId}/likedUsers": {
+      "get": {
+        "tags": [
+          "Activities"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "ActivityId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "NextId",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "Limit",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "Keyword",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "OrderBy",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Activity Data",
+            "schema": {
+              "$ref": "#/definitions/UserDataArray"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "402": {
+            "description": "Payment Required"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/activities/{ParentId}/comments/": {
       "get": {
         "tags": [
           "Comments"
@@ -1733,7 +1799,7 @@
         }
       }
     },
-    "/api/comments/{ActivityId}": {
+    "/api/activities/{ActivityId}/comments": {
       "post": {
         "tags": [
           "Comments"
@@ -1794,7 +1860,7 @@
         ]
       }
     },
-    "/api/comments/{ActivityId}/reply/{CommentId}": {
+    "/api/activities/{ActivityId}/comments/{CommentId}/reply": {
       "post": {
         "tags": [
           "Comments"

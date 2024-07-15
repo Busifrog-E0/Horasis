@@ -3,7 +3,7 @@ import e from 'express';
 import { ReadOneFromActivities, ReadActivities, UpdateActivities, CreateActivities, RemoveActivities, UpdateAndIncrementActivities, } from '../databaseControllers/activities-databaseController.js';
 import { fileTypeFromBuffer } from 'file-type';
 import { AsyncSaveFileToSpaces, documentExtensions, mediaExtensions } from './files-controller.js';
-import { ReadUsers } from '../databaseControllers/users-databaseController.js';
+import { ReadOneFromUsers, ReadUsers } from '../databaseControllers/users-databaseController.js';
 import { AlertBoxObject } from './common.js';
 
 /**
@@ -182,10 +182,23 @@ const DislikeAnActivity = async (req, res) => {
     return res.json(true);
 }
 
-
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ * @returns 
+ */
+const GetLikedUsers = async (req, res) => {
+    const { ActivityId } = req.params;
+    const { LikedIds } = await ReadOneFromActivities(ActivityId);
+    const LikedUsers = await Promise.all(LikedIds.map(async UserId => {
+        return await ReadOneFromUsers(UserId);
+    }))
+    return res.json(LikedUsers);
+}
 
 
 export {
     GetOneFromActivities, GetActivities, PostActivities, PatchActivities, DeleteActivities,
-    LikeAnActivity,DislikeAnActivity
+    LikeAnActivity,DislikeAnActivity,GetLikedUsers
 }
