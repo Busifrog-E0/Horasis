@@ -2,6 +2,7 @@ import swaggerAutogen from 'swagger-autogen';
 
 import usersDefinitions from './swaggerDocs/usersDefinitions.js';
 import activitiesDefinitions from './swaggerDocs/activitiesDefinitions.js';
+import commentsDefinitions from './swaggerDocs/commentsDefinitions.js';
 
 const doc = {
     info: {
@@ -30,6 +31,10 @@ const doc = {
         {
             "name": "Activities",
             "description": "",
+        },
+        {
+            "name": "Comments",
+            "description": "",
         }
     ],
     securityDefinitions: {
@@ -42,7 +47,8 @@ const doc = {
     definitions: {
         LoginData: { Token: "string", RefreshToken: "string", CurrentUser: { Role: "User", UserId: "" } },
         ...usersDefinitions,
-        ...activitiesDefinitions
+        ...activitiesDefinitions,
+        ...commentsDefinitions
     }
 }
 
