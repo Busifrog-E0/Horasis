@@ -433,7 +433,7 @@ const MyProfile = () => {
   return (
     <>
       <div className='p-2 lg:px-10 lg:py-6'>
-        <div className='rounded-lg z-20 bg-red-400 h-40 lg:h-80 relative'>
+        <div className='rounded-lg z-20 h-40 lg:h-80 relative'>
           {user ? (
             <>
               {user.CoverPicture ? (
