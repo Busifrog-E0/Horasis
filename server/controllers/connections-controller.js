@@ -181,7 +181,7 @@ const DeleteConnection = async (req, res) => {
 const GetConnectionsNumber = async (req, res) => {
     //@ts-ignore
     const { UserId } = req.params;
-    return res.json(await GetConnectionsCount({ UserIds: UserId }))
+    return res.json(await GetConnectionsCount({ UserIds: UserId, Status : "Connected"}))
 }
 
 
