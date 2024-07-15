@@ -3,6 +3,7 @@ import e from 'express';
 import { ReadOneFromFollows, ReadFollows, UpdateFollows, CreateFollows, RemoveFollows, GetFollowCount, } from './../databaseControllers/follow-databaseController.js';
 import { ViewOtherUserData } from './users-controller.js';
 import { AlertBoxObject } from './common.js';
+import { ReadOneFromUsers } from '../databaseControllers/users-databaseController.js';
 /**
  * @typedef {import('./../databaseControllers/follow-databaseController.js').FollowData} FollowData 
  */
@@ -29,10 +30,19 @@ const GetOneFromFollows = async (req, res) => {
  * @returns 
  */
 const GetFollows = (IsFollowers) => async (/** @type {e.Request} */ req, /** @type {e.Response} */ res) => {
-    
+
     const { UserId } = req.params;
     let OtherUser = ""
-    const { Filter, NextId, Limit, OrderBy } = req.query;
+    const { Filter, NextId, Limit, OrderBy, Keyword } = req.query;
+    if (Keyword) {
+        //@ts-ignore
+        Filter['UserDetails.DocId'] = UserId;
+        //@ts-ignore
+        Filter['$or'] = [
+            { 'UserDetails.FullName': { $regex: Keyword, $options: 'i' } },
+            { 'UserDetails.Username': { $regex: Keyword, $options: 'i' } },
+        ]
+    }
     if (IsFollowers) {
         //@ts-ignore
         Filter.FolloweeId = UserId;
@@ -80,12 +90,14 @@ const PostFollows = async (req, res) => {
     req.body.FollowerId = req.user.UserId;
     const { FollowerId, FolloweeId } = req.body;
     if (FolloweeId === FollowerId) {
-        return res.status(444).json(AlertBoxObject("Cannot follow yourself","You cannot follow yourself"));
+        return res.status(444).json(AlertBoxObject("Cannot follow yourself", "You cannot follow yourself"));
     }
     const Follow = await ReadFollows({ FolloweeId, FollowerId }, undefined, 1, undefined);
     if (Follow.length > 0) {
         return res.status(444).json(AlertBoxObject("Already follows this profile", "You already follow this profile"));
     }
+    const UserDetails = await Promise.all([ReadOneFromUsers(FolloweeId), ReadOneFromUsers(FollowerId)]);
+    req.body.UserDetails = UserDetails;
     await CreateFollows(req.body);
     return res.json(true);
 }

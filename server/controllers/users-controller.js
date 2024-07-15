@@ -48,7 +48,14 @@ const GetOneFromUsers = async (req, res) => {
  * @returns {Promise<e.Response<Array<UserData & OtherUserData>>>}
  */
 const GetUsers = async (req, res) => {
-    const { Filter, NextId, Limit, OrderBy } = req.query;
+    const { Filter, NextId, Limit, OrderBy,Keyword } = req.query;
+    if (Keyword) {
+        //@ts-ignore
+        Filter['$or'] = [
+            { 'FullName': { $regex: Keyword, $options: 'i' } },
+            { 'Username': { $regex: Keyword, $options: 'i' } },
+        ]
+    }
     // @ts-ignore
     const Users = await ReadUsers(Filter, NextId, Limit, OrderBy);
     const data = await Promise.all(Users.map(async User => {
