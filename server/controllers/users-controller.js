@@ -5,7 +5,7 @@ import { ReadOneFromUsers, ReadUsers, UpdateUsers, CreateUsers, RemoveUsers, } f
 import { AccountVerificationEmail, SendOTPEmail } from './emails-controller.js';
 import { CreateEmailVerifications, ReadOneFromEmailVerifications, UpdateEmailVerifications } from '../databaseControllers/emailVerification-databaseController.js';
 import { GenerateToken, SendRegisterOTP, TokenData, VerifyOTP } from './auth-controller.js';
-import { AlertBoxObject, GetNonEmptyFieldsPercentage, getOTP } from './common.js';
+import { AlertBoxObject, getOTP, GetUserNonEmptyFieldsPercentage } from './common.js';
 import { ReadConnections } from '../databaseControllers/connections-databaseController.js';
 import { ReadFollows } from '../databaseControllers/follow-databaseController.js';
 import { ConnectionStatus } from './connections-controller.js';
@@ -35,7 +35,7 @@ const GetOneFromUsers = async (req, res) => {
     const { UserId } = req.params;
     //@ts-ignore
     let data = await ViewOtherUserData(req.user.UserId, UserId);
-    const ProfileCompletionPercentage = GetNonEmptyFieldsPercentage(data);
+    const ProfileCompletionPercentage = GetUserNonEmptyFieldsPercentage(data);
     //@ts-ignore
     data.ProfileCompletionPercentage = ProfileCompletionPercentage;
     return res.json(data);

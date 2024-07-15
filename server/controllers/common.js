@@ -1,3 +1,19 @@
+import axios from "axios";
+
+const UserFields = [
+    "FullName",
+    "Username",
+    "Email",
+    "Country",
+    "City",
+    "JobTitle",
+    "Industry",
+    "CompanyName",
+    "About",
+    "ProfilePicture",
+    "CoverPicture"
+];
+
 /**
  * 
  * @param {string} Header 
@@ -7,9 +23,6 @@
  * @param {boolean} UpdateButton 
  * @returns 
  */
-
-import axios from "axios";
-
 
 const AlertBoxObject = (Header, Message, SubscriptionButton = false, CloseButton = true, UpdateButton = false) => {
     return {
@@ -42,16 +55,15 @@ const getOTP = (TestUser = false) => {
  * 
  * @param {object} Data 
  */
-const GetNonEmptyFieldsPercentage = (Data) => {
-    let NoOfFields = 0;
+const GetUserNonEmptyFieldsPercentage = (Data) => {
+    const NoOfFields = UserFields.length;
     let NoOfFilledFields = 0;
-    for (const Field in Data) {
-        NoOfFields++;
+    for (const Field in UserFields) {
         if (Data[Field] !== undefined && Data[Field] !== "") {
             NoOfFilledFields++;
         }
     }
-    return NoOfFilledFields / NoOfFields;
+    return Math.round((NoOfFilledFields / NoOfFields)*100);
 }
 
 const GetFileFromURI = async (URI) => {
@@ -65,6 +77,6 @@ const GetFileFromURI = async (URI) => {
 export {
     AlertBoxObject,
     getOTP,
-    GetNonEmptyFieldsPercentage,
+    GetUserNonEmptyFieldsPercentage,
     GetFileFromURI
 }
