@@ -1,6 +1,6 @@
 import e from 'express';
 
-import { ReadOneFromActivities, ReadActivities, UpdateActivities, CreateActivities, RemoveActivities, } from '../databaseControllers/activities-databaseController.js';
+import { ReadOneFromActivities, ReadActivities, UpdateActivities, CreateActivities, RemoveActivities, UpdateAndIncrementActivities, } from '../databaseControllers/activities-databaseController.js';
 import { fileTypeFromBuffer } from 'file-type';
 import { AsyncSaveFileToSpaces, documentExtensions, mediaExtensions } from './files-controller.js';
 import { ReadUsers } from '../databaseControllers/users-databaseController.js';
@@ -121,7 +121,8 @@ const ActivityInit = (Activity) => {
     return {
         NoOfLikes: 0,
         ...Activity,
-        NoOfComments: 0
+        NoOfComments: 0,
+        LikedIds : []
     }
 }
 /**
@@ -146,7 +147,44 @@ const ExtractMentionedUsersFromContent =async (Content) => {
 };
 
 
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ * @returns 
+ */
+const LikeAnActivity = async (req, res) => {
+    const { UserId, ActivityId } = req.params;
+    const {LikedIds,DocId} = await ReadOneFromActivities(ActivityId);
+    if (LikedIds.includes(UserId)) {
+        return res.status(444).json("Already Liked this post");
+    }
+    LikedIds.push(UserId);
+    await UpdateAndIncrementActivities({ LikedIds }, { NoOfLikes: 1 }, DocId);
+    return res.json(true);
+}
+
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ * @returns 
+ */
+const DislikeAnActivity = async (req, res) => {
+    const { UserId, ActivityId } = req.params;
+    const { LikedIds, DocId } = await ReadOneFromActivities(ActivityId);
+    if (!LikedIds.includes(UserId)) {
+        return res.status(444).json("Not Liked this post");
+    }
+    const NewLikedIds = LikedIds.filter(Id => Id != UserId);
+    await UpdateAndIncrementActivities({ LikedIds : NewLikedIds }, { NoOfLikes: -1 }, DocId);
+    return res.json(true);
+}
+
+
+
+
 export {
     GetOneFromActivities, GetActivities, PostActivities, PatchActivities, DeleteActivities,
-
+    LikeAnActivity,DislikeAnActivity
 }
