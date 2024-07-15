@@ -4,9 +4,10 @@ import dataHandling from './functions.js'
  * @typedef {object} CommentData
  * @property {string} Content
  * @property {string} ParentId
- * @property {string[]} ReplyIds
  * @property {string} UserId
  * @property {string} DocId
+ * @property {number} NoOfReplies
+ * @property {'Comment'|'Reply'} Type
  */
 
 
@@ -65,11 +66,17 @@ const RemoveComments = async (DocId) => {
 const CommentCount = async (Where = {}) => {
     return dataHandling.ReadCount('Comments', Where);
 }
+
+const IncrementComments = async (data, DocId) => {
+    return dataHandling.Update("Comments", data, DocId, ["$inc"]);
+}
+
 export {
     ReadComments,
     ReadOneFromComments,
     UpdateComments,
     CreateComments,
     RemoveComments,
-    CommentCount
+    CommentCount,
+    IncrementComments
 }
