@@ -11,9 +11,8 @@ import { decodeIDToken, ensureAuthorized } from '../middleware/auth-middleware.j
 import { QueryParameterFormatting, ValidateGetEntity } from '../middleware/common.js';
 import { ValidatePostComments } from '../validations/comments-validations.js';
 const router = e.Router();
-router.route
 
-router.get('/activites/:ParentId/comments/', decodeIDToken, ensureAuthorized("User"), ValidateGetEntity, QueryParameterFormatting,SwaggerDocs.get_Comments,
+router.get('/activities/:ParentId/comments/', decodeIDToken, ensureAuthorized("User"), ValidateGetEntity, QueryParameterFormatting,SwaggerDocs.get_Comments,
     //@ts-ignore
     asyncHandler(GetComments));
 
@@ -21,11 +20,11 @@ router.get('/comments/:CommentId', decodeIDToken, ensureAuthorized("User"),Swagg
     // @ts-ignore
     asyncHandler(GetOneFromComments));
 
-router.post('/comments/:ActivityId', decodeIDToken, ensureAuthorized("User"),ValidatePostComments,SwaggerDocs.post_Comments,
+router.post('/activities/:ActivityId/comments', decodeIDToken, ensureAuthorized("User"),ValidatePostComments,SwaggerDocs.post_Comments,
     // @ts-ignore
     asyncHandler(PostComments));
 
-router.post('/comments/:ActivityId/reply/:CommentId', decodeIDToken, ensureAuthorized("User"), ValidatePostComments, SwaggerDocs.post_Comments,
+router.post('/activities/:ActivityId/comments/:CommentId/reply', decodeIDToken, ensureAuthorized("User"), ValidatePostComments, SwaggerDocs.post_Comments,
     // @ts-ignore
     asyncHandler(PostComments));    
 
