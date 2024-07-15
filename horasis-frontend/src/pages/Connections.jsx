@@ -70,6 +70,7 @@ const Connections = () => {
 
 
   const onTabChange = (item) => {
+    setPageDisabled(true)
     setActiveTab(item.key)
     _storeData(MAINTAB, { connections: item.key })
   }
