@@ -5,6 +5,7 @@ import { getItem } from '../../constants/operations'
 import Spinner from '../ui/Spinner'
 import avatar from '../../assets/icons/avatar.svg'
 import { useToast } from '../Toast/ToastService'
+import { useFollow } from '../../context/Follow/FollowService'
 
 const CurrentProfileTab = () => {
 	const { currentUserData, updateCurrentUser, scrollToTop } = useContext(AuthContext)
@@ -12,7 +13,7 @@ const CurrentProfileTab = () => {
 	const [expand, setExpand] = useState(false)
 	const [isLoading, setIsLoading] = useState(false)
 	const [user, setUser] = useState()
-	const [followCount, setFollowCount] = useState({})
+	const {followCount,getFollowCount} = useFollow()
 
 	const navigate = useNavigate()
 	const GoToProfilePage = () => {
@@ -49,22 +50,7 @@ const CurrentProfileTab = () => {
 		)
 	}
 
-	const getFollowCount = () => {
-		setIsLoading(true)
-		getItem(
-			`users/${currentUserData.CurrentUser.UserId}/follow/count`,
-			(result) => {
-				setIsLoading(false)
-				setFollowCount(result)
-			},
-			(err) => {
-				setIsLoading(false)
-				// console.log(err)
-			},
-			updateCurrentUser,
-			currentUserData,toast
-		)
-	}
+	
 
 	useEffect(() => {
 		getUserDetails()

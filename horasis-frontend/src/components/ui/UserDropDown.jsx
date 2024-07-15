@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { deleteItem, patchItem, postItem } from '../../constants/operations'
 import { AuthContext } from '../../utils/AuthProvider'
 import { useToast } from '../Toast/ToastService'
+import { useFollow } from '../../context/Follow/FollowService'
 
 const DropdownConnectComponent = ({ profile, updateList }) => {
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
@@ -20,7 +21,8 @@ const DropdownConnectComponent = ({ profile, updateList }) => {
 				// console.log(err)
 			},
 			updateCurrentUser,
-			currentUserData,toast
+			currentUserData,
+			toast
 		)
 	}
 	const acceptConnectionRequest = () => {
@@ -35,7 +37,8 @@ const DropdownConnectComponent = ({ profile, updateList }) => {
 				// console.log(err)
 			},
 			updateCurrentUser,
-			currentUserData,toast
+			currentUserData,
+			toast
 		)
 	}
 	const rejectConnectionRequest = () => {
@@ -49,7 +52,8 @@ const DropdownConnectComponent = ({ profile, updateList }) => {
 				// console.log(err)
 			},
 			updateCurrentUser,
-			currentUserData,toast
+			currentUserData,
+			toast
 		)
 	}
 	const cancelConnectionRequest = () => {
@@ -63,7 +67,8 @@ const DropdownConnectComponent = ({ profile, updateList }) => {
 				// console.log(err)
 			},
 			updateCurrentUser,
-			currentUserData,toast
+			currentUserData,
+			toast
 		)
 	}
 	const deleteConnection = () => {
@@ -77,7 +82,8 @@ const DropdownConnectComponent = ({ profile, updateList }) => {
 				// console.log(err)
 			},
 			updateCurrentUser,
-			currentUserData,toast
+			currentUserData,
+			toast
 		)
 	}
 
@@ -141,42 +147,8 @@ const DropdownConnectComponent = ({ profile, updateList }) => {
 }
 
 const DropdownFollowComponent = ({ profile, updateList }) => {
-	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
-	const toast = useToast()
-	const followUser = () => {
-		postItem(
-			'follow',
-			{
-				FolloweeId: profile.DocId,
-			},
-			(result) => {
-				if (result === true) {
-					updateList([])
-				}
-			},
-			(err) => {
-				// console.log(err)
-			},
-			updateCurrentUser,
-			currentUserData,toast
-		)
-	}
+	const { followUser, unFollowUser } = useFollow()
 
-	const unFollowUser = () => {
-		deleteItem(
-			`users/${currentUserData.CurrentUser.UserId}/follow/${profile.DocId}`,
-			(result) => {
-				if (result === true) {
-					updateList([])
-				}
-			},
-			(err) => {
-				// console.log(err)
-			},
-			updateCurrentUser,
-			currentUserData,toast
-		)
-	}
 	if (profile.IsFollowing) {
 		return (
 			<>
@@ -184,7 +156,9 @@ const DropdownFollowComponent = ({ profile, updateList }) => {
 					className='cursor-pointer flex px-4 py-2 text-sm text-brand-gray-dim hover:bg-system-primary-bg'
 					role='menuitem'
 					onClick={() => {
-						unFollowUser()
+						unFollowUser(profile.DocId, () => {
+							updateList([])
+						})
 					}}>
 					Unfollow
 				</span>
@@ -197,7 +171,9 @@ const DropdownFollowComponent = ({ profile, updateList }) => {
 					className='cursor-pointer flex px-4 py-2 text-sm text-brand-gray-dim hover:bg-system-primary-bg'
 					role='menuitem'
 					onClick={() => {
-						followUser()
+						followUser(profile.DocId, () => {
+							updateList([])
+						})
 					}}>
 					Follow
 				</span>
@@ -249,7 +225,9 @@ const UserDropDown = ({ memberProfile, updateList }) => {
 			{isOpen && (
 				<div className='origin-top-right absolute z-10 right-0 mt-2 w-56 rounded-md shadow-lg bg-system-secondary-bg ring-1 ring-black ring-opacity-5'>
 					<div className='py-1' role='menu' aria-orientation='vertical' aria-labelledby='options-menu'>
-						{profile && profile.ConnectionStatus && <DropdownConnectComponent profile={profile} updateList={updateList} />}
+						{profile && profile.ConnectionStatus && (
+							<DropdownConnectComponent profile={profile} updateList={updateList} />
+						)}
 						{profile && <DropdownFollowComponent profile={profile} updateList={updateList} />}
 
 						{/* <span

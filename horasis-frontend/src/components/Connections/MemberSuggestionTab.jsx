@@ -5,6 +5,7 @@ import avatar from '../../assets/icons/avatar.svg'
 import { deleteItem, postItem } from '../../constants/operations'
 import { AuthContext } from '../../utils/AuthProvider'
 import { useToast } from '../Toast/ToastService'
+import { useFollow } from '../../context/Follow/FollowService'
 
 const MemberSuggestionTab = ({ lastElement, profile, updateList }) => {
 	const navigate = useNavigate()
@@ -14,64 +15,12 @@ const MemberSuggestionTab = ({ lastElement, profile, updateList }) => {
 		}
 	}
 
-	const { currentUserData, updateCurrentUser } = useContext(AuthContext)
-	const toast = useToast()
-	const [user, setUser] = useState()
-	const [isLoading, setIsLoading] = useState(false)
-	const [isFollowLoading, setIsFollowLoading] = useState(false)
 
-	const getUserDetails = (setLoading) => {
-		setLoading(true)
-		getItem(
-			`users/${profile.DocId}`,
-			(result) => {
-				setLoading(false)
-				setUser(result)
-			},
-			(err) => {
-				setLoading(false)
-				// console.log(err)
-			},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
-	}
+	const { followUser, unFollowUser } = useFollow()
 
-	const followUser = () => {
-		postItem(
-			'follow',
-			{
-				FolloweeId: profile.DocId,
-			},
-			(result) => {
-				updateList([])
-				// getUserDetails(setIsFollowLoading)
-			},
-			(err) => {
-				// console.log(err)
-			},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
-	}
+	
 
-	const unFollowUser = () => {
-		deleteItem(
-			`users/${currentUserData.CurrentUser.UserId}/follow/${profile.DocId}`,
-			(result) => {
-				updateList([])
-				// getUserDetails(setIsFollowLoading)
-			},
-			(err) => {
-				// console.log(err)
-			},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
-	}
+
 
 	return (
 		<>
@@ -111,7 +60,9 @@ const MemberSuggestionTab = ({ lastElement, profile, updateList }) => {
 							<Button
 								variant='outline'
 								onClick={() => {
-									unFollowUser()
+									unFollowUser(profile.DocId, () => {
+										updateList([])
+									})
 								}}>
 								Unfollow
 							</Button>
@@ -121,13 +72,15 @@ const MemberSuggestionTab = ({ lastElement, profile, updateList }) => {
 							<Button
 								variant='outline'
 								onClick={() => {
-									followUser()
+									followUser(profile.DocId, () => {
+										updateList([])
+									})
 								}}>
 								Follow
 							</Button>
 						</>
 					)}
-					{/* <Button variant='outline'>Follow</Button> */}
+				
 				</div>
 			</div>
 		</>

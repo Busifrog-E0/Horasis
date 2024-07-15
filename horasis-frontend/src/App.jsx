@@ -9,6 +9,7 @@ import { _storeData } from './utils/LocalStorage'
 import { useEffect } from 'react'
 import { AuthProvider } from './utils/AuthProvider'
 import ToastProvider from './components/Toast/ToastProvider'
+import FollowProvider from './context/Follow/FollowProvider'
 
 function App() {
 	useEffect(() => {
@@ -27,7 +28,9 @@ function App() {
 	return (
 		<ToastProvider>
 			<AuthProvider>
-				<RouterProvider router={router} />
+				<FollowProvider>
+					<RouterProvider router={router} />
+				</FollowProvider>
 			</AuthProvider>
 		</ToastProvider>
 	)

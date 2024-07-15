@@ -18,6 +18,7 @@ import Button from '../components/ui/Button'
 import avatar from '../assets/icons/avatar.svg'
 import cover from '../assets/icons/cover.svg'
 import { useToast } from '../components/Toast/ToastService'
+import { useFollow } from '../context/Follow/FollowService'
 
 const UserProfileConnectComponent = ({ profile, connectCallback = () => {}, setIsLoading }) => {
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
@@ -181,44 +182,7 @@ const UserProfileConnectComponent = ({ profile, connectCallback = () => {}, setI
 }
 
 const UserProfileFollowComponent = ({ profile, followCallback = () => {}, setIsLoading }) => {
-	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
-	const toast = useToast()
-	const followUser = () => {
-		setIsLoading(true)
-		postItem(
-			'follow',
-			{
-				FolloweeId: profile.DocId,
-			},
-			(result) => {
-				followCallback()
-			},
-			(err) => {
-				// console.log(err)
-				setIsLoading(false)
-			},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
-	}
-
-	const unFollowUser = () => {
-		setIsLoading(true)
-		deleteItem(
-			`users/${currentUserData.CurrentUser.UserId}/follow/${profile.DocId}`,
-			(result) => {
-				followCallback()
-			},
-			(err) => {
-				// console.log(err)
-				setIsLoading(true)
-			},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
-	}
+	const { followUser, unFollowUser } = useFollow()
 
 	if (profile.IsFollowing) {
 		return (
@@ -229,7 +193,7 @@ const UserProfileFollowComponent = ({ profile, followCallback = () => {}, setIsL
 					className='rounded-full font-semibold shadow-sm bg-system-secondary-accent text-system-primary-accent'
 					size='md'
 					onClick={() => {
-						unFollowUser()
+						unFollowUser(profile.DocId, followCallback, setIsLoading)
 					}}>
 					Unfollow
 				</Button>
@@ -244,7 +208,7 @@ const UserProfileFollowComponent = ({ profile, followCallback = () => {}, setIsL
 					className='rounded-full font-semibold'
 					size='md'
 					onClick={() => {
-						followUser()
+						followUser(profile.DocId, followCallback, setIsLoading)
 					}}>
 					Follow
 				</Button>
