@@ -3,8 +3,7 @@ import ToastContext from './ToastService'
 
 const ToastProvider = ({ children }) => {
 	const [toasts, setToasts] = useState([])
-	const open = (type, title, message, timeout = 2000) => {
-		console.log('opened	')
+	const open = (type, title, message, timeout = 3000) => {
 		const id = Date.now()
 		setToasts((toasts) => [...toasts, { id, type, title, message }])
 		setTimeout(() => close(id), timeout)
@@ -15,7 +14,7 @@ const ToastProvider = ({ children }) => {
 	return (
 		<ToastContext.Provider value={{ open, close }}>
 			{children}
-			<div className='space-y-2 absolute bottom-4 right-4 transition-all'>
+			<div className='space-y-2 absolute bottom-4 right-4 transition-all z-50'>
 				{toasts.map(({ id, message, type, title }) => {
 					return (
 						<div key={id} className='relative'>

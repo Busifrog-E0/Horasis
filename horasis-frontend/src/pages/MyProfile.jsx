@@ -577,6 +577,7 @@ const MyProfile = () => {
               onImageSelect={onProfileImageSelect}
               onImageDelete={onProfileImageDelete}
               onUploadImage={onProfileImageUpload}
+              fileFieldName={'ProfilePicture'}
             />
           </div>
         </Modal.Body>
@@ -607,6 +608,7 @@ const MyProfile = () => {
               onImageSelect={onCoverImageSelect}
               onImageDelete={onCoverImageDelete}
               onUploadImage={onCoverImageUpload}
+              fileFieldName={'CoverPicture'}
             />
           </div>
         </Modal.Body>
