@@ -1,3 +1,5 @@
+import { ReadFollows, ReadOneFromFollows, UpdateFollows } from "./follow-databaseController.js";
+import { ReadOneFromUsers } from "./users-databaseController.js";
 
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
 
@@ -33,6 +35,17 @@ const VersionUpdate = async (ReadFn, UpdateFn, where = {}) => {
     console.log(count);
     return count;
 }
+
+const UserDetailsinFollow = async () => {
+    const update = async (follow) => {
+        const UserDetails = await Promise.all([ReadOneFromUsers(follow.FolloweeId), ReadOneFromUsers(follow.FollowerId)])
+        await UpdateFollows({ UserDetails }, follow.DocId);
+    }
+    await VersionUpdate(ReadFollows, update, { UserDetails: { '$exists': false } });
+}
+
+//UserDetailsinFollow()
+
 function Shuffle(array) {
     let m = array.length, t, i;
 

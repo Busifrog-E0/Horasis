@@ -42,12 +42,18 @@ const doc = {
         }
     ],
     securityDefinitions: {
-        api_key: {
-            type: "apiKey",
-            name: "api_key",
-            in: "header"
+        BearerAuth: {
+            type: 'apiKey',
+            name: 'Authorization',
+            in: 'header',
+            description: 'Enter your bearer token in the format **Bearer &lt;token&gt;**',
         },
     },
+    security: [
+        {
+            BearerAuth: [],
+        },
+    ],
     definitions: {
         LoginData: { Token: "string", RefreshToken: "string", CurrentUser: { Role: "User", UserId: "" } },
         ...usersDefinitions,

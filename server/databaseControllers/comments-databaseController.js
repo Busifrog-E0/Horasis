@@ -68,7 +68,7 @@ const CommentCount = async (Where = {}) => {
 }
 
 const IncrementComments = async (data, DocId) => {
-    return dataHandling.Update("Comments", data, DocId, ["$inc"]);
+    return dataHandling.Update("Comments", data, DocId, ["$inc"], false);
 }
 
 export {

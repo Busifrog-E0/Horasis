@@ -47,10 +47,13 @@ const GetComments = async (req, res) => {
  */
 const PostComments = async (req, res) => {
     const { ActivityId } = req.params;
-    await IncrementActivities({ NoOfComments: 1 }, ActivityId);
+    req.body.Type = "Comment";
+    await IncrementActivities({ NoOfComments: 1 }, ActivityId, );
     if (req.params.CommentId) {
         await IncrementComments({ NoOfReplies: 1 }, req.params.CommentId);
+        req.body.Type = "Reply";
     }
+    req.body = CommentInit(req.body);
     await CreateComments(req.body);
     return res.json(true);
 }
@@ -75,11 +78,21 @@ const PatchComments = async (req, res) => {
  */
 const DeleteComments = async (req, res) => {
     const { CommentId, ActivityId } = req.params;
+    const Comment = await ReadOneFromComments(CommentId);
+    if (Comment.Type == "Reply") {
+        await IncrementComments({ NoOfReplies: -1 }, Comment.ParentId);
+    }
     await RemoveComments(CommentId);
     await IncrementActivities({ NoOfComments: -1 }, ActivityId);
     return res.json(true);
 }
 
+const CommentInit = (CommentData) => {
+    return {
+        NoOfReplies: 0,
+        ...CommentData
+    }
+}
 export {
     GetOneFromComments, GetComments, PostComments, PatchComments, DeleteComments,
 

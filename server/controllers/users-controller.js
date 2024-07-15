@@ -5,7 +5,7 @@ import { ReadOneFromUsers, ReadUsers, UpdateUsers, CreateUsers, RemoveUsers, } f
 import { AccountVerificationEmail, SendOTPEmail } from './emails-controller.js';
 import { CreateEmailVerifications, ReadOneFromEmailVerifications, UpdateEmailVerifications } from '../databaseControllers/emailVerification-databaseController.js';
 import { GenerateToken, SendRegisterOTP, TokenData, VerifyOTP } from './auth-controller.js';
-import { GetNonEmptyFieldsPercentage, getOTP } from './common.js';
+import { AlertBoxObject, getOTP, GetUserNonEmptyFieldsPercentage } from './common.js';
 import { ReadConnections } from '../databaseControllers/connections-databaseController.js';
 import { ReadFollows } from '../databaseControllers/follow-databaseController.js';
 import { ConnectionStatus } from './connections-controller.js';
@@ -35,7 +35,7 @@ const GetOneFromUsers = async (req, res) => {
     const { UserId } = req.params;
     //@ts-ignore
     let data = await ViewOtherUserData(req.user.UserId, UserId);
-    const ProfileCompletionPercentage = GetNonEmptyFieldsPercentage(data);
+    const ProfileCompletionPercentage = GetUserNonEmptyFieldsPercentage(data);
     //@ts-ignore
     data.ProfileCompletionPercentage = ProfileCompletionPercentage;
     return res.json(data);
@@ -48,7 +48,14 @@ const GetOneFromUsers = async (req, res) => {
  * @returns {Promise<e.Response<Array<UserData & OtherUserData>>>}
  */
 const GetUsers = async (req, res) => {
-    const { Filter, NextId, Limit, OrderBy } = req.query;
+    const { Filter, NextId, Limit, OrderBy,Keyword } = req.query;
+    if (Keyword) {
+        //@ts-ignore
+        Filter['$or'] = [
+            { 'FullName': { $regex: Keyword, $options: 'i' } },
+            { 'Username': { $regex: Keyword, $options: 'i' } },
+        ]
+    }
     // @ts-ignore
     const Users = await ReadUsers(Filter, NextId, Limit, OrderBy);
     const data = await Promise.all(Users.map(async User => {
@@ -71,11 +78,11 @@ const PostUsersRegister = async (req, res) => {
 
     const Users = await ReadUsers({ Username: req.body.Username }, undefined, 1, undefined);
     if (Users.length > 0) {
-        return res.status(444).json("Username already in use");;
+        return res.status(444).json(AlertBoxObject("Username already in use", "This username is already taken"));
     }
     const CheckEmailExists = await ReadUsers({ Email: req.body.Email }, undefined, 1, undefined);
     if (CheckEmailExists.length > 0) {
-        return res.status(444).json("User with Email already exists");
+        return res.status(444).json(AlertBoxObject("User with Email already exists", "An account with this email already exists"));
     }
     const User = UserInit(req.body);
     const OTPId = await SendRegisterOTP(User.Email, User, 'Verify Your Email', res);
@@ -112,7 +119,7 @@ const PatchUsers = async (req, res) => {
     const CheckUserExists = await ReadUsers({ Username: req.body.Username }, undefined, 1, undefined);
     //@ts-ignore
     if (CheckUserExists.length > 0 && CheckUserExists[0].DocId !== req.user.UserId) {
-        return res.status(444).json("Username already in use");
+        return res.status(444).json(AlertBoxObject("Username already in use", "This username is already taken"));
     }
     const { UserId } = req.params;
     await UpdateUsers(req.body, UserId);
@@ -133,7 +140,7 @@ const UserLogin = async (req, res) => {
     }
     const [User] = Users
     if (User.Password !== Password) {
-        return res.status(444).json("Invalid Credentials");
+        return res.status(444).json(AlertBoxObject("Invalid Credentials", "The email or password you entered is incorrect"));
     }
 
     if (User.Password === Password) {

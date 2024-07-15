@@ -1,9 +1,10 @@
 import e from 'express';
 
-import { ReadOneFromActivities, ReadActivities, UpdateActivities, CreateActivities, RemoveActivities, } from '../databaseControllers/activities-databaseController.js';
+import { ReadOneFromActivities, ReadActivities, UpdateActivities, CreateActivities, RemoveActivities, UpdateAndIncrementActivities, } from '../databaseControllers/activities-databaseController.js';
 import { fileTypeFromBuffer } from 'file-type';
 import { AsyncSaveFileToSpaces, documentExtensions, mediaExtensions } from './files-controller.js';
 import { ReadUsers } from '../databaseControllers/users-databaseController.js';
+import { AlertBoxObject } from './common.js';
 
 /**
  * @typedef {import('../databaseControllers/activities-databaseController.js').ActivityData} ActivityData 
@@ -51,7 +52,7 @@ const PostActivities = async (req, res) => {
     const [AttachmentsLinksObject, Mentions] = await Promise.all(promises);
 
     if (!AttachmentsLinksObject) {
-        return res.status(444).json("Cannot Upload this file");
+        return res.status(444).json(AlertBoxObject("Cannot Upload File", " The file(s) cannot be uploaded"));
     }
 
     req.body = ActivityInit(req.body);
@@ -121,7 +122,8 @@ const ActivityInit = (Activity) => {
     return {
         NoOfLikes: 0,
         ...Activity,
-        NoOfComments: 0
+        NoOfComments: 0,
+        LikedIds : []
     }
 }
 /**
@@ -146,7 +148,44 @@ const ExtractMentionedUsersFromContent =async (Content) => {
 };
 
 
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ * @returns 
+ */
+const LikeAnActivity = async (req, res) => {
+    const { UserId, ActivityId } = req.params;
+    const {LikedIds,DocId} = await ReadOneFromActivities(ActivityId);
+    if (LikedIds.includes(UserId)) {
+        return res.status(444).json(AlertBoxObject("Already Liked this post", "You have already liked this post"));
+    }
+    LikedIds.push(UserId);
+    await UpdateAndIncrementActivities({ LikedIds }, { NoOfLikes: 1 }, DocId);
+    return res.json(true);
+}
+
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ * @returns 
+ */
+const DislikeAnActivity = async (req, res) => {
+    const { UserId, ActivityId } = req.params;
+    const { LikedIds, DocId } = await ReadOneFromActivities(ActivityId);
+    if (!LikedIds.includes(UserId)) {
+        return res.status(444).json(AlertBoxObject("Not Liked this post", "You have not liked this post"));
+    }
+    const NewLikedIds = LikedIds.filter(Id => Id != UserId);
+    await UpdateAndIncrementActivities({ LikedIds : NewLikedIds }, { NoOfLikes: -1 }, DocId);
+    return res.json(true);
+}
+
+
+
+
 export {
     GetOneFromActivities, GetActivities, PostActivities, PatchActivities, DeleteActivities,
-
+    LikeAnActivity,DislikeAnActivity
 }
