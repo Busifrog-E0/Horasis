@@ -13,7 +13,7 @@ import { ValidatePostComments } from '../validations/comments-validations.js';
 const router = e.Router();
 router.route
 
-router.get('/comments/:ParentId', decodeIDToken, ensureAuthorized("User"), ValidateGetEntity, QueryParameterFormatting,SwaggerDocs.get_Comments,
+router.get('/activites/:ParentId/comments/', decodeIDToken, ensureAuthorized("User"), ValidateGetEntity, QueryParameterFormatting,SwaggerDocs.get_Comments,
     //@ts-ignore
     asyncHandler(GetComments));
 
@@ -33,7 +33,7 @@ router.patch('/comments/:CommentId', decodeIDToken, ensureAuthorized("User"),
     // @ts-ignore
     asyncHandler(PatchComments));
 
-router.delete('/comments/:CommentId', decodeIDToken, ensureAuthorized("User"),SwaggerDocs.delete_Comments_CommentId,
+router.delete('/activities/:ActivityId/comments/:CommentId', decodeIDToken, ensureAuthorized("User"),SwaggerDocs.delete_Comments_CommentId,
     // @ts-ignore
     asyncHandler(DeleteComments));
 

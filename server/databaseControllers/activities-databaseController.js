@@ -67,10 +67,14 @@ const RemoveActivities = async (DocId) => {
 };
 
 const IncrementActivities = async (data,DocId) => {
-  return dataHandling.Update("Activities", data, DocId, ["$inc"]);
+  return dataHandling.Update("Activities", data, DocId, ["$inc"],false);
+}
+
+const UpdateAndIncrementActivities = async (UpdateData, IncrementData, DocId) => {
+  return dataHandling.Update("Activities", UpdateData, DocId, ["$set","$inc"], true,IncrementData);
 }
 
 export {
   ReadActivities, ReadOneFromActivities, UpdateActivities, CreateActivities, RemoveActivities,
-  IncrementActivities
+  IncrementActivities,UpdateAndIncrementActivities
  };
