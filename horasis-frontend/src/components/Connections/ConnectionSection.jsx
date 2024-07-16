@@ -103,7 +103,7 @@ const ConnectionSection = () => {
 		},
 		{
 			key: 3,
-			title: 'Send',
+			title: 'Sent',
 			render: () => (
 				<SendConnectionTab
 					data={connectionsSend}

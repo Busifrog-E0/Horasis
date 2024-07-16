@@ -18,6 +18,7 @@ const FollowProvider = ({ children }) => {
 				if (result === true) {
 					followCallback()
 					getFollowCount()
+					toast.open('success', 'Followed', `Followed user`)
 				}
 				setLoading(false)
 			},
@@ -38,6 +39,7 @@ const FollowProvider = ({ children }) => {
 				if (result === true) {
 					unFollowCallback()
 					getFollowCount()
+					toast.open('info', 'Unfollowed', `Unfollowed user`)
 				}
 				setLoading(false)
 			},

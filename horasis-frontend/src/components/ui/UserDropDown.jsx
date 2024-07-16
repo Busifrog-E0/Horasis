@@ -15,6 +15,7 @@ const DropdownConnectComponent = ({ profile, updateList, tabName }) => {
 			{},
 			(result) => {
 				updateList('UPDATE')
+				toast.open('success','Request Sent','Connection request has been sent')
 				console.log(result)
 			},
 			(err) => {
@@ -35,6 +36,7 @@ const DropdownConnectComponent = ({ profile, updateList, tabName }) => {
 				} else {
 					updateList('UPDATE')
 				}
+				toast.open('success','Connection Accepted',`Accepted connection request from ${profile.FullName}`)
 				console.log(result)
 			},
 			(err) => {
@@ -54,6 +56,8 @@ const DropdownConnectComponent = ({ profile, updateList, tabName }) => {
 				} else {
 					updateList('UPDATE')
 				}
+				toast.open('info','Connection Rejected',`Rejected connection request from ${profile.FullName}`)
+
 				console.log(result)
 			},
 			(err) => {
@@ -73,6 +77,7 @@ const DropdownConnectComponent = ({ profile, updateList, tabName }) => {
 				} else {
 					updateList('UPDATE')
 				}
+				toast.open('info','Connection cancelled',`Cancelled connection request to ${profile.FullName}`)
 				console.log(result)
 			},
 			(err) => {
@@ -92,6 +97,7 @@ const DropdownConnectComponent = ({ profile, updateList, tabName }) => {
 				} else {
 					updateList('UPDATE')
 				}
+				toast.open('info','Connection Removed',`Removed connection from ${profile.FullName}`)
 				console.log(result)
 			},
 			(err) => {
