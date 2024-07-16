@@ -67,7 +67,7 @@ const MemberSuggestionTab = ({ lastElement, profile, updateList }) => {
 											unFollowUser(
 												profile.DocId,
 												() => {
-													updateList([])
+													updateList()
 												},
 												setLoading
 											)
@@ -83,7 +83,7 @@ const MemberSuggestionTab = ({ lastElement, profile, updateList }) => {
 											followUser(
 												profile.DocId,
 												() => {
-													updateList([])
+													updateList()
 												},
 												setLoading
 											)

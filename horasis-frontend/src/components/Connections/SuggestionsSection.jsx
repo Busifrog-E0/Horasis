@@ -10,6 +10,7 @@ import Spinner from '../ui/Spinner'
 const SuggestionsSection = () => {
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
 	const toast = useToast()
+	const [updatingId, setUpdatingId] = useState(null)
 	const [isLoading, setIsLoading] = useState(false)
 	const [isLoadingMore, setIsLoadingMore] = useState(false)
 	const [pageDisabled, setPageDisabled] = useState(true)
@@ -86,12 +87,40 @@ const SuggestionsSection = () => {
 		hasAnyLeft()
 	}, [suggested])
 
+	const updateSingleData = (profile) => {
+		setUpdatingId(profile.DocId)
+		getItem(
+			`users/${profile.DocId}`,
+			(result) => {
+				setSuggested(suggested.map((suggested) => (suggested.DocId === profile.DocId ? { ...suggested, ...result } : suggested)))
+				setUpdatingId(null)
+			},
+			(err) => {
+				setUpdatingId(null)
+				console.log(err)
+			},
+			updateCurrentUser,
+			currentUserData,
+			toast
+		)
+	}
+
 	return (
 		<>
 			{suggested.map((item, index) => {
 				const lastElement = suggested.length === index + 1
 				// if (item.DocId === currentUserData.CurrentUser.UserId) return
-				return <MemberSuggestionTab lastElement={lastElement} key={index} profile={item} updateList={getSuggested} />
+				return (
+					<MemberSuggestionTab
+						lastElement={lastElement}
+						key={index}
+						profile={item}
+						updateList={() => {
+							updateSingleData(item)
+						}}
+						updatingId={updatingId}
+					/>
+				)
 			})}
 
 			{isLoadingMore && (

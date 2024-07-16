@@ -44,7 +44,7 @@ const FollowProvider = ({ children }) => {
 				setLoading(false)
 			},
 			(err) => {
-				setLoading(true)
+				setLoading(false)
 			},
 			updateCurrentUser,
 			currentUserData,
