@@ -3,13 +3,23 @@ import { fileTypeFromBuffer } from 'file-type';
 import dotenv from 'dotenv';
 dotenv.config();
 
-const documentExtensions = [
-    'pdf'];
-
-const mediaExtensions = [
-    'jpeg', 'jpg', 'mp4', 'mkv'];
-
-
+const fileFormats = {
+    document: {
+        extensions: [
+            'pdf'],
+        size: 12345
+    },
+    image: {
+        extensions: [
+            'jpeg', 'jpg'],
+        size: 12345
+    },
+    video: {
+        extensions: [
+            'mp4', 'mkv'],
+        size: 12345
+    }
+}
 /**
  * Converts a byte array to a file and saves it to the specified file path.
  * @param {ArrayBufferView} byteArray - The byte array to be converted to a file.
@@ -156,6 +166,5 @@ export {
     AsyncSaveFileToSpaces,
     getFileArrayBuffer,
     FileDelete,
-    documentExtensions,
-    mediaExtensions
+    fileFormats
 }
