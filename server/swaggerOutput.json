@@ -2187,6 +2187,14 @@
         "About": {
           "type": "string",
           "example": "Seasoned product manager with over 10 years of experience in the software industry."
+        },
+        "CoverPicture": {
+          "type": "string",
+          "example": "string"
+        },
+        "ProfilePicture": {
+          "type": "string",
+          "example": "string"
         }
       }
     },
@@ -2263,6 +2271,14 @@
           "About": {
             "type": "string",
             "example": "Seasoned product manager with over 10 years of experience in the software industry."
+          },
+          "CoverPicture": {
+            "type": "string",
+            "example": "string"
+          },
+          "ProfilePicture": {
+            "type": "string",
+            "example": "string"
           }
         }
       }
@@ -2532,6 +2548,14 @@
             "About": {
               "type": "string",
               "example": "Seasoned product manager with over 10 years of experience in the software industry."
+            },
+            "CoverPicture": {
+              "type": "string",
+              "example": "string"
+            },
+            "ProfilePicture": {
+              "type": "string",
+              "example": "string"
             }
           }
         }
@@ -2608,6 +2632,14 @@
               "About": {
                 "type": "string",
                 "example": "Seasoned product manager with over 10 years of experience in the software industry."
+              },
+              "CoverPicture": {
+                "type": "string",
+                "example": "string"
+              },
+              "ProfilePicture": {
+                "type": "string",
+                "example": "string"
               }
             }
           }
