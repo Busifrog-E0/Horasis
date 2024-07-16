@@ -77,8 +77,16 @@ const PictureUpload = ({
 						{isBanner ? (
 							<>
 								{isUploading ? (
-									<div className='h-[150px] w-[320px] rounded-md flex items-center justify-center border-2 border-dashed'>
+									<div className='w-full lg:w-full h-24 lg:h-60 rounded-md flex items-center justify-center relative '>
 										<Spinner />
+										<div className='w-full lg:w-full h-24 lg:h-60 rounded-md flex items-center justify-center bg-black absolute top-0 bottom-0 left-0 right-0 opacity-20'>
+											<img
+												src={selectedImage}
+												alt={altTitle}
+												// className='h-[150px] w-[320px] rounded-md object-cover'
+												className='w-full lg:w-full h-24 lg:h-60 rounded-md object-cover cursor-pointer'
+											/>
+										</div>
 									</div>
 								) : (
 									<img
@@ -93,8 +101,16 @@ const PictureUpload = ({
 						) : (
 							<>
 								{isUploading ? (
-									<div className='h-32 w-32 rounded-full flex items-center justify-center border-2 border-dashed'>
+									<div className='w-24 lg:w-60 h-24 lg:h-60 rounded-full flex items-center justify-center relative'>
 										<Spinner />
+										<div className='w-full h-full rounded-full flex items-center justify-center bg-black absolute top-0 bottom-0 left-0 right-0 opacity-20'>
+											<img
+												src={selectedImage}
+												alt={altTitle}
+												// className='h-32 w-32 rounded-full object-cover'
+												className='w-24 lg:w-60 h-24 lg:h-60 rounded-full object-cover cursor-pointer'
+											/>
+										</div>
 									</div>
 								) : (
 									<div className='w-24 lg:w-60 h-24 lg:h-60 rounded-full flex items-center justify-center bg-black'>
@@ -150,11 +166,14 @@ const PictureUpload = ({
 			</div>
 
 			<div className='p-2 flex items-center justify-between w-full'>
-				<p className='font-medium text-brand-gray-dim text-lg cursor-pointer' onClick={onImageDelete}>
+				<p
+					className='font-medium text-brand-gray-dim text-lg cursor-pointer'
+					onClick={onImageDelete}
+					disabled={isUploading}>
 					Delete Image
 				</p>
 				<div className='flex gap-2'>
-					<Button onClick={handleClick} size='md' variant='outline' className='text-md'>
+					<Button onClick={handleClick} size='md' variant='outline' className='text-md' disabled={isUploading}>
 						Change Image
 					</Button>
 					<Button
@@ -163,7 +182,8 @@ const PictureUpload = ({
 						}}
 						size='md'
 						variant='black'
-						className='text-md'>
+						className='text-md'
+						disabled={isUploading}>
 						Apply
 					</Button>
 				</div>
