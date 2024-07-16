@@ -55,7 +55,7 @@ const DashboardHeader = () => {
 							Activities
 						</a>
 						<div
-							className={`h-1 w-1/2 rounded-full ${
+							className={`h-1 w-10 rounded-full ${
 								location.pathname === '/Activities' || location.pathname === '/' ? 'bg-system-primary-accent' : 'bg-transparent'
 							}`}></div>
 					</div>
@@ -68,7 +68,7 @@ const DashboardHeader = () => {
 							Events
 						</a>
 						<div
-							className={`h-1 w-1/2 rounded-full ${
+							className={`h-1 w-10 rounded-full ${
 								location.pathname === '/Events' ? 'bg-system-primary-accent' : 'bg-transparent'
 							}`}></div>
 					</div> */}
@@ -81,7 +81,7 @@ const DashboardHeader = () => {
 							Discussions
 						</a>
 						<div
-							className={`h-1 w-1/2 rounded-full ${
+							className={`h-1 w-10 rounded-full ${
 								location.pathname === '/Discussions' ? 'bg-system-primary-accent' : 'bg-transparent'
 							}`}></div>
 					</div> */}
@@ -94,7 +94,7 @@ const DashboardHeader = () => {
 							Connections
 						</a>
 						<div
-							className={`h-1 w-1/2 rounded-full ${
+							className={`h-1 w-10 rounded-full ${
 								location.pathname === '/Connections' ? 'bg-system-primary-accent' : 'bg-transparent'
 							}`}></div>
 					</div>
@@ -107,7 +107,7 @@ const DashboardHeader = () => {
 							Analytics
 						</a>
 						<div
-							className={`h-1 w-1/2 rounded-full ${
+							className={`h-1 w-10 rounded-full ${
 								location.pathname === '/Analytics' ? 'bg-system-primary-accent' : 'bg-transparent'
 							}`}></div>
 					</div> */}
