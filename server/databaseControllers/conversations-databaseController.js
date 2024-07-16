@@ -67,11 +67,14 @@ const RemoveConversations = async (DocId) => {
     return dataHandling.Delete('Conversations', DocId);
 }
 
-
+const UpdateAndIncrementConversations = async (UpdateData, IncrementData, DocId) => {
+    return dataHandling.Update("Conversations", UpdateData, DocId, ["$set", "$inc"], true, IncrementData);
+}
 export {
     ReadConversations,
     ReadOneFromConversations,
     UpdateConversations,
     CreateConversations,
-    RemoveConversations
+    RemoveConversations,
+    UpdateAndIncrementConversations
 }
