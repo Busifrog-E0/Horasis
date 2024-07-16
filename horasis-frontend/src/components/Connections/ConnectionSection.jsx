@@ -31,7 +31,7 @@ const ConnectionSection = () => {
 	const [filters, setFilters] = useState({
 		OrderBy: 'Index',
 		Keyword: '',
-		Limit: 2,
+		Limit: 10,
 		Keyword: '',
 	})
 	const [activeTab, setActiveTab] = useState(
@@ -58,6 +58,7 @@ const ConnectionSection = () => {
 			title: 'All Members',
 			render: () => (
 				<AllMembersTab
+					getConnectionCount={getConnectionCount}
 					data={members}
 					getAllData={getAllMembers}
 					isLoading={isLoading}
@@ -74,6 +75,7 @@ const ConnectionSection = () => {
 			title: `${connectionCount} Connections`,
 			render: () => (
 				<ConnectionsTab
+					getConnectionCount={getConnectionCount}
 					data={connections}
 					getAllData={getConnections}
 					isLoading={isLoading}
@@ -90,6 +92,7 @@ const ConnectionSection = () => {
 			title: 'Recieved',
 			render: () => (
 				<RecievedConnectionTab
+					getConnectionCount={getConnectionCount}
 					data={connectionsReceived}
 					getAllData={getConnectionRecieved}
 					isLoading={isLoading}
@@ -106,6 +109,7 @@ const ConnectionSection = () => {
 			title: 'Sent',
 			render: () => (
 				<SendConnectionTab
+
 					data={connectionsSend}
 					getAllData={getConnectionsSend}
 					isLoading={isLoading}
@@ -122,6 +126,7 @@ const ConnectionSection = () => {
 			title: 'Following',
 			render: () => (
 				<FollowingsTab
+					getConnectionCount={getConnectionCount}
 					data={followings}
 					getAllData={getFollowing}
 					isLoading={isLoading}
@@ -138,6 +143,7 @@ const ConnectionSection = () => {
 			title: 'Followers',
 			render: () => (
 				<FollowersTab
+					getConnectionCount={getConnectionCount}
 					data={followers}
 					getAllData={getFollowers}
 					isLoading={isLoading}
@@ -157,7 +163,7 @@ const ConnectionSection = () => {
 			(result) => {
 				setConnectionCount(result)
 			},
-			(err) => {},
+			(err) => { },
 			updateCurrentUser,
 			currentUserData,
 			toast
@@ -245,6 +251,8 @@ const ConnectionSection = () => {
 				getAllMembers(initialRender ? [] : members)
 				break
 			case 1:
+				console.log("getConnectionCount")
+				getConnectionCount()
 				getConnections(initialRender ? [] : connections)
 				break
 			case 2:

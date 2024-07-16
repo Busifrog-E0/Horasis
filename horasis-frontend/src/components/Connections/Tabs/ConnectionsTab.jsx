@@ -1,7 +1,7 @@
 import Spinner from '../../ui/Spinner'
 import MembersSection from '../MembersSection'
 
-const ConnectionsTab = ({ isLoading, setIsLoading, data, setData, getAllData, fetchMore, isLoadingMore, pageDisabled }) => {
+const ConnectionsTab = ({ isLoading, setIsLoading, data, setData, getAllData, fetchMore, isLoadingMore, pageDisabled, getConnectionCount }) => {
 
   if (isLoading)
     return (
@@ -13,7 +13,10 @@ const ConnectionsTab = ({ isLoading, setIsLoading, data, setData, getAllData, fe
     <MembersSection
       members={data}
       emptyText='You currently have no connections'
-      updateList={setData}
+      updateList={updatedData => {
+        setData(updatedData)
+        getConnectionCount()
+      }}
       whichTime='connection'
       fetchMore={fetchMore}
       isLoadingMore={isLoadingMore}

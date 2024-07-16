@@ -1,7 +1,7 @@
 import Spinner from '../../ui/Spinner'
 import MembersSection from '../MembersSection'
 
-const FollowersTab = ({ isLoading, setIsLoading, data, setData, getAllData, fetchMore, isLoadingMore, pageDisabled }) => {
+const FollowersTab = ({ isLoading, setIsLoading, data, setData, getAllData, fetchMore, isLoadingMore, pageDisabled, getConnectionCount }) => {
   if (isLoading)
     return (
       <div className='bg-system-secondary-bg p-4 rounded-b-lg '>
@@ -13,7 +13,10 @@ const FollowersTab = ({ isLoading, setIsLoading, data, setData, getAllData, fetc
     <MembersSection
       members={data}
       emptyText='You currently have no followers.'
-      updateList={setData}
+      updateList={(updatedData) => {
+        setData(updatedData)
+        getConnectionCount()
+      }}
       whichTime='followed'
       fetchMore={fetchMore}
       isLoadingMore={isLoadingMore}
