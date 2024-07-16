@@ -2,6 +2,7 @@ import {
     GetOneFromActivities, GetActivities, PostActivities, PatchActivities, DeleteActivities,
     LikeAnActivity,
     DislikeAnActivity,
+    GetLikedUsers,
 } from '../controllers/activities-controller.js';
 import asyncHandler from 'express-async-handler';
 
@@ -36,6 +37,10 @@ router.patch('/users/:UserId/activities/:ActivityId/like', decodeIDToken, ensure
 router.patch('/users/:UserId/activities/:ActivityId/dislike', decodeIDToken, ensureAuthorized("User"), SwaggerDocs.patch_Activities_ActivityId_Dislike,
     // @ts-ignore
     asyncHandler(DislikeAnActivity));  
+
+router.get('/activities/:ActivityId/likedUsers', decodeIDToken, ensureAuthorized("User"),ValidateGetEntity,QueryParameterFormatting, SwaggerDocs.get_Activities_ActivityId_LikedUsers,
+    //@ts-ignore
+asyncHandler(GetLikedUsers))    
 
 router.delete('/activities/:ActivityId', decodeIDToken, ensureAuthorized("User"),SwaggerDocs.delete_Activities_ActivityId,
     // @ts-ignore
