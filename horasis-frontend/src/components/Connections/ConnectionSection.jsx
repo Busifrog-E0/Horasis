@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from 'react'
 import { getItem } from '../../constants/operations'
 import { AuthContext } from '../../utils/AuthProvider'
 import { useToast } from '../Toast/ToastService'
-import { _retrieveData,MAINTAB,_storeData } from '../../utils/LocalStorage'
+import { _retrieveData, MAINTAB, _storeData } from '../../utils/LocalStorage'
 import SearchComponent from '../SearchBox/SearchComponent'
 import Tab from '../ui/Tab'
 import FollowersTab from './Tabs/FollowersTab'
@@ -26,6 +26,8 @@ const ConnectionSection = () => {
 	const [followings, setFollowings] = useState([])
 	const [connectionsReceived, setConnectionsRecieved] = useState([])
 	const [connectionsSend, setConnectionsSend] = useState([])
+
+	const [connectionCount, setConnectionCount] = useState('-')
 	const [filters, setFilters] = useState({
 		OrderBy: 'Index',
 		Keyword: '',
@@ -69,7 +71,7 @@ const ConnectionSection = () => {
 		},
 		{
 			key: 1,
-			title: 'Connections',
+			title: `${connectionCount} Connections`,
 			render: () => (
 				<ConnectionsTab
 					data={connections}
@@ -148,6 +150,19 @@ const ConnectionSection = () => {
 			),
 		},
 	]
+
+	const getConnectionCount = () => {
+		getItem(
+			`users/${currentUserData.CurrentUser.UserId}/connections/count`,
+			(result) => {
+				setConnectionCount(result)
+			},
+			(err) => {},
+			updateCurrentUser,
+			currentUserData,
+			toast
+		)
+	}
 
 	const getAllMembers = (tempMembers) => {
 		getData(`users?&${jsonToQuery(filters)}`, tempMembers, setMembers)
@@ -282,6 +297,10 @@ const ConnectionSection = () => {
 	useEffect(() => {
 		fetch()
 	}, [filters, activeTab])
+
+	useEffect(() => {
+		getConnectionCount()
+	}, [])
 	return (
 		<>
 			<SearchComponent
