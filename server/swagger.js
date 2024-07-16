@@ -25,6 +25,10 @@ const doc = {
             "description": "", 
         },
         {
+            "name": "Connections",
+            "description": "",
+        },
+        {
             "name": "Files",
             "description": "",
         },

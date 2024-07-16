@@ -57,7 +57,7 @@ const GetFollows = (IsFollowers) => async (/** @type {e.Request} */ req, /** @ty
     const data = await ReadFollows(Filter, NextId, Limit, OrderBy);
     const Users = await Promise.all(data.map(Follow => {
         const OtherUserId = Follow[OtherUser];
-        return ViewOtherUserData(UserId, OtherUserId);
+        return ViewOtherUserData(UserId, OtherUserId, Follow);
     }));
     return res.json(Users);
 }

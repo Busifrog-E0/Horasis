@@ -17,6 +17,10 @@
       "description": ""
     },
     {
+      "name": "Connections",
+      "description": ""
+    },
+    {
       "name": "Files",
       "description": ""
     },
@@ -910,7 +914,133 @@
         }
       }
     },
-    "/api/connections/send": {
+    "/api/users/{UserId}/connections/received": {
+      "get": {
+        "tags": [
+          "Connections"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "UserId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "NextId",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "Limit",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "Keyword",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "OrderBy",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "Filter",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "402": {
+            "description": "Payment Required"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      }
+    },
+    "/api/users/{UserId}/connections/sent": {
+      "get": {
+        "tags": [
+          "Connections"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "UserId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "NextId",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "Limit",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "Keyword",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "OrderBy",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "Filter",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "402": {
+            "description": "Payment Required"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      }
+    },
+    "/api/connections/{ReceiverId}/send": {
       "post": {
         "tags": [
           "Connections"
@@ -918,21 +1048,15 @@
         "description": "",
         "parameters": [
           {
-            "name": "authorization",
-            "in": "header",
+            "name": "ReceiverId",
+            "in": "path",
+            "required": true,
             "type": "string"
           },
           {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "ReceiverId": {
-                  "example": "any"
-                }
-              }
-            }
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
@@ -954,7 +1078,7 @@
         }
       }
     },
-    "/api/connections/accept": {
+    "/api/connections/{SenderId}/accept": {
       "patch": {
         "tags": [
           "Connections"
@@ -962,21 +1086,15 @@
         "description": "",
         "parameters": [
           {
-            "name": "authorization",
-            "in": "header",
+            "name": "SenderId",
+            "in": "path",
+            "required": true,
             "type": "string"
           },
           {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "SenderId": {
-                  "example": "any"
-                }
-              }
-            }
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
@@ -998,7 +1116,7 @@
         }
       }
     },
-    "/api/connections/reject": {
+    "/api/connections/{SenderId}/reject": {
       "delete": {
         "tags": [
           "Connections"
@@ -1006,21 +1124,15 @@
         "description": "",
         "parameters": [
           {
-            "name": "authorization",
-            "in": "header",
+            "name": "SenderId",
+            "in": "path",
+            "required": true,
             "type": "string"
           },
           {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "SenderId": {
-                  "example": "any"
-                }
-              }
-            }
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
@@ -1042,7 +1154,7 @@
         }
       }
     },
-    "/api/connections/cancel": {
+    "/api/connections/{ReceiverId}/cancel": {
       "delete": {
         "tags": [
           "Connections"
@@ -1050,21 +1162,15 @@
         "description": "",
         "parameters": [
           {
-            "name": "authorization",
-            "in": "header",
+            "name": "ReceiverId",
+            "in": "path",
+            "required": true,
             "type": "string"
           },
           {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "ReceiverId": {
-                  "example": "any"
-                }
-              }
-            }
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
@@ -1086,7 +1192,7 @@
         }
       }
     },
-    "/api/connections": {
+    "/api/connections/{UserId}": {
       "delete": {
         "tags": [
           "Connections"
@@ -1094,21 +1200,15 @@
         "description": "",
         "parameters": [
           {
-            "name": "authorization",
-            "in": "header",
+            "name": "UserId",
+            "in": "path",
+            "required": true,
             "type": "string"
           },
           {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "UserId": {
-                  "example": "any"
-                }
-              }
-            }
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
@@ -1126,6 +1226,48 @@
           },
           "444": {
             "description": "Connection Closed Without Response"
+          }
+        }
+      }
+    },
+    "/api/users/{UserId}/connections/count": {
+      "get": {
+        "tags": [
+          "Connections"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "UserId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User Data",
+            "schema": {
+              "type": "number",
+              "example": 5,
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "402": {
+            "description": "Payment Required"
+          },
+          "403": {
+            "description": "Forbidden"
           }
         }
       }
@@ -2111,6 +2253,14 @@
         "About": {
           "type": "string",
           "example": "Seasoned product manager with over 10 years of experience in the software industry."
+        },
+        "CoverPicture": {
+          "type": "string",
+          "example": "string"
+        },
+        "ProfilePicture": {
+          "type": "string",
+          "example": "string"
         }
       }
     },
@@ -2187,6 +2337,14 @@
           "About": {
             "type": "string",
             "example": "Seasoned product manager with over 10 years of experience in the software industry."
+          },
+          "CoverPicture": {
+            "type": "string",
+            "example": "string"
+          },
+          "ProfilePicture": {
+            "type": "string",
+            "example": "string"
           }
         }
       }
@@ -2456,6 +2614,14 @@
             "About": {
               "type": "string",
               "example": "Seasoned product manager with over 10 years of experience in the software industry."
+            },
+            "CoverPicture": {
+              "type": "string",
+              "example": "string"
+            },
+            "ProfilePicture": {
+              "type": "string",
+              "example": "string"
             }
           }
         }
@@ -2532,6 +2698,14 @@
               "About": {
                 "type": "string",
                 "example": "Seasoned product manager with over 10 years of experience in the software industry."
+              },
+              "CoverPicture": {
+                "type": "string",
+                "example": "string"
+              },
+              "ProfilePicture": {
+                "type": "string",
+                "example": "string"
               }
             }
           }

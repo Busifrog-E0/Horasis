@@ -27,6 +27,8 @@ const UserData = {
     "Industry": "Software",
     "CompanyName": "InnovateTech",
     "About": "Seasoned product manager with over 10 years of experience in the software industry.",
+    "CoverPicture": "string",
+    "ProfilePicture": "string",
 }
 
 const OTPVerifyData = {
