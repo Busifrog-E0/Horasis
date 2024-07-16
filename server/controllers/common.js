@@ -57,12 +57,12 @@ const getOTP = (TestUser = false) => {
  */
 const GetUserNonEmptyFieldsPercentage = (Data) => {
     const NoOfFields = UserFields.length;
-    let NoOfFilledFields = 0;
-    for (const Field in UserFields) {
-        if (Data[Field] !== undefined && Data[Field] !== "") {
-            NoOfFilledFields++;
+    const NoOfFilledFields = UserFields.reduce((Num, Field) => {
+        if (Data[Field] != undefined && Data[Field] !== "") {
+            return Num + 1;
         }
-    }
+        return Num;
+    },0)
     return Math.round((NoOfFilledFields / NoOfFields)*100);
 }
 
