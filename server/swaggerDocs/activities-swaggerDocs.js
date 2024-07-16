@@ -59,11 +59,21 @@ const patch_Activities_ActivityId_Dislike = async (req, res, next) => {
     // #swagger.tags = ['Activities']
     next();
 }
+const get_Activities_ActivityId_LikedUsers = async (req, res, next) => {
+    /* #swagger.security = [{ "BearerAuth": [] }] */
+    // #swagger.tags = ['Activities']
+    /* #swagger.responses[200] = {
+                 description: 'Activity Data',
+                 schema: { $ref: '#/definitions/UserDataArray' }
+         } 
+     */
+    next();
+}
 
 export default {
     post_Activities,patch_Activities_ActivityId_Like,
     patch_Activities,patch_Activities_ActivityId_Dislike,
-    get_Activities,
+    get_Activities,get_Activities_ActivityId_LikedUsers,
     get_Activities_ActivityId,
     delete_Activities_ActivityId
 }
