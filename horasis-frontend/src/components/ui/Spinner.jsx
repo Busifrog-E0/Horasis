@@ -4,7 +4,7 @@ const Spinner = () => {
   return (
     <div className="flex justify-center items-center ">
       <div
-        className="border-2 border-transparent border-t-2 border-t-blue-400 animate-spin rounded-full h-6 w-6"
+        className="border-2 border-transparent border-t-2 border-t-system-primary-accent animate-spin rounded-full h-6 w-6"
       ></div>
       {/* <Oval
         height={20}
