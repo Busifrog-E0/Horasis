@@ -18,11 +18,12 @@ const AllMembersTab = ({ isLoading, setIsLoading, data, setData, getAllData, fet
     <MembersSection
       members={data}
       emptyText={'No members '}
-      updateList={getAllData}
+      updateList={setData}
       whichTime='member'
       fetchMore={fetchMore}
       isLoadingMore={isLoadingMore}
       pageDisabled={pageDisabled}
+      tabName='members'
     />
   )
 }

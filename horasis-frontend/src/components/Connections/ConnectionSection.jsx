@@ -31,7 +31,7 @@ const ConnectionSection = () => {
 	const [filters, setFilters] = useState({
 		OrderBy: 'Index',
 		Keyword: '',
-		Limit: 10,
+		Limit: 2,
 		Keyword: '',
 	})
 	const [activeTab, setActiveTab] = useState(

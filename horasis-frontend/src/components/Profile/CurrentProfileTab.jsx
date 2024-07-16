@@ -125,7 +125,7 @@ const CurrentProfileTab = () => {
 									Complete Your Profile
 								</h4>
 								<h4 className='font-semibold text-base text-center text-system-primary-accent mt-2'>
-									{user && user.ProfileCompletionPercentage && Math.floor(user.ProfileCompletionPercentage * 100)}%
+									{user && user.ProfileCompletionPercentage && user.ProfileCompletionPercentage}%
 								</h4>
 							</div>
 							<div className='w-full bg-system-secondary-selected-accent rounded-full h-2 mt-3 mb-1'>
@@ -133,7 +133,7 @@ const CurrentProfileTab = () => {
 									className='bg-brand-green h-2 rounded-full'
 									style={{
 										width: `${
-											user?.ProfileCompletionPercentage ? Math.floor(user.ProfileCompletionPercentage * 100) : '0'
+											user?.ProfileCompletionPercentage ? user.ProfileCompletionPercentage : '0'
 										}%`,
 									}}></div>
 							</div>
@@ -220,7 +220,7 @@ const CurrentProfileTab = () => {
 											))} */}
 										</div>
 									</div>
-									{user && user?.ProfileCompletionPercentage != 1 && (
+									{user && user?.ProfileCompletionPercentage != 100 && (
 										<h1
 											className='text-center cursor-pointer text-sm font-semibold underline text-system-primary-accent mt-2'
 											onClick={() => GoToProfilePage()}>

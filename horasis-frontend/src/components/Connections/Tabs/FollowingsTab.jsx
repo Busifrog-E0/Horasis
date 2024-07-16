@@ -14,11 +14,12 @@ const FollowingsTab = ({ isLoading, setIsLoading, data, setData, getAllData, fet
     <MembersSection
       members={data}
       emptyText='You are not currently following anyone.'
-      updateList={getAllData}
+      updateList={setData}
       whichTime='following'
       fetchMore={fetchMore}
       isLoadingMore={isLoadingMore}
       pageDisabled={pageDisabled}
+      tabName='following'
     />
   )
 }

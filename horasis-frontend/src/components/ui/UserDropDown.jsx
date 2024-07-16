@@ -5,7 +5,7 @@ import { AuthContext } from '../../utils/AuthProvider'
 import { useToast } from '../Toast/ToastService'
 import { useFollow } from '../../context/Follow/FollowService'
 
-const DropdownConnectComponent = ({ profile, updateList }) => {
+const DropdownConnectComponent = ({ profile, updateList, tabName }) => {
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
 	const toast = useToast()
 
@@ -14,7 +14,7 @@ const DropdownConnectComponent = ({ profile, updateList }) => {
 			`connections/${profile.DocId}/send`,
 			{},
 			(result) => {
-				updateList([])
+				updateList('UPDATE')
 				console.log(result)
 			},
 			(err) => {
@@ -30,7 +30,11 @@ const DropdownConnectComponent = ({ profile, updateList }) => {
 			`connections/${profile.DocId}/accept`,
 			{},
 			(result) => {
-				updateList([])
+				if (tabName === 'received') {
+					updateList('REMOVE')
+				} else {
+					updateList('UPDATE')
+				}
 				console.log(result)
 			},
 			(err) => {
@@ -45,7 +49,11 @@ const DropdownConnectComponent = ({ profile, updateList }) => {
 		deleteItem(
 			`connections/${profile.DocId}/reject`,
 			(result) => {
-				updateList([])
+				if (tabName === 'received') {
+					updateList('REMOVE')
+				} else {
+					updateList('UPDATE')
+				}
 				console.log(result)
 			},
 			(err) => {
@@ -60,7 +68,11 @@ const DropdownConnectComponent = ({ profile, updateList }) => {
 		deleteItem(
 			`connections/${profile.DocId}/cancel`,
 			(result) => {
-				updateList([])
+				if (tabName === 'sent') {
+					updateList('REMOVE')
+				} else {
+					updateList('UPDATE')
+				}
 				console.log(result)
 			},
 			(err) => {
@@ -75,7 +87,11 @@ const DropdownConnectComponent = ({ profile, updateList }) => {
 		deleteItem(
 			`connections/${profile.DocId}`,
 			(result) => {
-				updateList([])
+				if (tabName === 'connections') {
+					updateList('REMOVE')
+				} else {
+					updateList('UPDATE')
+				}
 				console.log(result)
 			},
 			(err) => {
@@ -146,7 +162,7 @@ const DropdownConnectComponent = ({ profile, updateList }) => {
 	}
 }
 
-const DropdownFollowComponent = ({ profile, updateList }) => {
+const DropdownFollowComponent = ({ profile, updateList, tabName }) => {
 	const { followUser, unFollowUser } = useFollow()
 
 	if (profile.IsFollowing) {
@@ -157,7 +173,11 @@ const DropdownFollowComponent = ({ profile, updateList }) => {
 					role='menuitem'
 					onClick={() => {
 						unFollowUser(profile.DocId, () => {
-							updateList([])
+							if (tabName === 'following') {
+								updateList('REMOVE')
+							} else {
+								updateList('UPDATE')
+							}
 						})
 					}}>
 					Unfollow
@@ -172,7 +192,7 @@ const DropdownFollowComponent = ({ profile, updateList }) => {
 					role='menuitem'
 					onClick={() => {
 						followUser(profile.DocId, () => {
-							updateList([])
+							updateList('UPDATE')
 						})
 					}}>
 					Follow
@@ -184,7 +204,7 @@ const DropdownFollowComponent = ({ profile, updateList }) => {
 	}
 }
 
-const UserDropDown = ({ memberProfile, updateList }) => {
+const UserDropDown = ({ memberProfile, updateList, tabName }) => {
 	const navigate = useNavigate()
 	const { currentUserData } = useContext(AuthContext)
 	const dropdownRef = useRef(null)
@@ -226,9 +246,9 @@ const UserDropDown = ({ memberProfile, updateList }) => {
 				<div className='origin-top-right absolute z-10 right-0 mt-2 w-56 rounded-md shadow-lg bg-system-secondary-bg ring-1 ring-black ring-opacity-5'>
 					<div className='py-1' role='menu' aria-orientation='vertical' aria-labelledby='options-menu'>
 						{profile && profile.ConnectionStatus && (
-							<DropdownConnectComponent profile={profile} updateList={updateList} />
+							<DropdownConnectComponent profile={profile} updateList={updateList} tabName={tabName} />
 						)}
-						{profile && <DropdownFollowComponent profile={profile} updateList={updateList} />}
+						{profile && <DropdownFollowComponent profile={profile} updateList={updateList} tabName={tabName} />}
 
 						{/* <span
 							className='cursor-pointer block px-4 py-2 text-sm text-brand-gray-dim hover:bg-system-primary-bg'

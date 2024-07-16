@@ -13,11 +13,12 @@ const ConnectionsTab = ({ isLoading, setIsLoading, data, setData, getAllData, fe
     <MembersSection
       members={data}
       emptyText='You currently have no connections'
-      updateList={getAllData}
+      updateList={setData}
       whichTime='connection'
       fetchMore={fetchMore}
       isLoadingMore={isLoadingMore}
       pageDisabled={pageDisabled}
+      tabName='connections'
     />
   )
 }
