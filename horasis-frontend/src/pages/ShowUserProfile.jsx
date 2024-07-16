@@ -413,14 +413,7 @@ const ShowUserProfile = () => {
 												className='w-24 lg:w-60 h-24 lg:h-60 rounded-full object-cover'
 												src={user.ProfilePicture}
 												alt='Rounded avatar'
-												onClick={() => {
-													setIsProfilePictureOpen(true)
-													if (user.ProfilePicture) {
-														setSelectedProfileImage(user.ProfilePicture)
-													} else {
-														setSelectedProfileImage(null)
-													}
-												}}
+												onClick={() => {}}
 											/>
 										</div>
 									</>
@@ -428,14 +421,7 @@ const ShowUserProfile = () => {
 									<>
 										<div
 											className='w-24 lg:w-60 h-24 lg:h-60 rounded-full flex items-center justify-center border-2 border-dashed bg-brand-light-gray'
-											onClick={() => {
-												setIsProfilePictureOpen(true)
-												if (user.ProfilePicture) {
-													setSelectedProfileImage(user.ProfilePicture)
-												} else {
-													setSelectedProfileImage(null)
-												}
-											}}>
+											onClick={() => {}}>
 											<img src={avatar} className='object-cover h-full w-full rounded-lg' />
 										</div>
 									</>
