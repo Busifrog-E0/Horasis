@@ -5,7 +5,7 @@ const ActivityListComponent = ({ activitiesData }) => {
 	return (
 		<div className='flex flex-col gap-3 my-3'>
 			{activitiesData.map((activity, index) => (
-				<ActivityComponent key={index} activity={activity} />
+				<ActivityComponent key={activity.DocId} activity={activity} />
 			))}
 		</div>
 	)
