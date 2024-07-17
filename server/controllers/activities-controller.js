@@ -43,7 +43,7 @@ const GetActivities = async (req, res) => {
         const [Id1, Id2] = Connection.UserIds;
         return Id1 === UserId ? Id2 : Id1;
     })
-    const UserIds = [...new Set([...FollowerIds, ...ConnectedIds])]
+    const UserIds = [...new Set([...FollowerIds, ...ConnectedIds,UserId])]
     const { Filter, NextId, Limit, OrderBy } = req.query;
     // @ts-ignore
     Filter.UserId = { "$in": UserIds };
@@ -167,7 +167,6 @@ const ActivityInit = (Activity) => {
         NoOfLikes: 0,
         ...Activity,
         NoOfComments: 0,
-        LikedIds: []
     }
 }
 /**
