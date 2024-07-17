@@ -1,8 +1,5 @@
 import {
     GetOneFromActivities, GetActivities, PostActivities, PatchActivities, DeleteActivities,
-    LikeAnActivity,
-    DislikeAnActivity,
-    GetLikedUsers,
 } from '../controllers/activities-controller.js';
 import asyncHandler from 'express-async-handler';
 
@@ -12,6 +9,7 @@ import SwaggerDocs from '../swaggerDocs/activities-swaggerDocs.js'
 import e from 'express';
 import { QueryParameterFormatting, ValidateGetEntity } from '../middleware/common.js';
 import { GetFeedActivitiesMiddleware, PostFeedActivitiesMiddleware } from '../middleware/activities-middleware.js';
+import { DeleteLikes, GetLikes, PostLikes } from '../controllers/likes-controller.js';
 const router = e.Router();
 
 router.get('/activities', decodeIDToken, ensureAuthorized("User"),GetFeedActivitiesMiddleware ,ValidateGetEntity, QueryParameterFormatting,SwaggerDocs.get_Activities,
@@ -30,17 +28,17 @@ router.patch('/activities/:ActivityId', decodeIDToken, ensureAuthorized("User"),
     // @ts-ignore
     asyncHandler(PatchActivities));
 
-router.patch('/users/:UserId/activities/:ActivityId/like', decodeIDToken, ensureAuthorized("User"), SwaggerDocs.patch_Activities_ActivityId_Like,
+router.post('/users/:UserId/activities/:ActivityId/like', decodeIDToken, ensureAuthorized("User"), SwaggerDocs.patch_Activities_ActivityId_Like,
     // @ts-ignore
-    asyncHandler(LikeAnActivity));
+    asyncHandler(PostLikes));
     
-router.patch('/users/:UserId/activities/:ActivityId/dislike', decodeIDToken, ensureAuthorized("User"), SwaggerDocs.patch_Activities_ActivityId_Dislike,
+router.delete('/users/:UserId/activities/:ActivityId/dislike/:LikeId', decodeIDToken, ensureAuthorized("User"), SwaggerDocs.patch_Activities_ActivityId_Dislike,
     // @ts-ignore
-    asyncHandler(DislikeAnActivity));  
+    asyncHandler(DeleteLikes));  
 
 router.get('/activities/:ActivityId/likedUsers', decodeIDToken, ensureAuthorized("User"),ValidateGetEntity,QueryParameterFormatting, SwaggerDocs.get_Activities_ActivityId_LikedUsers,
     //@ts-ignore
-asyncHandler(GetLikedUsers))    
+asyncHandler(GetLikes))    
 
 router.delete('/activities/:ActivityId', decodeIDToken, ensureAuthorized("User"),SwaggerDocs.delete_Activities_ActivityId,
     // @ts-ignore

@@ -46,11 +46,29 @@ const PatchUserData = {
 }
 const UserDataArray = [UserData]
 
+const LikedUsersData = [{
+    UserDetails: {
+        "FullName": "Jane Doe",
+        "Username": "janedoe",
+        "Email": "jane.doe@example.com",
+        "DocId": "abc123DEF",
+        "Country": "Canada",
+        "City": "Toronto",
+        "JobTitle": "Product Manager",
+        "Industry": "Software",
+        "CompanyName": "InnovateTech",
+        "About": "Seasoned product manager with over 10 years of experience in the software industry.",
+        "CoverPicture": "string",
+        "ProfilePicture": "string",
+    },
+    ActivityId: "string",
+    UserId : "string"
+}]
 
 export default {
     UserRegisterData,OTPVerifyData,
     UserLoginData,
     UserData,
     PatchUserData,
-    UserDataArray
+    UserDataArray,LikedUsersData
 }

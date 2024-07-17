@@ -33,8 +33,8 @@ const GetComments = async (req, res) => {
     // @ts-ignore
     const Comments = await ReadComments(Filter, NextId, Limit, OrderBy);
     const data = await Promise.all(Comments.map(async Comment => {
-        const User = await ReadOneFromUsers(Comment.UserId);
-        return { ...Comment, User }
+        const UserDetails = await ReadOneFromUsers(Comment.UserId);
+        return { ...Comment, UserDetails }
     }))
     return res.json(data);
 }
