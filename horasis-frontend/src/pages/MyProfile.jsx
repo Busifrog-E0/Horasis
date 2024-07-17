@@ -23,6 +23,7 @@ import ConnectionsTab from '../components/Connections/Tabs/ConnectionsTab'
 import { useToast } from '../components/Toast/ToastService'
 import { getNextId } from '../utils/URLParams'
 import { jsonToQuery } from '../utils/searchParams/extractSearchParams'
+import TimeLine from '../components/Activities/Timeline'
 
 const tabs = (user, getUserDetails) => [
 	{
@@ -30,6 +31,7 @@ const tabs = (user, getUserDetails) => [
 		title: 'Timeline',
 		render: () => (
 			<div className='bg-system-secondary-bg p-4 lg:py-8 lg:px-12 rounded-b-lg '>
+				<TimeLine gapBnTabs="gap-7" classNameForPost="py-5" bordered={true} />
 				{/* <EmptyMembers emptyText={'You currently have nothing on your timeline'} /> */}
 				{/* <div className='p-5 pr-10 bg-system-secondary-bg rounded-lg mb-3'>
 					<div className='flex items-center gap-5'>

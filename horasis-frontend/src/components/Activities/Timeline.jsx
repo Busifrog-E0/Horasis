@@ -10,7 +10,7 @@ import { useToast } from '../Toast/ToastService';
 import ActivityComponent from './ActivityComponent';
 import PostComponent from './PostComponent';
 
-const TimeLine = forwardRef((props, ref) => {
+const TimeLine = ({ gapBnTabs = "", bordered = false, header, classNameForPost = "" }) => {
 
     const { updateCurrentUser, currentUserData } = useContext(AuthContext)
     const toast = useToast()
@@ -89,12 +89,12 @@ const TimeLine = forwardRef((props, ref) => {
 
     return (
         <div>
-            <PostComponent onSuccess={fetch} />
+            <PostComponent className={classNameForPost} onSuccess={fetch} />
 
-            <h4 className='font-medium text-2xl text-system-primary-text mt-3 lg:mt-9 mb-4'>All Updates</h4>
+            {header && <h4 className='font-medium text-2xl text-system-primary-text mt-3 lg:mt-9 mb-4'>All Updates</h4>}
             {activitiesData.length > 0 ?
                 <>
-                    <ActivityListComponent activitiesData={activitiesData} />
+                    <ActivityListComponent gapBnTabs={gapBnTabs} bordered={bordered} activitiesData={activitiesData} />
                     {isLoadingMore && (
                         <div className='bg-system-secondary-bg p-4 rounded-b-lg '>
                             <Spinner />
@@ -115,7 +115,7 @@ const TimeLine = forwardRef((props, ref) => {
                 <EmptyMembers emptyText={"You don't have any updates."} />
             }
         </div>
-    );
-});
+    )
+}
 
 export default TimeLine;

@@ -1,11 +1,11 @@
 import { defaultActivity } from '../../utils/AuthProvider'
 import ActivityComponent from './ActivityComponent'
 
-const ActivityListComponent = ({ activitiesData }) => {
+const ActivityListComponent = ({ bordered, activitiesData, gapBnTabs }) => {
 	return (
-		<div className='flex flex-col gap-3 my-3'>
+		<div className={`flex flex-col ${gapBnTabs} my-3`}>
 			{activitiesData.map((activity, index) => (
-				<ActivityComponent key={activity.DocId} activity={activity} />
+				<ActivityComponent bordered={bordered} key={activity.DocId} activity={activity} />
 			))}
 		</div>
 	)

@@ -6,7 +6,7 @@ import Input from "../ui/Input"
 import { useToast } from "../Toast/ToastService"
 import Spinner from "../ui/Spinner"
 
-const PostComponent = ({ onSuccess }) => {
+const PostComponent = ({ onSuccess, className = "" }) => {
 	const { currentUserData, updateCurrentUser, scrollToTop } = useContext(AuthContext)
 	const imageFileInputRef = useRef(null)
 	const docFileInputRef = useRef(null)
@@ -157,7 +157,7 @@ const PostComponent = ({ onSuccess }) => {
 		getUserDetails()
 	}, [])
 	return (
-		<div className='p-5 pr-10 bg-system-secondary-bg rounded-xl relative'>
+		<div className={`bg-system-secondary-bg rounded-xl relative ${className}`}>
 			{isLoading &&
 				<div className='absolute z-20 top-0 right-0 left-0 bottom-0 flex flex-col justify-center items-center h-100 bg-brand-orange-transparent overflow-hidden rounded-xl'>
 					<Spinner />

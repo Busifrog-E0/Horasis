@@ -14,7 +14,7 @@ import { getNextId } from '../../utils/URLParams'
 import { jsonToQuery } from '../../utils/searchParams/extractSearchParams'
 import Spinner from '../ui/Spinner'
 import ViewLikedMembers from './Likes/ViewLikedMembers'
-const ActivityComponent = ({ activity, activityId }) => {
+const ActivityComponent = ({ bordered, activity, activityId }) => {
 	const [showComment, setShowComment] = useState(false)
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
 	const toast = useToast()
@@ -58,9 +58,7 @@ const ActivityComponent = ({ activity, activityId }) => {
 
 	const onDeleteBtnClicked = (api) => {
 		console.log("onLikeBtnClicked")
-		deleteItem(
-			`activities/${singleActivity.DocId}`,
-			{},
+		deleteItem(`activities/${singleActivity.DocId}`, {},
 			(result) => {
 				console.log(result)
 				if (result === true) {
@@ -175,7 +173,7 @@ const ActivityComponent = ({ activity, activityId }) => {
 
 	if (singleActivity)
 		return (
-			<div className='p-5 bg-system-secondary-bg rounded-lg'>
+			<div className={`p-5 bg-system-secondary-bg rounded-lg ${bordered && 'border border-system-file-border'}`}>
 				<div className='flex items-start gap-2'>
 					{singleActivity.UserDetails?.ProfilePicture ? (
 						<>

@@ -31,7 +31,7 @@ const Activities = () => {
                         </div>
                     </div>
                     <div className='lg:col-span-2'>
-                        <TimeLine />
+                        <TimeLine gapBnTabs="gap-3" classNameForPost='p-5 pr-10 ' header="All Updates" />
                     </div>
                     <div>
                         <div className='p-5 bg-system-secondary-bg rounded-lg'>
