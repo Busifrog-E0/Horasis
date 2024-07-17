@@ -1,9 +1,57 @@
-import { defaultComment } from '../../../utils/AuthProvider'
+import { AuthContext, defaultComment } from '../../../utils/AuthProvider'
 import ActivityComment from './ActivityComment'
 import TextArea from '../../ui/TextArea'
+import { postItem } from '../../../constants/operations'
+import { useContext, useState } from 'react'
+import { useToast } from '../../Toast/ToastService'
+import Spinner from '../../ui/Spinner'
 
-const ActivityCommentList = ({ activity, comments }) => {
+const ActivityCommentList = ({
+	activity,
+	comments,
+	getAllActivityComments,
+	getSingleActivity,
+	isLoading,
+	isLoadingMore,
+	pageDisabled,
+	fetchMore,
+	setIsLoading,
+}) => {
+	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
+	const toast = useToast()
+	const [comment, setComment] = useState('')
+	const postComment = () => {
+		setIsLoading(true)
+		postItem(
+			`activities/${activity.DocId}/comments`,
+			{
+				Content: comment,
+				UserId: activity.UserId,
+				ParentId: activity.DocId,
+			},
+			(result) => {
+				if (result) {
+					getAllActivityComments([])
+					getSingleActivity()
+					setComment('')
+				}
+			},
+			(err) => {
+				setIsLoading(false)
+				console.log(err)
+			},
+			updateCurrentUser,
+			currentUserData,
+			toast
+		)
+	}
 
+	if (isLoading)
+		return (
+			<div className='bg-system-secondary-bg p-4 rounded-b-lg '>
+				<Spinner />
+			</div>
+		)
 
 	return (
 		<div className='flex items-center justify-between flex-col w-full mt-4'>
@@ -13,8 +61,15 @@ const ActivityCommentList = ({ activity, comments }) => {
 						width='full'
 						className='p-0 border-none rounded-none hover:shadow-none'
 						placeholder='Leave a comment'
+						value={comment}
+						onChange={(e) => {
+							setComment(e.target.value)
+						}}
 					/>
 					<svg
+						onClick={() => {
+							postComment()
+						}}
 						aria-hidden='true'
 						className='w-6 h-6 text-brand-gray cursor-pointer'
 						xmlns='http://www.w3.org/2000/svg'
@@ -32,9 +87,28 @@ const ActivityCommentList = ({ activity, comments }) => {
 			</div>
 			<div className='flex items-center  justify-between mt-4 flex-col gap-1 w-full'>
 				{comments.map((item) => (
-					<ActivityComment key={item} comment={activity} />
+					<ActivityComment key={item.DocId} comment={item} />
 				))}
 			</div>
+			{isLoadingMore && (
+				<div className='bg-system-secondary-bg p-4 rounded-b-lg '>
+					<Spinner />
+				</div>
+			)}
+			{!pageDisabled && (
+				<div
+					onClick={() => {
+						fetchMore()
+					}}
+					className='flex flex-row justify-end mt-4 mb-2  w-full'>
+					<div className='cursor-pointer flex items-center gap-2 '>
+						<h4 className='font-semibold text-xl text-system-primary-accent'>Load More</h4>
+						{/* <svg className="text-system-primary-accent h-3 w-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                <path d="m19.707 9.293-2-2-7-7a1 1 0 0 0-1.414 0l-7 7-2 2a1 1 0 0 0 1.414 1.414L2 10.414V18a2 2 0 0 0 2 2h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a2 2 0 0 0 2-2v-7.586l.293.293a1 1 0 0 0 1.414-1.414Z" />
+              </svg> */}
+					</div>
+				</div>
+			)}
 		</div>
 	)
 }

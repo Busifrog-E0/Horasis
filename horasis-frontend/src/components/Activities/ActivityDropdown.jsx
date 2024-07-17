@@ -1,8 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 
-const DropdownMenu = () => {
+const ActivityDropdown = ({ activity }) => {
 	const [isOpen, setIsOpen] = useState(false)
 	const dropdownRef = useRef(null)
+	const navigate = useNavigate()
 
 	const handleClickOutside = (event) => {
 		if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -31,17 +33,28 @@ const DropdownMenu = () => {
 						<span
 							className='cursor-pointer block px-4 py-2 text-sm text-brand-gray-dim hover:bg-system-primary-bg'
 							role='menuitem'>
-							Option 1
+							Save
 						</span>
 						<span
 							className='cursor-pointer block px-4 py-2 text-sm text-brand-gray-dim hover:bg-system-primary-bg'
 							role='menuitem'>
-							Option 2
+							View this profile
 						</span>
 						<span
 							className='cursor-pointer block px-4 py-2 text-sm text-brand-gray-dim hover:bg-system-primary-bg'
 							role='menuitem'>
-							Option 3
+							Copy the post
+						</span>
+						<span
+							className='cursor-pointer block px-4 py-2 text-sm text-brand-gray-dim hover:bg-system-primary-bg'
+							role='menuitem'
+							onClick={() => navigate(`/Activities/${activity.DocId}`)}>
+							View the post
+						</span>
+						<span
+							className='cursor-pointer block px-4 py-2 text-sm text-brand-gray-dim hover:bg-system-primary-bg'
+							role='menuitem'>
+							Report Post
 						</span>
 					</div>
 				</div>
@@ -50,4 +63,4 @@ const DropdownMenu = () => {
 	)
 }
 
-export default DropdownMenu
+export default ActivityDropdown
