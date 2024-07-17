@@ -20,7 +20,6 @@ const Activities = () => {
                         </div>
                     </div>
                     <div className='lg:col-span-2'>
-
                         <TimeLine gapBnTabs="gap-3" classNameForPost='p-5 pr-10 ' header="All Updates" />
                     </div>
                     <div>

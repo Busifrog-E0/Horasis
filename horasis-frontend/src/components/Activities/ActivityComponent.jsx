@@ -1,15 +1,13 @@
 import { relativeTime } from '../../utils/date'
-import DropdownMenu from '../ui/DropdownMenu'
 import avatar from '../../assets/icons/avatar.svg'
 import like from '../../assets/icons/like.svg'
 import reply from '../../assets/icons/reply.svg'
 import ActivityCarousel from './ActivityCarousel'
-import ActivityComment from './Comment/ActivityComment'
 import { useContext, useEffect, useState } from 'react'
 import ActivityCommentList from './Comment/ActivityCommentList'
 import { AuthContext } from '../../utils/AuthProvider'
 import { useToast } from '../Toast/ToastService'
-import { deleteItem, getItem, patchItem, postItem } from '../../constants/operations'
+import { deleteItem, getItem, postItem } from '../../constants/operations'
 import { getNextId } from '../../utils/URLParams'
 import { jsonToQuery } from '../../utils/searchParams/extractSearchParams'
 import Spinner from '../ui/Spinner'
@@ -164,6 +162,11 @@ const ActivityComponent = ({ bordered, activity, activityId }) => {
 		else setIsLoadingActivity(false)
 	}, [activityId])
 
+	if (isLoadingActivity) {
+		return <div className={`p-5 bg-system-secondary-bg rounded-lg ${bordered && 'border border-system-file-border'}`}>
+			<Spinner />
+		</div>
+	}
 	if (singleActivity)
 		return (
 			<div className={`p-5 bg-system-secondary-bg rounded-lg ${bordered && 'border border-system-file-border'}`}>
