@@ -12,6 +12,7 @@ import { AuthContext } from '../utils/AuthProvider'
 import avatar from '../assets/icons/avatar.svg'
 import { getItem } from '../constants/operations'
 import PostComponent from '../components/Activities/PostComponent'
+import ActivityListComponent from '../components/Activities/ActivityListComponent'
 
 
 
@@ -63,6 +64,7 @@ const Activities = () => {
                     </div> */}
                         <h4 className='font-medium text-2xl text-system-primary-text mt-3 lg:mt-9 mb-4'>All Updates</h4>
                         <EmptyMembers emptyText={"You don't have any updates."} />
+                        <ActivityListComponent/>
                         {/* <div className="flex flex-col gap-3">
                         <div className="p-5 bg-system-secondary-bg rounded-lg">
                             <div className="flex items-start gap-2">
