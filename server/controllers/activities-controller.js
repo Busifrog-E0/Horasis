@@ -191,57 +191,10 @@ const ExtractMentionedUsersFromContent = async (Content) => {
 };
 
 
-/**
- * 
- * @param {e.Request} req 
- * @param {e.Response} res 
- * @returns 
- */
-const LikeAnActivity = async (req, res) => {
-    const { UserId, ActivityId } = req.params;
-    const { LikedIds, DocId } = await ReadOneFromActivities(ActivityId);
-    if (LikedIds.includes(UserId)) {
-        return res.status(444).json(AlertBoxObject("Already Liked this post", "You have already liked this post"));
-    }
-    LikedIds.push(UserId);
-    await UpdateAndIncrementActivities({ LikedIds }, { NoOfLikes: 1 }, DocId);
-    return res.json(true);
-}
 
-/**
- * 
- * @param {e.Request} req 
- * @param {e.Response} res 
- * @returns 
- */
-const DislikeAnActivity = async (req, res) => {
-    const { UserId, ActivityId } = req.params;
-    const { LikedIds, DocId } = await ReadOneFromActivities(ActivityId);
-    if (!LikedIds.includes(UserId)) {
-        return res.status(444).json(AlertBoxObject("Not Liked this post", "You have not liked this post"));
-    }
-    const NewLikedIds = LikedIds.filter(Id => Id != UserId);
-    await UpdateAndIncrementActivities({ LikedIds: NewLikedIds }, { NoOfLikes: -1 }, DocId);
-    return res.json(true);
-}
-
-/**
- * 
- * @param {e.Request} req 
- * @param {e.Response} res 
- * @returns 
- */
-const GetLikedUsers = async (req, res) => {
-    const { ActivityId } = req.params;
-    const { LikedIds } = await ReadOneFromActivities(ActivityId);
-    const LikedUsers = await Promise.all(LikedIds.map(async UserId => {
-        return await ReadOneFromUsers(UserId);
-    }))
-    return res.json(LikedUsers);
-}
 
 
 export {
     GetOneFromActivities, GetActivities, PostActivities, PatchActivities, DeleteActivities,
-    LikeAnActivity, DislikeAnActivity, GetLikedUsers, PostActivityForProfilePatch
+     PostActivityForProfilePatch
 }

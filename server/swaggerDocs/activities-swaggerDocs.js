@@ -64,7 +64,7 @@ const get_Activities_ActivityId_LikedUsers = async (req, res, next) => {
     // #swagger.tags = ['Activities']
     /* #swagger.responses[200] = {
                  description: 'Activity Data',
-                 schema: { $ref: '#/definitions/UserDataArray' }
+                 schema: { $ref: '#/definitions/LikedUsersData' }
          } 
      */
     next();
