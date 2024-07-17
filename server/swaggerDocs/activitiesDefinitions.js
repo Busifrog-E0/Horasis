@@ -13,9 +13,7 @@ const ActivityGetData = {
     Mentions: [{"Username" : "user1345", "UserId" : "6df8f7wed689ef"}],
     NoOfLikes: 2,
     NoOfComments: 2,
-    DocId: "activity_1234", 
-    Type: "Feed", 
-    ParentId: "7adcadfa99asffda1b", 
+    DocId: "activity_1234",  
 };
 
 const ActivityGetDataArray = [ActivityGetData];
