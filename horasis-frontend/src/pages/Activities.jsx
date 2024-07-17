@@ -2,7 +2,7 @@ import TodaysEventTab from '../components/Events/TodaysEventTab'
 import RecentlyActiveMemebrsTab from '../components/Members/RecentlyActiveMemebrsTab'
 import CurrentProfileTab from '../components/Profile/CurrentProfileTab'
 import EmptyMembers from '../components/Common/EmptyMembers'
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 import { AuthContext } from '../utils/AuthProvider'
 import { getItem } from '../constants/operations'
 import PostComponent from '../components/Activities/PostComponent'
@@ -11,84 +11,12 @@ import { useToast } from '../components/Toast/ToastService'
 import { getNextId } from '../utils/URLParams'
 import { jsonToQuery } from '../utils/searchParams/extractSearchParams'
 import Spinner from '../components/ui/Spinner'
+import TimeLine from '../components/Activities/Timeline'
 
 
 
 const Activities = () => {
-    const { updateCurrentUser, currentUserData } = useContext(AuthContext)
-    const toast = useToast()
-    const [isLoading, setIsLoading] = useState(true)
-    const [isLoadingMore, setIsLoadingMore] = useState(false)
-    const [activitiesData, setActivitiesData] = useState([])
-    const [pageDisabled, setPageDisabled] = useState(true)
-    const [filters, setFilters] = useState({
-        OrderBy: 'Index',
-        Keyword: '',
-        Limit: 10,
-        Keyword: '',
-    })
-    const setLoadingCom = (tempArr, value) => {
-        if (tempArr.length > 0) {
-            setIsLoadingMore(value)
-        } else {
-            setIsLoading(value)
-        }
-    }
 
-    const getAllActivities = (tempActivites) => {
-        getData(`activities?&${jsonToQuery(filters)}`, tempActivites, setActivitiesData)
-    }
-    const getData = (endpoint, tempData, setData) => {
-        setLoadingCom(tempData, true)
-        getItem(
-            `${endpoint}&NextId=${getNextId(tempData)}`,
-            (data) => {
-                setData([...tempData, ...data])
-                setLoadingCom(tempData, false)
-            },
-            (err) => {
-                setLoadingCom(tempData, false)
-                // console.log(err)
-            },
-            updateCurrentUser,
-            currentUserData,
-            toast
-        )
-    }
-    const hasAnyLeft = (endpoint, tempData) => {
-        getItem(
-            `${endpoint}?NextId=${getNextId(tempData)}&${jsonToQuery({ ...filters, Limit: 1 })}`,
-            (data) => {
-                if (data?.length > 0) {
-                    setPageDisabled(false)
-                } else {
-                    setPageDisabled(true)
-                }
-            },
-            (err) => {
-                setPageDisabled(true)
-            },
-            updateCurrentUser,
-            currentUserData,
-            toast
-        )
-    }
-
-    const fetchData = (initialRender = false) => {
-        getAllActivities(initialRender ? [] : activitiesData)
-
-    }
-
-    const fetch = () => fetchData(true)
-    const fetchMore = () => fetchData(false)
-
-    useEffect(() => {
-        if (activitiesData.length > 0) hasAnyLeft(`activities`, activitiesData)
-    }, [activitiesData])
-
-    useEffect(() => {
-        fetch()
-    }, [filters])
     return (
         <>
             <div className='p-2 lg:px-10 lg:py-6'>
@@ -103,60 +31,7 @@ const Activities = () => {
                         </div>
                     </div>
                     <div className='lg:col-span-2'>
-
-                        <PostComponent onSuccess={fetch} />
-                        {/* <div className="flex gap-3 flex-wrap mt-5">
-                        <Button variant="redhot">
-                            Join Event
-                        </Button>
-                        <Button variant="default">
-                            Join Event
-                        </Button>
-                        <Button variant="white">
-                            Join Event
-                        </Button>
-                        <Button variant="sea_outlined">
-                            Join Event
-                        </Button>
-                        <Button variant="primary">
-                            Join Event
-                        </Button>
-                        <Button variant="danger_outlined">
-                            Join Event
-                        </Button>
-                        <Button variant="danger">
-                            Join Event
-                        </Button>
-                        <Button variant="success">
-                            Join Event
-                        </Button>
-                        <Button variant="disabled">
-                            Join Event
-                        </Button>
-                    </div> */}
-                        <h4 className='font-medium text-2xl text-system-primary-text mt-3 lg:mt-9 mb-4'>All Updates</h4>
-                        {activitiesData.length > 0 ?
-                            <>
-                                <ActivityListComponent activitiesData={activitiesData} />
-                                {isLoadingMore && (
-                                    <div className='bg-system-secondary-bg p-4 rounded-b-lg '>
-                                        <Spinner />
-                                    </div>
-                                )}
-                                {
-                                    !pageDisabled &&
-                                    (
-                                        <div onClick={fetchMore}
-                                            className='flex flex-row justify-end mt-4 mb-2'>
-                                            <div className='cursor-pointer flex items-center gap-2'>
-                                                <h4 className='font-semibold text-xl text-system-primary-accent'>Load More</h4>
-                                            </div>
-                                        </div>
-                                    )}
-                            </>
-                            :
-                            <EmptyMembers emptyText={"You don't have any updates."} />
-                        }
+                        <TimeLine />
                     </div>
                     <div>
                         <div className='p-5 bg-system-secondary-bg rounded-lg'>

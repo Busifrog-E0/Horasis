@@ -30,22 +30,22 @@ const tabs = (user, getUserDetails) => [
 		title: 'Timeline',
 		render: () => (
 			<div className='bg-system-secondary-bg p-4 lg:py-8 lg:px-12 rounded-b-lg '>
+				{/* <EmptyMembers emptyText={'You currently have nothing on your timeline'} /> */}
 				{/* <div className='p-5 pr-10 bg-system-secondary-bg rounded-lg mb-3'>
-          <div className='flex items-center gap-5'>
-            <img
-              className='w-16 h-16 rounded-full'
-              src='https://flowbite.com/docs/images/people/profile-picture-5.jpg'
-              alt='Rounded avatar'
-            />
+					<div className='flex items-center gap-5'>
+						<img
+							className='w-16 h-16 rounded-full'
+							src='https://flowbite.com/docs/images/people/profile-picture-5.jpg'
+							alt='Rounded avatar'
+						/>
 
-            <div className='flex-1 rounded-md p-2 px-3 border border-system-file-border flex items-center justify-between bg-system-secondary-bg'>
-              <h4 className='font-medium text-xl text-brand-gray-dim italic '>
-                Share what's on your mind, Frank
-              </h4>
-            </div>
-          </div>
-        </div> */}
-				<EmptyMembers emptyText={'You currently have nothing on your timeline'} />
+						<div className='flex-1 rounded-md p-2 px-3 border border-system-file-border flex items-center justify-between bg-system-secondary-bg'>
+							<h4 className='font-medium text-xl text-brand-gray-dim italic '>
+								Share what's on your mind, Frank
+							</h4>
+						</div>
+					</div>
+				</div> */}
 				{/* <div className='flex flex-col gap-3'>
           <div className='p-5 bg-system-secondary-bg rounded-lg border border-system-file-border'>
             <div className='flex items-start gap-2'>

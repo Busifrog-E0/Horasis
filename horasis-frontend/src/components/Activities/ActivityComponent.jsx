@@ -9,7 +9,7 @@ import { useContext, useEffect, useState } from 'react'
 import ActivityCommentList from './Comment/ActivityCommentList'
 import { AuthContext } from '../../utils/AuthProvider'
 import { useToast } from '../Toast/ToastService'
-import { getItem, patchItem, postItem } from '../../constants/operations'
+import { deleteItem, getItem, patchItem, postItem } from '../../constants/operations'
 import { getNextId } from '../../utils/URLParams'
 import { jsonToQuery } from '../../utils/searchParams/extractSearchParams'
 import Spinner from '../ui/Spinner'
@@ -55,6 +55,27 @@ const ActivityComponent = ({ activity, activityId }) => {
 			toast
 		)
 	}
+
+	const onDeleteBtnClicked = (api) => {
+		console.log("onLikeBtnClicked")
+		deleteItem(
+			`activities/${singleActivity.DocId}`,
+			{},
+			(result) => {
+				console.log(result)
+				if (result === true) {
+					getSingleActivity()
+				}
+			},
+			(err) => {
+				console.error(err)
+			},
+			updateCurrentUser,
+			currentUserData,
+			toast
+		)
+	}
+
 
 
 	const getSingleActivity = () => {
@@ -198,6 +219,9 @@ const ActivityComponent = ({ activity, activityId }) => {
 							<img src={reply} className='h-6 w-6' />
 							<p className='text-brand-gray-dim mt-1'>{singleActivity.NoOfComments} replies</p>
 						</div>
+						{/* <div className='flex items-center gap-2 cursor-pointer' onClick={onDeleteBtnClicked}>
+							<p className='text-brand-gray-dim mt-1'>Delete</p>
+						</div> */}
 					</div>
 					<DropdownMenu />
 				</div>
