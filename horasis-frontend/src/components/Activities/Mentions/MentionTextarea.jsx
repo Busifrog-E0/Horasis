@@ -21,7 +21,6 @@ const MentionTextarea = ({ user, newPost, handleContentChange }) => {
     const [isLoadingMore, setIsLoadingMore] = useState(false)
     const [filters, setFilters] = useState({
         OrderBy: 'Index',
-        Keyword: '',
         Limit: -1,
         Keyword: '',
     })
