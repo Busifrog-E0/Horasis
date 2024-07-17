@@ -52,7 +52,6 @@ const tabs = (user, getUserDetails) => [
 			const [pageDisabled, setPageDisabled] = useState(true)
 			const [filters, setFilters] = useState({
 				OrderBy: 'Index',
-				Keyword: '',
 				Limit: 10,
 				Keyword: '',
 			})

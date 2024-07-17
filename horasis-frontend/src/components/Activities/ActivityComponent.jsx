@@ -25,7 +25,6 @@ const ActivityComponent = ({ bordered, activity, activityId, onDelete }) => {
 	const [pageDisabled, setPageDisabled] = useState(true)
 	const [filters, setFilters] = useState({
 		OrderBy: 'Index',
-		Keyword: '',
 		Limit: 3,
 		Keyword: '',
 	})

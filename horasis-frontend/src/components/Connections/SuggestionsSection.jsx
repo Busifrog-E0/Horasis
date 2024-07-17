@@ -17,7 +17,6 @@ const SuggestionsSection = () => {
 	const [suggested, setSuggested] = useState([])
 	const [filters, setFilters] = useState({
 		OrderBy: 'Index',
-		Keyword: '',
 		Limit: 10,
 		Keyword: '',
 	})
