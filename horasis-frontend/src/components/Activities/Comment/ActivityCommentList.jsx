@@ -8,7 +8,7 @@ const ActivityCommentList = ({ activity, comments }) => {
 	return (
 		<div className='flex items-center justify-between flex-col w-full mt-4'>
 			<div className='flex-1 mt-2 rounded-md p-2 px-3 border border-system-secondary-accent bg-system-secondary-bg flex flex-col gap-4 w-full'>
-				<div className='flex items-end justify-between gap-2'>
+				<div className='flex items-start justify-between gap-2'>
 					<TextArea
 						width='full'
 						className='p-0 border-none rounded-none hover:shadow-none'
