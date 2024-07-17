@@ -26,6 +26,7 @@ import UniversalSearchDetails from '../pages/UniversalSearchDetails'
 import Home from '../pages/Home'
 import Register from '../pages/Register'
 import ShowUserProfile from '../pages/ShowUserProfile'
+import SingleActivity from '../pages/SingleActivity'
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -34,6 +35,7 @@ export const router = createBrowserRouter(
         <Route path='/' element={<DashboardLayout />}>
           <Route path='/' element={<Activities />} />
           <Route path='/Activities' element={<Activities />} />
+          <Route path='/Activities/:activityid' element={<SingleActivity />} />
           <Route path='/home' element={<Home />} />
 
           <Route path='/Connections' element={<Connections />} />
