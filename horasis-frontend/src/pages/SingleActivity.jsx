@@ -20,39 +20,7 @@ const SingleActivity = () => {
     const { updateCurrentUser, currentUserData } = useContext(AuthContext)
     const { activityid } = useParams()
     const toast = useToast()
-    const [isLoading, setIsLoading] = useState(true)
-    const [singleActivity, setSingleActivity] = useState([])
 
-    const getSingleActivity = () => {
-        getData(`activities/${activityid}`, setSingleActivity)
-    }
-    const getData = (endpoint, setData) => {
-        setIsLoading(true)
-        getItem(
-            `${endpoint}`,
-            (data) => {
-                setData(data)
-                setIsLoading(false)
-            },
-            (err) => {
-                setIsLoading(false)
-                // console.log(err)
-            },
-            updateCurrentUser,
-            currentUserData,
-            toast
-        )
-    }
-
-    const fetchData = () => {
-        getSingleActivity()
-    }
-
-    const fetch = () => fetchData()
-
-    useEffect(() => {
-        fetch()
-    }, [activityid])
 
     return (
         <>
@@ -68,7 +36,7 @@ const SingleActivity = () => {
                         </div>
                     </div>
                     <div className='lg:col-span-2'>
-                        <ActivityComponent activity={singleActivity} />
+                        <ActivityComponent activityId={activityid} />
                     </div>
                     <div>
                         <div className='p-5 bg-system-secondary-bg rounded-lg'>

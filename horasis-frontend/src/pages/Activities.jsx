@@ -82,7 +82,6 @@ const Activities = () => {
     const fetch = () => fetchData(true)
     const fetchMore = () => fetchData(false)
 
-
     useEffect(() => {
         if (activitiesData.length > 0) hasAnyLeft(`activities`, activitiesData)
     }, [activitiesData])
