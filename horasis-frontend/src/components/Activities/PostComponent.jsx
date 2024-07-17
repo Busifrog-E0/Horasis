@@ -178,11 +178,17 @@ const PostComponent = ({ onSuccess }) => {
 					style={{ display: 'none' }}
 					ref={imageFileInputRef}
 				/>
-				<img
-					className='w-16 h-16 rounded-full'
-					src='https://flowbite.com/docs/images/people/profile-picture-5.jpg'
-					alt='Rounded avatar'
-				/>
+				{user?.ProfilePicture ? (
+					<div className='w-16 h-16 rounded-full bg-black'>
+						<img className='w-16 h-16  rounded-full object-cover' src={user?.ProfilePicture} alt='avatar' />
+					</div>
+				) : (
+					<>
+						<div className='w-16 h-16 rounded-full bg-brand-light-gray'>
+							<img src={avatar} className='object-cover h-full w-full rounded-lg' alt='No avatar' />
+						</div>
+					</>
+				)}
 
 				<div className="flex-1 mt-2 rounded-md p-2 px-3 border border-system-secondary-accent bg-system-secondary-bg flex flex-col gap-4">
 					{/* <h4 className="font-medium text-xl text-brand-gray-dim italic ">Share what's on your mind, Frank</h4> */}
@@ -259,7 +265,7 @@ const PostComponent = ({ onSuccess }) => {
 							{newPost?.Documents.map((file, index) => {
 								return <div className="relative w-20 h-20" key={index}>
 									<div className="absolute bottom-1 right-1" onClick={() => {
-										handleImageDeleteClick(index)
+										handleDocumentDeleteClick(index)
 									}}>
 										<svg aria-hidden='true' className="w-4 h-4 text-system-error cursor-pointer" xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'>
 											<path
