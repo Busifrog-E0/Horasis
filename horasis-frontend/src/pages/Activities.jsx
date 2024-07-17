@@ -2,18 +2,7 @@ import TodaysEventTab from '../components/Events/TodaysEventTab'
 import RecentlyActiveMemebrsTab from '../components/Members/RecentlyActiveMemebrsTab'
 import CurrentProfileTab from '../components/Profile/CurrentProfileTab'
 import EmptyMembers from '../components/Common/EmptyMembers'
-import { useContext, useEffect, useRef, useState } from 'react'
-import { AuthContext } from '../utils/AuthProvider'
-import { getItem } from '../constants/operations'
-import PostComponent from '../components/Activities/PostComponent'
-import ActivityListComponent from '../components/Activities/ActivityListComponent'
-import { useToast } from '../components/Toast/ToastService'
-import { getNextId } from '../utils/URLParams'
-import { jsonToQuery } from '../utils/searchParams/extractSearchParams'
-import Spinner from '../components/ui/Spinner'
 import TimeLine from '../components/Activities/Timeline'
-
-
 
 const Activities = () => {
 
@@ -31,6 +20,7 @@ const Activities = () => {
                         </div>
                     </div>
                     <div className='lg:col-span-2'>
+
                         <TimeLine gapBnTabs="gap-3" classNameForPost='p-5 pr-10 ' header="All Updates" />
                     </div>
                     <div>

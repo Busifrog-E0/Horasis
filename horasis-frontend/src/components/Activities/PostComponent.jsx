@@ -5,6 +5,7 @@ import avatar from '../../assets/icons/avatar.svg'
 import Input from "../ui/Input"
 import { useToast } from "../Toast/ToastService"
 import Spinner from "../ui/Spinner"
+import MentionTextarea from "./Mentions/MentionTextarea"
 
 const PostComponent = ({ onSuccess, className = "" }) => {
 	const { currentUserData, updateCurrentUser, scrollToTop } = useContext(AuthContext)
@@ -190,16 +191,17 @@ const PostComponent = ({ onSuccess, className = "" }) => {
 					</>
 				)}
 
-				<div className="flex-1 mt-2 rounded-md p-2 px-3 border border-system-secondary-accent bg-system-secondary-bg flex flex-col gap-4">
+				<div className="flex-1 mt-2 rounded-lg p-2 px-3 border border-system-secondary-accent bg-system-secondary-bg flex flex-col gap-4">
 					{/* <h4 className="font-medium text-xl text-brand-gray-dim italic ">Share what's on your mind, Frank</h4> */}
 					<div className="flex items-center justify-between gap-2">
-						<Input
+						{/* <Input
 							setValue={handleContentChange}
 							width={'full'} value={newPost.Content}
 							className='p-0 border-none rounded-none hover:shadow-none'
 							placeholder={`Share what's on  your mind, ${user && user.FullName}`}
 
-						/>
+						/> */}
+						<MentionTextarea user={user} handleContentChange={handleContentChange} newPost={newPost} />
 						<svg onClick={handleDocumentUploadClick} aria-hidden='true' className="w-6 h-6 text-brand-gray cursor-pointer" xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'>
 							<path
 								stroke='currentColor'
@@ -300,36 +302,6 @@ const PostComponent = ({ onSuccess, className = "" }) => {
 				</div>
 			</div>
 		</div>
-		// <div className='p-5 pr-10 bg-system-secondary-bg rounded-lg'>
-		// 	<div className='flex items-center gap-5'>
-		// 		{user ? (
-		// 			<>
-		// 				{user.ProfilePicture ? (
-		// 					<div className='w-16 h-16 rounded-full bg-black'>
-		// 						<img className='w-16 h-16  rounded-full object-cover' src={user.ProfilePicture} alt='avatar' />
-		// 					</div>
-		// 				) : (
-		// 					<>
-		// 						<div className='w-16 h-16 rounded-full bg-brand-light-gray'>
-		// 							<img src={avatar} className='object-cover h-full w-full rounded-lg' alt='No avatar' />
-		// 						</div>
-		// 					</>
-		// 				)}
-		// 			</>
-		// 		) : (
-		// 			<></>
-		// 		)}
-		// 		<div className="flex-1">
-		// 			<Input
-		// 				width={'full'}
-		// 				className='py-3 rounded-xl border-2 border-system-secondary-accent'
-		// 				placeholder={`Share what's on  your mind, ${user && user.FullName}`}
-
-		// 			/>
-		// 		</div>
-
-		// 	</div>
-		// </div>
 	)
 }
 
