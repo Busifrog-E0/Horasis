@@ -87,6 +87,13 @@ const TimeLine = ({ gapBnTabs = "", bordered = false, header, classNameForPost =
         fetch()
     }, [filters])
 
+    if (isLoading)
+        return (
+            <div className=''>
+                <Spinner />
+            </div>
+        )
+
     return (
         <div>
             <PostComponent className={classNameForPost} onSuccess={fetch} />
