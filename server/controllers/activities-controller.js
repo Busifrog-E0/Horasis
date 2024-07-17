@@ -63,15 +63,15 @@ const PostActivities = async (req, res) => {
     const ActivityId = (new ObjectId()).toString();
     //@ts-ignore
     const { UserId } = req.user;
-    const ValidateFiles = CheckFileType(MediaFiles, Documents);
+    const ValidateFiles = await CheckFileType(MediaFiles, Documents);
     if (!ValidateFiles) {
         return res.status(444).json(AlertBoxObject("Can't upload","File(s) cannot be uploaded"))
     }
-    ({ MediaFiles, Documents } = await UploadFiles(MediaFiles, Documents, UserId, ActivityId));
+    const Attachments = await UploadFiles(MediaFiles, Documents, UserId, ActivityId);
     const Mentions = await ExtractMentionedUsersFromContent(Content);
     req.body = ActivityInit(req.body);
     //@ts-ignore
-    const data = { ...req.body, Documents, MediaFiles, Mentions };
+    const data = { ...req.body, Documents : Attachments.DocumentsLinks, MediaFiles : Attachments.MediaFilesLinks, Mentions };
     await CreateActivities(data);
     return res.json(true);
 }
@@ -102,42 +102,46 @@ const DeleteActivities = async (req, res) => {
 }
 
 
-const CheckFileType = (MediaFiles, Documents) => {
-    const validate = (FileData, Format) => {
+const CheckFileType = async (MediaFiles, Documents) => {
+    const validate =async (FileData, Format) => {
         const FileDataBuffer = new Uint8Array(FileData);
         //@ts-ignore
-        const { ext } = fileTypeFromBuffer(FileDataBuffer);
+        const  {ext}  = await fileTypeFromBuffer(FileDataBuffer);
         const Size = FileData.length;
+        console.log(Format.extensions.includes(ext) && Size <= Format.size)
         return Format.extensions.includes(ext) && Size <= Format.size;
     }
-    MediaFiles.forEach(File => {
-        if (!validate(File.FileData, fileFormats.image) && !validate(File.FileData, fileFormats.video)) {
+    for (const File of MediaFiles) {
+        if (!(await validate(File.FileData, fileFormats.image)) &&
+            !(await validate(File.FileData, fileFormats.video))) {
             return false
         }
-    });
-    Documents.forEach(File => {
-        if (!validate(File.FileData, fileFormats.document)) {
+    };
+    for(const File of Documents) {
+        if (!(await validate(File.FileData, fileFormats.document))) {
             return false
         }
-    })
+    };
     return true;
 }
 
 const UploadFiles = async (MediaFiles, Documents,UserId,ActivityId) => {
-    const MediaFilesLinks = await Promise.all([MediaFiles.map(async File => {
+    const MediaFilesLinks = await Promise.all(MediaFiles.map(async File => {
         const { FileData, FileName } = File;
         const FileBuffer = new Uint8Array(FileData)
         //@ts-ignore
-        const { ext, mime } = fileTypeFromBuffer(FileBuffer);
-        return await AsyncSaveFileToSpaces(`${UserId}/${ActivityId}`, `${FileName}`, FileData, mime)
-    })]);
-    const DocumentsLinks = await Promise.all([Documents.map(async File => {
+        const { mime } = await fileTypeFromBuffer(FileBuffer);
+        const link = await AsyncSaveFileToSpaces(UserId, `${ActivityId}/${FileName}`, FileData, mime)
+        console.log(link)
+        return  link
+    }));
+    const DocumentsLinks = await Promise.all(Documents.map(async File => {
         const { FileData, FileName } = File;
         const FileBuffer = new Uint8Array(FileData)
         //@ts-ignore
-        const { ext, mime } = fileTypeFromBuffer(FileBuffer);
-        return await AsyncSaveFileToSpaces(`${UserId}/${ActivityId}`, `${FileName}`, FileData, mime)
-    })]);
+        const {  mime } = await fileTypeFromBuffer(FileBuffer);
+        return  AsyncSaveFileToSpaces(UserId,`${ActivityId}/${FileName}`, FileData, mime)
+    }));
     return { MediaFilesLinks, DocumentsLinks };
 }
 
