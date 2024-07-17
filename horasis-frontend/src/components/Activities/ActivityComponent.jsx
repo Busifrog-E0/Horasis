@@ -9,13 +9,16 @@ import { useContext, useEffect, useState } from 'react'
 import ActivityCommentList from './Comment/ActivityCommentList'
 import { AuthContext } from '../../utils/AuthProvider'
 import { useToast } from '../Toast/ToastService'
-import { getItem } from '../../constants/operations'
+import { getItem, patchItem, postItem } from '../../constants/operations'
 import { getNextId } from '../../utils/URLParams'
 import { jsonToQuery } from '../../utils/searchParams/extractSearchParams'
+import Spinner from '../ui/Spinner'
+import ViewLikedMembers from './Likes/ViewLikedMembers'
 const ActivityComponent = ({ activity, activityId }) => {
 	const [showComment, setShowComment] = useState(false)
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
 	const toast = useToast()
+	const [isLiking, setIsLiking] = useState(false)
 	const [isLoading, setIsLoading] = useState(false)
 	const [isLoadingMore, setIsLoadingMore] = useState(false)
 	const [commentsData, setCommentsData] = useState([])
@@ -30,8 +33,32 @@ const ActivityComponent = ({ activity, activityId }) => {
 	const [isLoadingActivity, setIsLoadingActivity] = useState(true)
 	const [singleActivity, setSingleActivity] = useState(activity)
 
+	const onLikeBtnClicked = (api) => {
+		setIsLiking(true)
+		console.log("onLikeBtnClicked")
+		postItem(
+			`users/${currentUserData.CurrentUser.UserId}/activities/${singleActivity.DocId}/like`,
+			{},
+			(result) => {
+				console.log(result)
+				if (result === true) {
+					getSingleActivity()
+				}
+				setIsLiking(false)
+			},
+			(err) => {
+				setIsLiking(false)
+				console.error(err)
+			},
+			updateCurrentUser,
+			currentUserData,
+			toast
+		)
+	}
+
+
 	const getSingleActivity = () => {
-		getActivity(`activities/${activityId}`, setSingleActivity)
+		getActivity(`activities/${activityId ? activityId : singleActivity.DocId}`, setSingleActivity)
 	}
 	const getActivity = (endpoint, setData) => {
 		setIsLoadingActivity(true)
@@ -159,10 +186,14 @@ const ActivityComponent = ({ activity, activityId }) => {
 				)}
 				<div className='flex items-center justify-between gap-10 mt-2'>
 					<div className='flex flex-wrap items-start justify-between gap-10'>
-						<div className='flex items-center gap-2 cursor-pointer'>
-							<img src={like} className='h-6 w-6' />
-							<p className='text-brand-gray-dim mt-1'>{singleActivity.NoOfLikes} likes</p>
-						</div>
+						{isLiking ?
+							<Spinner />
+							:
+							<div className='flex items-center gap-2' >
+								<img src={like} className='h-6 w-6 cursor-pointer' onClick={onLikeBtnClicked} />
+								<ViewLikedMembers activity={singleActivity} />
+							</div>
+						}
 						<div className='flex items-center gap-2 cursor-pointer' onClick={() => setShowComment((prev) => !prev)}>
 							<img src={reply} className='h-6 w-6' />
 							<p className='text-brand-gray-dim mt-1'>{singleActivity.NoOfComments} replies</p>
