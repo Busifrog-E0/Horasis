@@ -42,6 +42,13 @@ export const defaultUserData = {
         "Subscription": null
     }
 }
+
+export const defaultPostData = (UserId) => ({
+    "Content": "",
+    "UserId": UserId,
+    "MediaFiles": [],
+    "Documents": []
+})
 export const AuthProvider = ({ children }) => {
 
     const scrollRef = useRef()

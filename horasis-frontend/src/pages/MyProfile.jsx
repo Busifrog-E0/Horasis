@@ -196,7 +196,7 @@ const tabs = (user, getUserDetails) => [
 			return (
 				<div className='bg-system-secondary-bg p-4 lg:p-6 rounded-b-lg '>
 					<ConnectionsTab
-						getConnectionCount={() => {}}
+						getConnectionCount={() => { }}
 						data={connections}
 						getAllData={getConnections}
 						isLoading={isLoading}

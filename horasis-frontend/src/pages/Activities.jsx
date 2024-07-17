@@ -16,42 +16,23 @@ import PostComponent from '../components/Activities/PostComponent'
 
 
 const Activities = () => {
-	return (
-		<>
-			<div className='p-2 lg:px-10 lg:py-6'>
-				<div className='grid lg:grid-cols-4 gap-3 lg:gap-12'>
-					<div>
-						<CurrentProfileTab />
-						<h4 className='font-medium text-xl text-system-primary-text mt-3 lg:mt-5'>Today's Event</h4>
-						<TodaysEventTab />
-						<div className='p-6 bg-system-secondary-bg rounded-lg mt-3 lg:mt-5'>
-							<h4 className='font-medium text-md text-system-primary-text mb-4'>Recently Active Members</h4>
-							<RecentlyActiveMemebrsTab />
-						</div>
-					</div>
-					<div className='lg:col-span-2'>
-						{/* <div className='p-5 pr-10 bg-system-secondary-bg rounded-lg'>
-							<div className='flex items-center gap-5'>
-								<img
-									className='w-16 h-16 rounded-full'
-									src='https://flowbite.com/docs/images/people/profile-picture-5.jpg'
-									alt='Rounded avatar'
-								/>
+    return (
+        <>
+            <div className='p-2 lg:px-10 lg:py-6'>
+                <div className='grid lg:grid-cols-4 gap-3 lg:gap-12'>
+                    <div>
+                        <CurrentProfileTab />
+                        <h4 className='font-medium text-xl text-system-primary-text mt-3 lg:mt-5'>Today's Event</h4>
+                        <TodaysEventTab />
+                        <div className='p-6 bg-system-secondary-bg rounded-lg mt-3 lg:mt-5'>
+                            <h4 className='font-medium text-md text-system-primary-text mb-4'>Recently Active Members</h4>
+                            <RecentlyActiveMemebrsTab />
+                        </div>
+                    </div>
+                    <div className='lg:col-span-2'>
 
-								<Input
-									className='py-3 rounded-xl border-2 border-system-secondary-accent'
-									placeholder="Share what's on  your mind, Haris"
-									width='full'
-								/>
-
-								<div className="flex-1 rounded-md p-2 px-3 border border-system-file-border flex items-center justify-between bg-system-secondary-bg">
-                                <h4 className="font-medium text-xl text-brand-gray-dim italic ">Share what's on your mind, Frank</h4>
-
-                            </div>
-							</div>
-						</div> */}
-						<PostComponent />
-						{/* <div className="flex gap-3 flex-wrap mt-5">
+                        <PostComponent onSuccess={() => { }} />
+                        {/* <div className="flex gap-3 flex-wrap mt-5">
                         <Button variant="redhot">
                             Join Event
                         </Button>
@@ -80,9 +61,9 @@ const Activities = () => {
                             Join Event
                         </Button>
                     </div> */}
-						<h4 className='font-medium text-2xl text-system-primary-text mt-3 lg:mt-9 mb-4'>All Updates</h4>
-						<EmptyMembers emptyText={"You don't have any updates."} />
-						{/* <div className="flex flex-col gap-3">
+                        <h4 className='font-medium text-2xl text-system-primary-text mt-3 lg:mt-9 mb-4'>All Updates</h4>
+                        <EmptyMembers emptyText={"You don't have any updates."} />
+                        {/* <div className="flex flex-col gap-3">
                         <div className="p-5 bg-system-secondary-bg rounded-lg">
                             <div className="flex items-start gap-2">
                                 <img className="w-16 h-16 rounded-full" src="https://flowbite.com/docs/images/people/profile-picture-1.jpg" alt="Rounded avatar" />
@@ -180,15 +161,15 @@ const Activities = () => {
                             </div>
                         </div>
                     </div> */}
-					</div>
-					<div>
-						<div className='p-5 bg-system-secondary-bg rounded-lg'>
-							<div className='flex items-center justify-between gap-2 mb-5'>
-								<h4 className='font-medium text-2xl text-system-primary-text'>Events</h4>
-								{/* arrow cursor-pointer */}
-							</div>
-							<EmptyMembers emptyText={'No events'} />
-							{/* <div className="flex flex-col gap-4">
+                    </div>
+                    <div>
+                        <div className='p-5 bg-system-secondary-bg rounded-lg'>
+                            <div className='flex items-center justify-between gap-2 mb-5'>
+                                <h4 className='font-medium text-2xl text-system-primary-text'>Events</h4>
+                                {/* arrow cursor-pointer */}
+                            </div>
+                            <EmptyMembers emptyText={'No events'} />
+                            {/* <div className="flex flex-col gap-4">
                             <div className="border-b border-system-file-border pb-4">
                                 <div className="flex items-start gap-2 ">
                                     <img className="w-12 h-12 rounded-full" src="https://flowbite.com/docs/images/people/profile-picture-1.jpg" alt="Rounded avatar" />
@@ -230,14 +211,14 @@ const Activities = () => {
                                 </div>
                             </div>
                         </div> */}
-						</div>
-						<div className='p-5 bg-system-secondary-bg rounded-lg mt-3 lg:mt-5'>
-							<div className='flex items-center justify-between gap-2 mb-5'>
-								<h4 className='font-medium text-2xl text-system-primary-text'>Mentions</h4>
-								{/* arrow cursor-pointer */}
-							</div>
-							<EmptyMembers emptyText={'No mentions'} />
-							{/* <div className="flex flex-col gap-4">
+                        </div>
+                        <div className='p-5 bg-system-secondary-bg rounded-lg mt-3 lg:mt-5'>
+                            <div className='flex items-center justify-between gap-2 mb-5'>
+                                <h4 className='font-medium text-2xl text-system-primary-text'>Mentions</h4>
+                                {/* arrow cursor-pointer */}
+                            </div>
+                            <EmptyMembers emptyText={'No mentions'} />
+                            {/* <div className="flex flex-col gap-4">
                             <div className="border-b border-system-file-border pb-4">
                                 <div className="flex items-start gap-2 ">
                                     <img className="w-12 h-12 rounded-full" src="https://flowbite.com/docs/images/people/profile-picture-1.jpg" alt="Rounded avatar" />
@@ -291,12 +272,12 @@ const Activities = () => {
                                 </div>
                             </div>
                         </div> */}
-						</div>
-					</div>
-				</div>
-			</div>
-		</>
-	)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </>
+    )
 }
 
 export default Activities
