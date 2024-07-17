@@ -3,7 +3,9 @@ import Joi from "joi"
 
 const ActivitySchema =  Joi.object({
     Content: Joi.string().required(),
-    Attachments: Joi.array().required(),
+    MediaFiles: Joi.array().required(),
+    Documents: Joi.array().required(),
+    UserId: Joi.string().required(),
 });
 
 

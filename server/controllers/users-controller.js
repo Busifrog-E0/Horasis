@@ -9,6 +9,7 @@ import { AlertBoxObject, getOTP, GetUserNonEmptyFieldsPercentage } from './commo
 import { ReadConnections } from '../databaseControllers/connections-databaseController.js';
 import { ReadFollows } from '../databaseControllers/follow-databaseController.js';
 import { ConnectionStatus } from './connections-controller.js';
+import { PostActivityForProfilePatch } from './activities-controller.js';
 
 
 
@@ -48,7 +49,7 @@ const GetOneFromUsers = async (req, res) => {
  * @returns {Promise<e.Response<Array<UserData & OtherUserData>>>}
  */
 const GetUsers = async (req, res) => {
-    const { Filter, NextId, Limit, OrderBy,Keyword } = req.query;
+    const { Filter, NextId, Limit, OrderBy, Keyword } = req.query;
     if (Keyword) {
         //@ts-ignore
         Filter['$or'] = [
@@ -123,6 +124,7 @@ const PatchUsers = async (req, res) => {
     }
     const { UserId } = req.params;
     await UpdateUsers(req.body, UserId);
+    await PostActivityForProfilePatch(req.body, UserId);
     return res.json(true);
 }
 
@@ -148,7 +150,7 @@ const UserLogin = async (req, res) => {
             Role: 'User',
             UserId: User.DocId
         }
-        const LoginData = await TokenData(CurrentUser);        
+        const LoginData = await TokenData(CurrentUser);
 
         return res.json(LoginData);
     }
@@ -168,16 +170,16 @@ const CheckUsernameAvailability = (IsEdit) =>
      * @returns 
      */
     async (req, res) => {
-    const CheckUserExists = await ReadUsers({ Username: req.body.Username }, undefined, 1, undefined);
-    if (CheckUserExists.length === 0) {
-        return res.json(true)
+        const CheckUserExists = await ReadUsers({ Username: req.body.Username }, undefined, 1, undefined);
+        if (CheckUserExists.length === 0) {
+            return res.json(true)
         }
         //@ts-ignore
-    if (IsEdit && CheckUserExists[0].DocId === req.user.UserId) {
-        return res.json(true);
+        if (IsEdit && CheckUserExists[0].DocId === req.user.UserId) {
+            return res.json(true);
+        }
+        return res.json(false);
     }
-    return res.json(false);
-}
 
 /**
  * 
@@ -237,7 +239,7 @@ const UserInit = (User) => {
     return {
         ...User,
         ProfilePicture: "",
-        CoverPicture : ""
+        CoverPicture: ""
     };
 }
 

@@ -2360,14 +2360,38 @@
           "type": "string",
           "example": "user123"
         },
-        "Attachments": {
+        "MediaFiles": {
           "type": "array",
-          "example": [
-            "https://example.com/image.jpg",
-            "https://example.com/document.pdf"
-          ],
           "items": {
-            "type": "string"
+            "type": "object",
+            "properties": {
+              "FileData": {
+                "type": "array",
+                "example": [],
+                "items": {}
+              },
+              "FileName": {
+                "type": "string",
+                "example": "string"
+              }
+            }
+          }
+        },
+        "Documents": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "FileData": {
+                "type": "array",
+                "example": [],
+                "items": {}
+              },
+              "FileName": {
+                "type": "string",
+                "example": "string"
+              }
+            }
           }
         }
       }
@@ -2415,24 +2439,6 @@
                 "example": "6df8f7wed689ef"
               }
             }
-          }
-        },
-        "LikedIds": {
-          "type": "array",
-          "example": [
-            "user987",
-            "user000"
-          ],
-          "items": {
-            "type": "string"
-          }
-        },
-        "Attachments": {
-          "type": "array",
-          "items": {
-            "type": "array",
-            "example": [],
-            "items": {}
           }
         },
         "NoOfLikes": {
@@ -2502,24 +2508,6 @@
                   "example": "6df8f7wed689ef"
                 }
               }
-            }
-          },
-          "LikedIds": {
-            "type": "array",
-            "example": [
-              "user987",
-              "user000"
-            ],
-            "items": {
-              "type": "string"
-            }
-          },
-          "Attachments": {
-            "type": "array",
-            "items": {
-              "type": "array",
-              "example": [],
-              "items": {}
             }
           },
           "NoOfLikes": {
