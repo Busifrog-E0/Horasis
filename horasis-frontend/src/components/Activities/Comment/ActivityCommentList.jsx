@@ -46,12 +46,6 @@ const ActivityCommentList = ({
 		)
 	}
 
-	if (isLoading)
-		return (
-			<div className='bg-system-secondary-bg p-4 rounded-b-lg '>
-				<Spinner />
-			</div>
-		)
 
 	return (
 		<div className='flex items-center justify-between flex-col w-full mt-4'>
@@ -66,23 +60,28 @@ const ActivityCommentList = ({
 							setComment(e.target.value)
 						}}
 					/>
-					<svg
-						onClick={() => {
-							postComment()
-						}}
-						aria-hidden='true'
-						className='w-6 h-6 text-brand-gray cursor-pointer'
-						xmlns='http://www.w3.org/2000/svg'
-						fill='none'
-						viewBox='0 0 20 20'>
-						<path
-							stroke='currentColor'
-							strokeLinecap='round'
-							strokeLinejoin='round'
-							strokeWidth='2'
-							d='M4 12.25V1m0 11.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M4 19v-2.25m6-13.5V1m0 2.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M10 19V7.75m6 4.5V1m0 11.25a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5ZM16 19v-2'
-						/>
-					</svg>
+					{isLoading ?
+						<Spinner />
+						:
+						<svg
+							onClick={() => {
+								postComment()
+							}}
+							aria-hidden='true'
+							className='w-6 h-6 text-brand-gray cursor-pointer'
+							xmlns='http://www.w3.org/2000/svg'
+							fill='none'
+							viewBox='0 0 20 20'>
+							<path
+								stroke='currentColor'
+								strokeLinecap='round'
+								strokeLinejoin='round'
+								strokeWidth='2'
+								d='M4 12.25V1m0 11.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M4 19v-2.25m6-13.5V1m0 2.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M10 19V7.75m6 4.5V1m0 11.25a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5ZM16 19v-2'
+							/>
+						</svg>
+					}
+
 				</div>
 			</div>
 			<div className='flex items-center  justify-between mt-4 flex-col gap-1 w-full'>

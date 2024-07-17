@@ -31,7 +31,7 @@ const ActivityComment = ({ comment }) => {
 								View Replies
 							</h4>
 						</div>
-						<h4 className='font-medium text-base text-brand-gray-dim'>{relativeTime(new Date().getTime())}</h4>
+						<h4 className='font-medium text-base text-brand-gray-dim'>{relativeTime(comment.CreatedIndex)}</h4>
 					</div>
 				</div>
 			</div>
