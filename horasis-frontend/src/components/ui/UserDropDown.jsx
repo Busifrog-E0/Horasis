@@ -15,10 +15,11 @@ const DropdownConnectComponent = ({ profile, updateList, tabName }) => {
 			{},
 			(result) => {
 				updateList('UPDATE')
-				toast.open('success','Request Sent','Connection request has been sent')
+				toast.open('success', 'Connection Request Sent', `Connection request sent to ${profile.FullName}`)
 				console.log(result)
 			},
 			(err) => {
+				toast.open('error','Connection request error',`Error happened while sending connection request`)
 				// console.log(err)
 			},
 			updateCurrentUser,
@@ -36,10 +37,11 @@ const DropdownConnectComponent = ({ profile, updateList, tabName }) => {
 				} else {
 					updateList('UPDATE')
 				}
-				toast.open('success','Connection Accepted',`Accepted connection request from ${profile.FullName}`)
+				toast.open('success', 'Connection request accepted', `Accepted connection request from ${profile.FullName}`)
 				console.log(result)
 			},
 			(err) => {
+				toast.open('error','Connection accept error',`Some error happened while accepting connection request`)
 				// console.log(err)
 			},
 			updateCurrentUser,
@@ -56,11 +58,12 @@ const DropdownConnectComponent = ({ profile, updateList, tabName }) => {
 				} else {
 					updateList('UPDATE')
 				}
-				toast.open('info','Connection Rejected',`Rejected connection request from ${profile.FullName}`)
+				toast.open('info', 'Connection request rejected', `Rejected connection request from ${profile.FullName}`)
 
 				console.log(result)
 			},
 			(err) => {
+				toast.open('error','Connection reject error',`Some error happened while rejecting connection request`)
 				// console.log(err)
 			},
 			updateCurrentUser,
@@ -77,10 +80,11 @@ const DropdownConnectComponent = ({ profile, updateList, tabName }) => {
 				} else {
 					updateList('UPDATE')
 				}
-				toast.open('info','Connection cancelled',`Cancelled connection request to ${profile.FullName}`)
+				toast.open('info', 'Connection cancelled', `Connection request to ${profile.FullName} cancelled`)
 				console.log(result)
 			},
 			(err) => {
+				toast.open('error','Connection cancel error',`Some error happened while cancelling connection request`)
 				// console.log(err)
 			},
 			updateCurrentUser,
@@ -97,10 +101,11 @@ const DropdownConnectComponent = ({ profile, updateList, tabName }) => {
 				} else {
 					updateList('UPDATE')
 				}
-				toast.open('info','Connection Removed',`Removed connection from ${profile.FullName}`)
+				toast.open('info', 'Connection Removed', `Removed connection from ${profile.FullName}`)
 				console.log(result)
 			},
 			(err) => {
+				toast.open('error','Connection remove error',`Some error happened while removing connection`)
 				// console.log(err)
 			},
 			updateCurrentUser,
@@ -178,7 +183,7 @@ const DropdownFollowComponent = ({ profile, updateList, tabName }) => {
 					className='cursor-pointer flex px-4 py-2 text-sm text-brand-gray-dim hover:bg-system-primary-bg'
 					role='menuitem'
 					onClick={() => {
-						unFollowUser(profile.DocId, () => {
+						unFollowUser(profile, () => {
 							if (tabName === 'following') {
 								updateList('REMOVE')
 							} else {
@@ -197,7 +202,7 @@ const DropdownFollowComponent = ({ profile, updateList, tabName }) => {
 					className='cursor-pointer flex px-4 py-2 text-sm text-brand-gray-dim hover:bg-system-primary-bg'
 					role='menuitem'
 					onClick={() => {
-						followUser(profile.DocId, () => {
+						followUser(profile, () => {
 							updateList('UPDATE')
 						})
 					}}>

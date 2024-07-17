@@ -4,7 +4,7 @@ import ToastContext from './ToastService'
 const ToastProvider = ({ children }) => {
 	const [toasts, setToasts] = useState([])
 	const open = (type, title, message, timeout = 3000) => {
-		const id = Date.now()
+		const id = Date.now() * Math.floor(Math.random() * 100 + 1)
 		setToasts((toasts) => [...toasts, { id, type, title, message }])
 		setTimeout(() => close(id), timeout)
 	}

@@ -193,7 +193,7 @@ const UserProfileFollowComponent = ({ profile, followCallback = () => {}, setIsL
 					className='rounded-full font-semibold shadow-sm bg-system-secondary-accent text-system-primary-accent'
 					size='md'
 					onClick={() => {
-						unFollowUser(profile.DocId, followCallback, setIsLoading)
+						unFollowUser(profile, followCallback, setIsLoading)
 					}}>
 					Unfollow
 				</Button>
@@ -208,7 +208,7 @@ const UserProfileFollowComponent = ({ profile, followCallback = () => {}, setIsL
 					className='rounded-full font-semibold'
 					size='md'
 					onClick={() => {
-						followUser(profile.DocId, followCallback, setIsLoading)
+						followUser(profile, followCallback, setIsLoading)
 					}}>
 					Follow
 				</Button>

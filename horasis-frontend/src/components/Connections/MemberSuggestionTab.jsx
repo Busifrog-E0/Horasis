@@ -65,7 +65,7 @@ const MemberSuggestionTab = ({ lastElement, profile, updateList }) => {
 										variant='outline'
 										onClick={() => {
 											unFollowUser(
-												profile.DocId,
+												profile,
 												() => {
 													updateList()
 												},
@@ -81,7 +81,7 @@ const MemberSuggestionTab = ({ lastElement, profile, updateList }) => {
 										variant='outline'
 										onClick={() => {
 											followUser(
-												profile.DocId,
+												profile,
 												() => {
 													updateList()
 												},

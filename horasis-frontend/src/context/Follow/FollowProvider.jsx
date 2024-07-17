@@ -9,20 +9,21 @@ const FollowProvider = ({ children }) => {
 	const toast = useToast()
 
 	const [followCount, setFollowCount] = useState()
-	const followUser = (userId, followCallback = () => {}, setLoading = () => {}) => {
+	const followUser = (profile, followCallback = () => {}, setLoading = () => {}) => {
 		setLoading(true)
 		postItem(
 			'follow',
-			{ FolloweeId: userId },
+			{ FolloweeId: profile.DocId },
 			(result) => {
 				if (result === true) {
 					followCallback()
 					getFollowCount()
-					toast.open('success', 'Followed', `Followed user`)
+					toast.open('success', 'Started following', `You have started following ${profile.FullName}`)
 				}
 				setLoading(false)
 			},
 			(err) => {
+				toast.open('error','Follow',`Some error happened while following`)
 				setLoading(false)
 			},
 			updateCurrentUser,
@@ -31,19 +32,20 @@ const FollowProvider = ({ children }) => {
 		)
 	}
 
-	const unFollowUser = (userId, unFollowCallback = () => {}, setLoading = () => {}) => {
+	const unFollowUser = (profile, unFollowCallback = () => {}, setLoading = () => {}) => {
 		setLoading(true)
 		deleteItem(
-			`users/${currentUserData.CurrentUser.UserId}/follow/${userId}`,
+			`users/${currentUserData.CurrentUser.UserId}/follow/${profile.DocId}`,
 			(result) => {
 				if (result === true) {
 					unFollowCallback()
 					getFollowCount()
-					toast.open('info', 'Unfollowed', `Unfollowed user`)
+					toast.open('info', 'Unfollowed', `You have unfollowed ${profile.FullName}`)
 				}
 				setLoading(false)
 			},
 			(err) => {
+				toast.open('error','Unfollow',`Some error happened while unfollowing`)
 				setLoading(false)
 			},
 			updateCurrentUser,
