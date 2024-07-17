@@ -32,10 +32,11 @@ const GetOneFromActivities = async (req, res) => {
  * @returns {Promise<e.Response<Array<ActivityData>>>}
  */
 const GetActivities = async (req, res) => {
-    const { UserId } = req.params;
+    //@ts-ignore
+    const { UserId } = req.user;
     const [Follows, Connections] = await Promise.all([
-        await ReadFollows({ FollowerId: UserId }, undefined, -1, undefined),
-        await ReadConnections({ UserIds: UserId, Status: "Connected" }, undefined, -1, undefined)
+         ReadFollows({ FollowerId: UserId }, undefined, -1, undefined),
+         ReadConnections({ UserIds: UserId, Status: "Connected" }, undefined, -1, undefined)
     ])
     const FollowerIds = Follows.map(Follow => Follow.DocId);
     const ConnectedIds = Connections.map(Connection => {
@@ -131,9 +132,9 @@ const UploadFiles = async (MediaFiles, Documents,UserId,ActivityId) => {
         const FileBuffer = new Uint8Array(FileData)
         //@ts-ignore
         const { mime } = await fileTypeFromBuffer(FileBuffer);
-        const link = await AsyncSaveFileToSpaces(UserId, `${ActivityId}/${FileName}`, FileData, mime)
-        console.log(link)
-        return  link
+        const Type = mime.split('/')[0];
+        const Link = await AsyncSaveFileToSpaces(UserId, `${ActivityId}/${FileName}`, FileData, mime)
+        return  {FileUrl : Link,Type}
     }));
     const DocumentsLinks = await Promise.all(Documents.map(async File => {
         const { FileData, FileName } = File;
