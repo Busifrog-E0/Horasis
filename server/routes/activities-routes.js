@@ -32,7 +32,7 @@ router.post('/users/:UserId/activities/:ActivityId/like', decodeIDToken, ensureA
     // @ts-ignore
     asyncHandler(PostLikes));
     
-router.delete('/users/:UserId/activities/:ActivityId/dislike/:LikeId', decodeIDToken, ensureAuthorized("User"), SwaggerDocs.patch_Activities_ActivityId_Dislike,
+router.delete('/users/:UserId/activities/:ActivityId/dislike', decodeIDToken, ensureAuthorized("User"), SwaggerDocs.patch_Activities_ActivityId_Dislike,
     // @ts-ignore
     asyncHandler(DeleteLikes));  
 

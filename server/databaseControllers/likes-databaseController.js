@@ -6,6 +6,7 @@ import dataHandling from './functions.js'
  * @property {string} UserId
  * @property {object[]} UserDetails
  * @property {number} CreatedIndex
+ * @property {string} DocId
  */
 
 
