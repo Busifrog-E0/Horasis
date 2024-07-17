@@ -25,22 +25,22 @@ const ActivityCarousel = ({ slides }) => {
 
 	return (
 		<div className='aspect-square w-full m-auto py-2 px-2 relative'>
-			{slides[currentIndex].Type === 'Image' && (
+			{slides[currentIndex].Type === 'image' && (
 				<div
-					// key={slides[currentIndex].Url}
-					style={{ backgroundImage: `url(${slides[currentIndex].Url})` }}
+					// key={slides[currentIndex].FileUrl}
+					style={{ backgroundImage: `url(${slides[currentIndex].FileUrl})` }}
 					className='w-full h-full rounded-2xl bg-center bg-cover duration-500'></div>
 			)}
-			{slides[currentIndex].Type === 'Video' && (
+			{slides[currentIndex].Type === 'video' && (
 				<video
-					key={slides[currentIndex].Url}
+					key={slides[currentIndex].FileUrl}
 					playsInline
 					className='w-full h-full rounded-2xl bg-center bg-cover duration-500 bg-system-primary-text'
 					autoPlay
 					muted
 					controls
 					controlsList='nodownload'>
-					<source src={slides[currentIndex].Url} type='video/mp4' />
+					<source src={slides[currentIndex].FileUrl} type='video/mp4' />
 				</video>
 			)}
 			{slides.length !== 1 && (

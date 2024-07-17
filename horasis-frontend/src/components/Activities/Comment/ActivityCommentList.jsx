@@ -1,10 +1,13 @@
+import { defaultComment } from '../../../utils/AuthProvider'
 import ActivityComment from './ActivityComment'
 
-const ActivityCommentList = ({ activity }) => {
+const ActivityCommentList = ({ activity, comments }) => {
+
+
 	return (
 		<div className='flex items-center  justify-between mt-4 flex-col gap-1'>
-			{[0, 1, 2].map((item) => (
-				<ActivityComment key={item} comment={activity} />
+			{comments.map((item) => (
+				<ActivityComment key={item} comment={defaultComment} />
 			))}
 		</div>
 	)

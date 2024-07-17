@@ -5,81 +5,98 @@ import like from '../../assets/icons/like.svg'
 import reply from '../../assets/icons/reply.svg'
 import ActivityCarousel from './ActivityCarousel'
 import ActivityComment from './Comment/ActivityComment'
-import { useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import ActivityCommentList from './Comment/ActivityCommentList'
-const ActivityComponent = () => {
-	const activity = {
-		UserDetails: {
-			ProfilePicture: 'https://flowbite.com/docs/images/people/profile-picture-2.jpg',
-			FullName: 'Tejeswara Rao Pedada',
-			Username: 'Teja',
-		},
-		MediaFiles: [
-			{
-				Type: 'Image',
-				Url: 'https://images.unsplash.com/photo-1531297484001-80022131f5a1?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2620&q=80',
-			},
-			{
-				Type: 'Image',
-				Url: 'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2670&q=80',
-			},
-			{
-				Type: 'Image',
-				Url: 'https://images.unsplash.com/photo-1661961112951-f2bfd1f253ce?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2672&q=80',
-			},
-
-			{
-				Type: 'Image',
-				Url: 'https://images.unsplash.com/photo-1512756290469-ec264b7fbf87?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2253&q=80',
-			},
-			{
-				Type: 'Image',
-				Url: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2671&q=80',
-			},
-			{
-				Type: 'Video',
-				Url: 'https://videos.pexels.com/video-files/26626391/11978858_1440_2560_60fps.mp4',
-			},
-			{
-				Type: 'Video',
-				Url: 'https://videos.pexels.com/video-files/17127360/17127360-uhd_2560_1440_30fps.mp4',
-			},
-		],
-		NoOfLikes: 100,
-		NoOfComments: 50,
-	}
-
-	const comment = {
-		Content: 'This is a sample comment content.',
-		ParentId: '1234567890abcdef',
-		UserId: 'user12345',
-		DocId: 'comment12345',
-		NoOfReplies: 5,
-		Type: 'Comment',
-		User: {
-			FullName: 'Jane Doe',
-			Username: 'janedoe',
-			Email: 'jane.doe@example.com',
-			DocId: 'abc123DEF',
-			Country: 'Canada',
-			City: 'Toronto',
-			JobTitle: 'Product Manager',
-			Industry: 'Software',
-			CompanyName: 'InnovateTech',
-			About: 'Seasoned product manager with over 10 years of experience in the software industry.',
-			CoverPicture: 'string',
-			ProfilePicture: 'https://flowbite.com/docs/images/people/profile-picture-2.jpg',
-		},
-	}
-
+import { AuthContext } from '../../utils/AuthProvider'
+import { useToast } from '../Toast/ToastService'
+import { getItem } from '../../constants/operations'
+import { getNextId } from '../../utils/URLParams'
+import { jsonToQuery } from '../../utils/searchParams/extractSearchParams'
+const ActivityComponent = ({ activity }) => {
 	const [showComment, setShowComment] = useState(false)
+	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
+	const toast = useToast()
+	const [isLoading, setIsLoading] = useState(false)
+	const [isLoadingMore, setIsLoadingMore] = useState(false)
+	const [commentsData, setCommentsData] = useState([])
+	const [pageDisabled, setPageDisabled] = useState(true)
+	const [filters, setFilters] = useState({
+		OrderBy: 'Index',
+		Keyword: '',
+		Limit: 10,
+		Keyword: '',
 
+	})
+	const setLoadingCom = (tempArr, value) => {
+		if (tempArr.length > 0) {
+			setIsLoadingMore(value)
+		} else {
+			setIsLoading(value)
+		}
+	}
+
+	const getAllActivities = (tempActivites) => {
+		getData(`activities/${activity.DocId}/comments?&${jsonToQuery(filters)}`, tempActivites, setCommentsData)
+	}
+	const getData = (endpoint, tempData, setData) => {
+		setLoadingCom(tempData, true)
+		getItem(
+			`${endpoint}&NextId=${getNextId(tempData)}`,
+			(data) => {
+				setData([...tempData, ...data])
+				setLoadingCom(tempData, false)
+			},
+			(err) => {
+				setLoadingCom(tempData, false)
+				// console.log(err)
+			},
+			updateCurrentUser,
+			currentUserData,
+			toast
+		)
+	}
+	const hasAnyLeft = (endpoint, tempData) => {
+		getItem(
+			`${endpoint}?NextId=${getNextId(tempData)}&${jsonToQuery({ ...filters, Limit: 1 })}`,
+			(data) => {
+				if (data?.length > 0) {
+					setPageDisabled(false)
+				} else {
+					setPageDisabled(true)
+				}
+			},
+			(err) => {
+				setPageDisabled(true)
+			},
+			updateCurrentUser,
+			currentUserData,
+			toast
+		)
+	}
+
+	const fetchData = (initialRender = false) => {
+		getAllActivities(initialRender ? [] : commentsData)
+
+	}
+
+	const fetch = () => fetchData(true)
+	const fetchMore = () => fetchData(false)
+
+
+	useEffect(() => {
+		if (commentsData.length > 0) hasAnyLeft(`activities/${activity.DocId}/comments`, commentsData)
+	}, [commentsData])
+
+	useEffect(() => {
+		if (showComment)
+			fetch()
+	}, [showComment])
 	return (
 		<div className='p-5 bg-system-secondary-bg rounded-lg'>
 			<div className='flex items-start gap-2'>
-				{activity.UserDetails.ProfilePicture ? (
+				{activity.UserDetails?.ProfilePicture ? (
 					<>
-						<img className='w-16 h-16 rounded-full' src={activity.UserDetails.ProfilePicture} alt='Rounded avatar' />
+						<img className='w-16 h-16 rounded-full' src={activity.UserDetails?.ProfilePicture} alt='Rounded avatar' />
 					</>
 				) : (
 					<>
@@ -90,7 +107,7 @@ const ActivityComponent = () => {
 				<div className='flex-1'>
 					<div className='flex items-start justify-between gap-10'>
 						<div className='flex  flex-col gap-1'>
-							<h4 className='font-semibold text-xl text-system-primary-accent mt-1'>{activity.UserDetails.FullName}</h4>
+							<h4 className='font-semibold text-xl text-system-primary-accent mt-1'>{activity.UserDetails?.FullName}</h4>
 							{/* <h4 className='text-system-primary-text text-md'>Updated their photo</h4> */}
 						</div>
 						<h4 className='font-medium text-base text-brand-gray-dim'>{relativeTime(new Date().getTime())}</h4>
@@ -98,7 +115,7 @@ const ActivityComponent = () => {
 				</div>
 			</div>
 			<div className='mt-5'>
-				<h4 className='text-system-primary-text font-medium text-xl'>Have a great day!</h4>
+				<h4 className='text-system-primary-text font-medium text-xl'>{activity.Content}</h4>
 			</div>
 			{activity?.MediaFiles && activity.MediaFiles.length > 0 && (
 				<div>
@@ -118,7 +135,7 @@ const ActivityComponent = () => {
 				</div>
 				<DropdownMenu />
 			</div>
-			{showComment && <ActivityCommentList activity={activity} />}
+			{showComment && <ActivityCommentList comments={commentsData} activity={activity} />}
 		</div>
 	)
 }
