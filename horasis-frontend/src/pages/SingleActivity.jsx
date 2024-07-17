@@ -36,7 +36,9 @@ const SingleActivity = () => {
                         </div>
                     </div>
                     <div className='lg:col-span-2'>
-                        <ActivityComponent activityId={activityid} />
+                        <ActivityComponent onDelete={(DocId) => { }} activityId={activityid}
+                            bordered={false}
+                        />
                     </div>
                     <div>
                         <div className='p-5 bg-system-secondary-bg rounded-lg'>

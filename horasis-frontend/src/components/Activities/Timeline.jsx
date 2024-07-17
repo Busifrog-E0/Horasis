@@ -24,6 +24,14 @@ const TimeLine = ({ gapBnTabs = "", bordered = false, header, classNameForPost =
         Limit: 10,
         Keyword: '',
     })
+
+
+    const onDelete = (DocId) => {
+        console.log(DocId)
+        setActivitiesData(activitiesData.filter(d => d.DocId !== DocId))
+    }
+
+
     const setLoadingCom = (tempArr, value) => {
         if (tempArr.length > 0) {
             setIsLoadingMore(value)
@@ -101,7 +109,7 @@ const TimeLine = ({ gapBnTabs = "", bordered = false, header, classNameForPost =
             {header && <h4 className='font-medium text-2xl text-system-primary-text mt-3 lg:mt-9 mb-4'>All Updates</h4>}
             {activitiesData.length > 0 ?
                 <>
-                    <ActivityListComponent gapBnTabs={gapBnTabs} bordered={bordered} activitiesData={activitiesData} />
+                    <ActivityListComponent onDelete={onDelete} gapBnTabs={gapBnTabs} bordered={bordered} activitiesData={activitiesData} />
                     {isLoadingMore && (
                         <div className='bg-system-secondary-bg p-4 rounded-b-lg '>
                             <Spinner />

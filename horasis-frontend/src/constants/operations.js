@@ -89,7 +89,7 @@ export const postItem = async (
 	errorCallback,
 	updateCurrentUser,
 	currentUserData,
-	toast = { open: () => {}, close: () => {} },
+	toast = { open: () => { }, close: () => { } },
 	debug = false
 ) => {
 	const API_URL = debug ? DEBUG_API : PRODUCTION_API
@@ -98,9 +98,8 @@ export const postItem = async (
 			headers: {
 				'Access-Control-Allow-Origin': '*',
 				'Content-Type': 'application/json',
-				Authorization: `Bearer ${
-					_retrieveData(CURRENTUSERDATA) ? JSON.parse(_retrieveData(CURRENTUSERDATA)).Token : null
-				}`,
+				Authorization: `Bearer ${_retrieveData(CURRENTUSERDATA) ? JSON.parse(_retrieveData(CURRENTUSERDATA)).Token : null
+					}`,
 			},
 			mode: 'no-cors',
 		})
@@ -140,7 +139,7 @@ export const patchItem = async (
 	errorCallback,
 	updateCurrentUser,
 	currentUserData,
-	toast = { open: () => {}, close: () => {} },
+	toast = { open: () => { }, close: () => { } },
 	debug = false
 ) => {
 	const API_URL = debug ? DEBUG_API : PRODUCTION_API
@@ -149,9 +148,8 @@ export const patchItem = async (
 			headers: {
 				'Access-Control-Allow-Origin': '*',
 				'Content-Type': 'application/json',
-				Authorization: `Bearer ${
-					_retrieveData(CURRENTUSERDATA) ? JSON.parse(_retrieveData(CURRENTUSERDATA)).Token : null
-				}`,
+				Authorization: `Bearer ${_retrieveData(CURRENTUSERDATA) ? JSON.parse(_retrieveData(CURRENTUSERDATA)).Token : null
+					}`,
 			},
 			mode: 'no-cors',
 		})
@@ -189,7 +187,7 @@ export const deleteItem = async (
 	errorCallback,
 	updateCurrentUser,
 	currentUserData,
-	toast = { open: () => {}, close: () => {} },
+	toast = { open: () => { }, close: () => { } },
 	debug = false
 ) => {
 	const API_URL = debug ? DEBUG_API : PRODUCTION_API
@@ -199,9 +197,8 @@ export const deleteItem = async (
 			headers: {
 				'Access-Control-Allow-Origin': '*',
 				'Content-Type': 'application/json',
-				Authorization: `Bearer ${
-					_retrieveData(CURRENTUSERDATA) ? JSON.parse(_retrieveData(CURRENTUSERDATA)).Token : null
-				}`,
+				Authorization: `Bearer ${_retrieveData(CURRENTUSERDATA) ? JSON.parse(_retrieveData(CURRENTUSERDATA)).Token : null
+					}`,
 			},
 			mode: 'no-cors',
 		})
@@ -239,7 +236,7 @@ export const getItem = async (
 	errorCallback,
 	updateCurrentUser,
 	currentUserData,
-	toast = { open: () => {}, close: () => {} },
+	toast = { open: () => { }, close: () => { } },
 	debug = false
 ) => {
 	const API_URL = debug ? DEBUG_API : PRODUCTION_API
@@ -248,9 +245,8 @@ export const getItem = async (
 			headers: {
 				'Access-Control-Allow-Origin': '*',
 				'Content-Type': 'application/json',
-				Authorization: `Bearer ${
-					_retrieveData(CURRENTUSERDATA) ? JSON.parse(_retrieveData(CURRENTUSERDATA)).Token : null
-				}`,
+				Authorization: `Bearer ${_retrieveData(CURRENTUSERDATA) ? JSON.parse(_retrieveData(CURRENTUSERDATA)).Token : null
+					}`,
 			},
 			mode: 'no-cors',
 		})

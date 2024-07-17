@@ -13,10 +13,11 @@ import { jsonToQuery } from '../../utils/searchParams/extractSearchParams'
 import Spinner from '../ui/Spinner'
 import ViewLikedMembers from './Likes/ViewLikedMembers'
 import ActivityDropdown from './ActivityDropdown'
-const ActivityComponent = ({ bordered, activity, activityId }) => {
+const ActivityComponent = ({ bordered, activity, activityId, onDelete }) => {
 	const [showComment, setShowComment] = useState(false)
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
 	const toast = useToast()
+	const [isDeleting, setIsDeleting] = useState(false)
 	const [isLiking, setIsLiking] = useState(false)
 	const [isLoading, setIsLoading] = useState(false)
 	const [isLoadingMore, setIsLoadingMore] = useState(false)
@@ -55,18 +56,20 @@ const ActivityComponent = ({ bordered, activity, activityId }) => {
 	}
 
 	const onDeleteBtnClicked = (api) => {
+		setIsDeleting(true)
 		console.log('onLikeBtnClicked')
 		deleteItem(
 			`activities/${singleActivity.DocId}`,
-			{},
 			(result) => {
+				setIsDeleting(false)
 				console.log(result)
 				if (result === true) {
-					getSingleActivity()
+					onDelete(singleActivity.DocId)
 				}
 			},
 			(err) => {
 				console.error(err)
+				setIsDeleting(false)
 			},
 			updateCurrentUser,
 			currentUserData,
@@ -219,9 +222,14 @@ const ActivityComponent = ({ bordered, activity, activityId }) => {
 							<img src={reply} className='h-6 w-6' />
 							<p className='text-brand-gray-dim mt-1'>{singleActivity.NoOfComments} replies</p>
 						</div>
-						{/* <div className='flex items-center gap-2 cursor-pointer' onClick={onDeleteBtnClicked}>
-							<p className='text-brand-gray-dim mt-1'>Delete</p>
-						</div> */}
+						{/* {isDeleting ? (
+							<Spinner />
+						) : (
+							<div className='flex items-center gap-2 cursor-pointer' onClick={onDeleteBtnClicked}>
+								<p className='text-brand-gray-dim mt-1'>Delete</p>
+							</div>
+						)} */}
+
 					</div>
 					<ActivityDropdown activity={singleActivity} />
 				</div>
