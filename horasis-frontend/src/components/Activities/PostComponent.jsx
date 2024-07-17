@@ -166,14 +166,14 @@ const PostComponent = ({ onSuccess }) => {
 			<div className='flex items-start gap-5'>
 				<input
 					type='file'
-					// accept='text/*'
+					accept='application/pdf'
 					onChange={handleDocumentChange}
 					style={{ display: 'none' }}
 					ref={docFileInputRef}
 				/>
 				<input
 					type='file'
-					accept='image/*'
+					accept='image/jpeg, image/png'
 					onChange={handleImageChange}
 					style={{ display: 'none' }}
 					ref={imageFileInputRef}

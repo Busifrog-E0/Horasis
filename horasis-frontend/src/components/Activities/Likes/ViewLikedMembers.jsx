@@ -6,6 +6,8 @@ import { getNextId } from "../../../utils/URLParams"
 import { getItem } from "../../../constants/operations"
 import Modal from "../../ui/Modal"
 import MembersSection from "../../Connections/MembersSection"
+import Spinner from "../../ui/Spinner"
+import EmptyMembers from "../../Common/EmptyMembers"
 
 const ViewLikedMembers = ({ activity }) => {
     const { updateCurrentUser, currentUserData } = useContext(AuthContext)
@@ -106,16 +108,25 @@ const ViewLikedMembers = ({ activity }) => {
                 </Modal.Header>
                 <Modal.Body >
                     <div className='flex flex-col gap-4'>
-                        <MembersSection
-                            members={membersData.map(d => ({ ...d.UserDetails, CreatedIndex: d.CreatedIndex }))}
-                            emptyText={'No members '}
-                            updateList={() => { }}
-                            whichTime='member'
-                            fetchMore={fetchMore}
-                            isLoadingMore={isLoadingMore}
-                            pageDisabled={pageDisabled}
-                            tabName='members'
-                        />
+                        {isLoading ?
+                            <div className='w-full lg:w-full h-24 rounded-md flex items-center justify-center  '>
+                                <Spinner />
+                            </div>
+                            :
+                            membersData.length > 0 ?
+                                <MembersSection
+                                    members={membersData.map(d => ({ ...d.UserDetails, CreatedIndex: d.CreatedIndex }))}
+                                    emptyText={'No members '}
+                                    updateList={() => { }}
+                                    whichTime='member'
+                                    fetchMore={fetchMore}
+                                    isLoadingMore={isLoadingMore}
+                                    pageDisabled={pageDisabled}
+                                    tabName='members'
+                                />
+                                :
+                                <EmptyMembers emptyText={"No liked members found"} />
+                        }
                     </div>
                 </Modal.Body>
             </Modal>
