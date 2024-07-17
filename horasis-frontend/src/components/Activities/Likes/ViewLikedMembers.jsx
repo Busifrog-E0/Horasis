@@ -107,7 +107,7 @@ const ViewLikedMembers = ({ activity }) => {
                 <Modal.Body >
                     <div className='flex flex-col gap-4'>
                         <MembersSection
-                            members={membersData.map(d => d.UserDetails)}
+                            members={membersData.map(d => ({ ...d.UserDetails, CreatedIndex: d.CreatedIndex }))}
                             emptyText={'No members '}
                             updateList={() => { }}
                             whichTime='member'
