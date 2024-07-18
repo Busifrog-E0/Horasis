@@ -107,7 +107,7 @@ const MentionedTab = ({ gapBnTabs = '', bordered = false }) => {
 						className={`relative`}
 						avatarSize='w-10 h-10'
 						onDelete={onDelete}
-						gapBnTabs={'gap-5'}
+						gapBnTabs={'gap-8'}
 						bordered={bordered}
 						activitiesData={activitiesData}
 					/>
