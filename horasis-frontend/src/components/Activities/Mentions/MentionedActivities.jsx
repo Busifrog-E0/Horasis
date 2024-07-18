@@ -105,7 +105,10 @@ const MentionedActivities = ({ gapBnTabs = "", bordered = false, header, classNa
                     :
                     activitiesData.length > 0 ?
                         <>
-                            <ActivityListComponent onDelete={onDelete} gapBnTabs={gapBnTabs} bordered={bordered} activitiesData={activitiesData} />
+
+                            <ActivityListComponent avatarSize={'w-16 h-16'}
+                                className={`p-5 bg-system-secondary-bg rounded-lg ${bordered && 'border border-system-file-border'} relative`}
+                                onDelete={onDelete} gapBnTabs={gapBnTabs} bordered={bordered} activitiesData={activitiesData} />
                             {isLoadingMore && (
                                 <div className='bg-system-secondary-bg p-4 rounded-b-lg '>
                                     <Spinner />
