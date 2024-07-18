@@ -199,8 +199,28 @@ const GetUserActivities = async (req, res) => {
     const Activities = await ReadActivities(Filter, NextId, Limit, OrderBy);
     const data = await Promise.all(Activities.map(async Activity => {
         const checkLike = await ReadLikes({ ActivityId: Activity.DocId, UserId }, undefined, 1, undefined);
+        const checkSave = await ReadSaves({ ActivityId: Activity.DocId, UserId }, undefined, 1, undefined);
+        const HasSaved = checkSave.length > 0 ? true : false;
         const HasLiked = checkLike.length > 0 ? true : false;
-        return {...Activity,UserDetails,HasLiked}
+        return {...Activity,UserDetails,HasLiked,HasSaved}
+    }))
+    return res.json(data)
+}
+
+const GetMentionedActivities = async (req, res) => {
+    const { UserId } = req.params;
+    const { Filter, NextId, Limit, OrderBy } = req.query;
+    //@ts-ignore
+    Filter["Mentions"] = { '$elemMatch': { UserId: UserId } };
+    const UserDetails = await ReadOneFromUsers(UserId);
+    //@ts-ignore
+    const Activities = await ReadActivities(Filter, NextId, Limit, OrderBy);
+    const data = await Promise.all(Activities.map(async Activity => {
+        const checkLike = await ReadLikes({ ActivityId: Activity.DocId, UserId }, undefined, 1, undefined);
+        const checkSave = await ReadSaves({ ActivityId: Activity.DocId, UserId }, undefined, 1, undefined);
+        const HasSaved = checkSave.length > 0 ? true : false;
+        const HasLiked = checkLike.length > 0 ? true : false;
+        return { ...Activity, UserDetails, HasLiked,HasSaved }
     }))
     return res.json(data)
 }
@@ -373,5 +393,5 @@ const ExtractMentionedUsersFromContent = async (Content) => {
 
 export {
     GetOneFromActivities, GetActivities, PostActivities, PatchActivities, DeleteActivities,
-    PostActivityForProfilePatch,GetUserActivities
+    PostActivityForProfilePatch,GetUserActivities,GetMentionedActivities
 }
