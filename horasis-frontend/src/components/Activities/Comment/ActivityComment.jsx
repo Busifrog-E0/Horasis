@@ -25,7 +25,7 @@ const ActivityComment = ({ comment, activity, commentId }) => {
 
 	const [filters, setFilters] = useState({
 		OrderBy: 'Index',
-		Limit: 3,
+		Limit: 10,
 		Keyword: '',
 	})
 
