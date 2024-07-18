@@ -224,13 +224,13 @@ const ActivityComponent = ({ bordered, activity, activityId, onDelete }) => {
 							<img src={reply} className='h-6 w-6' />
 							<p className='text-brand-gray-dim mt-1'>{singleActivity.NoOfComments} replies</p>
 						</div>
-						{/* {isDeleting ? (
+						{isDeleting ? (
 							<Spinner />
 						) : (
 							<div className='flex items-center gap-2 cursor-pointer' onClick={onDeleteBtnClicked}>
 								<p className='text-brand-gray-dim mt-1'>Delete</p>
 							</div>
-						)} */}
+						)}
 
 					</div>
 					<ActivityDropdown activity={singleActivity} />
