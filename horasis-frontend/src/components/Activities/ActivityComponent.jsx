@@ -215,7 +215,7 @@ const ActivityComponent = ({ bordered, activity, activityId, onDelete }) => {
 								</h4>
 								{/* <h4 className='text-system-primary-text text-md'>Updated their photo</h4> */}
 							</div>
-							<h4 className='font-medium text-base text-brand-gray-dim'>{relativeTime(activity.CreatedIndex)}</h4>
+							<h4 className='font-medium text-base text-brand-gray-dim'>{relativeTime(singleActivity.CreatedIndex)}</h4>
 						</div>
 					</div>
 				</div>
@@ -234,7 +234,7 @@ const ActivityComponent = ({ bordered, activity, activityId, onDelete }) => {
 						) : (
 							<div className='flex items-center gap-2'>
 								{
-									activity.HasLiked ?
+									singleActivity.HasLiked ?
 										<img src={like} className='h-6 w-6 cursor-pointer text-system-error' onClick={onUnLikeBtnClicked} />
 										:
 										<img src={like} className='h-6 w-6 cursor-pointer' onClick={onLikeBtnClicked} />
