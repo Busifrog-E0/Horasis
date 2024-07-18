@@ -137,12 +137,12 @@ const MentionTextarea = ({ user, newPost, handleContentChange }) => {
 					<Spinner />
 				) : ( */}
                 {suggestions.length > 0 && (
-                    <ul className='absolute bg-white border rounded shadow-lg mt-1  w-max z-10'>
+                    <ul className='absolute bg-white border rounded shadow-lg mt-1 top-3 w-max z-10 max-h-64 p-2 overflow-auto'>
                         {suggestions.map((user, index) => (
                             <li
                                 key={index}
                                 onClick={() => handleSuggestionClick(user.Username)}
-                                className='p-2 cursor-pointer hover:bg-gray-200'>
+                                className='p-2 cursor-pointer hover:bg-brand-light-gray'>
                                 {user.Username}
                             </li>
                         ))}

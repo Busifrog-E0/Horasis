@@ -202,7 +202,7 @@ const PostComponent = ({ onSuccess, className = "" }) => {
 	return (
 		<div className={`bg-system-secondary-bg rounded-xl relative ${className}`}>
 			{isLoading &&
-				<div className='absolute z-20 top-0 right-0 left-0 bottom-0 flex flex-col justify-center items-center h-100 bg-brand-orange-transparent overflow-hidden rounded-xl'>
+				<div className='absolute z-20 top-0 right-0 left-0 bottom-0 flex flex-col justify-center items-center h-100 overflow-hidden rounded-xl'>
 					<Spinner />
 				</div>
 			}
