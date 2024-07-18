@@ -10,7 +10,7 @@ import { useToast } from '../Toast/ToastService';
 import ActivityComponent from './ActivityComponent';
 import PostComponent from './PostComponent';
 
-const TimeLineTab = ({ gapBnTabs = "", bordered = false, header, classNameForPost = "" }) => {
+const TimeLineTab = ({ gapBnTabs = "", bordered = false, header, classNameForPost = "", api }) => {
 
     const { updateCurrentUser, currentUserData } = useContext(AuthContext)
     const toast = useToast()
@@ -42,7 +42,7 @@ const TimeLineTab = ({ gapBnTabs = "", bordered = false, header, classNameForPos
     }
 
     const getAllActivities = (tempActivites) => {
-        getData(`activities?&${jsonToQuery(filters)}`, tempActivites, setActivitiesData)
+        getData(`${api}?&${jsonToQuery(filters)}`, tempActivites, setActivitiesData)
     }
     const getData = (endpoint, tempData, setData) => {
         setLoadingCom(tempData, true)
@@ -89,7 +89,7 @@ const TimeLineTab = ({ gapBnTabs = "", bordered = false, header, classNameForPos
     const fetchMore = () => fetchData(false)
 
     useEffect(() => {
-        if (activitiesData.length > 0) hasAnyLeft(`activities`, activitiesData)
+        if (activitiesData.length > 0) hasAnyLeft(`${api}`, activitiesData)
     }, [activitiesData])
 
     useEffect(() => {

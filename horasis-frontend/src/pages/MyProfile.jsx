@@ -21,7 +21,7 @@ const tabs = (user, getUserDetails) => [
 		title: 'Timeline',
 		render: () => (
 			<div className='bg-system-secondary-bg p-4 lg:py-8 lg:px-12 rounded-b-lg '>
-				<TimeLineTab gapBnTabs="gap-7" classNameForPost="py-5" bordered={true} />
+				<TimeLineTab api={`user/${user?.DocId}/activities`} gapBnTabs="gap-7" classNameForPost="py-5" bordered={true} />
 			</div>
 		),
 	},
