@@ -74,7 +74,11 @@ const UpdateAndIncrementActivities = async (UpdateData, IncrementData, DocId) =>
   return dataHandling.Update("Activities", UpdateData, DocId, ["$set","$inc"], true,IncrementData);
 }
 
+const AggregateActivities = async (AggregateArray) => {
+  return dataHandling.Aggregate("Activities", AggregateArray);
+}
+
 export {
   ReadActivities, ReadOneFromActivities, UpdateActivities, CreateActivities, RemoveActivities,
-  IncrementActivities,UpdateAndIncrementActivities
+  IncrementActivities,UpdateAndIncrementActivities,AggregateActivities
  };

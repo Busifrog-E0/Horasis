@@ -11,12 +11,12 @@ const fileFormats = {
     },
     image: {
         extensions: [
-            'jpeg', 'jpg'],
+            'jpeg', 'jpg','png'],
         size: 1234556789
     },
     video: {
         extensions: [
-            'mp4', 'mkv'],
+            'mp4'],
         size: 123456789
     }
 }

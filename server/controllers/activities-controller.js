@@ -1,13 +1,14 @@
 import e from 'express';
 
-import { ReadOneFromActivities, ReadActivities, UpdateActivities, CreateActivities, RemoveActivities, UpdateAndIncrementActivities, } from '../databaseControllers/activities-databaseController.js';
+import { ReadOneFromActivities, ReadActivities, UpdateActivities, CreateActivities, RemoveActivities, UpdateAndIncrementActivities, AggregateActivities, } from '../databaseControllers/activities-databaseController.js';
 import { fileTypeFromBuffer } from 'file-type';
-import { AsyncSaveFileToSpaces, fileFormats,  } from './files-controller.js';
+import { AsyncSaveFileToSpaces, fileFormats, } from './files-controller.js';
 import { ReadOneFromUsers, ReadUsers } from '../databaseControllers/users-databaseController.js';
 import { AlertBoxObject } from './common.js';
 import { ReadFollows } from '../databaseControllers/follow-databaseController.js';
 import { ReadConnections } from '../databaseControllers/connections-databaseController.js';
 import { ObjectId } from 'mongodb';
+import { ReadLikes } from '../databaseControllers/likes-databaseController.js';
 
 /**
  * @typedef {import('../databaseControllers/activities-databaseController.js').ActivityData} ActivityData 
@@ -21,8 +22,13 @@ import { ObjectId } from 'mongodb';
  */
 const GetOneFromActivities = async (req, res) => {
     const { ActivityId } = req.params;
-    const data = await ReadOneFromActivities(ActivityId);
-    return res.json(data);
+    //@ts-ignore
+    const { UserId } = req.user;
+    const Activity = await ReadOneFromActivities(ActivityId);
+    const UserDetails = await ReadOneFromUsers(Activity.UserId);
+    const checkLike = await ReadLikes({ ActivityId: Activity.DocId, UserId }, undefined, 1, undefined);
+    const HasLiked = checkLike.length > 0 ? true : false;
+    return res.json({...Activity,UserDetails,HasLiked});
 }
 
 /**
@@ -34,23 +40,116 @@ const GetOneFromActivities = async (req, res) => {
 const GetActivities = async (req, res) => {
     //@ts-ignore
     const { UserId } = req.user;
-    const [Follows, Connections] = await Promise.all([
-         ReadFollows({ FollowerId: UserId }, undefined, -1, undefined),
-         ReadConnections({ UserIds: UserId, Status: "Connected" }, undefined, -1, undefined)
-    ])
-    const FollowerIds = Follows.map(Follow => Follow.DocId);
-    const ConnectedIds = Connections.map(Connection => {
-        const [Id1, Id2] = Connection.UserIds;
-        return Id1 === UserId ? Id2 : Id1;
-    })
-    const UserIds = [...new Set([...FollowerIds, ...ConnectedIds,UserId])]
     const { Filter, NextId, Limit, OrderBy } = req.query;
-    // @ts-ignore
-    Filter.UserId = { "$in": UserIds };
-    //@ts-ignore
-    const data = await ReadActivities(Filter, NextId, Limit, OrderBy);
+    const AggregateArray = [
+        {
+            '$lookup': {
+                'from': 'Follows',
+                'pipeline': [
+                    { '$match': { '$expr': { '$eq': ['$FollowerId', UserId] } } }
+                ],
+                'as': 'Followees'
+            }
+        },
+        {
+            '$lookup': {
+                'from': 'Connections',
+                'pipeline': [
+                    { '$match': { '$expr': { '$in': [UserId, '$UserIds'] } } }
+                ],
+                'as': 'Connections'
+            }
+        },
+        {
+            $addFields: {
+                Followees: { $map: { input: '$Followees', as: 'f', in: '$$f.FolloweeId' } },
+                Connections: {
+                    $reduce: {
+                        input: '$Connections',
+                        initialValue: [],
+                        in: { $setUnion: ['$$value', '$$this.UserIds'] }
+                    }
+                }
+            }
+        },
+        {
+            $addFields: {
+                UserIds: { $setUnion: ['$Followees', '$Connections'] }
+            }
+        },
+        {
+            $match: {
+                $expr: { $in: ['$UserId', '$UserIds'] }
+            }
+        },
+        { $sort: { CreatedIndex: -1, _id: -1 } },
+        { $limit: Limit },
+        {
+            $lookup: {
+                from: 'Users',
+                let: { userObjectId: { $toObjectId: '$UserId' } },
+                pipeline: [
+                    { $match: { $expr: { $eq: ['$_id', '$$userObjectId'] } } }
+                ],
+                as: 'UserDetails'
+            }
+        },
+        {
+            $lookup: {
+                from: 'Likes',
+                let: { activityId: { $toString: '$_id' }, userId: UserId },
+                pipeline: [
+                    {
+                        $match: {
+                            $expr: {
+                                $and: [
+                                    { $eq: ['$ActivityId', '$$activityId'] },
+                                    { $eq: ['$UserId', '$$userId'] }
+                                ]
+                            }
+                        }
+                    }
+                ],
+                as: 'HasLiked'
+            }
+        },
+        {
+            $addFields: {
+                HasLiked: { $gt: [{ $size: '$HasLiked' }, 0] }
+            }
+        },
+        {
+            $project: {
+                Followees: 0,
+                Connections: 0,
+                UserIds: 0
+            }
+        }
+
+    ]
+    if (NextId) {
+        //@ts-ignore
+        const [Index, nextId] = NextId.split('--');
+        AggregateArray.splice(5, 0, {
+            $match:
+            {
+                $expr: {
+                    $or: [
+                        { $lt: ['$CreatedIndex', Index] },
+                        {
+                            $and: [
+                                { $eq: ['$CreatedIndex', Index] },
+                                { $lt: ['$_id', new ObjectId(nextId)] }
+                            ]
+                        }
+                    ]
+                }
+            }
+        });
+    }
+    const data = await AggregateActivities(AggregateArray);
     return res.json(data);
-}
+};
 
 /**
  * 
@@ -66,13 +165,13 @@ const PostActivities = async (req, res) => {
     const { UserId } = req.user;
     const ValidateFiles = await CheckFileType(MediaFiles, Documents);
     if (!ValidateFiles) {
-        return res.status(444).json(AlertBoxObject("Can't upload","File(s) cannot be uploaded"))
+        return res.status(444).json(AlertBoxObject("Can't upload", "File(s) cannot be uploaded"))
     }
     const Attachments = await UploadFiles(MediaFiles, Documents, UserId, ActivityId);
     const Mentions = await ExtractMentionedUsersFromContent(Content);
     req.body = ActivityInit(req.body);
     //@ts-ignore
-    const data = { ...req.body, Documents : Attachments.DocumentsLinks, MediaFiles : Attachments.MediaFilesLinks, Mentions };
+    const data = { ...req.body, Documents: Attachments.DocumentsLinks, MediaFiles: Attachments.MediaFilesLinks, Mentions };
     await CreateActivities(data);
     return res.json(true);
 }
@@ -98,16 +197,21 @@ const PatchActivities = async (req, res) => {
  */
 const DeleteActivities = async (req, res) => {
     const { ActivityId } = req.params;
+    const { UserId } = req.user;
+    const Activity = await ReadOneFromActivities(ActivityId);
+    if (Activity.UserId !== UserId) {
+        return res.status(444).json(AlertBoxObject("Cannot Delete","Cannot delete other User's Activity"))
+    }
     await RemoveActivities(ActivityId);
     return res.json(true);
 }
 
 
 const CheckFileType = async (MediaFiles, Documents) => {
-    const validate =async (FileData, Format) => {
+    const validate = async (FileData, Format) => {
         const FileDataBuffer = new Uint8Array(FileData);
         //@ts-ignore
-        const  {ext}  = await fileTypeFromBuffer(FileDataBuffer);
+        const { ext } = await fileTypeFromBuffer(FileDataBuffer);
         const Size = FileData.length;
         console.log(Format.extensions.includes(ext) && Size <= Format.size)
         return Format.extensions.includes(ext) && Size <= Format.size;
@@ -118,7 +222,7 @@ const CheckFileType = async (MediaFiles, Documents) => {
             return false
         }
     };
-    for(const File of Documents) {
+    for (const File of Documents) {
         if (!(await validate(File.FileData, fileFormats.document))) {
             return false
         }
@@ -126,7 +230,7 @@ const CheckFileType = async (MediaFiles, Documents) => {
     return true;
 }
 
-const UploadFiles = async (MediaFiles, Documents,UserId,ActivityId) => {
+const UploadFiles = async (MediaFiles, Documents, UserId, ActivityId) => {
     const MediaFilesLinks = await Promise.all(MediaFiles.map(async File => {
         const { FileData, FileName } = File;
         const FileBuffer = new Uint8Array(FileData)
@@ -134,14 +238,14 @@ const UploadFiles = async (MediaFiles, Documents,UserId,ActivityId) => {
         const { mime } = await fileTypeFromBuffer(FileBuffer);
         const Type = mime.split('/')[0];
         const Link = await AsyncSaveFileToSpaces(UserId, `${ActivityId}/${FileName}`, FileData, mime)
-        return  {FileUrl : Link,Type}
+        return { FileUrl: Link, Type }
     }));
     const DocumentsLinks = await Promise.all(Documents.map(async File => {
         const { FileData, FileName } = File;
         const FileBuffer = new Uint8Array(FileData)
         //@ts-ignore
-        const {  mime } = await fileTypeFromBuffer(FileBuffer);
-        return  AsyncSaveFileToSpaces(UserId,`${ActivityId}/${FileName}`, FileData, mime)
+        const { mime } = await fileTypeFromBuffer(FileBuffer);
+        return AsyncSaveFileToSpaces(UserId, `${ActivityId}/${FileName}`, FileData, mime)
     }));
     return { MediaFilesLinks, DocumentsLinks };
 }
@@ -179,13 +283,13 @@ const ExtractMentionedUsersFromContent = async (Content) => {
     const mentions = Content.match(mentionPattern);
     let Users = [];
     if (mentions) {
-        await Promise.all([mentions.map(async mention => {
+        await Promise.all(mentions.map(async mention => {
             const Username = mention.slice(1);
             const User = await ReadUsers({ Username }, undefined, 1, undefined);
             if (User.length > 0) {
                 Users.push({ Username, UserId: User[0].DocId })
             }
-        })])
+        }))
     }
     return Users;
 };
@@ -196,5 +300,5 @@ const ExtractMentionedUsersFromContent = async (Content) => {
 
 export {
     GetOneFromActivities, GetActivities, PostActivities, PatchActivities, DeleteActivities,
-     PostActivityForProfilePatch
+    PostActivityForProfilePatch
 }
