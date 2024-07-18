@@ -2594,6 +2594,10 @@
               "UserId": {
                 "type": "string",
                 "example": "6df8f7wed689ef"
+              },
+              "FullName": {
+                "type": "string",
+                "example": "User"
               }
             }
           }
@@ -2712,6 +2716,10 @@
                 "UserId": {
                   "type": "string",
                   "example": "6df8f7wed689ef"
+                },
+                "FullName": {
+                  "type": "string",
+                  "example": "User"
                 }
               }
             }
