@@ -32,6 +32,40 @@ const ActivityComponent = ({ bordered, activity, activityId, onDelete }) => {
 	const [isLoadingActivity, setIsLoadingActivity] = useState(true)
 	const [singleActivity, setSingleActivity] = useState(activity)
 
+	function replaceMentionsWithLinks(singleActivity) {
+		let content = singleActivity.Content;
+		const mentions = singleActivity.Mentions; // Assuming the mentions array is stored in singleActivity.Mentions
+
+		mentions.forEach(mention => {
+			const mentionPattern = new RegExp(`@${mention.Username}`, 'g');
+			const link = `<a href="/profile/${mention.UserId}">${mention.FullName}</a>`;
+			content = content.replace(mentionPattern, link);
+		});
+
+		return content;
+	}
+
+	function parseContent(singleActivity) {
+		const content = singleActivity.Content;
+		const mentions = singleActivity.Mentions;
+		const parts = content.split(/(\s+)/); // Split by spaces, keeping the spaces
+
+		return parts.map((part, index) => {
+			if (part.startsWith('@')) {
+				const username = part.substring(1); // Remove the '@' character
+				const mention = mentions.find(m => m.Username === username);
+				if (mention) {
+					return (
+						<a key={index} href={`/ViewProfile/${mention.UserId}`} className="text-blue-500">
+							{mention.Username}
+						</a>
+					);
+				}
+			}
+			return <span key={index}>{part}</span>;
+		});
+	}
+
 	const onLikeBtnClicked = (api) => {
 		setIsLiking(true)
 		postItem(
@@ -243,7 +277,7 @@ const ActivityComponent = ({ bordered, activity, activityId, onDelete }) => {
 					</div>
 				</div>
 				<div className='mt-5'>
-					<h4 className='text-system-primary-text font-medium text-xl'>{singleActivity.Content}</h4>
+					<h4 className='text-system-primary-text font-medium text-xl'>{parseContent(singleActivity)}</h4>
 				</div>
 				{/* {
 					singleActivity.Mentions?.length > 0 &&
