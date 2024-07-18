@@ -77,7 +77,7 @@ const GetActivities = async (req, res) => {
         },
         {
             $addFields: {
-                UserIds: { $setUnion: ['$Followees', '$Connections',UserId] }                  
+                UserIds: { $setUnion: ['$Followees', '$Connections',[UserId]] }                  
             }
         },
         {
