@@ -76,7 +76,7 @@ const PatchLikes = async (req, res) => {
 const DeleteLikes = async (req, res) => {
     const { ActivityId, UserId } = req.params;
     const CheckLike = await ReadLikes({ ActivityId, UserId }, undefined, 1, undefined);
-    if (CheckLike.length > 0) {
+    if (CheckLike.length === 0) {
         return res.status(444).json(AlertBoxObject("Cannot DisLike", "You have not liked this activity"));
     }
     const [Like] = CheckLike;
