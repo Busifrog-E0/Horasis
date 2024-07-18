@@ -345,10 +345,10 @@ const UploadFiles = async (MediaFiles, Documents, UserId, ActivityId) => {
 const PostActivityForProfilePatch = async (Data, UserId) => {
     let Activity = {}
     if (Data.CoverPicture) {
-        Activity = { Content: "Updated his Cover Photo", MediaFiles: [Data.Co], UserId };
+        Activity = { Content: "Updated their Cover Photo", MediaFiles: [Data.Co], UserId };
     }
     if (Data.ProfilePicture) {
-        Activity = { Content: "Updated his Profile Photo", UserId };
+        Activity = { Content: "Updated their Profile Photo", UserId };
     }
     Activity = ActivityInit(Activity);
     await CreateActivities(Activity);
