@@ -284,7 +284,7 @@ const ActivityInit = (Activity) => {
  * @returns 
  */
 const ExtractMentionedUsersFromContent = async (Content) => {
-    const mentionPattern = /(?<=\s|^)@(\w+)/g;
+    const mentionPattern = /(?<=\s|^)@([\w.]+)/g;
     const mentions = Content.match(mentionPattern);
     let Users = [];
     if (mentions) {
