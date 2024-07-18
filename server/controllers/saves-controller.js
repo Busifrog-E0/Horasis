@@ -32,7 +32,11 @@ const GetSaves = async (req, res) => {
     // @ts-ignore
     Filter.UserId = UserId;
     //@ts-ignore
-    const data = await ReadSaves(Filter, NextId, Limit, OrderBy);
+    const Saves = await ReadSaves(Filter, NextId, Limit, OrderBy);
+    const data = await Promise.all(Saves.map(async Save => {
+        const UserDetails = await ReadOneFromUsers(Save.UserId);
+        return { ...Save, UserDetails };
+    }))
     return res.json(data);
 }
 
