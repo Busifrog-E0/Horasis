@@ -95,12 +95,17 @@ const SavedTab = ({ bordered = false }) => {
     }, [filters])
 
     return (
-        <div>
-            {isLoading ? (
-                <Spinner />
-            ) : activitiesData.length > 0 ? (
-                <>
-                    {/* <ActivityListComponent
+        <div className="p-5 bg-system-secondary-bg rounded-lg mt-4 lg:mt-8">
+            <div className="flex items-center justify-between gap-2 mb-1">
+                <h4 className="font-medium text-2xl text-system-primary-text">Saved Posts</h4>
+                {/* arrow cursor-pointer */}
+            </div>
+            <div>
+                {isLoading ? (
+                    <Spinner />
+                ) : activitiesData.length > 0 ? (
+                    <>
+                        {/* <ActivityListComponent
                         className={`p-5 bg-system-secondary-bg rounded-lg ${bordered && 'border border-system-file-border'} relative`}
                         avatarSize='w-10 h-10'
                         titleSize="text-md"
@@ -110,11 +115,12 @@ const SavedTab = ({ bordered = false }) => {
                         bordered={true}
                         activitiesData={activitiesData}
                     /> */}
-                    <EmptyMembers emptyText={`${activitiesData.length} saved posts. But some error occured!`} />
-                </>
-            ) : (
-                <EmptyMembers emptyText={'No saved posts'} />
-            )}
+                        <EmptyMembers emptyText={`${activitiesData.length} saved posts. But some error occured!`} />
+                    </>
+                ) : (
+                    <EmptyMembers emptyText={'No saved posts'} />
+                )}
+            </div>
         </div>
     )
 }

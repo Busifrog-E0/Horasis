@@ -94,26 +94,32 @@ const MentionedTab = ({ bordered = false }) => {
 	}, [filters])
 
 	return (
-		<div>
-			{/* {header && <h4 className='font-medium text-2xl text-system-primary-text mb-4'>All Mentions</h4>} */}
+		<div className='p-5 bg-system-secondary-bg rounded-lg mt-3 lg:mt-5'>
+			<div className='flex items-center justify-between gap-2 mb-5'>
+				<h4 className='font-medium text-2xl text-system-primary-text'>Mentions</h4>
+				{/* arrow cursor-pointer */}
+			</div>
+			<div>
+				{/* {header && <h4 className='font-medium text-2xl text-system-primary-text mb-4'>All Mentions</h4>} */}
 
-			{isLoading ? (
-				<Spinner />
-			) : activitiesData.length > 0 ? (
-				<>
-					<ActivityListComponent
-						className={`relative`}
-						avatarSize='w-10 h-10'
-						onDelete={onDelete}
-						gapBnTabs={'gap-8'}
-						descriptionSize="text-base"
-						bordered={bordered}
-						activitiesData={activitiesData}
-					/>
-				</>
-			) : (
-				<EmptyMembers emptyText={'No mentions'} />
-			)}
+				{isLoading ? (
+					<Spinner />
+				) : activitiesData.length > 0 ? (
+					<>
+						<ActivityListComponent
+							className={`relative`}
+							avatarSize='w-10 h-10'
+							onDelete={onDelete}
+							gapBnTabs={'gap-8'}
+							descriptionSize="text-base"
+							bordered={bordered}
+							activitiesData={activitiesData}
+						/>
+					</>
+				) : (
+					<EmptyMembers emptyText={'No mentions'} />
+				)}
+			</div>
 		</div>
 	)
 }

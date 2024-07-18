@@ -50,13 +50,7 @@ const SingleActivity = () => {
                             </div>
                             <EmptyMembers emptyText={'No events'} />
                         </div>
-                        <div className='p-5 bg-system-secondary-bg rounded-lg mt-3 lg:mt-5'>
-                            <div className='flex items-center justify-between gap-2 mb-5'>
-                                <h4 className='font-medium text-2xl text-system-primary-text'>Mentions</h4>
-                                {/* arrow cursor-pointer */}
-                            </div>
-                            <MentionedTab />
-                        </div>
+                        <MentionedTab />
                     </div>
                 </div>
             </div>
