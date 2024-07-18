@@ -11,7 +11,7 @@ import TextArea from '../../ui/TextArea'
 import Spinner from '../../ui/Spinner'
 import ActivityCommentReplyList from './ActivityCommentReplyList'
 
-const ActivityComment = ({ comment, activity, commentId }) => {
+const ActivityComment = ({ comment, activity, commentId, getSingleActivity }) => {
 	const { currentUserData, updateCurrentUser } = useContext(AuthContext)
 	const toast = useToast()
 	const [showReplies, setShowReplies] = useState(false)
@@ -154,6 +154,7 @@ const ActivityComment = ({ comment, activity, commentId }) => {
 					replies={repliesData}
 					getAllCommentReplies={getAllCommentReplies}
 					getSingleComment={getSingleComment}
+					getSingleActivity={getSingleActivity}
 					isLoading={isLoading}
 					isLoadingMore={isLoadingMore}
 					pageDisabled={pageDisabled}
