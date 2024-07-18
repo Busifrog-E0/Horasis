@@ -216,7 +216,7 @@ const PostComponent = ({ onSuccess, className = "" }) => {
 				/>
 				<input
 					type='file'
-					accept='image/jpeg, image/png'
+					accept='image/jpeg, image/png, video/mp4'
 					onChange={handleImageChange}
 					style={{ display: 'none' }}
 					ref={imageFileInputRef}
