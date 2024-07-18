@@ -7,7 +7,7 @@ import { decodeIDToken, ensureAuthorized } from '../middleware/auth-middleware.j
 import { ValidatePostActivities, ValidatePatchActivities } from '../validations/activities-validations.js';
 import SwaggerDocs from '../swaggerDocs/activities-swaggerDocs.js'
 import e from 'express';
-import { QueryParameterFormatting, ValidateGetEntity } from '../middleware/common.js';
+import { CheckSameUser, QueryParameterFormatting, ValidateGetEntity } from '../middleware/common.js';
 import { GetFeedActivitiesMiddleware, PostFeedActivitiesMiddleware } from '../middleware/activities-middleware.js';
 import { DeleteLikes, GetLikes, PostLikes } from '../controllers/likes-controller.js';
 const router = e.Router();
@@ -28,11 +28,11 @@ router.patch('/activities/:ActivityId', decodeIDToken, ensureAuthorized("User"),
     // @ts-ignore
     asyncHandler(PatchActivities));
 
-router.post('/users/:UserId/activities/:ActivityId/like', decodeIDToken, ensureAuthorized("User"), SwaggerDocs.patch_Activities_ActivityId_Like,
+router.post('/users/:UserId/activities/:ActivityId/like', decodeIDToken, ensureAuthorized("User"),CheckSameUser, SwaggerDocs.patch_Activities_ActivityId_Like,
     // @ts-ignore
     asyncHandler(PostLikes));
     
-router.delete('/users/:UserId/activities/:ActivityId/dislike', decodeIDToken, ensureAuthorized("User"), SwaggerDocs.patch_Activities_ActivityId_Dislike,
+router.delete('/users/:UserId/activities/:ActivityId/dislike', decodeIDToken, ensureAuthorized("User"),CheckSameUser, SwaggerDocs.patch_Activities_ActivityId_Dislike,
     // @ts-ignore
     asyncHandler(DeleteLikes));  
 

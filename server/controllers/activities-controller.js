@@ -197,6 +197,11 @@ const PatchActivities = async (req, res) => {
  */
 const DeleteActivities = async (req, res) => {
     const { ActivityId } = req.params;
+    const { UserId } = req.user;
+    const Activity = await ReadOneFromActivities(ActivityId);
+    if (Activity.UserId !== UserId) {
+        return res.status(444).json(AlertBoxObject("Cannot Delete","Cannot delete other User's Activity"))
+    }
     await RemoveActivities(ActivityId);
     return res.json(true);
 }
