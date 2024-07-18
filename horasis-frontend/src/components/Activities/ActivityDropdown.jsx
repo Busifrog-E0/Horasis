@@ -3,9 +3,11 @@ import { useNavigate } from 'react-router-dom'
 import ReportPostButton from './ReportPost/ReportPostButton'
 import Modal from '../ui/Modal'
 import Button from '../ui/Button'
+import { useToast } from '../Toast/ToastService'
 
 const ActivityDropdown = ({ activity }) => {
 	const [isOpen, setIsOpen] = useState(false)
+	const toast = useToast()
 	const dropdownRef = useRef(null)
 	const navigate = useNavigate()
 
@@ -22,14 +24,22 @@ const ActivityDropdown = ({ activity }) => {
 		}
 	}, [])
 
-	const [isModalOpen, setIsModalOpen] = useState(false)
-	const [issueType, setIssueType] = useState('')
-
-	const openReasonsModal = () => {
-		setIsModalOpen(true)
+	const handleCopyPost = () => {
+		const { protocol, hostname } = window.location
+		let baseUrl = `${protocol}//${hostname}`
+		if (hostname === 'localhost') {
+			baseUrl = baseUrl + ':5173'
+		}
+		const copyLink = `${baseUrl}/Activities/${activity.DocId}`
+		navigator.clipboard
+			.writeText(copyLink)
+			.then(() => {
+				toast.open('success', 'Copied', 'Post link has been copied!')
+			})
+			.catch((err) => {
+				toast.open('error', 'Failed', 'Post link not copied')
+			})
 	}
-
-	const closeReasonModal = () => setIsModalOpen(false)
 
 	return (
 		<div className='relative inline-block text-left' ref={dropdownRef}>
@@ -54,7 +64,8 @@ const ActivityDropdown = ({ activity }) => {
 						</span>
 						<span
 							className='cursor-pointer block px-4 py-2 text-sm text-brand-gray-dim hover:bg-system-primary-bg'
-							role='menuitem'>
+							role='menuitem'
+							onClick={handleCopyPost}>
 							Copy the post
 						</span>
 						<span
