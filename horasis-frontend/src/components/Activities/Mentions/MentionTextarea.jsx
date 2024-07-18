@@ -90,9 +90,16 @@ const MentionTextarea = ({ user, newPost, handleContentChange }) => {
 
 		if (lastAtSymbol !== -1) {
 			const mentionText = value.slice(lastAtSymbol + 1, cursorPosition)
-			setMentionName(mentionText)
-			setSuggestions(members.filter((user) => user.Username.toLowerCase().includes(mentionText.toLowerCase())))
-			setMentionStart(lastAtSymbol)
+			if (mentionText.includes(' ')) {
+				setSuggestions([])
+				setMentionName('')
+				setMentionStart(-1)
+			} else {
+				console.log(mentionText)
+				setMentionName(mentionText)
+				setSuggestions(members.filter((user) => user.Username.toLowerCase().includes(mentionText.toLowerCase())))
+				setMentionStart(lastAtSymbol)
+			}
 		} else {
 			setSuggestions([])
 			setMentionStart(-1)
