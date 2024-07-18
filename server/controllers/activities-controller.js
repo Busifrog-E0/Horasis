@@ -124,6 +124,30 @@ const GetActivities = async (req, res) => {
             }
         },
         {
+            $lookup: {
+                from: 'Saves',
+                let: { activityId: { $toString: '$_id' }, userId: UserId },
+                pipeline: [
+                    {
+                        $match: {
+                            $expr: {
+                                $and: [                                                                     //INSERTS HASLIKED ARRAY
+                                    { $eq: ['$ActivityId', '$$activityId'] },
+                                    { $eq: ['$UserId', '$$userId'] }
+                                ]
+                            }
+                        }
+                    }
+                ],
+                as: 'HasSaved'
+            }
+        },
+        {
+            $addFields: {
+                HasSaved: { $gt: [{ $size: '$HasSaved' }, 0] }                              //CONVERTS TO BOOLEAN
+            }
+        },
+        {
             $project: {
                 Followees: 0,
                 Connections: 0,                                                             //REMOVE UNNECESSARY FIELDS

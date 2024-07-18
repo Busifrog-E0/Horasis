@@ -11,6 +11,7 @@ import e from 'express';
 import { CheckSameUser, QueryParameterFormatting, ValidateGetEntity } from '../middleware/common.js';
 import { GetFeedActivitiesMiddleware, PostFeedActivitiesMiddleware } from '../middleware/activities-middleware.js';
 import { DeleteLikes, GetLikes, PostLikes } from '../controllers/likes-controller.js';
+import { DeleteSaves, GetSaves, PostSaves } from '../controllers/saves-controller.js';
 const router = e.Router();
 
 router.get('/activities', decodeIDToken, ensureAuthorized("User"),GetFeedActivitiesMiddleware ,ValidateGetEntity, QueryParameterFormatting,SwaggerDocs.get_Activities,
@@ -39,11 +40,24 @@ router.post('/users/:UserId/activities/:ActivityId/like', decodeIDToken, ensureA
     
 router.delete('/users/:UserId/activities/:ActivityId/dislike', decodeIDToken, ensureAuthorized("User"),CheckSameUser, SwaggerDocs.patch_Activities_ActivityId_Dislike,
     // @ts-ignore
-    asyncHandler(DeleteLikes));  
+    asyncHandler(DeleteLikes)); 
+    
+
+router.post('/users/:UserId/activities/:ActivityId/save', decodeIDToken, ensureAuthorized("User"), CheckSameUser, SwaggerDocs.patch_Activities_ActivityId_Like,
+    // @ts-ignore
+    asyncHandler(PostLikes));
+
+router.delete('/users/:UserId/activities/:ActivityId/save', decodeIDToken, ensureAuthorized("User"), CheckSameUser, SwaggerDocs.patch_Activities_ActivityId_Dislike,
+    // @ts-ignore
+    asyncHandler(PostSaves));      
 
 router.get('/activities/:ActivityId/likedUsers', decodeIDToken, ensureAuthorized("User"),ValidateGetEntity,QueryParameterFormatting, SwaggerDocs.get_Activities_ActivityId_LikedUsers,
     //@ts-ignore
-asyncHandler(GetLikes))    
+    asyncHandler(DeleteSaves))  
+
+router.get('user/:UserId/activities/save', decodeIDToken, ensureAuthorized("User"), ValidateGetEntity, QueryParameterFormatting, SwaggerDocs.get_Activities,
+    //@ts-ignore
+    asyncHandler(GetSaves))     
 
 router.delete('/activities/:ActivityId', decodeIDToken, ensureAuthorized("User"),SwaggerDocs.delete_Activities_ActivityId,
     // @ts-ignore
