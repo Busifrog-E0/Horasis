@@ -1,6 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import ReportPostButton from './ReportPost/ReportPostButton'
+import Modal from '../ui/Modal'
+import Button from '../ui/Button'
 
 const ActivityDropdown = ({ activity }) => {
 	const [isOpen, setIsOpen] = useState(false)
@@ -19,6 +21,15 @@ const ActivityDropdown = ({ activity }) => {
 			document.removeEventListener('mousedown', handleClickOutside)
 		}
 	}, [])
+
+	const [isModalOpen, setIsModalOpen] = useState(false)
+	const [issueType, setIssueType] = useState('')
+
+	const openReasonsModal = () => {
+		setIsModalOpen(true)
+	}
+
+	const closeReasonModal = () => setIsModalOpen(false)
 
 	return (
 		<div className='relative inline-block text-left' ref={dropdownRef}>
@@ -52,6 +63,7 @@ const ActivityDropdown = ({ activity }) => {
 							onClick={() => navigate(`/Activities/${activity.DocId}`)}>
 							View the post
 						</span>
+
 						<ReportPostButton />
 					</div>
 				</div>

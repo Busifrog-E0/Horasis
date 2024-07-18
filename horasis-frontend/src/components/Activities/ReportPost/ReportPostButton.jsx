@@ -1,7 +1,6 @@
 import { useState } from 'react'
-import Modal from '../../ui/Modal'
-import Input from '../../ui/Input'
 import Button from '../../ui/Button'
+import Modal from '../../ui/Modal'
 
 const ReportPostButton = () => {
 	const [isModalOpen, setIsModalOpen] = useState(false)
@@ -32,7 +31,7 @@ const ReportPostButton = () => {
 					</button>
 				</Modal.Header>
 				<Modal.Body>
-					<div className='flex flex-col gap-4 px-10'>
+					<div className='flex flex-col gap-4'>
 						<p className='text-system-secondary-text'>
 							We rely on our community to help us maintain a safe and welcoming environment. Please report any posts
 							that violate our guidelines.
