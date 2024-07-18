@@ -24,12 +24,9 @@ const ActivityCarousel = ({ slides }) => {
 	}
 
 	return (
-		<div className='aspect-square w-full m-auto py-2 relative'>
+		<div className='w-full h-96 m-auto mb-6 mt-3 relative bg-black'>
 			{slides[currentIndex].Type === 'image' && (
-				<div
-					// key={slides[currentIndex].FileUrl}
-					style={{ backgroundImage: `url(${slides[currentIndex].FileUrl})` }}
-					className='w-full h-full rounded-2xl bg-center bg-cover duration-500'></div>
+				<img src={slides[currentIndex].FileUrl} className='w-full h-full rounded-2xl bg-center bg-cover duration-500 object-contain'></img>
 			)}
 			{slides[currentIndex].Type === 'video' && (
 				<video
