@@ -13,6 +13,7 @@ import { jsonToQuery } from '../utils/searchParams/extractSearchParams'
 import Spinner from '../components/ui/Spinner'
 import { useParams } from 'react-router-dom'
 import ActivityComponent from '../components/Activities/ActivityComponent'
+import MentionedTab from '../components/Activities/Mentions/MentionedTab'
 
 
 
@@ -54,7 +55,7 @@ const SingleActivity = () => {
                                 <h4 className='font-medium text-2xl text-system-primary-text'>Mentions</h4>
                                 {/* arrow cursor-pointer */}
                             </div>
-                            <EmptyMembers emptyText={'No mentions'} />
+                            <MentionedTab />
                         </div>
                     </div>
                 </div>
