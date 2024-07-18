@@ -1,5 +1,6 @@
 import {
     GetOneFromActivities, GetActivities, PostActivities, PatchActivities, DeleteActivities,
+    GetUserActivities,
 } from '../controllers/activities-controller.js';
 import asyncHandler from 'express-async-handler';
 
@@ -15,6 +16,10 @@ const router = e.Router();
 router.get('/activities', decodeIDToken, ensureAuthorized("User"),GetFeedActivitiesMiddleware ,ValidateGetEntity, QueryParameterFormatting,SwaggerDocs.get_Activities,
     //@ts-ignore
     asyncHandler(GetActivities));
+
+router.get('/user/:UserId/activities', decodeIDToken, ensureAuthorized("User"), GetFeedActivitiesMiddleware, ValidateGetEntity, QueryParameterFormatting, SwaggerDocs.get_Activities,
+    //@ts-ignore
+    asyncHandler(GetUserActivities));    
 
 router.get('/activities/:ActivityId', decodeIDToken, ensureAuthorized("User"),SwaggerDocs.get_Activities_ActivityId,
     // @ts-ignore

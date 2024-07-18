@@ -137,7 +137,7 @@ const GetActivities = async (req, res) => {
         const [Index, nextId] = NextId.split('--');
         AggregateArray.splice(5, 0, {
             $match:
-            {
+            {//@ts-ignore
                 $expr: {
                     $or: [
                         { $lt: ['$Index', Index] },
@@ -147,7 +147,7 @@ const GetActivities = async (req, res) => {
                                 { $lt: ['$_id', new ObjectId(nextId)] }
                             ]
                         }
-                    ]
+                    ],
                 }
             }
         });
@@ -155,6 +155,28 @@ const GetActivities = async (req, res) => {
     const data = await AggregateActivities(AggregateArray);
     return res.json(data);
 };
+
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ * @returns 
+ */
+const GetUserActivities = async (req, res) => {
+    const { UserId } = req.params;
+    const { Filter, NextId, Limit, OrderBy } = req.query;
+    //@ts-ignore
+    Filter.UserId = UserId;
+    const UserDetails = await ReadOneFromUsers(UserId);
+    //@ts-ignore
+    const Activities = await ReadActivities(Filter, NextId, Limit, OrderBy);
+    const data = await Promise.all(Activities.map(async Activity => {
+        const checkLike = await ReadLikes({ ActivityId: Activity.DocId, UserId }, undefined, 1, undefined);
+        const HasLiked = checkLike.length > 0 ? true : false;
+        return {...Activity,UserDetails,HasLiked}
+    }))
+    return res.json(data)
+}
 
 /**
  * 
@@ -202,6 +224,7 @@ const PatchActivities = async (req, res) => {
  */
 const DeleteActivities = async (req, res) => {
     const { ActivityId } = req.params;
+    //@ts-ignore
     const { UserId } = req.user;
     const Activity = await ReadOneFromActivities(ActivityId);
     if (Activity.UserId !== UserId) {
@@ -211,7 +234,12 @@ const DeleteActivities = async (req, res) => {
     return res.json(true);
 }
 
-
+/**
+ * 
+ * @param {{FileData : Array,FileName : string}[]} MediaFiles 
+ * @param {{FileData : Array,FileName : string}[]} Documents 
+ * @returns {Promise<boolean>}
+ */
 const CheckFileType = async (MediaFiles, Documents) => {
     const validate = async (FileData, Format) => {
         const FileDataBuffer = new Uint8Array(FileData);
@@ -235,6 +263,14 @@ const CheckFileType = async (MediaFiles, Documents) => {
     return true;
 }
 
+/**
+ * 
+ * @param {{FileData : Array,FileName : string}[]} MediaFiles 
+ * @param {{FileData : Array,FileName : string}[]} Documents  
+ * @param {string} UserId 
+ * @param {string} ActivityId 
+ * @returns 
+ */
 const UploadFiles = async (MediaFiles, Documents, UserId, ActivityId) => {
     const MediaFilesLinks = await Promise.all(MediaFiles.map(async File => {
         const { FileData, FileName } = File;
@@ -257,7 +293,12 @@ const UploadFiles = async (MediaFiles, Documents, UserId, ActivityId) => {
 
 
 
-
+/**
+ * 
+ * @param {object} Data 
+ * @param {string} UserId 
+ * @returns 
+ */
 const PostActivityForProfilePatch = async (Data, UserId) => {
     let Activity = {}
     if (Data.CoverPicture) {
@@ -305,5 +346,5 @@ const ExtractMentionedUsersFromContent = async (Content) => {
 
 export {
     GetOneFromActivities, GetActivities, PostActivities, PatchActivities, DeleteActivities,
-    PostActivityForProfilePatch
+    PostActivityForProfilePatch,GetUserActivities
 }
