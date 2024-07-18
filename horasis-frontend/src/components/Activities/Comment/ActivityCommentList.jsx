@@ -46,7 +46,6 @@ const ActivityCommentList = ({
 		)
 	}
 
-
 	return (
 		<div className='flex items-center justify-between flex-col w-full mt-4'>
 			<div className='flex-1 mt-2 rounded-md p-2 px-3 border border-system-secondary-accent bg-system-secondary-bg flex flex-col gap-4 w-full'>
@@ -60,22 +59,24 @@ const ActivityCommentList = ({
 							setComment(e.target.value)
 						}}
 					/>
-					{isLoading ?
+					{isLoading ? (
 						<Spinner />
-						:
-						<svg className="w-6 h-6 text-system-primary-accent cursor-pointer" onClick={() => {
-							postComment()
-						}} xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" >
-							<path d="M120-160v-640l760 320-760 320Zm80-120 474-200-474-200v140l240 60-240 60v140Zm0 0v-400 400Z" />
+					) : (
+						<svg
+							className='w-6 h-6 text-system-primary-accent cursor-pointer'
+							onClick={() => {
+								postComment()
+							}}
+							xmlns='http://www.w3.org/2000/svg'
+							viewBox='0 -960 960 960'>
+							<path d='M120-160v-640l760 320-760 320Zm80-120 474-200-474-200v140l240 60-240 60v140Zm0 0v-400 400Z' />
 						</svg>
-
-					}
-
+					)}
 				</div>
 			</div>
 			<div className='flex items-center  justify-between mt-4 flex-col gap-1 w-full'>
 				{comments.map((item) => (
-					<ActivityComment key={item.DocId} comment={item} />
+					<ActivityComment key={item.DocId} comment={item} activity={activity} />
 				))}
 			</div>
 			{isLoadingMore && (
