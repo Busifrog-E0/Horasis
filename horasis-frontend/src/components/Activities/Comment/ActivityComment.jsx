@@ -122,11 +122,11 @@ const ActivityComment = ({ comment, activity, commentId, getSingleActivity }) =>
 			<div className='flex items-start gap-2 bg-system-secondary-bg w-full p-4 rounded-lg'>
 				{comment?.UserDetails?.ProfilePicture ? (
 					<>
-						<img className='w-8 h-8 rounded-full' src={comment?.UserDetails?.ProfilePicture} alt='Rounded avatar' />
+						<img className='w-8 h-8 rounded-full object-cover' src={comment?.UserDetails?.ProfilePicture} alt='Rounded avatar' />
 					</>
 				) : (
 					<>
-						<img className='w-8 h-8 rounded-full' src={avatar} alt='Rounded avatar' />
+						<img className='w-8 h-8 rounded-full object-cover' src={avatar} alt='Rounded avatar' />
 					</>
 				)}
 
