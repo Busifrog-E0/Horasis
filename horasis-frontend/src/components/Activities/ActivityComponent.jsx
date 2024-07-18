@@ -223,6 +223,12 @@ const ActivityComponent = ({ bordered, activity, activityId, onDelete }) => {
 				<div className='mt-5'>
 					<h4 className='text-system-primary-text font-medium text-xl'>{singleActivity.Content}</h4>
 				</div>
+				{
+					singleActivity.Mentions?.length > 0 &&
+					<div className='mb-2 mt-1'>
+						<p className='text-system-primary-text font-normal text-xs m-0'>{singleActivity.Mentions?.length} Mentions</p>
+					</div>
+				}
 				{singleActivity?.MediaFiles && singleActivity.MediaFiles.length > 0 && (
 					<div>
 						<ActivityCarousel slides={singleActivity.MediaFiles} />
