@@ -96,39 +96,37 @@ const TimeLineTab = ({ gapBnTabs = "", bordered = false, header, classNameForPos
         fetch()
     }, [filters])
 
-    if (isLoading)
-        return (
-            <div className=''>
-                <Spinner />
-            </div>
-        )
-
     return (
         <div>
             <PostComponent className={classNameForPost} onSuccess={fetch} />
 
             {header && <h4 className='font-medium text-2xl text-system-primary-text mt-3 lg:mt-9 mb-4'>All Updates</h4>}
-            {activitiesData.length > 0 ?
-                <>
-                    <ActivityListComponent onDelete={onDelete} gapBnTabs={gapBnTabs} bordered={bordered} activitiesData={activitiesData} />
-                    {isLoadingMore && (
-                        <div className='bg-system-secondary-bg p-4 rounded-b-lg '>
-                            <Spinner />
-                        </div>
-                    )}
-                    {
-                        !pageDisabled &&
-                        (
-                            <div onClick={fetchMore}
-                                className='flex flex-row justify-end mt-4 mb-2'>
-                                <div className='cursor-pointer flex items-center gap-2'>
-                                    <h4 className='font-semibold text-xl text-system-primary-accent'>Load More</h4>
+
+            {
+                isLoading ?
+                    <Spinner />
+                    :
+                    activitiesData.length > 0 ?
+                        <>
+                            <ActivityListComponent onDelete={onDelete} gapBnTabs={gapBnTabs} bordered={bordered} activitiesData={activitiesData} />
+                            {isLoadingMore && (
+                                <div className='bg-system-secondary-bg p-4 rounded-b-lg '>
+                                    <Spinner />
                                 </div>
-                            </div>
-                        )}
-                </>
-                :
-                <EmptyMembers emptyText={"You don't have any updates."} />
+                            )}
+                            {
+                                !pageDisabled &&
+                                (
+                                    <div onClick={fetchMore}
+                                        className='flex flex-row justify-end mt-4 mb-2'>
+                                        <div className='cursor-pointer flex items-center gap-2'>
+                                            <h4 className='font-semibold text-xl text-system-primary-accent'>Load More</h4>
+                                        </div>
+                                    </div>
+                                )}
+                        </>
+                        :
+                        <EmptyMembers emptyText={"You don't have any updates."} />
             }
         </div>
     )
