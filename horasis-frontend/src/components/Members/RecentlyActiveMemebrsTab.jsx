@@ -86,7 +86,7 @@ const RecentlyActiveMemebrsTab = () => {
 
                     <div className="flex items-center flex-wrap gap-3">
                         {members.map((member, index) => {
-                            return <div className="cursor-pointer" onClick={() => { }}>
+                            return <div className="cursor-pointer" onClick={() => { }} key={member.DocId}>
                                 {member?.ProfilePicture ? (
                                     <>
                                         <img className="w-12 h-12 rounded-full object-cover" src={member?.ProfilePicture} alt='Rounded avatar' />
