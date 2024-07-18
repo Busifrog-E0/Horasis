@@ -212,10 +212,10 @@ const GetMentionedActivities = async (req, res) => {
     const { Filter, NextId, Limit, OrderBy } = req.query;
     //@ts-ignore
     Filter["Mentions"] = { '$elemMatch': { UserId: UserId } };
-    const UserDetails = await ReadOneFromUsers(UserId);
     //@ts-ignore
     const Activities = await ReadActivities(Filter, NextId, Limit, OrderBy);
     const data = await Promise.all(Activities.map(async Activity => {
+        const UserDetails = await ReadOneFromUsers(Activity.UserId);
         const checkLike = await ReadLikes({ ActivityId: Activity.DocId, UserId }, undefined, 1, undefined);
         const checkSave = await ReadSaves({ ActivityId: Activity.DocId, UserId }, undefined, 1, undefined);
         const HasSaved = checkSave.length > 0 ? true : false;
