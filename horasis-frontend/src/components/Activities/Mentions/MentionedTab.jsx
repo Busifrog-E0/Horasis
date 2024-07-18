@@ -1,16 +1,16 @@
-import React, { forwardRef, useContext, useEffect, useImperativeHandle, useState } from 'react';
-import { AuthContext } from '../../utils/AuthProvider';
-import { jsonToQuery } from '../../utils/searchParams/extractSearchParams';
-import { getNextId } from '../../utils/URLParams';
-import { getItem } from '../../constants/operations';
-import ActivityListComponent from './ActivityListComponent';
-import Spinner from '../ui/Spinner';
-import EmptyMembers from '../Common/EmptyMembers';
-import { useToast } from '../Toast/ToastService';
-import ActivityComponent from './ActivityComponent';
-import PostComponent from './PostComponent';
+import { useContext, useEffect, useState } from "react"
+import { AuthContext } from "../../../utils/AuthProvider"
+import { useToast } from "../../Toast/ToastService"
+import { jsonToQuery } from "../../../utils/searchParams/extractSearchParams"
+import { getNextId } from "../../../utils/URLParams"
+import { getItem } from "../../../constants/operations"
+import Spinner from "../../ui/Spinner"
+import ActivityListComponent from "../ActivityListComponent"
+import EmptyMembers from "../../Common/EmptyMembers"
+import DropdownMenu from "../../ui/DropdownMenu"
+import { relativeTime } from "../../../utils/date"
 
-const TimeLineTab = ({ gapBnTabs = "", bordered = false, header, classNameForPost = "" }) => {
+const MentionedTab = ({ gapBnTabs = "", bordered = false }) => {
 
     const { updateCurrentUser, currentUserData } = useContext(AuthContext)
     const toast = useToast()
@@ -22,6 +22,7 @@ const TimeLineTab = ({ gapBnTabs = "", bordered = false, header, classNameForPos
         OrderBy: 'Index',
         Limit: 10,
         Keyword: '',
+
     })
 
 
@@ -42,7 +43,7 @@ const TimeLineTab = ({ gapBnTabs = "", bordered = false, header, classNameForPos
     }
 
     const getAllActivities = (tempActivites) => {
-        getData(`activities?&${jsonToQuery(filters)}`, tempActivites, setActivitiesData)
+        getData(`user/${currentUserData.CurrentUser.UserId}/mentions/activities?&${jsonToQuery(filters)}`, tempActivites, setActivitiesData)
     }
     const getData = (endpoint, tempData, setData) => {
         setLoadingCom(tempData, true)
@@ -89,7 +90,7 @@ const TimeLineTab = ({ gapBnTabs = "", bordered = false, header, classNameForPos
     const fetchMore = () => fetchData(false)
 
     useEffect(() => {
-        if (activitiesData.length > 0) hasAnyLeft(`activities`, activitiesData)
+        if (activitiesData.length > 0) hasAnyLeft(`user/${currentUserData.CurrentUser.UserId}/mentions/activities`, activitiesData)
     }, [activitiesData])
 
     useEffect(() => {
@@ -98,9 +99,7 @@ const TimeLineTab = ({ gapBnTabs = "", bordered = false, header, classNameForPos
 
     return (
         <div>
-            <PostComponent className={classNameForPost} onSuccess={fetch} />
-
-            {header && <h4 className='font-medium text-2xl text-system-primary-text mt-3 lg:mt-9 mb-4'>All Updates</h4>}
+            {/* {header && <h4 className='font-medium text-2xl text-system-primary-text mb-4'>All Mentions</h4>} */}
 
             {
                 isLoading ?
@@ -108,30 +107,15 @@ const TimeLineTab = ({ gapBnTabs = "", bordered = false, header, classNameForPos
                     :
                     activitiesData.length > 0 ?
                         <>
-                            <ActivityListComponent avatarSize={'w-16 h-16'}
-                                className={`p-5 bg-system-secondary-bg rounded-lg ${bordered && 'border border-system-file-border'} relative`}
-                                onDelete={onDelete} gapBnTabs={gapBnTabs} bordered={bordered} activitiesData={activitiesData} />
-                            {isLoadingMore && (
-                                <div className='bg-system-secondary-bg p-4 rounded-b-lg '>
-                                    <Spinner />
-                                </div>
-                            )}
-                            {
-                                !pageDisabled &&
-                                (
-                                    <div onClick={fetchMore}
-                                        className='flex flex-row justify-end mt-4 mb-2'>
-                                        <div className='cursor-pointer flex items-center gap-2'>
-                                            <h4 className='font-semibold text-xl text-system-primary-accent'>Load More</h4>
-                                        </div>
-                                    </div>
-                                )}
+                            <ActivityListComponent
+                                className={`border-b pb-5 border-system-file-border relative`} avatarSize="w-10 h-10"
+                                onDelete={onDelete} gapBnTabs={"gap-5"} bordered={bordered} activitiesData={activitiesData} />
                         </>
                         :
-                        <EmptyMembers emptyText={"You don't have any updates."} />
+                        <EmptyMembers emptyText={'No mentions'} />
             }
         </div>
     )
 }
 
-export default TimeLineTab;
+export default MentionedTab

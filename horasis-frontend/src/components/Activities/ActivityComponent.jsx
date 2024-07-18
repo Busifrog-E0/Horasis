@@ -15,7 +15,7 @@ import Spinner from '../ui/Spinner'
 import ViewLikedMembers from './Likes/ViewLikedMembers'
 import ActivityDropdown from './ActivityDropdown'
 import MentionTextLink from './Mentions/MentionTextLink'
-const ActivityComponent = ({ bordered, activity, activityId, onDelete }) => {
+const ActivityComponent = ({ bordered, activity, activityId, onDelete, className, avatarSize }) => {
 	const [showComment, setShowComment] = useState(false)
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
 	const toast = useToast()
@@ -233,7 +233,7 @@ const ActivityComponent = ({ bordered, activity, activityId, onDelete }) => {
 	// }
 	if (singleActivity)
 		return (
-			<div className={`p-5 bg-system-secondary-bg rounded-lg ${bordered && 'border border-system-file-border'} relative`}>
+			<div className={className}>
 				{isLoadingActivity && <div style={{ zIndex: 1000 }} className='absolute top-0 bottom-0 right-0 left-0 flex flex-col justify-center items-center'>
 					<Spinner />
 				</div>}
@@ -242,14 +242,14 @@ const ActivityComponent = ({ bordered, activity, activityId, onDelete }) => {
 					{singleActivity.UserDetails?.ProfilePicture ? (
 						<>
 							<img
-								className='w-16 h-16 rounded-full object-cover'
+								className={`${avatarSize} rounded-full object-cover`}
 								src={singleActivity.UserDetails?.ProfilePicture}
 								alt='Rounded avatar'
 							/>
 						</>
 					) : (
 						<>
-							<img className='w-16 h-16 rounded-full object-cover' src={avatar} alt='Rounded avatar' />
+							<img className={`${avatarSize} rounded-full object-cover`} src={avatar} alt='Rounded avatar' />
 						</>
 					)}
 
@@ -268,12 +268,12 @@ const ActivityComponent = ({ bordered, activity, activityId, onDelete }) => {
 				<div className='mt-5'>
 					<MentionTextLink singleActivity={singleActivity} />
 				</div>
-				{
+				{/* {
 					singleActivity.Mentions?.length > 0 &&
 					<div className='mb-2 mt-1'>
 						<p className='text-system-primary-text font-normal text-xs m-0'>{singleActivity.Mentions?.length} Mentions</p>
 					</div>
-				}
+				} */}
 				{singleActivity?.MediaFiles && singleActivity.MediaFiles.length > 0 && (
 					<div>
 						<ActivityCarousel slides={singleActivity.MediaFiles} />

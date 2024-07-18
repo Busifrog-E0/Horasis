@@ -3,6 +3,7 @@ import RecentlyActiveMemebrsTab from '../components/Members/RecentlyActiveMemebr
 import CurrentProfileTab from '../components/Profile/CurrentProfileTab'
 import EmptyMembers from '../components/Common/EmptyMembers'
 import TimeLineTab from '../components/Activities/TimeLineTab'
+import MentionedTab from '../components/Activities/Mentions/MentionedTab'
 
 const Activities = () => {
 
@@ -77,61 +78,8 @@ const Activities = () => {
                                 <h4 className='font-medium text-2xl text-system-primary-text'>Mentions</h4>
                                 {/* arrow cursor-pointer */}
                             </div>
-                            <EmptyMembers emptyText={'No mentions'} />
-                            {/* <div className="flex flex-col gap-4">
-                            <div className="border-b border-system-file-border pb-4">
-                                <div className="flex items-start gap-2 ">
-                                    <img className="w-12 h-12 rounded-full" src="https://flowbite.com/docs/images/people/profile-picture-1.jpg" alt="Rounded avatar" />
-
-                                    <div className="flex-1">
-                                        <div className="flex items-start justify-between gap-10">
-                                            <h4 className="font-semibold text-system-primary-accent">James Lim</h4>
-                                            <h4 className="font-medium text-sm text-brand-gray-dim">{relativeTime(new Date().getTime())}</h4>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="mt-2">
-                                    <h4 className="text-brand-gray-dim text-sm">Any interesting events coming up? <span className="text-system-primary-text font-semibold">Frank-Jurgen Ritcher</span></h4>
-                                </div>
-                                <div className="flex items-center justify-between gap-10 mt-3">
-                                    <div className="flex flex-wrap items-start justify-between gap-10">
-                                        <div className="flex items-start gap-1 cursor-pointer">
-                                            <p className="text-sm text-brand-gray-dim mt-1">likes</p>
-                                        </div>
-                                        <div className="flex items-start gap-1 cursor-pointer">
-                                            <p className="text-sm text-brand-gray-dim mt-1">replies</p>
-                                        </div>
-                                    </div>
-                                    <DropdownMenu />
-                                </div>
-                            </div>
-                            <div className="border-b border-system-file-border pb-4">
-                                <div className="flex items-start gap-2 ">
-                                    <img className="w-12 h-12 rounded-full" src="https://flowbite.com/docs/images/people/profile-picture-1.jpg" alt="Rounded avatar" />
-
-                                    <div className="flex-1">
-                                        <div className="flex items-start justify-between gap-10">
-                                            <h4 className="font-semibold text-system-primary-accent">James Lim</h4>
-                                            <h4 className="font-medium text-sm text-brand-gray-dim">{relativeTime(new Date().getTime())}</h4>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="mt-2">
-                                    <h4 className="text-brand-gray-dim text-sm">Thank you! <span className="text-system-primary-text font-semibold">Frank-Jurgen Ritcher</span></h4>
-                                </div>
-                                <div className="flex items-center justify-between gap-10 mt-3">
-                                    <div className="flex flex-wrap items-start justify-between gap-10">
-                                        <div className="flex items-start gap-1 cursor-pointer">
-                                            <p className="text-sm text-brand-gray-dim mt-1">likes</p>
-                                        </div>
-                                        <div className="flex items-start gap-1 cursor-pointer">
-                                            <p className="text-sm text-brand-gray-dim mt-1">replies</p>
-                                        </div>
-                                    </div>
-                                    <DropdownMenu />
-                                </div>
-                            </div>
-                        </div> */}
+                            <MentionedTab />
+                            {/*  */}
                         </div>
                     </div>
                 </div>
