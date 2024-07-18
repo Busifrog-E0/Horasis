@@ -33,7 +33,6 @@ const ActivityComponent = ({ bordered, activity, activityId, onDelete }) => {
 
 	const onLikeBtnClicked = (api) => {
 		setIsLiking(true)
-		console.log('onLikeBtnClicked')
 		postItem(
 			`users/${currentUserData.CurrentUser.UserId}/activities/${singleActivity.DocId}/like`,
 			{},
@@ -53,10 +52,28 @@ const ActivityComponent = ({ bordered, activity, activityId, onDelete }) => {
 			toast
 		)
 	}
-
+	const onUnLikeBtnClicked = (api) => {
+		setIsLiking(true)
+		deleteItem(
+			`users/${currentUserData.CurrentUser.UserId}/activities/${singleActivity.DocId}/disLike`,
+			(result) => {
+				console.log(result)
+				if (result === true) {
+					getSingleActivity()
+				}
+				setIsLiking(false)
+			},
+			(err) => {
+				setIsLiking(false)
+				console.error(err)
+			},
+			updateCurrentUser,
+			currentUserData,
+			toast
+		)
+	}
 	const onDeleteBtnClicked = (api) => {
 		setIsDeleting(true)
-		console.log('onLikeBtnClicked')
 		deleteItem(
 			`activities/${singleActivity.DocId}`,
 			(result) => {
@@ -179,14 +196,14 @@ const ActivityComponent = ({ bordered, activity, activityId, onDelete }) => {
 					{singleActivity.UserDetails?.ProfilePicture ? (
 						<>
 							<img
-								className='w-16 h-16 rounded-full'
+								className='w-16 h-16 rounded-full object-cover'
 								src={singleActivity.UserDetails?.ProfilePicture}
 								alt='Rounded avatar'
 							/>
 						</>
 					) : (
 						<>
-							<img className='w-16 h-16 rounded-full' src={avatar} alt='Rounded avatar' />
+							<img className='w-16 h-16 rounded-full object-cover' src={avatar} alt='Rounded avatar' />
 						</>
 					)}
 
@@ -216,7 +233,12 @@ const ActivityComponent = ({ bordered, activity, activityId, onDelete }) => {
 							<Spinner />
 						) : (
 							<div className='flex items-center gap-2'>
-								<img src={like} className='h-6 w-6 cursor-pointer' onClick={onLikeBtnClicked} />
+								{
+									activity.HasLiked ?
+										<img src={like} className='h-6 w-6 cursor-pointer text-system-error' onClick={onUnLikeBtnClicked} />
+										:
+										<img src={like} className='h-6 w-6 cursor-pointer' onClick={onLikeBtnClicked} />
+								}
 								<ViewLikedMembers activity={singleActivity} />
 							</div>
 						)}
