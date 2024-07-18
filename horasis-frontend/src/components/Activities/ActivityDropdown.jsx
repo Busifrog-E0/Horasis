@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import ReportPostButton from './ReportPost/ReportPostButton'
 
 const ActivityDropdown = ({ activity }) => {
 	const [isOpen, setIsOpen] = useState(false)
@@ -51,11 +52,7 @@ const ActivityDropdown = ({ activity }) => {
 							onClick={() => navigate(`/Activities/${activity.DocId}`)}>
 							View the post
 						</span>
-						<span
-							className='cursor-pointer block px-4 py-2 text-sm text-brand-gray-dim hover:bg-system-primary-bg'
-							role='menuitem'>
-							Report Post
-						</span>
+						<ReportPostButton />
 					</div>
 				</div>
 			)}

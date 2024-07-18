@@ -1,29 +1,19 @@
 import { useNavigate } from 'react-router-dom'
 import Tab from '../components/ui/Tab'
-import EventsList from '../components/Events/EventsList'
 import { useContext, useEffect, useState } from 'react'
 import { MAINTAB, _retrieveData, _storeData } from '../utils/LocalStorage'
-import MembersSection from '../components/Connections/MembersSection'
-import { relativeTime } from '../utils/date'
-import DropdownMenu from '../components/ui/DropdownMenu'
-import StaggeredList from '../components/ui/StaggeredList'
-import VideoPlayer from '../components/ui/VideoPlayer'
 import { getItem, patchItem, postItem } from '../constants/operations'
 import { AuthContext } from '../utils/AuthProvider'
 import Modal from '../components/ui/Modal'
-import Input from '../components/ui/Input'
 import Spinner from '../components/ui/Spinner'
 import AboutProfile from '../components/Profile/AboutProfile'
-import Button from '../components/ui/Button'
-import PictureUpload from '../components/Profile/PictureUpload'
+import PictureUpload from '../components/Profile/EditProfile/PictureUpload'
 import avatar from '../assets/icons/avatar.svg'
 import cover from '../assets/icons/cover.svg'
-import EmptyMembers from '../components/Common/EmptyMembers'
-import ConnectionsTab from '../components/Connections/Tabs/ConnectionsTab'
 import { useToast } from '../components/Toast/ToastService'
-import { getNextId } from '../utils/URLParams'
-import { jsonToQuery } from '../utils/searchParams/extractSearchParams'
-import TimeLine from '../components/Activities/Timeline'
+import TimeLineTab from '../components/Activities/TimeLineTab'
+import MyConnectionsTab from '../components/Connections/MyConnectionsTab'
+import AboutTab from '../components/Profile/Tabs/AboutTab'
 
 const tabs = (user, getUserDetails) => [
 	{
@@ -31,7 +21,7 @@ const tabs = (user, getUserDetails) => [
 		title: 'Timeline',
 		render: () => (
 			<div className='bg-system-secondary-bg p-4 lg:py-8 lg:px-12 rounded-b-lg '>
-				<TimeLine gapBnTabs="gap-7" classNameForPost="py-5" bordered={true} />
+				<TimeLineTab gapBnTabs="gap-7" classNameForPost="py-5" bordered={true} />
 			</div>
 		),
 	},
@@ -43,91 +33,7 @@ const tabs = (user, getUserDetails) => [
 	{
 		key: 2,
 		title: 'Connections',
-		render: () => {
-			const { updateCurrentUser, currentUserData } = useContext(AuthContext)
-			const toast = useToast()
-			const [connections, setConnections] = useState([])
-			const [isLoading, setIsLoading] = useState(true)
-			const [isLoadingMore, setIsLoadingMore] = useState(false)
-			const [pageDisabled, setPageDisabled] = useState(true)
-			const [filters, setFilters] = useState({
-				OrderBy: 'Index',
-				Limit: 10,
-				Keyword: '',
-			})
-			const setLoadingCom = (tempArr, value) => {
-				if (tempArr.length > 0) {
-					setIsLoadingMore(value)
-				} else {
-					setIsLoading(value)
-				}
-			}
-			const getConnections = (tempConnections) => {
-				setLoadingCom(tempConnections, true)
-				getItem(
-					`users/${currentUserData.CurrentUser.UserId}/connections?&NextId=${getNextId(tempConnections)}&${jsonToQuery(
-						filters
-					)}`,
-					(data) => {
-						setConnections([...tempConnections, ...data])
-						setLoadingCom(tempConnections, false)
-					},
-					(err) => {
-						setLoadingCom(tempConnections, false)
-						// console.log(err)
-					},
-					updateCurrentUser,
-					currentUserData,
-					toast
-				)
-			}
-
-			const hasAnyLeft = () => {
-				getItem(
-					`users/${currentUserData.CurrentUser.UserId}/connections?NextId=${getNextId(connections)}&${jsonToQuery({
-						...filters,
-						Limit: 1,
-					})}`,
-					(data) => {
-						if (data?.length > 0) {
-							setPageDisabled(false)
-						} else {
-							setPageDisabled(true)
-						}
-					},
-					(err) => {
-						setPageDisabled(true)
-					},
-					updateCurrentUser,
-					currentUserData,
-					toast
-				)
-			}
-
-			useEffect(() => {
-				getConnections([])
-			}, [])
-			useEffect(() => {
-				if (connections.length > 0) hasAnyLeft()
-			}, [connections])
-			return (
-				<div className='bg-system-secondary-bg p-4 lg:p-6 rounded-b-lg '>
-					<ConnectionsTab
-						getConnectionCount={() => { }}
-						data={connections}
-						getAllData={getConnections}
-						isLoading={isLoading}
-						setData={setConnections}
-						setIsLoading={setIsLoading}
-						fetchMore={() => {
-							getConnections(connections)
-						}}
-						isLoadingMore={isLoadingMore}
-						pageDisabled={pageDisabled}
-					/>
-				</div>
-			)
-		},
+		render: () => <MyConnectionsTab />,
 	},
 	// {
 	//   key: 3,
@@ -732,38 +638,6 @@ const MyProfile = () => {
 							alignment='justify-start'
 						/>
 					</div>
-				</div>
-			</div>
-		</>
-	)
-}
-
-const AboutTab = ({ user, getUserDetails, isCurrentUser }) => {
-	return (
-		<>
-			<AboutProfile user={user} getUserDetails={getUserDetails} isCurrentUser={isCurrentUser} />
-			<div className='bg-system-secondary-bg p-4 lg:px-10 lg:py-8 rounded-lg mt-3 lg:mt-5'>
-				<div className='flex flex-row items-center justify-between pb-5 mb-5 border-b border-system-file-border'>
-					<h4 className='font-medium text-lg text-system-primary-text'>Notification</h4>
-					<h4 className='font-medium text-lg text-system-primary-accent'>ON</h4>
-				</div>
-				<div className='flex flex-row items-center justify-between'>
-					<h4 className='font-medium text-lg text-system-primary-text'>Language</h4>
-					<h4 className='font-medium text-lg text-system-primary-accent'>English</h4>
-				</div>
-			</div>
-			<div className='bg-system-secondary-bg p-4 lg:px-10 lg:py-8 rounded-lg mt-3 lg:mt-5'>
-				<div className='flex flex-row items-center justify-between pb-5 mb-5 border-b border-system-file-border'>
-					<h4 className='font-medium text-lg text-system-primary-text'>Security</h4>
-				</div>
-				<div className='flex flex-row items-center justify-between pb-5 mb-5 border-b border-system-file-border'>
-					<h4 className='font-medium text-lg text-system-primary-text'>Help & Support</h4>
-				</div>
-				<div className='flex flex-row items-center justify-between pb-5 mb-5 border-b border-system-file-border'>
-					<h4 className='font-medium text-lg text-system-primary-text'>Contact Us</h4>
-				</div>
-				<div className='flex flex-row items-center justify-between'>
-					<h4 className='font-medium text-lg text-system-primary-text'>Privacy Policy</h4>
 				</div>
 			</div>
 		</>

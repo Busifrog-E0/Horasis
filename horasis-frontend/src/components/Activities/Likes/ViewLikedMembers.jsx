@@ -14,7 +14,7 @@ const ViewLikedMembers = ({ activity }) => {
     const toast = useToast()
     const [isLoading, setIsLoading] = useState(false)
     const [isLoadingMore, setIsLoadingMore] = useState(false)
-    const [isModelOpen, setIsModelOpen] = useState(false)
+    const [isModalOpen, setIsModalOpen] = useState(false)
     const [membersData, setMembersData] = useState([])
     const [pageDisabled, setPageDisabled] = useState(true)
     const [filters, setFilters] = useState({
@@ -23,7 +23,7 @@ const ViewLikedMembers = ({ activity }) => {
     })
 
     const openMembersList = () => {
-        setIsModelOpen(true)
+        setIsModalOpen(true)
         fetch()
     }
 
@@ -93,12 +93,12 @@ const ViewLikedMembers = ({ activity }) => {
 
     return (
         <>
-            <Modal isOpen={isModelOpen} maxWidth={`max-w-4xl`}>
+            <Modal isOpen={isModalOpen} maxWidth={`max-w-4xl`}>
                 <Modal.Header>
                     <p className='text-lg font-medium'>Liked Members</p>
                     <button
                         onClick={() => {
-                            setIsModelOpen(false)
+                            setIsModalOpen(false)
                         }}
                     >
                         close

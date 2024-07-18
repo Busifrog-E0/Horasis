@@ -10,7 +10,7 @@ import { useToast } from '../Toast/ToastService';
 import ActivityComponent from './ActivityComponent';
 import PostComponent from './PostComponent';
 
-const TimeLine = ({ gapBnTabs = "", bordered = false, header, classNameForPost = "" }) => {
+const TimeLineTab = ({ gapBnTabs = "", bordered = false, header, classNameForPost = "" }) => {
 
     const { updateCurrentUser, currentUserData } = useContext(AuthContext)
     const toast = useToast()
@@ -23,6 +23,8 @@ const TimeLine = ({ gapBnTabs = "", bordered = false, header, classNameForPost =
         Limit: 10,
         Keyword: '',
     })
+
+
 
 
     const onDelete = (DocId) => {
@@ -132,4 +134,4 @@ const TimeLine = ({ gapBnTabs = "", bordered = false, header, classNameForPost =
     )
 }
 
-export default TimeLine;
+export default TimeLineTab;

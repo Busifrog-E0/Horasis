@@ -1,9 +1,9 @@
 import { useRef } from 'react'
-import Spinner from '../ui/Spinner'
-import Button from '../ui/Button'
-import avatar from '../../assets/icons/avatar.svg'
-import cover from '../../assets/icons/cover.svg'
-import { useToast } from '../Toast/ToastService'
+import Spinner from '../../ui/Spinner'
+import Button from '../../ui/Button'
+import avatar from '../../../assets/icons/avatar.svg'
+import cover from '../../../assets/icons/cover.svg'
+import { useToast } from '../../Toast/ToastService'
 
 const PictureUpload = ({
 	onImageSelect,

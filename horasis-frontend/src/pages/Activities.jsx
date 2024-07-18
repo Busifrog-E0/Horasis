@@ -2,7 +2,7 @@ import TodaysEventTab from '../components/Events/TodaysEventTab'
 import RecentlyActiveMemebrsTab from '../components/Members/RecentlyActiveMemebrsTab'
 import CurrentProfileTab from '../components/Profile/CurrentProfileTab'
 import EmptyMembers from '../components/Common/EmptyMembers'
-import TimeLine from '../components/Activities/Timeline'
+import TimeLineTab from '../components/Activities/TimeLineTab'
 
 const Activities = () => {
 
@@ -20,7 +20,7 @@ const Activities = () => {
                         </div>
                     </div>
                     <div className='lg:col-span-2'>
-                        <TimeLine gapBnTabs="gap-3" classNameForPost='p-5 pr-10 ' header="All Updates" />
+                        <TimeLineTab gapBnTabs="gap-3" classNameForPost='p-5 pr-10 ' header="All Updates" />
                     </div>
                     <div>
                         <div className='p-5 bg-system-secondary-bg rounded-lg'>

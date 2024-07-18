@@ -164,14 +164,17 @@ const ActivityComponent = ({ bordered, activity, activityId, onDelete }) => {
 		else setIsLoadingActivity(false)
 	}, [activityId])
 
-	if (isLoadingActivity) {
-		return <div className={`p-5 bg-system-secondary-bg rounded-lg ${bordered && 'border border-system-file-border'}`}>
-			<Spinner />
-		</div>
-	}
+	// if (isLoadingActivity) {
+	// 	return <div className={`p-5 bg-system-secondary-bg rounded-lg ${bordered && 'border border-system-file-border'}`}>
+	// 	</div>
+	// }
 	if (singleActivity)
 		return (
-			<div className={`p-5 bg-system-secondary-bg rounded-lg ${bordered && 'border border-system-file-border'}`}>
+			<div className={`p-5 bg-system-secondary-bg rounded-lg ${bordered && 'border border-system-file-border'} relative`}>
+				{isLoadingActivity && <div style={{ zIndex: 1000 }} className='absolute top-0 bottom-0 right-0 left-0 flex flex-col justify-center items-center'>
+					<Spinner />
+				</div>}
+
 				<div className='flex items-start gap-2'>
 					{singleActivity.UserDetails?.ProfilePicture ? (
 						<>
@@ -195,7 +198,7 @@ const ActivityComponent = ({ bordered, activity, activityId, onDelete }) => {
 								</h4>
 								{/* <h4 className='text-system-primary-text text-md'>Updated their photo</h4> */}
 							</div>
-							<h4 className='font-medium text-base text-brand-gray-dim'>{relativeTime(new Date().getTime())}</h4>
+							<h4 className='font-medium text-base text-brand-gray-dim'>{relativeTime(activity.CreatedIndex)}</h4>
 						</div>
 					</div>
 				</div>

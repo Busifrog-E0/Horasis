@@ -6,6 +6,7 @@ import Input from "../ui/Input"
 import { useToast } from "../Toast/ToastService"
 import Spinner from "../ui/Spinner"
 import MentionTextarea from "./Mentions/MentionTextarea"
+import { activityValidation } from "../../utils/schema/users/activityValidation"
 
 const PostComponent = ({ onSuccess, className = "" }) => {
 	const { currentUserData, updateCurrentUser, scrollToTop } = useContext(AuthContext)
@@ -15,6 +16,47 @@ const PostComponent = ({ onSuccess, className = "" }) => {
 	const toast = useToast()
 	const [isLoading, setIsLoading] = useState(false)
 	const [user, setUser] = useState()
+	const [errorOj, setErrorObj] = useState({})
+
+
+
+
+	const validate = (callback) => {
+		const { error, warning } = activityValidation.validate(newPost, {
+			abortEarly: false,
+			stripUnknown: true,
+		})
+		if (error && error.details) {
+			let obj = {}
+			error.details.forEach((val) => (obj[val.context.key] = val.message))
+			setErrorObj(obj)
+		} else {
+			setErrorObj({})
+			if (callback) {
+				callback()
+			}
+		}
+	}
+	const validateSingle = (value, key, callback) => {
+		setNewPost({ ...newPost, ...value })
+		const { error, warning } = activityValidation
+			.extract(key)
+			.validate(value[key], { abortEarly: false, stripUnknown: true })
+		if (error && error.details) {
+			let obj = {}
+			error.details.forEach((val) => (obj[key] = val.message))
+			setErrorObj(obj)
+		} else {
+			setErrorObj({})
+			if (callback) {
+				callback()
+			}
+		}
+	}
+
+
+
+
 	const getUserDetails = () => {
 		getItem(
 			`users/${currentUserData.CurrentUser.UserId}`,
@@ -191,115 +233,124 @@ const PostComponent = ({ onSuccess, className = "" }) => {
 					</>
 				)}
 
-				<div className="flex-1 mt-2 rounded-lg p-2 px-3 border border-system-secondary-accent bg-system-secondary-bg flex flex-col gap-4">
-					{/* <h4 className="font-medium text-xl text-brand-gray-dim italic ">Share what's on your mind, Frank</h4> */}
-					<div className="flex items-center justify-between gap-2">
-						{/* <Input
+				<div className="flex-1">
+					<div className={`flex-1 mt-2 rounded-lg p-2 px-3 border ${Object.values(errorOj).some(error => error) ? "border-system-error" : "border-system-secondary-accent"} bg-system-secondary-bg flex flex-col gap-4`}>
+						{/* <h4 className="font-medium text-xl text-brand-gray-dim italic ">Share what's on your mind, Frank</h4> */}
+						<div className="flex items-center justify-between gap-2">
+							{/* <Input
 							setValue={handleContentChange}
 							width={'full'} value={newPost.Content}
 							className='p-0 border-none rounded-none hover:shadow-none'
 							placeholder={`Share what's on  your mind, ${user && user.FullName}`}
 
 						/> */}
-						<MentionTextarea user={user} handleContentChange={handleContentChange} newPost={newPost} />
-						<svg onClick={handleDocumentUploadClick} aria-hidden='true' className="w-6 h-6 text-brand-gray cursor-pointer" xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'>
-							<path
-								stroke='currentColor'
-								strokeLinecap='round'
-								strokeLinejoin='round'
-								strokeWidth='2'
-								d='M4 12.25V1m0 11.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M4 19v-2.25m6-13.5V1m0 2.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M10 19V7.75m6 4.5V1m0 11.25a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5ZM16 19v-2'
-							/>
-						</svg>
-						<svg onClick={handleImageUploadClick} aria-hidden='true' className="w-6 h-6 text-brand-gray cursor-pointer" xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'>
-							<path
-								stroke='currentColor'
-								strokeLinecap='round'
-								strokeLinejoin='round'
-								strokeWidth='2'
-								d='M4 12.25V1m0 11.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M4 19v-2.25m6-13.5V1m0 2.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M10 19V7.75m6 4.5V1m0 11.25a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5ZM16 19v-2'
-							/>
-						</svg>
-						<svg onClick={onSendBtnClicked} aria-hidden='true' className="w-6 h-6 text-system-primary-accent cursor-pointer" xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'>
-							<path
-								stroke='currentColor'
-								strokeLinecap='round'
-								strokeLinejoin='round'
-								strokeWidth='2'
-								d='M4 12.25V1m0 11.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M4 19v-2.25m6-13.5V1m0 2.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M10 19V7.75m6 4.5V1m0 11.25a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5ZM16 19v-2'
-							/>
-						</svg>
+							<MentionTextarea errorOj={errorOj} user={user} handleContentChange={(e) => validateSingle({ Content: e }, 'Content')} newPost={newPost} />
+							<svg onClick={handleDocumentUploadClick} aria-hidden='true' className="w-6 h-6 text-brand-gray cursor-pointer" xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'>
+								<path
+									stroke='currentColor'
+									strokeLinecap='round'
+									strokeLinejoin='round'
+									strokeWidth='2'
+									d='M4 12.25V1m0 11.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M4 19v-2.25m6-13.5V1m0 2.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M10 19V7.75m6 4.5V1m0 11.25a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5ZM16 19v-2'
+								/>
+							</svg>
+							<svg onClick={handleImageUploadClick} aria-hidden='true' className="w-6 h-6 text-brand-gray cursor-pointer" xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'>
+								<path
+									stroke='currentColor'
+									strokeLinecap='round'
+									strokeLinejoin='round'
+									strokeWidth='2'
+									d='M4 12.25V1m0 11.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M4 19v-2.25m6-13.5V1m0 2.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M10 19V7.75m6 4.5V1m0 11.25a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5ZM16 19v-2'
+								/>
+							</svg>
+							<svg onClick={() => validate(onSendBtnClicked)} aria-hidden='true' className="w-6 h-6 text-system-primary-accent cursor-pointer" xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'>
+								<path
+									stroke='currentColor'
+									strokeLinecap='round'
+									strokeLinejoin='round'
+									strokeWidth='2'
+									d='M4 12.25V1m0 11.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M4 19v-2.25m6-13.5V1m0 2.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M10 19V7.75m6 4.5V1m0 11.25a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5ZM16 19v-2'
+								/>
+							</svg>
+						</div>
+						{newPost?.MediaFiles.length > 0 &&
+							<div className="flex flex-row flex-wrap gap-2">
+								{newPost?.MediaFiles.map((file, index) => {
+									return <div className="relative w-20 h-20" key={index}>
+										<div className="absolute bottom-1 right-1" onClick={() => {
+											handleImageDeleteClick(index)
+										}}>
+											<svg aria-hidden='true' className="w-4 h-4 text-system-error cursor-pointer" xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'>
+												<path
+													stroke='currentColor'
+													strokeLinecap='round'
+													strokeLinejoin='round'
+													strokeWidth='2'
+													d='M4 12.25V1m0 11.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M4 19v-2.25m6-13.5V1m0 2.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M10 19V7.75m6 4.5V1m0 11.25a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5ZM16 19v-2'
+												/>
+											</svg>
+										</div>
+										<div className="w-20 h-20 bg-system-secondary-bg rounded-md border border-system-secondary-accent overflow-hidden">
+
+											<img
+												className='w-full h-full object-cover'
+												src={file.FileUrl}
+												alt='Rounded avatar'
+											/>
+										</div>
+									</div>
+								})
+
+								}
+
+							</div>
+						}
+						{newPost?.Documents.length > 0 &&
+							<div className="flex flex-row flex-wrap gap-2">
+								{newPost?.Documents.map((file, index) => {
+									return <div className="relative w-20 h-20" key={index}>
+										<div className="absolute bottom-1 right-1" onClick={() => {
+											handleDocumentDeleteClick(index)
+										}}>
+											<svg aria-hidden='true' className="w-4 h-4 text-system-error cursor-pointer" xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'>
+												<path
+													stroke='currentColor'
+													strokeLinecap='round'
+													strokeLinejoin='round'
+													strokeWidth='2'
+													d='M4 12.25V1m0 11.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M4 19v-2.25m6-13.5V1m0 2.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M10 19V7.75m6 4.5V1m0 11.25a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5ZM16 19v-2'
+												/>
+											</svg>
+										</div>
+										<div className="w-20 h-20 bg-system-secondary-bg rounded-md border border-system-secondary-accent overflow-hidden flex flex-col justify-center items-center">
+											<svg aria-hidden='true' className="w-6 h-6" xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'>
+												<path
+													stroke='currentColor'
+													strokeLinecap='round'
+													strokeLinejoin='round'
+													strokeWidth='2'
+													d='M4 12.25V1m0 11.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M4 19v-2.25m6-13.5V1m0 2.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M10 19V7.75m6 4.5V1m0 11.25a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5ZM16 19v-2'
+												/>
+											</svg>
+
+										</div>
+									</div>
+								})
+
+								}
+
+							</div>
+						}
+
 					</div>
-					{newPost?.MediaFiles.length > 0 &&
-						<div className="flex flex-row flex-wrap gap-2">
-							{newPost?.MediaFiles.map((file, index) => {
-								return <div className="relative w-20 h-20" key={index}>
-									<div className="absolute bottom-1 right-1" onClick={() => {
-										handleImageDeleteClick(index)
-									}}>
-										<svg aria-hidden='true' className="w-4 h-4 text-system-error cursor-pointer" xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'>
-											<path
-												stroke='currentColor'
-												strokeLinecap='round'
-												strokeLinejoin='round'
-												strokeWidth='2'
-												d='M4 12.25V1m0 11.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M4 19v-2.25m6-13.5V1m0 2.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M10 19V7.75m6 4.5V1m0 11.25a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5ZM16 19v-2'
-											/>
-										</svg>
-									</div>
-									<div className="w-20 h-20 bg-system-secondary-bg rounded-md border border-system-secondary-accent overflow-hidden">
-
-										<img
-											className='w-full h-full object-cover'
-											src={file.FileUrl}
-											alt='Rounded avatar'
-										/>
-									</div>
-								</div>
-							})
-
-							}
-
-						</div>
-					}
-					{newPost?.Documents.length > 0 &&
-						<div className="flex flex-row flex-wrap gap-2">
-							{newPost?.Documents.map((file, index) => {
-								return <div className="relative w-20 h-20" key={index}>
-									<div className="absolute bottom-1 right-1" onClick={() => {
-										handleDocumentDeleteClick(index)
-									}}>
-										<svg aria-hidden='true' className="w-4 h-4 text-system-error cursor-pointer" xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'>
-											<path
-												stroke='currentColor'
-												strokeLinecap='round'
-												strokeLinejoin='round'
-												strokeWidth='2'
-												d='M4 12.25V1m0 11.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M4 19v-2.25m6-13.5V1m0 2.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M10 19V7.75m6 4.5V1m0 11.25a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5ZM16 19v-2'
-											/>
-										</svg>
-									</div>
-									<div className="w-20 h-20 bg-system-secondary-bg rounded-md border border-system-secondary-accent overflow-hidden flex flex-col justify-center items-center">
-										<svg aria-hidden='true' className="w-6 h-6" xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'>
-											<path
-												stroke='currentColor'
-												strokeLinecap='round'
-												strokeLinejoin='round'
-												strokeWidth='2'
-												d='M4 12.25V1m0 11.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M4 19v-2.25m6-13.5V1m0 2.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M10 19V7.75m6 4.5V1m0 11.25a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5ZM16 19v-2'
-											/>
-										</svg>
-
-									</div>
-								</div>
-							})
-
-							}
-
-						</div>
-					}
-
+					{Object.values(errorOj).find(error => error) && (
+						<p className="m-0 text-system-error">
+							{Object.values(errorOj).find(error => error)}
+						</p>
+					)}
 				</div>
+
+
 			</div>
 		</div>
 	)
