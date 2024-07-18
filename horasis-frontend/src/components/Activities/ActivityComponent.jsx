@@ -20,6 +20,7 @@ const ActivityComponent = ({ bordered, activity, activityId, onDelete }) => {
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
 	const toast = useToast()
 	const [isDeleting, setIsDeleting] = useState(false)
+	const [isSaving, setIsSaving] = useState(false)
 	const [isLiking, setIsLiking] = useState(false)
 	const [isLoading, setIsLoading] = useState(false)
 	const [isLoadingMore, setIsLoadingMore] = useState(false)
@@ -56,19 +57,19 @@ const ActivityComponent = ({ bordered, activity, activityId, onDelete }) => {
 	}
 
 	const onSaveClicked = (api) => {
-		setIsLiking(true)
+		setIsSaving(true)
 		postItem(
-			`users/${currentUserData.CurrentUser.UserId}/activities/${singleActivity.DocId}/like`,
+			`users/${currentUserData.CurrentUser.UserId}/activities/${singleActivity.DocId}/save`,
 			{},
 			(result) => {
 				console.log(result)
 				if (result === true) {
 					getSingleActivity()
 				}
-				setIsLiking(false)
+				setIsSaving(false)
 			},
 			(err) => {
-				setIsLiking(false)
+				setIsSaving(false)
 				console.error(err)
 			},
 			updateCurrentUser,
