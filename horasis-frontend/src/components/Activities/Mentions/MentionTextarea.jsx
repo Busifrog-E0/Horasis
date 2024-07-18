@@ -124,7 +124,7 @@ const MentionTextarea = ({ user, newPost, handleContentChange }) => {
 				width={'full'}
 				value={newPost.Content}
 				className='p-0 border-none rounded-none hover:shadow-none'
-				placeholder={`Share what's on  your mind, ${user && user?.FullName}`}
+				placeholder={`Share what's on  your mind, ${user && user?.FullName ? user.FullName : ''}`}
 			/>
 			<div className='fixed z-40'>
 				{/* {isLoading ? (
