@@ -1,6 +1,7 @@
 import {
     GetOneFromActivities, GetActivities, PostActivities, PatchActivities, DeleteActivities,
     GetUserActivities,
+    GetMentionedActivities,
 } from '../controllers/activities-controller.js';
 import asyncHandler from 'express-async-handler';
 
@@ -21,6 +22,10 @@ router.get('/activities', decodeIDToken, ensureAuthorized("User"),GetFeedActivit
 router.get('/user/:UserId/activities', decodeIDToken, ensureAuthorized("User"), GetFeedActivitiesMiddleware, ValidateGetEntity, QueryParameterFormatting, SwaggerDocs.get_Activities,
     //@ts-ignore
     asyncHandler(GetUserActivities));    
+
+router.get('/user/:UserId/mentions/activities', decodeIDToken, ensureAuthorized("User"), GetFeedActivitiesMiddleware, ValidateGetEntity, QueryParameterFormatting, SwaggerDocs.get_Activities,
+    //@ts-ignore
+    asyncHandler(GetMentionedActivities));       
 
 router.get('/activities/:ActivityId', decodeIDToken, ensureAuthorized("User"),SwaggerDocs.get_Activities_ActivityId,
     // @ts-ignore
@@ -55,7 +60,7 @@ router.get('/activities/:ActivityId/likedUsers', decodeIDToken, ensureAuthorized
     //@ts-ignore
     asyncHandler(GetLikes))  
 
-router.get('user/:UserId/activities/save', decodeIDToken, ensureAuthorized("User"), ValidateGetEntity, QueryParameterFormatting, SwaggerDocs.get_Activities,
+router.get('/user/:UserId/activities/save', decodeIDToken, ensureAuthorized("User"), ValidateGetEntity, QueryParameterFormatting, SwaggerDocs.get_Activities,
     //@ts-ignore
     asyncHandler(GetSaves))     
 
