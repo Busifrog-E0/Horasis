@@ -67,12 +67,15 @@ const MyConnectionsTab = () => {
         )
     }
 
+
     useEffect(() => {
         getConnections([])
     }, [])
     useEffect(() => {
         if (connections.length > 0) hasAnyLeft()
     }, [connections])
+
+
     return (
         <div className='bg-system-secondary-bg p-4 lg:p-6 rounded-b-lg '>
             <ConnectionsTab

@@ -25,12 +25,12 @@ const MemberSuggestionTab = ({ lastElement, profile, updateList }) => {
 			<div className={`${lastElement === true ? '' : 'border-b border-system-file-border pb-3'}`}>
 				<div className='flex items-start gap-4'>
 					{profile.ProfilePicture ? (
-						<div className='w-11 h-11 rounded-full bg-black'>
-							<img className='w-11 h-11 rounded-full object-cover' src={profile.ProfilePicture} alt='Rounded avatar' />
+						<div className='w-16 h-16 rounded-full bg-black'>
+							<img className='w-16 h-16 rounded-full object-cover' src={profile.ProfilePicture} alt='Rounded avatar' />
 						</div>
 					) : (
 						<>
-							<div className='w-11 h-11 rounded-full bg-brand-light-gray'>
+							<div className='w-16 h-16 rounded-full bg-brand-light-gray'>
 								<img src={avatar} className='object-cover h-full w-full rounded-lg' />
 							</div>
 						</>

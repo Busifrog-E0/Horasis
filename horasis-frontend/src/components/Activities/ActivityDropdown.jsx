@@ -94,7 +94,7 @@ const ActivityDropdown = ({ activity }) => {
 							We rely on our community to help us maintain a safe and welcoming environment. Please report any posts
 							that violate our guidelines.
 						</p>
-						<p>Report this post for :</p>
+						<p className='text'>Report this post for :</p>
 						<div className='mb-4'>
 							<div className='flex flex-col gap-2'>
 								<div>

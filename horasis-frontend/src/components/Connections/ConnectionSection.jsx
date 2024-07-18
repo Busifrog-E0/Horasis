@@ -27,7 +27,7 @@ const ConnectionSection = () => {
 	const [connectionsReceived, setConnectionsRecieved] = useState([])
 	const [connectionsSend, setConnectionsSend] = useState([])
 
-	const [connectionCount, setConnectionCount] = useState('-')
+	const [connectionCount, setConnectionCount] = useState('')
 	const [filters, setFilters] = useState({
 		OrderBy: 'Index',
 		Limit: 10,
