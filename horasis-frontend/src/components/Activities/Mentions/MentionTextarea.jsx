@@ -75,7 +75,6 @@ const MentionTextarea = ({ user, newPost, handleContentChange }) => {
 		)
 	}
 	const fetchData = (initialRender = false) => {
-		console.log('called')
 		getAllMembers(initialRender ? [] : members)
 	}
 	const fetch = () => fetchData(true)

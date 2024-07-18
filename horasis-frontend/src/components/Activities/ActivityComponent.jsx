@@ -1,6 +1,7 @@
 import { relativeTime } from '../../utils/date'
 import avatar from '../../assets/icons/avatar.svg'
 import like from '../../assets/icons/like.svg'
+import liked from '../../assets/icons/liked.svg'
 import reply from '../../assets/icons/reply.svg'
 import ActivityCarousel from './ActivityCarousel'
 import { useContext, useEffect, useState } from 'react'
@@ -235,7 +236,7 @@ const ActivityComponent = ({ bordered, activity, activityId, onDelete }) => {
 							<div className='flex items-center gap-2'>
 								{
 									singleActivity.HasLiked ?
-										<img src={like} className='h-6 w-6 cursor-pointer text-system-error' onClick={onUnLikeBtnClicked} />
+										<img src={liked} className='h-6 w-6 cursor-pointer text-system-error' onClick={onUnLikeBtnClicked} />
 										:
 										<img src={like} className='h-6 w-6 cursor-pointer' onClick={onLikeBtnClicked} />
 								}

@@ -250,7 +250,7 @@ const ConnectionSection = () => {
 				getAllMembers(initialRender ? [] : members)
 				break
 			case 1:
-				console.log("getConnectionCount")
+				// console.log("getConnectionCount")
 				getConnectionCount()
 				getConnections(initialRender ? [] : connections)
 				break
