@@ -63,23 +63,12 @@ const ActivityCommentList = ({
 					{isLoading ?
 						<Spinner />
 						:
-						<svg
-							onClick={() => {
-								postComment()
-							}}
-							aria-hidden='true'
-							className='w-6 h-6 text-brand-gray cursor-pointer'
-							xmlns='http://www.w3.org/2000/svg'
-							fill='none'
-							viewBox='0 0 20 20'>
-							<path
-								stroke='currentColor'
-								strokeLinecap='round'
-								strokeLinejoin='round'
-								strokeWidth='2'
-								d='M4 12.25V1m0 11.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M4 19v-2.25m6-13.5V1m0 2.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M10 19V7.75m6 4.5V1m0 11.25a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5ZM16 19v-2'
-							/>
+						<svg className="w-6 h-6 text-system-primary-accent cursor-pointer" onClick={() => {
+							postComment()
+						}} xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" >
+							<path d="M120-160v-640l760 320-760 320Zm80-120 474-200-474-200v140l240 60-240 60v140Zm0 0v-400 400Z" />
 						</svg>
+
 					}
 
 				</div>
