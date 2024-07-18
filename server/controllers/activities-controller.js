@@ -95,6 +95,11 @@ const GetActivities = async (req, res) => {
             }
         },
         {
+            $addFields: {
+                UserDetails : { $arrayElemAt : ['$UserDetails',0]}
+            }
+        },
+        {
             $lookup: {
                 from: 'Likes',
                 let: { activityId: { $toString: '$_id' }, userId: UserId },
