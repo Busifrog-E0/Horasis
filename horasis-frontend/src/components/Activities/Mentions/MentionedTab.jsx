@@ -106,6 +106,7 @@ const MentionedTab = ({ bordered = false }) => {
 						avatarSize='w-10 h-10'
 						onDelete={onDelete}
 						gapBnTabs={'gap-8'}
+						descriptionSize="text-base"
 						bordered={bordered}
 						activitiesData={activitiesData}
 					/>
