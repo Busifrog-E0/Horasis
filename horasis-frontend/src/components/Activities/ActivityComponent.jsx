@@ -34,7 +34,7 @@ const ActivityComponent = ({ bordered, activity, activityId, onDelete }) => {
 	const [isLoadingActivity, setIsLoadingActivity] = useState(true)
 	const [singleActivity, setSingleActivity] = useState(activity)
 
-	const onLikeBtnClicked = (api) => {
+	const onLikeBtnClicked = () => {
 		setIsLiking(true)
 		postItem(
 			`users/${currentUserData.CurrentUser.UserId}/activities/${singleActivity.DocId}/like`,
@@ -56,7 +56,7 @@ const ActivityComponent = ({ bordered, activity, activityId, onDelete }) => {
 		)
 	}
 
-	const onSaveClicked = (api) => {
+	const onSaveClicked = () => {
 		setIsSaving(true)
 		postItem(
 			`users/${currentUserData.CurrentUser.UserId}/activities/${singleActivity.DocId}/save`,
@@ -77,7 +77,28 @@ const ActivityComponent = ({ bordered, activity, activityId, onDelete }) => {
 			toast
 		)
 	}
-	const onUnLikeBtnClicked = (api) => {
+
+	const OnRemoveClicked = () => {
+		setIsSaving(true)
+		deleteItem(
+			`users/${currentUserData.CurrentUser.UserId}/activities/${singleActivity.DocId}/save`,
+			(result) => {
+				console.log(result)
+				if (result === true) {
+					getSingleActivity()
+				}
+				setIsSaving(false)
+			},
+			(err) => {
+				setIsSaving(false)
+				console.error(err)
+			},
+			updateCurrentUser,
+			currentUserData,
+			toast
+		)
+	}
+	const onUnLikeBtnClicked = () => {
 		setIsLiking(true)
 		deleteItem(
 			`users/${currentUserData.CurrentUser.UserId}/activities/${singleActivity.DocId}/disLike`,
@@ -97,7 +118,7 @@ const ActivityComponent = ({ bordered, activity, activityId, onDelete }) => {
 			toast
 		)
 	}
-	const onDeleteBtnClicked = (api) => {
+	const onDeleteBtnClicked = () => {
 		setIsDeleting(true)
 		deleteItem(
 			`activities/${singleActivity.DocId}`,
@@ -286,7 +307,7 @@ const ActivityComponent = ({ bordered, activity, activityId, onDelete }) => {
 						)} */}
 
 					</div>
-					<ActivityDropdown activity={singleActivity} />
+					<ActivityDropdown onRemoveClicked={OnRemoveClicked} onSaveClicked={onSaveClicked} activity={singleActivity} isSaving={isSaving} />
 				</div>
 				{showComment && (
 					<ActivityCommentList

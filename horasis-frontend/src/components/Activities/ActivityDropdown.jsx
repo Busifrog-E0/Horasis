@@ -3,8 +3,9 @@ import { useNavigate } from 'react-router-dom'
 import Modal from '../ui/Modal'
 import Button from '../ui/Button'
 import { useToast } from '../Toast/ToastService'
+import Spinner from '../ui/Spinner'
 
-const ActivityDropdown = ({ activity }) => {
+const ActivityDropdown = ({ activity, onSaveClicked, onRemoveClicked, isSaving }) => {
 	const [isOpen, setIsOpen] = useState(false)
 	const toast = useToast()
 	const dropdownRef = useRef(null)
@@ -186,11 +187,23 @@ const ActivityDropdown = ({ activity }) => {
 						className='origin-top-right absolute z-10 right-0 mt-2 w-56 rounded-md shadow-lg bg-system-secondary-bg ring-1 ring-black ring-opacity-5'
 						ref={dropdownRef}>
 						<div className='py-1' role='menu' aria-orientation='vertical' aria-labelledby='options-menu'>
-							<span
-								className='cursor-pointer block px-4 py-2 text-sm text-brand-gray-dim hover:bg-system-primary-bg'
-								role='menuitem'>
-								Save
-							</span>
+							{
+								isSaving ? <Spinner />
+									:
+									activity.HasSaved ?
+										<span onClick={onRemoveClicked}
+											className='cursor-pointer block px-4 py-2 text-sm text-brand-gray-dim hover:bg-system-primary-bg'
+											role='menuitem'>
+											Remove
+										</span>
+										:
+										<span onClick={onSaveClicked}
+											className='cursor-pointer block px-4 py-2 text-sm text-brand-gray-dim hover:bg-system-primary-bg'
+											role='menuitem'>
+											Save
+										</span>
+							}
+
 							<span
 								className='cursor-pointer block px-4 py-2 text-sm text-brand-gray-dim hover:bg-system-primary-bg'
 								role='menuitem'
