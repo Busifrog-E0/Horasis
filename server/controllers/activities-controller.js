@@ -60,7 +60,16 @@ const GetActivities = async (req, res) => {
             '$lookup': {
                 'from': 'Connections',
                 'pipeline': [
-                    { '$match': { '$expr': { '$in': [UserId, '$UserIds'] } } }      //INSERTS CONNECTIONS ARRAY
+                    {
+                        '$match': {
+                            '$expr': {
+                                '$and': [
+                                    { '$in': [UserId, '$UserIds'] },
+                                    { '$eq': ['$Status', 'Connected'] }
+                                ]
+                            }
+                        }
+                    }      //INSERTS CONNECTIONS ARRAY
                 ],
                 'as': 'Connections'
             }
@@ -336,7 +345,7 @@ const UploadFiles = async (MediaFiles, Documents, UserId, ActivityId) => {
 const PostActivityForProfilePatch = async (Data, UserId) => {
     let Activity = {}
     if (Data.CoverPicture) {
-        Activity = { Content: "Updated his Cover Photo", UserId };
+        Activity = { Content: "Updated his Cover Photo", MediaFiles: [Data.Co], UserId };
     }
     if (Data.ProfilePicture) {
         Activity = { Content: "Updated his Profile Photo", UserId };
