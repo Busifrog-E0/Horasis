@@ -86,10 +86,11 @@ const MentionTextarea = ({ user, newPost, handleContentChange }) => {
 
 		const cursorPosition = e.target.selectionStart
 		const lastAtSymbol = value.lastIndexOf('@', cursorPosition - 1)
+		const isFirstChar = lastAtSymbol === 0
 		const prevChar = value.charAt(lastAtSymbol - 1)
 		const isPrevCharSpace = prevChar === ' '
 
-		if (lastAtSymbol !== -1 && isPrevCharSpace) {
+		if (lastAtSymbol !== -1 && (isFirstChar || isPrevCharSpace)) {
 			const mentionText = value.slice(lastAtSymbol + 1, cursorPosition)
 			if (mentionText.includes(' ')) {
 				setSuggestions([])

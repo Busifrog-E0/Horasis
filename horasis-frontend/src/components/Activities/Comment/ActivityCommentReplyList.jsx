@@ -1,10 +1,11 @@
 import { useContext, useState } from 'react'
-import { AuthContext } from '../../../utils/AuthProvider'
+import { AuthContext, defaultCommentData } from '../../../utils/AuthProvider'
 import { useToast } from '../../Toast/ToastService'
 import ActivityCommentReply from './ActivityCommentReply'
 import TextArea from '../../ui/TextArea'
 import Spinner from '../../ui/Spinner'
 import { postItem } from '../../../constants/operations'
+import { commentValidation } from '../../../utils/schema/users/commentValidation'
 
 const ActivityCommentReplyList = ({
 	activity,
@@ -22,21 +23,53 @@ const ActivityCommentReplyList = ({
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
 	const toast = useToast()
 	const [reply, setReply] = useState('')
+	const [newReply, setNewReply] = useState(defaultCommentData(currentUserData.CurrentUser.UserId, comment.DocId))
+	const [errorOj, setErrorObj] = useState({})
+
+	const validate = (callback) => {
+		const { error, warning } = commentValidation.validate(newReply, {
+			abortEarly: false,
+			stripUnknown: true,
+		})
+		if (error && error.details) {
+			let obj = {}
+			error.details.forEach((val) => (obj[val.context.key] = val.message))
+			setErrorObj(obj)
+		} else {
+			setErrorObj({})
+			if (callback) {
+				callback()
+			}
+		}
+	}
+	const validateSingle = (value, key, callback) => {
+		setNewReply({ ...newReply, ...value })
+		const { error, warning } = commentValidation
+			.extract(key)
+			.validate(value[key], { abortEarly: false, stripUnknown: true })
+		if (error && error.details) {
+			let obj = {}
+			error.details.forEach((val) => (obj[key] = val.message))
+			setErrorObj(obj)
+		} else {
+			setErrorObj({})
+			if (callback) {
+				callback()
+			}
+		}
+	}
+
 	const postReply = () => {
 		setIsLoading(true)
 		postItem(
 			`activities/${activity.DocId}/comments/${comment.DocId}/reply`,
-			{
-				Content: reply,
-				UserId: currentUserData.CurrentUser.UserId,
-				ParentId: comment.DocId,
-			},
+			newReply,
 			(result) => {
 				if (result) {
 					getAllCommentReplies([])
 					getSingleActivity()
 					getSingleComment()
-					setReply('')
+					setNewReply(defaultCommentData(currentUserData.CurrentUser.UserId, comment.DocId))
 				}
 			},
 			(err) => {
@@ -50,16 +83,17 @@ const ActivityCommentReplyList = ({
 	}
 	return (
 		<div className='flex items-center justify-between flex-col w-full mt-4 pl-20'>
-			<div className='flex-1 mt-2 rounded-md p-2 px-3 border border-system-secondary-accent bg-system-secondary-bg flex flex-col gap-4 w-full'>
+			<div
+				className={`flex-1 mt-2 rounded-md p-2 px-3 border ${
+					Object.values(errorOj).some((error) => error) ? 'border-system-error' : 'border-system-secondary-accent'
+				} bg-system-secondary-bg flex flex-col gap-4 w-full`}>
 				<div className='flex items-start justify-between gap-2'>
 					<TextArea
 						width='full'
 						className='p-0 border-none rounded-none hover:shadow-none'
 						placeholder='Leave a reply'
-						value={reply}
-						onChange={(e) => {
-							setReply(e.target.value)
-						}}
+						value={newReply.Content}
+						onChange={(e) => validateSingle({ Content: e.target.value }, 'Content')}
 					/>
 					{isLoading ? (
 						<Spinner />
@@ -67,7 +101,7 @@ const ActivityCommentReplyList = ({
 						<svg
 							className='w-6 h-6 text-system-primary-accent cursor-pointer'
 							onClick={() => {
-								postReply()
+								validate(postReply)
 							}}
 							xmlns='http://www.w3.org/2000/svg'
 							viewBox='0 -960 960 960'>
@@ -75,6 +109,9 @@ const ActivityCommentReplyList = ({
 						</svg>
 					)}
 				</div>
+				{Object.values(errorOj).find((error) => error) && (
+					<p className='m-0 text-system-error'>{Object.values(errorOj).find((error) => error)}</p>
+				)}
 			</div>
 			<div className='flex items-center  justify-between mt-4 flex-col gap-1 w-full'>
 				{replies.map((item) => (

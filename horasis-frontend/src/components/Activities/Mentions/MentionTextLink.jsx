@@ -8,16 +8,18 @@ function parseContent(singleActivity) {
 	const navigate = useNavigate()
 
 	return parts.map((part, index) => {
-		const mention = mentions.find((m) => m.Username === part)
-		if (mention) {
-			return (
-				<a
-					key={index}
-					onClick={() => navigate(`/ViewProfile/${mention.UserId}`)}
-					className='text-system-primary-accent cursor-pointer'>
-					{mention.FullName}
-				</a>
-			)
+		if (mentions && mentions.length > 0) {
+			const mention = mentions.find((m) => m.Username === part)
+			if (mention) {
+				return (
+					<a
+						key={index}
+						onClick={() => navigate(`/ViewProfile/${mention.UserId}`)}
+						className='text-system-primary-accent cursor-pointer'>
+						{mention.FullName}
+					</a>
+				)
+			}
 		}
 
 		return <span key={index}>{part}</span>
