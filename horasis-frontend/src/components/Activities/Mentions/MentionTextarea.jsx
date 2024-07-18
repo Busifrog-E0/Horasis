@@ -7,7 +7,7 @@ import { jsonToQuery } from '../../../utils/searchParams/extractSearchParams'
 import { useToast } from '../../Toast/ToastService'
 import { AuthContext } from '../../../utils/AuthProvider'
 import { getNextId } from '../../../utils/URLParams'
-import Spinner from '../../ui/Spinner'
+import avatar from '../../../assets/icons/avatar.svg'
 
 const MentionTextarea = ({ user, newPost, handleContentChange }) => {
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
@@ -21,7 +21,7 @@ const MentionTextarea = ({ user, newPost, handleContentChange }) => {
 	const [isLoadingMore, setIsLoadingMore] = useState(false)
 	const [filters, setFilters] = useState({
 		OrderBy: 'Index',
-		Limit: 10,
+		Limit: 15,
 		Keyword: '',
 	})
 	const [mentionName, setMentionName] = useState('')
@@ -141,32 +141,46 @@ const MentionTextarea = ({ user, newPost, handleContentChange }) => {
 				{suggestions.length > 0 && (
 					<ul className='absolute bg-white border rounded shadow-lg mt-1 top-3 w-max z-10 max-h-64 p-1 overflow-auto'>
 						{suggestions.map((user, index) => (
-							<li
+							<div
 								key={index}
 								onClick={() => handleSuggestionClick(user.Username)}
-								className='p-1 cursor-pointer hover:bg-brand-light-gray text-xs'>
-								{user.Username}
-							</li>
+								className='p-1 cursor-pointer hover:bg-brand-backg flex flex-row items-start gap-2'>
+								{user.ProfilePicture ? (
+									<>
+										<img className='w-6 h-6 rounded-full' src={user?.ProfilePicture} alt='Rounded avatar' />
+									</>
+								) : (
+									<>
+										<img className='w-6 h-6 rounded-full' src={avatar} alt='Rounded avatar' />
+									</>
+								)}
+								<div>
+									<p className='text-sm m-0 font-medium'>	{user.FullName}</p>
+									<p className='text-xs m-0 text-brand-gray'>	{user.Username}</p>
+
+								</div>
+
+							</div>
 						))}
 					</ul>
 				)}
 				{/* )} */}
 				{/* {isLoadingMore && (
-                    <div className='bg-system-secondary-bg p-4 rounded-b-lg '>
-                        <Spinner />
-                    </div>
-                )}
-                {!pageDisabled && (
-                    <div
-                        onClick={() => {
-                            fetchMore()
-                        }}
-                        className='flex flex-row justify-end mt-4 mb-2'>
-                        <div className='cursor-pointer flex items-center gap-2'>
-                            <h4 className='font-semibold text-xl text-system-primary-accent'>Load More</h4>
-                        </div>
-                    </div>
-                )} */}
+					<div className='bg-system-secondary-bg p-4 rounded-b-lg '>
+						<Spinner />
+					</div>
+				)}
+				{!pageDisabled && (
+					<div
+						onClick={() => {
+							fetchMore()
+						}}
+						className='flex flex-row justify-end mt-4 mb-2'>
+						<div className='cursor-pointer flex items-center gap-2'>
+							<h4 className='font-semibold text-xl text-system-primary-accent'>Load More</h4>
+						</div>
+					</div>
+				)} */}
 			</div>
 		</>
 	)
