@@ -13,9 +13,9 @@
 }
 
 @media (min-width:1200px) {
-    *{
-      font-size: 1rem;
-    }
+  * {
+    font-size: 1rem;
+  }
 }
 
 
@@ -36,6 +36,7 @@
     --brand-light-gray: #dee0e3;
     --brand-backg: #f9f9f9;
 
+    --brand-yellow-transparent: #e5e5d5;
     --brand-orange-transparent: #fe855a55;
     --brand-orange: #fe855a;
     --brand-blue-transparent: #08083299;
@@ -97,6 +98,7 @@
     --brand-backg: #1d1d1d;
 
 
+    --brand-yellow-transparent: #Ffffed;
     --brand-orange-transparent: #fe855a55;
     --brand-orange: #fe855a;
     --brand-blue-transparent: #08083299;

@@ -18,6 +18,7 @@ const colors = {
   "brand-btn-sec": "var(--brand-btn-sec)",
 
   "brand-orange-transparent": "var(--brand-orange-transparent)",
+  "brand-yellow-transparent": "var(--brand-yellow-transparent)",
   "brand-orange": "var(--brand-orange)",
   "brand-blue-transparent": "var(--brand-blue-transparent)",
   "brand-black-transparent": "var(--brand-black-transparent)",

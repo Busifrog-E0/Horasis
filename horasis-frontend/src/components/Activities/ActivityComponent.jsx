@@ -14,6 +14,7 @@ import { jsonToQuery } from '../../utils/searchParams/extractSearchParams'
 import Spinner from '../ui/Spinner'
 import ViewLikedMembers from './Likes/ViewLikedMembers'
 import ActivityDropdown from './ActivityDropdown'
+import MentionTextLink from './Mentions/MentionTextLink'
 const ActivityComponent = ({ bordered, activity, activityId, onDelete }) => {
 	const [showComment, setShowComment] = useState(false)
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
@@ -31,28 +32,6 @@ const ActivityComponent = ({ bordered, activity, activityId, onDelete }) => {
 	})
 	const [isLoadingActivity, setIsLoadingActivity] = useState(true)
 	const [singleActivity, setSingleActivity] = useState(activity)
-
-
-	function parseContent(singleActivity) {
-		const content = singleActivity.Content;
-		const mentions = singleActivity.Mentions;
-		const parts = content.split(/(\s+)/); // Split by spaces, keeping the spaces
-
-		return parts.map((part, index) => {
-			if (part.startsWith('@')) {
-				const username = part.substring(1); // Remove the '@' character
-				const mention = mentions.find(m => m.Username === username);
-				if (mention) {
-					return (
-						<a key={index} href={`/ViewProfile/${mention.UserId}`} className="text-blue-500">
-							{mention.Username}
-						</a>
-					);
-				}
-			}
-			return <span key={index}>{part}</span>;
-		});
-	}
 
 	const onLikeBtnClicked = (api) => {
 		setIsLiking(true)
@@ -265,14 +244,14 @@ const ActivityComponent = ({ bordered, activity, activityId, onDelete }) => {
 					</div>
 				</div>
 				<div className='mt-5'>
-					<h4 className='text-system-primary-text font-medium text-xl'>{parseContent(singleActivity)}</h4>
+					<MentionTextLink singleActivity={singleActivity} />
 				</div>
-				{/* {
+				{
 					singleActivity.Mentions?.length > 0 &&
 					<div className='mb-2 mt-1'>
 						<p className='text-system-primary-text font-normal text-xs m-0'>{singleActivity.Mentions?.length} Mentions</p>
 					</div>
-				} */}
+				}
 				{singleActivity?.MediaFiles && singleActivity.MediaFiles.length > 0 && (
 					<div>
 						<ActivityCarousel slides={singleActivity.MediaFiles} />
@@ -297,13 +276,13 @@ const ActivityComponent = ({ bordered, activity, activityId, onDelete }) => {
 							<img src={reply} className='h-6 w-6' />
 							<p className='text-brand-gray-dim mt-1'>{singleActivity.NoOfComments} replies</p>
 						</div>
-						{/* {isDeleting ? (
+						{isDeleting ? (
 							<Spinner />
 						) : (
 							<div className='flex items-center gap-2 cursor-pointer' onClick={onDeleteBtnClicked}>
 								<p className='text-brand-gray-dim mt-1'>Delete</p>
 							</div>
-						)} */}
+						)}
 
 					</div>
 					<ActivityDropdown activity={singleActivity} />
