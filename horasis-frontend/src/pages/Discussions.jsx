@@ -9,6 +9,7 @@ import TabItem from "../components/ui/TabItem"
 import { relativeTime } from "../utils/date"
 import { useContext } from "react"
 import { AuthContext } from "../utils/AuthProvider"
+import SavedTab from "../components/Activities/Saved/SavedTab"
 
 const Discussions = () => {
     const { currentUserData, scrollToTop } = useContext(AuthContext)
@@ -178,7 +179,7 @@ const Discussions = () => {
                             <h4 className="font-medium text-2xl text-system-primary-text">Saved Posts</h4>
                             {/* arrow cursor-pointer */}
                         </div>
-                        <div className="flex flex-col gap-3">
+                        {/* <div className="flex flex-col gap-3">
                             <PostTab />
                             <div className="p-4 pb-5 bg-system-secondary-bg rounded-lg mt-3 border border-system-file-border">
                                 <div className="flex items-start gap-2">
@@ -238,7 +239,8 @@ const Discussions = () => {
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div> */}
+                        <SavedTab bordered={true} />
                     </div>
                 </div>
             </div>

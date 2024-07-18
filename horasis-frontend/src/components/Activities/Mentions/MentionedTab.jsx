@@ -7,10 +7,8 @@ import { getItem } from '../../../constants/operations'
 import Spinner from '../../ui/Spinner'
 import ActivityListComponent from '../ActivityListComponent'
 import EmptyMembers from '../../Common/EmptyMembers'
-import DropdownMenu from '../../ui/DropdownMenu'
-import { relativeTime } from '../../../utils/date'
 
-const MentionedTab = ({ gapBnTabs = '', bordered = false }) => {
+const MentionedTab = ({ bordered = false }) => {
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
 	const toast = useToast()
 	const [isLoading, setIsLoading] = useState(true)

@@ -15,7 +15,7 @@ import Spinner from '../ui/Spinner'
 import ViewLikedMembers from './Likes/ViewLikedMembers'
 import ActivityDropdown from './ActivityDropdown'
 import MentionTextLink from './Mentions/MentionTextLink'
-const ActivityComponent = ({ bordered, activity, activityId, onDelete, className, avatarSize }) => {
+const ActivityComponent = ({ titleSize, bordered, activity, activityId, onDelete, className, avatarSize, descriptionSize }) => {
 	const [showComment, setShowComment] = useState(false)
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
 	const toast = useToast()
@@ -256,17 +256,17 @@ const ActivityComponent = ({ bordered, activity, activityId, onDelete, className
 					<div className='flex-1'>
 						<div className='flex items-start justify-between gap-10'>
 							<div className='flex  flex-col gap-1'>
-								<h4 className='font-semibold text-xl text-system-primary-accent mt-1'>
+								<h1 className={`font-semibold ${titleSize} text-system-primary-accent mt-1`}>
 									{singleActivity.UserDetails?.FullName}
-								</h4>
+								</h1>
 								{/* <h4 className='text-system-primary-text text-md'>Updated their photo</h4> */}
 							</div>
-							<h4 className='font-medium text-base text-brand-gray-dim'>{relativeTime(singleActivity.CreatedIndex)}</h4>
+							<h4 className={`font-medium text-base text-brand-gray-dim`}>{relativeTime(singleActivity.CreatedIndex)}</h4>
 						</div>
 					</div>
 				</div>
 				<div className='mt-5'>
-					<MentionTextLink singleActivity={singleActivity} />
+					<MentionTextLink descriptionSize={descriptionSize} singleActivity={singleActivity} />
 				</div>
 				{/* {
 					singleActivity.Mentions?.length > 0 &&

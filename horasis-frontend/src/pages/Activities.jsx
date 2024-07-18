@@ -79,7 +79,6 @@ const Activities = () => {
                                 {/* arrow cursor-pointer */}
                             </div>
                             <MentionedTab />
-                            {/*  */}
                         </div>
                     </div>
                 </div>

@@ -44,6 +44,7 @@ export const router = createBrowserRouter(
 
           <Route path='/MyProfile' element={<MyProfile />} />
           <Route path='/ViewProfile/:userid' element={<ShowUserProfile />} />
+          <Route path='/Discussions' element={<Discussions />} />
         </Route>
       </Route>
       <Route path='login' element={<UnAuthLayout />}>
