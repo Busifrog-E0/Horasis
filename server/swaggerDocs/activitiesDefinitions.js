@@ -12,7 +12,7 @@ const ActivityGetData = {
     UserId: "user123",
     MediaFiles: ["https://example.com/image.jpg"],
     Documents: ["https://example.com/document.pdf"],
-    Mentions: [{"Username" : "user1345", "UserId" : "6df8f7wed689ef"}],
+    Mentions: [{"Username" : "user1345", "UserId" : "6df8f7wed689ef" ,"FullName" :"User"}],
     NoOfLikes: 2,
     NoOfComments: 2,
     DocId: "activity_1234", 

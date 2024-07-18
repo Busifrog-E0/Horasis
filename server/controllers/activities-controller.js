@@ -333,7 +333,7 @@ const ExtractMentionedUsersFromContent = async (Content) => {
             const Username = mention.slice(1);
             const User = await ReadUsers({ Username }, undefined, 1, undefined);
             if (User.length > 0) {
-                Users.push({ Username, UserId: User[0].DocId })
+                Users.push({ Username, UserId: User[0].DocId , FullName :User[0].FullName })
             }
         }))
     }
