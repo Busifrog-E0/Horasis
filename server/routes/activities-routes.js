@@ -45,15 +45,15 @@ router.delete('/users/:UserId/activities/:ActivityId/dislike', decodeIDToken, en
 
 router.post('/users/:UserId/activities/:ActivityId/save', decodeIDToken, ensureAuthorized("User"), CheckSameUser, SwaggerDocs.patch_Activities_ActivityId_Like,
     // @ts-ignore
-    asyncHandler(PostLikes));
+    asyncHandler(PostSaves));
 
 router.delete('/users/:UserId/activities/:ActivityId/save', decodeIDToken, ensureAuthorized("User"), CheckSameUser, SwaggerDocs.patch_Activities_ActivityId_Dislike,
     // @ts-ignore
-    asyncHandler(PostSaves));      
+    asyncHandler(DeleteSaves));      
 
 router.get('/activities/:ActivityId/likedUsers', decodeIDToken, ensureAuthorized("User"),ValidateGetEntity,QueryParameterFormatting, SwaggerDocs.get_Activities_ActivityId_LikedUsers,
     //@ts-ignore
-    asyncHandler(DeleteSaves))  
+    asyncHandler(GetLikes))  
 
 router.get('user/:UserId/activities/save', decodeIDToken, ensureAuthorized("User"), ValidateGetEntity, QueryParameterFormatting, SwaggerDocs.get_Activities,
     //@ts-ignore
