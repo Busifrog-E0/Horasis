@@ -24,7 +24,7 @@ const ActivityCarousel = ({ slides }) => {
 	}
 
 	return (
-		<div className='aspect-square w-full m-auto py-2 px-2 relative'>
+		<div className='aspect-square w-full m-auto py-2 relative'>
 			{slides[currentIndex].Type === 'image' && (
 				<div
 					// key={slides[currentIndex].FileUrl}
