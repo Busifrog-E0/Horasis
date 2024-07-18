@@ -46,7 +46,7 @@ const GetActivities = async (req, res) => {
             '$lookup': {
                 'from': 'Follows',
                 'pipeline': [
-                    { '$match': { '$expr': { '$eq': ['$FollowerId', UserId] } } }
+                    { '$match': { '$expr': { '$eq': ['$FollowerId', UserId] } } }       //INSERTS FOLLOWEES ARRAY
                 ],
                 'as': 'Followees'
             }
@@ -55,26 +55,26 @@ const GetActivities = async (req, res) => {
             '$lookup': {
                 'from': 'Connections',
                 'pipeline': [
-                    { '$match': { '$expr': { '$in': [UserId, '$UserIds'] } } }
+                    { '$match': { '$expr': { '$in': [UserId, '$UserIds'] } } }      //INSERTS CONNECTIONS ARRAY
                 ],
                 'as': 'Connections'
             }
         },
         {
             $addFields: {
-                Followees: { $map: { input: '$Followees', as: 'f', in: '$$f.FolloweeId' } },
-                Connections: {
+                Followees: { $map: { input: '$Followees', as: 'f', in: '$$f.FolloweeId' } },    //CHANGES FOLLOWEES ARRAY TO CONTAIN IDS
+                Connections: {                                                                  //CHANGES CONNECTION ARRAY TO CONTAIN IDS
                     $reduce: {
                         input: '$Connections',
                         initialValue: [],
-                        in: { $setUnion: ['$$value', '$$this.UserIds'] }
+                        in: { $setUnion: ['$$value', '$$this.UserIds'] }                //UNIONS ARRAY WITH USERIDS ARRAY
                     }
                 }
             }
         },
         {
             $addFields: {
-                UserIds: { $setUnion: ['$Followees', '$Connections'] }
+                UserIds: { $setUnion: ['$Followees', '$Connections'] }                  
             }
         },
         {
@@ -82,7 +82,7 @@ const GetActivities = async (req, res) => {
                 $expr: { $in: ['$UserId', '$UserIds'] }
             }
         },
-        { $sort: { CreatedIndex: -1, _id: -1 } },
+        { $sort: { Index: -1, _id: -1 } },
         { $limit: Limit },
         {
             $lookup: {
@@ -91,12 +91,12 @@ const GetActivities = async (req, res) => {
                 pipeline: [
                     { $match: { $expr: { $eq: ['$_id', '$$userObjectId'] } } }
                 ],
-                as: 'UserDetails'
+                as: 'UserDetails'                                                                 //INSERTS USERDETAILS ARRAY
             }
         },
         {
             $addFields: {
-                UserDetails : { $arrayElemAt : ['$UserDetails',0]}
+                UserDetails : { $arrayElemAt : ['$UserDetails',0]}                                 //ARRAY TO OBJECT
             }
         },
         {
@@ -107,7 +107,7 @@ const GetActivities = async (req, res) => {
                     {
                         $match: {
                             $expr: {
-                                $and: [
+                                $and: [                                                                     //INSERTS HASLIKED ARRAY
                                     { $eq: ['$ActivityId', '$$activityId'] },
                                     { $eq: ['$UserId', '$$userId'] }
                                 ]
@@ -115,18 +115,18 @@ const GetActivities = async (req, res) => {
                         }
                     }
                 ],
-                as: 'HasLiked'
+                as: 'HasLiked'                                                              
             }
         },
         {
             $addFields: {
-                HasLiked: { $gt: [{ $size: '$HasLiked' }, 0] }
+                HasLiked: { $gt: [{ $size: '$HasLiked' }, 0] }                              //CONVERTS TO BOOLEAN
             }
         },
         {
             $project: {
                 Followees: 0,
-                Connections: 0,
+                Connections: 0,                                                             //REMOVE UNNECESSARY FIELDS
                 UserIds: 0
             }
         }
@@ -140,10 +140,10 @@ const GetActivities = async (req, res) => {
             {
                 $expr: {
                     $or: [
-                        { $lt: ['$CreatedIndex', Index] },
+                        { $lt: ['$Index', Index] },
                         {
                             $and: [
-                                { $eq: ['$CreatedIndex', Index] },
+                                { $eq: ['$Index', Index] },
                                 { $lt: ['$_id', new ObjectId(nextId)] }
                             ]
                         }
