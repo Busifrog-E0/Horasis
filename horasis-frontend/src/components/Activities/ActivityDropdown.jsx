@@ -194,7 +194,7 @@ const ActivityDropdown = ({ activity, onSaveClicked, onRemoveClicked, isSaving }
 										<span onClick={onRemoveClicked}
 											className='cursor-pointer block px-4 py-2 text-sm text-brand-gray-dim hover:bg-system-primary-bg'
 											role='menuitem'>
-											Remove
+											Remove from collection
 										</span>
 										:
 										<span onClick={onSaveClicked}
