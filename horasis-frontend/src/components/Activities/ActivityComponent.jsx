@@ -32,18 +32,6 @@ const ActivityComponent = ({ bordered, activity, activityId, onDelete }) => {
 	const [isLoadingActivity, setIsLoadingActivity] = useState(true)
 	const [singleActivity, setSingleActivity] = useState(activity)
 
-	function replaceMentionsWithLinks(singleActivity) {
-		let content = singleActivity.Content;
-		const mentions = singleActivity.Mentions; // Assuming the mentions array is stored in singleActivity.Mentions
-
-		mentions.forEach(mention => {
-			const mentionPattern = new RegExp(`@${mention.Username}`, 'g');
-			const link = `<a href="/profile/${mention.UserId}">${mention.FullName}</a>`;
-			content = content.replace(mentionPattern, link);
-		});
-
-		return content;
-	}
 
 	function parseContent(singleActivity) {
 		const content = singleActivity.Content;
