@@ -36,8 +36,9 @@ const SingleActivity = () => {
                         </div>
                     </div>
                     <div className='lg:col-span-2'>
-                        <ActivityComponent onDelete={(DocId) => { }} activityId={activityid}
-                            bordered={false}
+                        <ActivityComponent titleSize="text-xl" descriptionSize="text-base font-medium" onDelete={(DocId) => { }} activityId={activityid}
+                            bordered={false} avatarSize={'w-16 h-16'}
+                            className={`p-5 bg-system-secondary-bg rounded-lg relative`}
                         />
                     </div>
                     <div>
