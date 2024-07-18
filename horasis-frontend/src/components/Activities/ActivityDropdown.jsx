@@ -193,7 +193,10 @@ const ActivityDropdown = ({ activity }) => {
 							</span>
 							<span
 								className='cursor-pointer block px-4 py-2 text-sm text-brand-gray-dim hover:bg-system-primary-bg'
-								role='menuitem'>
+								role='menuitem'
+								onClick={() => {
+									navigate(`/ViewProfile/${activity.UserId}`)
+								}}>
 								View this profile
 							</span>
 							<span
@@ -214,7 +217,6 @@ const ActivityDropdown = ({ activity }) => {
 								role='menuitem'>
 								Report Post
 							</span>
-
 						</div>
 					</div>
 				)}
