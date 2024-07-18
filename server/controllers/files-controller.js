@@ -64,14 +64,14 @@ const SaveFileToSpaces = async (FirstFolderName, FilePath, FileData, ContentType
             if (err) {
                 return Response.status(400).json(false);
             }
-            return Response.json({ "FileUrl": `${process.env.DO_SPACES_FILEURL}/${FirstFolderName}/${FilePath}?${Date.now()}${Math.floor(Math.random() * 10000) + 1}` });
+            return Response.json({ "FileUrl": `${process.env.DO_SPACES_FILEURL}/${FirstFolderName}/${FilePath}` });
         }
         if (err) {
             console.log("An error", err)
             return false;
         }
         // https://oxydebug.sgp1.cdn.digitaloceanspaces.com/Users/idName/input.pdf
-        return `${process.env.DO_SPACES_FILEURL}/${FirstFolderName}/${FilePath}?${Date.now()}${Math.floor(Math.random() * 10000) + 1}`;
+        return `${process.env.DO_SPACES_FILEURL}/${FirstFolderName}/${FilePath}`;
     });
 
 }
@@ -99,7 +99,7 @@ const AsyncSaveFileToSpaces = async (FirstFolderName, FilePath, FileData, Conten
                 reject(false);
             }
             // https://oxydebug.sgp1.cdn.digitaloceanspaces.com/Users/idName/input.pdf
-            resolve(`${process.env.DO_SPACES_FILEURL}/${FirstFolderName}/${FilePath}?${Date.now()}${Math.floor(Math.random() * 10000) + 1}`);
+            resolve(`${process.env.DO_SPACES_FILEURL}/${FirstFolderName}/${FilePath}`);
         });
     })
 

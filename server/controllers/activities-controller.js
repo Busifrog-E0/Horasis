@@ -343,13 +343,16 @@ const UploadFiles = async (MediaFiles, Documents, UserId, ActivityId) => {
  * @returns 
  */
 const PostActivityForProfilePatch = async (Data, UserId) => {
-    let Activity = {}
-    if (Data.CoverPicture) {
-        Activity = { Content: "Updated their Cover Photo", MediaFiles: [{FileUrl : Data.CoverPicture , Type : "image"}], UserId };
-    }
-    if (Data.ProfilePicture) {
+    let Activity = {};
+
+    if (Data.CoverPicture && Data.CoverPicture !== "") {
+        Activity = { Content: "Updated their Cover Photo", MediaFiles: [{ FileUrl: Data.CoverPicture, Type: "image" }], UserId };
+    } else if (Data.ProfilePicture && Data.ProfilePicture !== "") {
         Activity = { Content: "Updated their Profile Photo", MediaFiles: [{ FileUrl: Data.ProfilePicture, Type: "image" }], UserId };
+    } else {
+        return; 
     }
+
     Activity = ActivityInit(Activity);
     await CreateActivities(Activity);
     return;
