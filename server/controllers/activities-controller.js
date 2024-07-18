@@ -9,6 +9,7 @@ import { ReadFollows } from '../databaseControllers/follow-databaseController.js
 import { ReadConnections } from '../databaseControllers/connections-databaseController.js';
 import { ObjectId } from 'mongodb';
 import { ReadLikes } from '../databaseControllers/likes-databaseController.js';
+import { ReadSaves } from '../databaseControllers/saves-databaseController.js';
 
 /**
  * @typedef {import('../databaseControllers/activities-databaseController.js').ActivityData} ActivityData 
@@ -27,8 +28,10 @@ const GetOneFromActivities = async (req, res) => {
     const Activity = await ReadOneFromActivities(ActivityId);
     const UserDetails = await ReadOneFromUsers(Activity.UserId);
     const checkLike = await ReadLikes({ ActivityId: Activity.DocId, UserId }, undefined, 1, undefined);
+    const checkSave = await ReadSaves({ ActivityId: Activity.DocId, UserId }, undefined, 1, undefined);
     const HasLiked = checkLike.length > 0 ? true : false;
-    return res.json({...Activity,UserDetails,HasLiked});
+    const HasSaved = checkSave.length > 0 ? true : false;
+    return res.json({...Activity,UserDetails,HasLiked,HasSaved});
 }
 
 /**
