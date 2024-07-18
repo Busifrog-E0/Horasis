@@ -1690,6 +1690,9 @@
           },
           "403": {
             "description": "Forbidden"
+          },
+          "444": {
+            "description": "Connection Closed Without Response"
           }
         },
         "security": [
@@ -1699,7 +1702,7 @@
         ]
       }
     },
-    "/api/users/{UserId}/activities/{ActivityId}/dislike/{LikeId}": {
+    "/api/users/{UserId}/activities/{ActivityId}/dislike": {
       "delete": {
         "tags": [
           "Activities"
@@ -1714,12 +1717,6 @@
           },
           {
             "name": "ActivityId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "LikeId",
             "in": "path",
             "required": true,
             "type": "string"
@@ -1742,6 +1739,9 @@
           },
           "403": {
             "description": "Forbidden"
+          },
+          "444": {
+            "description": "Connection Closed Without Response"
           }
         },
         "security": [
@@ -2538,6 +2538,63 @@
         "DocId": {
           "type": "string",
           "example": "activity_1234"
+        },
+        "UserDetails": {
+          "type": "object",
+          "properties": {
+            "FullName": {
+              "type": "string",
+              "example": "Jane Doe"
+            },
+            "Username": {
+              "type": "string",
+              "example": "janedoe"
+            },
+            "Email": {
+              "type": "string",
+              "example": "jane.doe@example.com"
+            },
+            "DocId": {
+              "type": "string",
+              "example": "abc123DEF"
+            },
+            "Country": {
+              "type": "string",
+              "example": "Canada"
+            },
+            "City": {
+              "type": "string",
+              "example": "Toronto"
+            },
+            "JobTitle": {
+              "type": "string",
+              "example": "Product Manager"
+            },
+            "Industry": {
+              "type": "string",
+              "example": "Software"
+            },
+            "CompanyName": {
+              "type": "string",
+              "example": "InnovateTech"
+            },
+            "About": {
+              "type": "string",
+              "example": "Seasoned product manager with over 10 years of experience in the software industry."
+            },
+            "CoverPicture": {
+              "type": "string",
+              "example": "string"
+            },
+            "ProfilePicture": {
+              "type": "string",
+              "example": "string"
+            }
+          }
+        },
+        "HasLiked": {
+          "type": "boolean",
+          "example": true
         }
       }
     },
@@ -2599,6 +2656,63 @@
           "DocId": {
             "type": "string",
             "example": "activity_1234"
+          },
+          "UserDetails": {
+            "type": "object",
+            "properties": {
+              "FullName": {
+                "type": "string",
+                "example": "Jane Doe"
+              },
+              "Username": {
+                "type": "string",
+                "example": "janedoe"
+              },
+              "Email": {
+                "type": "string",
+                "example": "jane.doe@example.com"
+              },
+              "DocId": {
+                "type": "string",
+                "example": "abc123DEF"
+              },
+              "Country": {
+                "type": "string",
+                "example": "Canada"
+              },
+              "City": {
+                "type": "string",
+                "example": "Toronto"
+              },
+              "JobTitle": {
+                "type": "string",
+                "example": "Product Manager"
+              },
+              "Industry": {
+                "type": "string",
+                "example": "Software"
+              },
+              "CompanyName": {
+                "type": "string",
+                "example": "InnovateTech"
+              },
+              "About": {
+                "type": "string",
+                "example": "Seasoned product manager with over 10 years of experience in the software industry."
+              },
+              "CoverPicture": {
+                "type": "string",
+                "example": "string"
+              },
+              "ProfilePicture": {
+                "type": "string",
+                "example": "string"
+              }
+            }
+          },
+          "HasLiked": {
+            "type": "boolean",
+            "example": true
           }
         }
       }
