@@ -3,10 +3,13 @@ import { useNavigate } from 'react-router-dom'
 import ReportPostButton from './ReportPost/ReportPostButton'
 import Modal from '../ui/Modal'
 import Button from '../ui/Button'
+import { useToast } from '../Toast/ToastService'
 
 const ActivityDropdown = ({ activity }) => {
 	const [isOpen, setIsOpen] = useState(false)
+	const toast = useToast()
 	const dropdownRef = useRef(null)
+	const buttonRef = useRef(null)
 	const navigate = useNavigate()
 
 	const handleClickOutside = (event) => {
@@ -22,25 +25,63 @@ const ActivityDropdown = ({ activity }) => {
 		}
 	}, [])
 
-	const [isModalOpen, setIsModalOpen] = useState(false)
-	const [issueType, setIssueType] = useState('')
+	useEffect(() => {
+		if (isOpen) {
+			const dropdown = dropdownRef.current
+			const button = buttonRef.current
+			const rect = dropdown.getBoundingClientRect()
+			const buttonRect = button.getBoundingClientRect()
 
-	const openReasonsModal = () => {
-		setIsModalOpen(true)
+			// Adjust position if dropdown is out of viewport
+			if (rect.right > window.innerWidth) {
+				dropdown.style.right = 'auto'
+				dropdown.style.left = '0'
+			} else {
+				dropdown.style.left = 'auto'
+				dropdown.style.right = '0'
+			}
+
+			if (rect.bottom > window.innerHeight) {
+				dropdown.style.top = 'auto'
+				dropdown.style.bottom = `${buttonRect.height}px`
+			} else {
+				dropdown.style.bottom = 'auto'
+				dropdown.style.top = `${buttonRect.height}px`
+			}
+		}
+	}, [isOpen])
+
+	const handleCopyPost = () => {
+		const { protocol, hostname } = window.location
+		let baseUrl = `${protocol}//${hostname}`
+		if (hostname === 'localhost') {
+			baseUrl = baseUrl + ':5173'
+		}
+		const copyLink = `${baseUrl}/Activities/${activity.DocId}`
+		navigator.clipboard
+			.writeText(copyLink)
+			.then(() => {
+				toast.open('success', 'Copied', 'Post link has been copied!')
+			})
+			.catch((err) => {
+				toast.open('error', 'Failed', 'Post link not copied')
+			})
 	}
 
-	const closeReasonModal = () => setIsModalOpen(false)
-
 	return (
-		<div className='relative inline-block text-left' ref={dropdownRef}>
+		<div className='relative inline-block text-left' ref={buttonRef}>
 			<button
 				type='button'
 				className='inline-flex justify-center w-full rounded-md border-none bg-system-secondary-bg text-md px-0 font-medium text-brand-gray-dim'
-				onClick={() => setIsOpen(!isOpen)}>
+				onClick={() => {
+					setIsOpen((prev) => !prev)
+				}}>
 				•••
 			</button>
 			{isOpen && (
-				<div className='origin-top-right absolute z-10 right-0 mt-2 w-56 rounded-md shadow-lg bg-system-secondary-bg ring-1 ring-black ring-opacity-5'>
+				<div
+					className='origin-top-right absolute z-10 right-0 mt-2 w-56 rounded-md shadow-lg bg-system-secondary-bg ring-1 ring-black ring-opacity-5'
+					ref={dropdownRef}>
 					<div className='py-1' role='menu' aria-orientation='vertical' aria-labelledby='options-menu'>
 						<span
 							className='cursor-pointer block px-4 py-2 text-sm text-brand-gray-dim hover:bg-system-primary-bg'
@@ -54,7 +95,8 @@ const ActivityDropdown = ({ activity }) => {
 						</span>
 						<span
 							className='cursor-pointer block px-4 py-2 text-sm text-brand-gray-dim hover:bg-system-primary-bg'
-							role='menuitem'>
+							role='menuitem'
+							onClick={handleCopyPost}>
 							Copy the post
 						</span>
 						<span

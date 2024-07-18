@@ -19,7 +19,7 @@ const DropdownConnectComponent = ({ profile, updateList, tabName }) => {
 				console.log(result)
 			},
 			(err) => {
-				toast.open('error','Connection request error',`Error happened while sending connection request`)
+				toast.open('error', 'Connection request error', `Error happened while sending connection request`)
 				// console.log(err)
 			},
 			updateCurrentUser,
@@ -41,7 +41,7 @@ const DropdownConnectComponent = ({ profile, updateList, tabName }) => {
 				console.log(result)
 			},
 			(err) => {
-				toast.open('error','Connection accept error',`Some error happened while accepting connection request`)
+				toast.open('error', 'Connection accept error', `Some error happened while accepting connection request`)
 				// console.log(err)
 			},
 			updateCurrentUser,
@@ -63,7 +63,7 @@ const DropdownConnectComponent = ({ profile, updateList, tabName }) => {
 				console.log(result)
 			},
 			(err) => {
-				toast.open('error','Connection reject error',`Some error happened while rejecting connection request`)
+				toast.open('error', 'Connection reject error', `Some error happened while rejecting connection request`)
 				// console.log(err)
 			},
 			updateCurrentUser,
@@ -84,7 +84,7 @@ const DropdownConnectComponent = ({ profile, updateList, tabName }) => {
 				console.log(result)
 			},
 			(err) => {
-				toast.open('error','Connection cancel error',`Some error happened while cancelling connection request`)
+				toast.open('error', 'Connection cancel error', `Some error happened while cancelling connection request`)
 				// console.log(err)
 			},
 			updateCurrentUser,
@@ -105,7 +105,7 @@ const DropdownConnectComponent = ({ profile, updateList, tabName }) => {
 				console.log(result)
 			},
 			(err) => {
-				toast.open('error','Connection remove error',`Some error happened while removing connection`)
+				toast.open('error', 'Connection remove error', `Some error happened while removing connection`)
 				// console.log(err)
 			},
 			updateCurrentUser,
@@ -219,6 +219,7 @@ const UserDropDown = ({ memberProfile, updateList, tabName }) => {
 	const navigate = useNavigate()
 	const { currentUserData } = useContext(AuthContext)
 	const dropdownRef = useRef(null)
+	const buttonRef = useRef(null)
 	const [profile, setProfile] = useState(memberProfile)
 	const [isOpen, setIsOpen] = useState(false)
 
@@ -245,8 +246,34 @@ const UserDropDown = ({ memberProfile, updateList, tabName }) => {
 		}
 	}, [])
 
+	useEffect(() => {
+		if (isOpen) {
+			const dropdown = dropdownRef.current
+			const button = buttonRef.current
+			const rect = dropdown.getBoundingClientRect()
+			const buttonRect = button.getBoundingClientRect()
+
+			// Adjust position if dropdown is out of viewport
+			if (rect.right > window.innerWidth) {
+				dropdown.style.right = 'auto'
+				dropdown.style.left = '0'
+			} else {
+				dropdown.style.left = 'auto'
+				dropdown.style.right = '0'
+			}
+
+			if (rect.bottom > window.innerHeight) {
+				dropdown.style.top = 'auto'
+				dropdown.style.bottom = `${buttonRect.height}px`
+			} else {
+				dropdown.style.bottom = 'auto'
+				dropdown.style.top = `${buttonRect.height}px`
+			}
+		}
+	}, [isOpen])
+
 	return (
-		<div className='relative inline-block text-left' ref={dropdownRef}>
+		<div className='relative inline-block text-left' ref={buttonRef}>
 			<button
 				type='button'
 				className='inline-flex justify-center w-full rounded-md border-none bg-system-secondary-bg text-md px-0 font-medium text-brand-gray-dim'
@@ -254,7 +281,9 @@ const UserDropDown = ({ memberProfile, updateList, tabName }) => {
 				•••
 			</button>
 			{isOpen && (
-				<div className='origin-top-right absolute z-10 right-0 mt-2 w-56 rounded-md shadow-lg bg-system-secondary-bg ring-1 ring-black ring-opacity-5'>
+				<div
+					className='origin-top-right absolute z-10 right-0 mt-2 w-56 rounded-md shadow-lg bg-system-secondary-bg ring-1 ring-black ring-opacity-5'
+					ref={dropdownRef}>
 					<div className='py-1' role='menu' aria-orientation='vertical' aria-labelledby='options-menu'>
 						{profile && profile.ConnectionStatus && (
 							<DropdownConnectComponent profile={profile} updateList={updateList} tabName={tabName} />
