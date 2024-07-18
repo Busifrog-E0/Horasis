@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import ReportPostButton from './ReportPost/ReportPostButton'
 import Modal from '../ui/Modal'
 import Button from '../ui/Button'
 import { useToast } from '../Toast/ToastService'
