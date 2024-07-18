@@ -22,6 +22,13 @@ const ActivityGetData = {
 
 const ActivityGetDataArray = [ActivityGetData];
 
+const SavedActivitiesData = [
+    { 
+        CreatedIndex: 12345678987654,
+        ActivityId: "69ba6vsd6vfsadasdbs",
+        ...ActivityGetData
+    }
+]
 
 export default {
     ActivityPostData,

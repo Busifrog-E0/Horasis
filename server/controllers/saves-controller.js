@@ -1,24 +1,14 @@
 import e from 'express';
 
 import { ReadOneFromSaves, ReadSaves, UpdateSaves, CreateSaves, RemoveSaves, } from './../databaseControllers/saves-databaseController.js';
-import { IncrementActivities } from '../databaseControllers/activities-databaseController.js';
+import { IncrementActivities, ReadOneFromActivities } from '../databaseControllers/activities-databaseController.js';
 import { ReadOneFromUsers } from '../databaseControllers/users-databaseController.js';
 import { AlertBoxObject } from './common.js';
 /**
  * @typedef {import('./../databaseControllers/saves-databaseController.js').SaveData} SaveData 
  */
 
-/**
- * 
- * @param {e.Request} req 
- * @param {e.Response} res 
- * @returns {Promise<e.Response<SaveData>>}
- */
-const GetOneFromSaves = async (req, res) => {
-    const { SaveId } = req.params;
-    const data = await ReadOneFromSaves(SaveId);
-    return res.json(data);
-}
+
 
 /**
  * 
@@ -32,11 +22,7 @@ const GetSaves = async (req, res) => {
     // @ts-ignore
     Filter.UserId = UserId;
     //@ts-ignore
-    const Saves = await ReadSaves(Filter, NextId, Limit, OrderBy);
-    const data = await Promise.all(Saves.map(async Save => {
-        const UserDetails = await ReadOneFromUsers(Save.UserId);
-        return { ...Save, UserDetails };
-    }))
+    const data = await ReadSaves(Filter, NextId, Limit, OrderBy);
     return res.json(data);
 }
 
@@ -52,23 +38,12 @@ const PostSaves = async (req, res) => {
     if (CheckSave.length > 0) {
         return res.status(444).json(AlertBoxObject("Cannot Save", "You cannot Save twice"));
     }
-    const UserDetails = await ReadOneFromUsers(UserId);
-    const data = { ActivityId, UserId, UserDetails };
+    const [UserDetails, ActivityDetails] = await Promise.all([ReadOneFromUsers(UserId),ReadOneFromActivities(ActivityId)]) ;
+    const data = { ActivityId, ...{ UserDetails, ...ActivityDetails } };
     await CreateSaves(data);
     return res.json(true);
 }
 
-/**
- * 
- * @param {e.Request} req 
- * @param {e.Response} res 
- * @returns {Promise<e.Response<true>>}
- */
-const PatchSaves = async (req, res) => {
-    const { SaveId } = req.params;
-    await UpdateSaves(req.body, SaveId);
-    return res.json(true);
-}
 
 /**
  * 
@@ -89,5 +64,5 @@ const DeleteSaves = async (req, res) => {
 
 
 export {
-    GetOneFromSaves, GetSaves, PostSaves, PatchSaves, DeleteSaves
+    GetSaves, PostSaves, DeleteSaves
 }

@@ -28,7 +28,18 @@ const PostDiscussionActivitiesMiddleware = (req, res, next) => {
     return next();
 }
 
-export { 
+const GetUserActivitiesMiddleware = (req, res, next) => {
+    req.query.Filter = { UserId: req.params.UserId, ...req.query.Filter };
+    return next();
+}
+
+const GetMentionedActivitiesMiddleware = (req, res, next) => {
+    req.query.Filter = { Mentions : { $elemMatch: { UserId: req.params.UserId } }, ...req.query.Filter };
+    return next();
+}
+
+export {
     GetFeedActivitiesMiddleware, GetEventActivitiesMiddleware, GetDiscussionActivitiesMiddleware,
-    PostDiscussionActivitiesMiddleware,PostEventActivitiesMiddleware,PostFeedActivitiesMiddleware
+    PostDiscussionActivitiesMiddleware, PostEventActivitiesMiddleware, PostFeedActivitiesMiddleware,
+    GetUserActivitiesMiddleware,GetMentionedActivitiesMiddleware
 }
