@@ -26,7 +26,7 @@ const ActivityCommentList = ({
 			`activities/${activity.DocId}/comments`,
 			{
 				Content: comment,
-				UserId: activity.UserId,
+				UserId: currentUserData.CurrentUser.UserId,
 				ParentId: activity.DocId,
 			},
 			(result) => {
