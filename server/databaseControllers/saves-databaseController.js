@@ -1,10 +1,19 @@
 import dataHandling from './functions.js'
 
 /**
+ * @typedef {import('./users-databaseController.js').UserData} UserData
+ */
+
+/**
+ * @typedef {import('./activities-databaseController.js').ActivityData} ActivityData
+ */
+
+/**
  * @typedef {object} SaveData
  * @property {string} ActivityId
  * @property {string} UserId
- * @property {object[]} UserDetails
+ * @property {UserData} UserDetails
+ * @property {ActivityData} ActivityDetails
  * @property {number} CreatedIndex
  * @property {string} DocId
  */

@@ -26,12 +26,14 @@ const GetOneFromActivities = async (req, res) => {
     //@ts-ignore
     const { UserId } = req.user;
     const Activity = await ReadOneFromActivities(ActivityId);
-    const UserDetails = await ReadOneFromUsers(Activity.UserId);
-    const checkLike = await ReadLikes({ ActivityId: Activity.DocId, UserId }, undefined, 1, undefined);
-    const checkSave = await ReadSaves({ ActivityId: Activity.DocId, UserId }, undefined, 1, undefined);
+    const [UserDetails, checkLike, checkSave] = await Promise.all([
+        ReadOneFromUsers(Activity.UserId),
+        ReadLikes({ ActivityId: Activity.DocId, UserId }, undefined, 1, undefined),
+        ReadSaves({ ActivityId: Activity.DocId, UserId }, undefined, 1, undefined)
+    ])
     const HasLiked = checkLike.length > 0 ? true : false;
     const HasSaved = checkSave.length > 0 ? true : false;
-    return res.json({...Activity,UserDetails,HasLiked,HasSaved});
+    return res.json({ ...Activity, UserDetails, HasLiked, HasSaved });
 }
 
 /**
@@ -58,7 +60,16 @@ const GetActivities = async (req, res) => {
             '$lookup': {
                 'from': 'Connections',
                 'pipeline': [
-                    { '$match': { '$expr': { '$in': [UserId, '$UserIds'] } } }      //INSERTS CONNECTIONS ARRAY
+                    {
+                        '$match': {
+                            '$expr': {
+                                '$and': [
+                                    { '$in': [UserId, '$UserIds'] },
+                                    { '$eq': ['$Status', 'Connected'] }
+                                ]
+                            }
+                        }
+                    }      //INSERTS CONNECTIONS ARRAY
                 ],
                 'as': 'Connections'
             }
@@ -77,7 +88,7 @@ const GetActivities = async (req, res) => {
         },
         {
             $addFields: {
-                UserIds: { $setUnion: ['$Followees', '$Connections',[UserId]] }                  
+                UserIds: { $setUnion: ['$Followees', '$Connections', [UserId]] }
             }
         },
         {
@@ -99,7 +110,7 @@ const GetActivities = async (req, res) => {
         },
         {
             $addFields: {
-                UserDetails : { $arrayElemAt : ['$UserDetails',0]}                                 //ARRAY TO OBJECT
+                UserDetails: { $arrayElemAt: ['$UserDetails', 0] }                                 //ARRAY TO OBJECT
             }
         },
         {
@@ -118,7 +129,7 @@ const GetActivities = async (req, res) => {
                         }
                     }
                 ],
-                as: 'HasLiked'                                                              
+                as: 'HasLiked'
             }
         },
         {
@@ -183,47 +194,32 @@ const GetActivities = async (req, res) => {
     return res.json(data);
 };
 
+
 /**
  * 
  * @param {e.Request} req 
  * @param {e.Response} res 
  * @returns 
  */
-const GetUserActivities = async (req, res) => {
+const GetFilteredActivities = async (req, res) => {
     const { UserId } = req.params;
     const { Filter, NextId, Limit, OrderBy } = req.query;
     //@ts-ignore
-    Filter.UserId = UserId;
-    const UserDetails = await ReadOneFromUsers(UserId);
-    //@ts-ignore
     const Activities = await ReadActivities(Filter, NextId, Limit, OrderBy);
     const data = await Promise.all(Activities.map(async Activity => {
-        const checkLike = await ReadLikes({ ActivityId: Activity.DocId, UserId }, undefined, 1, undefined);
-        const checkSave = await ReadSaves({ ActivityId: Activity.DocId, UserId }, undefined, 1, undefined);
+        const [UserDetails, checkLike, checkSave] = await Promise.all([
+            ReadOneFromUsers(Activity.UserId),
+            ReadLikes({ ActivityId: Activity.DocId, UserId }, undefined, 1, undefined),
+            ReadSaves({ ActivityId: Activity.DocId, UserId }, undefined, 1, undefined)
+        ])
         const HasSaved = checkSave.length > 0 ? true : false;
         const HasLiked = checkLike.length > 0 ? true : false;
-        return {...Activity,UserDetails,HasLiked,HasSaved}
+        return { ...Activity, UserDetails, HasLiked, HasSaved }
     }))
     return res.json(data)
 }
 
-const GetMentionedActivities = async (req, res) => {
-    const { UserId } = req.params;
-    const { Filter, NextId, Limit, OrderBy } = req.query;
-    //@ts-ignore
-    Filter["Mentions"] = { '$elemMatch': { UserId: UserId } };
-    const UserDetails = await ReadOneFromUsers(UserId);
-    //@ts-ignore
-    const Activities = await ReadActivities(Filter, NextId, Limit, OrderBy);
-    const data = await Promise.all(Activities.map(async Activity => {
-        const checkLike = await ReadLikes({ ActivityId: Activity.DocId, UserId }, undefined, 1, undefined);
-        const checkSave = await ReadSaves({ ActivityId: Activity.DocId, UserId }, undefined, 1, undefined);
-        const HasSaved = checkSave.length > 0 ? true : false;
-        const HasLiked = checkLike.length > 0 ? true : false;
-        return { ...Activity, UserDetails, HasLiked,HasSaved }
-    }))
-    return res.json(data)
-}
+
 
 /**
  * 
@@ -275,7 +271,7 @@ const DeleteActivities = async (req, res) => {
     const { UserId } = req.user;
     const Activity = await ReadOneFromActivities(ActivityId);
     if (Activity.UserId !== UserId) {
-        return res.status(444).json(AlertBoxObject("Cannot Delete","Cannot delete other User's Activity"))
+        return res.status(444).json(AlertBoxObject("Cannot Delete", "Cannot delete other User's Activity"))
     }
     await RemoveActivities(ActivityId);
     return res.json(true);
@@ -347,13 +343,16 @@ const UploadFiles = async (MediaFiles, Documents, UserId, ActivityId) => {
  * @returns 
  */
 const PostActivityForProfilePatch = async (Data, UserId) => {
-    let Activity = {}
-    if (Data.CoverPicture) {
-        Activity = { Content: "Updated his Cover Photo", UserId };
+    let Activity = {};
+
+    if (Data.CoverPicture && Data.CoverPicture !== "") {
+        Activity = { Content: "Updated their Cover Photo", MediaFiles: [{ FileUrl: Data.CoverPicture, Type: "image" }], UserId };
+    } else if (Data.ProfilePicture && Data.ProfilePicture !== "") {
+        Activity = { Content: "Updated their Profile Photo", MediaFiles: [{ FileUrl: Data.ProfilePicture, Type: "image" }], UserId };
+    } else {
+        return; 
     }
-    if (Data.ProfilePicture) {
-        Activity = { Content: "Updated his Profile Photo", UserId };
-    }
+
     Activity = ActivityInit(Activity);
     await CreateActivities(Activity);
     return;
@@ -380,7 +379,7 @@ const ExtractMentionedUsersFromContent = async (Content) => {
             const Username = mention.slice(1);
             const User = await ReadUsers({ Username }, undefined, 1, undefined);
             if (User.length > 0) {
-                Users.push({ Username, UserId: User[0].DocId , FullName :User[0].FullName })
+                Users.push({ Username, UserId: User[0].DocId, FullName: User[0].FullName })
             }
         }))
     }
@@ -393,5 +392,5 @@ const ExtractMentionedUsersFromContent = async (Content) => {
 
 export {
     GetOneFromActivities, GetActivities, PostActivities, PatchActivities, DeleteActivities,
-    PostActivityForProfilePatch,GetUserActivities,GetMentionedActivities
+    PostActivityForProfilePatch, GetFilteredActivities
 }
