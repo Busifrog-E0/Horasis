@@ -10,12 +10,14 @@ const ActivityListComponent = ({
 	onDelete,
 	className,
 	avatarSize,
-	border=false,
+	border = false,
+	ShowImage = true,
 }) => {
 	return (
 		<div className={`flex flex-col ${gapBnTabs} my-3`}>
 			{activitiesData.map((activity, index) => (
 				<ActivityComponent
+					ShowImage={ShowImage}
 					titleSize={titleSize}
 					onDelete={onDelete}
 					descriptionSize={descriptionSize}

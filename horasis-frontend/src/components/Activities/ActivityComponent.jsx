@@ -15,7 +15,7 @@ import Spinner from '../ui/Spinner'
 import ViewLikedMembers from './Likes/ViewLikedMembers'
 import ActivityDropdown from './ActivityDropdown'
 import MentionTextLink from './Mentions/MentionTextLink'
-const ActivityComponent = ({ titleSize, bordered, activity, activityId, onDelete, className, avatarSize, descriptionSize }) => {
+const ActivityComponent = ({ titleSize, bordered, activity, activityId, onDelete, className, avatarSize, descriptionSize, ShowImage = true }) => {
 	const [showComment, setShowComment] = useState(false)
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
 	const toast = useToast()
@@ -274,11 +274,17 @@ const ActivityComponent = ({ titleSize, bordered, activity, activityId, onDelete
 						<p className='text-system-primary-text font-normal text-xs m-0'>{singleActivity.Mentions?.length} Mentions</p>
 					</div>
 				} */}
-				{singleActivity?.MediaFiles && singleActivity.MediaFiles.length > 0 && (
-					<div>
-						<ActivityCarousel slides={singleActivity.MediaFiles} />
-					</div>
-				)}
+				{
+
+
+				}
+				{
+					ShowImage && singleActivity?.MediaFiles && singleActivity.MediaFiles.length > 0 && (
+						<div>
+							<ActivityCarousel slides={singleActivity.MediaFiles} />
+						</div>
+					)
+				}
 				<div className='flex items-center justify-between gap-10 mt-2'>
 					<div className='flex flex-wrap items-start justify-between gap-10'>
 						{isLiking ? (
