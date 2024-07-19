@@ -444,7 +444,7 @@ const ShowUserProfile = () => {
 			</div>
 			<div className='p-2 lg:px-10 lg:py-6 pt-6'>
 				<div className='grid lg:grid-cols-4 gap-3 lg:gap-12 '>
-					<div className='py-5 lg:py-8 px-16 bg-system-secondary-bg rounded-lg mb-3 lg:mb-8'>
+					<div className='py-5 lg:py-8 px-16 bg-system-secondary-bg rounded-lg mb-3 lg:mb-8 h-max'>
 						{isLoading ? (
 							<Spinner />
 						) : (

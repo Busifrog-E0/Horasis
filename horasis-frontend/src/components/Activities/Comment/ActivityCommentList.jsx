@@ -105,10 +105,10 @@ const ActivityCommentList = ({
 						</svg>
 					)}
 				</div>
-				{Object.values(errorOj).find((error) => error) && (
-					<p className='m-0 text-system-error'>{Object.values(errorOj).find((error) => error)}</p>
-				)}
 			</div>
+			{Object.values(errorOj).find((error) => error) && (
+				<p className='m-0 text-system-error w-full'>{Object.values(errorOj).find((error) => error)}</p>
+			)}
 			<div className='flex items-center  justify-between mt-4 flex-col gap-1 w-full max-h-80 overflow-y-auto'>
 				{comments.map((item) => (
 					<ActivityComment key={item.DocId} comment={item} activity={activity} getSingleActivity={getSingleActivity} />
