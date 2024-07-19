@@ -32,7 +32,7 @@ const DiscussionSection = () => {
         }
     }
 
-    const getAllActivities = (tempDiscussions) => {
+    const getDiscussions = (tempDiscussions) => {
         getData(`${api}?&${jsonToQuery(filters)}`, tempDiscussions, setDiscussions)
     }
     const getData = (endpoint, tempData, setData) => {
@@ -72,7 +72,7 @@ const DiscussionSection = () => {
     }
 
     const fetchData = (initialRender = false) => {
-        getAllActivities(initialRender ? [] : discussions)
+        getDiscussions(initialRender ? [] : discussions)
 
     }
 
