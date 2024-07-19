@@ -134,12 +134,12 @@ const MentionTextarea = ({ user, newPost, handleContentChange }) => {
 				className='p-0 border-none rounded-none hover:shadow-none'
 				placeholder={`Share what's on  your mind, ${user && user?.FullName ? user.FullName : ''}`}
 			/>
-			<div className='fixed z-40'>
+			<div className='absolute z-40'>
 				{/* {isLoading ? (
 					<Spinner />
 				) : ( */}
 				{suggestions.length > 0 && (
-					<ul className='absolute bg-white border rounded shadow-lg mt-1 top-3 w-max z-10 max-h-64 p-1 overflow-auto'>
+					<ul className='absolute bg-white border rounded shadow-lg mt-1 top-3 w-max z-10 max-h-64 p-1 overflow-auto '>
 						{suggestions.map((user, index) => (
 							<div
 								key={index}
