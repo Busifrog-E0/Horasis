@@ -70,44 +70,46 @@ const PostComponent = ({ onSuccess, className = "" }) => {
 			currentUserData, toast
 		)
 	}
-	const handleImageChange = (e) => {
-		const files = Array.from(e.target.files)
+	const handleImageOrVideoChange = (e) => {
+		const files = Array.from(e.target.files);
 
-		const notAllow = files.some((file) => file.size > 3000000)
+		const notAllow = files.some((file) => file.size > 3000000);
 		if (notAllow) {
-			toast.open('error', 'Max File Size', 'File size should be less than 3MB')
+			toast.open('error', 'Max File Size', 'File size should be less than 3MB');
 		} else {
 			const promises = files.map((file) => {
 				return new Promise((resolve) => {
-					const reader = new FileReader()
+					const reader = new FileReader();
 
 					reader.onload = (event) => {
-						const arrayBuffer = event.target.result
-						const fileDataUint8Array = new Uint8Array(arrayBuffer)
-						const fileDataByteArray = Array.from(fileDataUint8Array)
+						const arrayBuffer = event.target.result;
+						const fileDataUint8Array = new Uint8Array(arrayBuffer);
+						const fileDataByteArray = Array.from(fileDataUint8Array);
+						const isVideo = file.type.startsWith('video/');
 						resolve({
 							FileType: file.type,
 							FileData: fileDataByteArray,
 							FileName: file.name,
 							FileUrl: URL.createObjectURL(new Blob([new Uint8Array(fileDataByteArray)]))
-						})
-					}
+						});
+					};
 
-					reader.readAsArrayBuffer(file)
-				})
-			})
+					reader.readAsArrayBuffer(file);
+				});
+			});
 
 			Promise.all(promises)
 				.then((arr) => {
 					if (arr.length === 1) {
-						setNewPost({ ...newPost, ["MediaFiles"]: [...newPost["MediaFiles"], arr[0]] })
+						setNewPost({ ...newPost, ["MediaFiles"]: [...newPost["MediaFiles"], arr[0]] });
 					}
 				})
 				.catch((error) => {
-					console.error('An error occurred:', error)
-				})
+					console.error('An error occurred:', error);
+				});
 		}
 	}
+
 	const handleDocumentChange = (e) => {
 		const files = Array.from(e.target.files)
 
@@ -217,7 +219,7 @@ const PostComponent = ({ onSuccess, className = "" }) => {
 				<input
 					type='file'
 					accept='image/jpeg, image/png, video/mp4'
-					onChange={handleImageChange}
+					onChange={handleImageOrVideoChange}
 					style={{ display: 'none' }}
 					ref={imageFileInputRef}
 				/>
@@ -252,8 +254,33 @@ const PostComponent = ({ onSuccess, className = "" }) => {
 						{newPost?.MediaFiles.length > 0 &&
 							<div className="flex flex-row flex-wrap gap-2">
 								{newPost?.MediaFiles.map((file, index) => {
-									return <div className="relative w-20 h-20" key={index}>
-										<div className="absolute bottom-1 right-1" onClick={() => {
+									if (file.FileType !== "video/mp4")
+										return <div className="relative w-20 h-20" key={index}>
+
+											<div className="absolute bottom-1 right-1" onClick={() => {
+												handleImageDeleteClick(index)
+											}}>
+												<svg aria-hidden='true' className="w-4 h-4 text-system-error cursor-pointer" xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'>
+													<path
+														stroke='currentColor'
+														strokeLinecap='round'
+														strokeLinejoin='round'
+														strokeWidth='2'
+														d='M4 12.25V1m0 11.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M4 19v-2.25m6-13.5V1m0 2.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M10 19V7.75m6 4.5V1m0 11.25a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5ZM16 19v-2'
+													/>
+												</svg>
+											</div>
+											<div className="w-20 h-20 bg-system-secondary-bg rounded-md border border-system-secondary-accent overflow-hidden">
+												<img
+													className='w-full h-full object-cover'
+													src={file.FileUrl}
+													alt='Rounded avatar'
+												/>
+											</div>
+										</div>
+									else return <div className="relative w-20 h-20" key={index}>
+
+										<div className="absolute bottom-1 right-1" style={{ zIndex: 10000 }} onClick={() => {
 											handleImageDeleteClick(index)
 										}}>
 											<svg aria-hidden='true' className="w-4 h-4 text-system-error cursor-pointer" xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'>
@@ -266,13 +293,21 @@ const PostComponent = ({ onSuccess, className = "" }) => {
 												/>
 											</svg>
 										</div>
-										<div className="w-20 h-20 bg-system-secondary-bg rounded-md border border-system-secondary-accent overflow-hidden">
+										<div className="w-20 h-20 bg-system-secondary-bg rounded-md border border-system-secondary-accent overflow-hidden flex flex-col justify-center items-center">
+											{/* <svg aria-hidden='true' className="w-6 h-6" xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'>
+												<path
+													stroke='currentColor'
+													strokeLinecap='round'
+													strokeLinejoin='round'
+													strokeWidth='2'
+													d='M4 12.25V1m0 11.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M4 19v-2.25m6-13.5V1m0 2.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M10 19V7.75m6 4.5V1m0 11.25a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5ZM16 19v-2'
+												/>
+											</svg> */}
+											<video controls style={{ display: 'block', marginTop: '10px', maxWidth: '200px' }}>
+												<source src={URL.createObjectURL(new Blob([new Uint8Array(file.FileData)]))} type={file.FileType} />
+												Your browser does not support the video tag.
+											</video>
 
-											<img
-												className='w-full h-full object-cover'
-												src={file.FileUrl}
-												alt='Rounded avatar'
-											/>
 										</div>
 									</div>
 								})
@@ -299,16 +334,9 @@ const PostComponent = ({ onSuccess, className = "" }) => {
 											</svg>
 										</div>
 										<div className="w-20 h-20 bg-system-secondary-bg rounded-md border border-system-secondary-accent overflow-hidden flex flex-col justify-center items-center">
-											<svg aria-hidden='true' className="w-6 h-6" xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'>
-												<path
-													stroke='currentColor'
-													strokeLinecap='round'
-													strokeLinejoin='round'
-													strokeWidth='2'
-													d='M4 12.25V1m0 11.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M4 19v-2.25m6-13.5V1m0 2.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M10 19V7.75m6 4.5V1m0 11.25a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5ZM16 19v-2'
-												/>
+											<svg xmlns="http://www.w3.org/2000/svg" aria-hidden='true' className="w-6 h-6 text-brand-gray cursor-pointer" viewBox="0 -960 960 960" >
+												<path className="text-brand-gray " d="M720-330q0 104-73 177T470-80q-104 0-177-73t-73-177v-370q0-75 52.5-127.5T400-880q75 0 127.5 52.5T580-700v350q0 46-32 78t-78 32q-46 0-78-32t-32-78v-370h80v370q0 13 8.5 21.5T470-320q13 0 21.5-8.5T500-350v-350q-1-42-29.5-71T400-800q-42 0-71 29t-29 71v370q-1 71 49 120.5T470-160q70 0 119-49.5T640-330v-390h80v390Z" />
 											</svg>
-
 										</div>
 									</div>
 								})
