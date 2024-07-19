@@ -85,6 +85,9 @@ const ConnectionsForChat = () => {
     useEffect(() => {
         fetch()
     }, [filters])
+    if (isLoading) {
+        <Spinner />
+    }
     return (
         <div className="max-h-96 overflow-y-auto" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
             {connectionsForChat ? (
