@@ -108,7 +108,7 @@ const TimeLineTab = ({ gapBnTabs = "", bordered = false, header, classNameForPos
                     :
                     activitiesData.length > 0 ?
                         <>
-                            <ActivityListComponent avatarSize={'w-16 h-16'}
+                            <ActivityListComponent avatarSize={'w-16 h-16'} ShowImage={true}
                                 className={`p-5 bg-system-secondary-bg rounded-lg ${bordered && 'border border-system-file-border'} relative`}
                                 onDelete={onDelete} gapBnTabs={gapBnTabs} bordered={bordered} activitiesData={activitiesData} />
                             {isLoadingMore && (

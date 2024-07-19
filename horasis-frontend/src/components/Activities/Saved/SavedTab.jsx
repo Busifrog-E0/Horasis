@@ -105,7 +105,8 @@ const SavedTab = ({ bordered = false }) => {
                     <Spinner />
                 ) : activitiesData.length > 0 ? (
                     <>
-                        {/* <ActivityListComponent
+                        {/* <ActivityListComponent\
+                         ShowImage={false}
                         className={`p-5 bg-system-secondary-bg rounded-lg ${bordered && 'border border-system-file-border'} relative`}
                         avatarSize='w-10 h-10'
                         titleSize="text-md"

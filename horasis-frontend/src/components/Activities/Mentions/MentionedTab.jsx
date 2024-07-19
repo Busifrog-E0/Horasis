@@ -107,6 +107,7 @@ const MentionedTab = ({ bordered = false }) => {
 				) : activitiesData.length > 0 ? (
 					<>
 						<ActivityListComponent
+							ShowImage={false}
 							className={`relative`}
 							avatarSize='w-10 h-10'
 							onDelete={onDelete}
