@@ -18,7 +18,7 @@ const DashboardHeader = () => {
 				<h1 className='text-4xl font-bold text-brand-violet'>
 					<Logo />
 				</h1>
-				<div className='px-10 hidden lg:flex flex-row flex-wrap gap-3 flex-1 gap-11'>
+				<div className='px-10 hidden lg:flex flex-row flex-wrap gap-3 flex-1 gap-12'>
 					<div className='w-max flex flex-col items-center'>
 						<a
 							className={`cursor-pointer  font-medium text-2xl  ${location.pathname === '/Activities' || location.pathname === '/' ? 'text-system-primary-accent' : 'text-system-primary-text'
@@ -43,7 +43,7 @@ const DashboardHeader = () => {
 								location.pathname === '/Events' ? 'bg-system-primary-accent' : 'bg-transparent'
 							}`}></div>
 					</div> */}
-					{/* <div className='w-max flex flex-col items-center'>
+					<div className='w-max flex flex-col items-center'>
 						<a
 							className={`cursor-pointer  font-medium text-2xl  ${location.pathname === '/Discussions' ? 'text-system-primary-accent' : 'text-system-primary-text'
 								}`}
@@ -53,7 +53,7 @@ const DashboardHeader = () => {
 						<div
 							className={`h-1 w-10 rounded-full ${location.pathname === '/Discussions' ? 'bg-system-primary-accent' : 'bg-transparent'
 								}`}></div>
-					</div> */}
+					</div>
 					<div className='w-max flex flex-col items-center'>
 						<a
 							className={`cursor-pointer  font-medium text-2xl  ${location.pathname === '/Connections' ? 'text-system-primary-accent' : 'text-system-primary-text'
