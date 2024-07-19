@@ -114,6 +114,7 @@ const MentionedTab = ({ bordered = false }) => {
 							descriptionSize="text-base"
 							bordered={bordered}
 							activitiesData={activitiesData}
+							border={true}
 						/>
 					</>
 				) : (
