@@ -147,11 +147,11 @@ const MentionTextarea = ({ user, newPost, handleContentChange }) => {
 								className='p-1 cursor-pointer hover:bg-brand-backg flex flex-row items-start gap-2'>
 								{user.ProfilePicture ? (
 									<>
-										<img className='w-6 h-6 rounded-full' src={user?.ProfilePicture} alt='Rounded avatar' />
+										<img className='w-6 h-6 rounded-full object-cover' src={user?.ProfilePicture} alt='Rounded avatar' />
 									</>
 								) : (
 									<>
-										<img className='w-6 h-6 rounded-full' src={avatar} alt='Rounded avatar' />
+										<img className='w-6 h-6 rounded-full object-cover' src={avatar} alt='Rounded avatar' />
 									</>
 								)}
 								<div>

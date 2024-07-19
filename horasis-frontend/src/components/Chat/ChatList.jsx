@@ -1,7 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { relativeTime } from '../../utils/date';
-import DropdownMenu from '../ui/DropdownMenu';
-import ChatDetailsItem from './ChatDetailsItem';
+import ConnectionsForChat from './ConnectionsForChat';
 
 const ChatList = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -19,6 +17,9 @@ const ChatList = () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, []);
+
+
+
 
     return <>
         <div className="relative inline-block text-left " ref={dropdownRef}>
@@ -40,15 +41,7 @@ const ChatList = () => {
 
                         </div>
                     </div>
-                    <div className="max-h-96 overflow-y-auto" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
-
-                        <ChatDetailsItem />
-                        <ChatDetailsItem />
-                        <ChatDetailsItem />
-                        <ChatDetailsItem />
-                        <ChatDetailsItem />
-                        <ChatDetailsItem />
-                    </div>
+                    <ConnectionsForChat />
                 </div>
             )}
         </div>

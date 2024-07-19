@@ -2,6 +2,7 @@ import { useContext } from 'react'
 import { AuthContext } from '../utils/AuthProvider'
 import Logo from './Common/Logo'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import ChatList from './Chat/ChatList'
 
 
 const DashboardHeader = () => {
@@ -43,7 +44,7 @@ const DashboardHeader = () => {
 								location.pathname === '/Events' ? 'bg-system-primary-accent' : 'bg-transparent'
 							}`}></div>
 					</div> */}
-					<div className='w-max flex flex-col items-center'>
+					{/* <div className='w-max flex flex-col items-center'>
 						<a
 							className={`cursor-pointer  font-medium text-2xl  ${location.pathname === '/Discussions' ? 'text-system-primary-accent' : 'text-system-primary-text'
 								}`}
@@ -53,7 +54,7 @@ const DashboardHeader = () => {
 						<div
 							className={`h-1 w-10 rounded-full ${location.pathname === '/Discussions' ? 'bg-system-primary-accent' : 'bg-transparent'
 								}`}></div>
-					</div>
+					</div> */}
 					<div className='w-max flex flex-col items-center'>
 						<a
 							className={`cursor-pointer  font-medium text-2xl  ${location.pathname === '/Connections' ? 'text-system-primary-accent' : 'text-system-primary-text'
@@ -86,8 +87,8 @@ const DashboardHeader = () => {
           >
             Search
           </button>
-          <ChatList />
           <AlertList /> */}
+					<ChatList />
 					<button
 						type='button'
 						className='inline-flex justify-center rounded-md border-none bg-system-secondary-bg text-md px-0 font-medium text-brand-red'
