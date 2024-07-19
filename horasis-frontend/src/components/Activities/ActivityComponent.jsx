@@ -15,7 +15,18 @@ import Spinner from '../ui/Spinner'
 import ViewLikedMembers from './Likes/ViewLikedMembers'
 import ActivityDropdown from './ActivityDropdown'
 import MentionTextLink from './Mentions/MentionTextLink'
-const ActivityComponent = ({ titleSize, bordered, activity, activityId, onDelete, className, avatarSize, descriptionSize, ShowImage = true }) => {
+import ActivityDocuments from './ActivityDocuments'
+const ActivityComponent = ({
+	titleSize,
+	bordered,
+	activity,
+	activityId,
+	onDelete,
+	className,
+	avatarSize,
+	descriptionSize,
+	ShowImage = true,
+}) => {
 	const [showComment, setShowComment] = useState(false)
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
 	const toast = useToast()
@@ -234,9 +245,13 @@ const ActivityComponent = ({ titleSize, bordered, activity, activityId, onDelete
 	if (singleActivity)
 		return (
 			<div className={className}>
-				{isLoadingActivity && <div style={{ zIndex: 1000 }} className='absolute top-0 bottom-0 right-0 left-0 flex flex-col justify-center items-center'>
-					<Spinner />
-				</div>}
+				{isLoadingActivity && (
+					<div
+						style={{ zIndex: 1000 }}
+						className='absolute top-0 bottom-0 right-0 left-0 flex flex-col justify-center items-center'>
+						<Spinner />
+					</div>
+				)}
 
 				<div className='flex items-start gap-2'>
 					{singleActivity.UserDetails?.ProfilePicture ? (
@@ -261,7 +276,9 @@ const ActivityComponent = ({ titleSize, bordered, activity, activityId, onDelete
 								</h1>
 								{/* <h4 className='text-system-primary-text text-md'>Updated their photo</h4> */}
 							</div>
-							<h4 className={`font-medium text-base text-brand-gray-dim`}>{relativeTime(singleActivity.CreatedIndex)}</h4>
+							<h4 className={`font-medium text-base text-brand-gray-dim`}>
+								{relativeTime(singleActivity.CreatedIndex)}
+							</h4>
 						</div>
 					</div>
 				</div>
@@ -274,29 +291,29 @@ const ActivityComponent = ({ titleSize, bordered, activity, activityId, onDelete
 						<p className='text-system-primary-text font-normal text-xs m-0'>{singleActivity.Mentions?.length} Mentions</p>
 					</div>
 				} */}
-				{
+				{}
+				{ShowImage && singleActivity?.MediaFiles && singleActivity.MediaFiles.length > 0 && (
+					<div>
+						<ActivityCarousel slides={singleActivity.MediaFiles} />
+					</div>
+				)}
 
-
-				}
-				{
-					ShowImage && singleActivity?.MediaFiles && singleActivity.MediaFiles.length > 0 && (
-						<div>
-							<ActivityCarousel slides={singleActivity.MediaFiles} />
-						</div>
-					)
-				}
+				{singleActivity?.Documents && singleActivity.Documents.length > 0 && (
+					<div>
+						<ActivityDocuments	 documents={singleActivity.Documents} />
+					</div>
+				)}
 				<div className='flex items-center justify-between gap-10 mt-2'>
 					<div className='flex flex-wrap items-start justify-between gap-10'>
 						{isLiking ? (
 							<Spinner />
 						) : (
 							<div className='flex items-center gap-2'>
-								{
-									singleActivity.HasLiked ?
-										<img src={liked} className='h-6 w-6 cursor-pointer text-system-error' onClick={onUnLikeBtnClicked} />
-										:
-										<img src={like} className='h-6 w-6 cursor-pointer' onClick={onLikeBtnClicked} />
-								}
+								{singleActivity.HasLiked ? (
+									<img src={liked} className='h-6 w-6 cursor-pointer text-system-error' onClick={onUnLikeBtnClicked} />
+								) : (
+									<img src={like} className='h-6 w-6 cursor-pointer' onClick={onLikeBtnClicked} />
+								)}
 								<ViewLikedMembers activity={singleActivity} />
 							</div>
 						)}
@@ -311,9 +328,13 @@ const ActivityComponent = ({ titleSize, bordered, activity, activityId, onDelete
 								<p className='text-brand-gray-dim mt-1'>Delete</p>
 							</div>
 						)} */}
-
 					</div>
-					<ActivityDropdown onRemoveClicked={OnRemoveClicked} onSaveClicked={onSaveClicked} activity={singleActivity} isSaving={isSaving} />
+					<ActivityDropdown
+						onRemoveClicked={OnRemoveClicked}
+						onSaveClicked={onSaveClicked}
+						activity={singleActivity}
+						isSaving={isSaving}
+					/>
 				</div>
 				{showComment && (
 					<ActivityCommentList
