@@ -2,11 +2,11 @@ import Button from "../ui/Button"
 
 const DiscussionTab = ({ discussion, onClick }) => {
     return (
-        <div className="rounded-lg mt-3 overflow-hidden h-full bg-system-secondary-bg" onClick={() => onClick(discussion.DocId)}>
-            <div className="h-28 overflow-hidden rounded-lg">
+        <div className="rounded-lg mt-3 overflow-hidden h-full bg-system-secondary-bg ">
+            <div className="h-28 overflow-hidden rounded-lg cursor-pointer" onClick={() => onClick(discussion.DocId)}>
                 <img src="https://thumbs.dreamstime.com/b/multiple-national-country-flags-waving-several-top-flag-poles-62247929.jpg" className="object-cover h-full w-full" />
             </div>
-            <div className="p-2 px-6">
+            <div className="p-2 px-6 cursor-pointer" onClick={() => onClick(discussion.DocId)}>
                 <div className="flex flex-wrap items-center gap-x-2">
                     <h4 className="text-xs text-brand-gray-dim">Public Discussion</h4>
                     <h4 className="tetx-xs text-brand-gray-dim">•</h4>

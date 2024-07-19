@@ -10,7 +10,7 @@ const DiscussionsList = ({ cols = 3, gap = "gap-1 lg:gap-4", data = [], emptyTex
 
     const GoToSingleDiscussion = (id) => {
         scrollToTop()
-        navigate(`/discussion/${id}`)
+        navigate(`/discussions/${id}`)
     }
 
     return (
@@ -22,7 +22,7 @@ const DiscussionsList = ({ cols = 3, gap = "gap-1 lg:gap-4", data = [], emptyTex
                             <div className={`grid lg:grid-cols-${cols} ${gap}`}>
                                 {data.map((item, index) => {
                                     return (
-                                        <DiscussionTab discussion={item} key={index} onClick={() => { }} />
+                                        <DiscussionTab discussion={item} key={index} onClick={() => GoToSingleDiscussion(item.DocId)} />
                                     )
                                 })}
                             </div>

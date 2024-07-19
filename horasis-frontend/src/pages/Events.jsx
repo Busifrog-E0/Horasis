@@ -7,6 +7,7 @@ import TabItem from "../components/ui/TabItem"
 import { AuthContext } from "../utils/AuthProvider"
 import { useNavigate } from "react-router-dom"
 import EventsList from "../components/Events/EventsList"
+import EventsSection from "../components/Events/EventsSection"
 
 const Events = () => {
 
@@ -31,22 +32,7 @@ const Events = () => {
                     </div>
                 </div>
                 <div className="lg:col-span-2">
-                    <div className="flex-1 rounded-md p-2 px-4 border border-system-file-border flex items-center justify-between bg-system-secondary-bg">
-                        <h4 className="font-medium text-lg text-brand-gray-dim italic ">Search Events</h4>
-
-                    </div>
-                    <h4 className="font-bold text-2xl text-system-primary-accent mt-4 mb-2">Events</h4>
-                    <h4 className=" text-base text-system-primary-text mb-2">Find answers, ask questions, and connect with our community aroundthe world.</h4>
-                    <div className="flex gap-6 flex-wrap mt-4 mb-3">
-
-                        <TabItem variant="active">
-                            All Events
-                        </TabItem>
-                        <TabItem variant="inactive">
-                            Popular Events
-                        </TabItem>
-                    </div>
-                    <EventsList data={[1]} emptyText={'No events'} />
+                    <EventsSection />
 
                     {/* <h4 className="font-medium text-2xl text-system-primary-accent mt-4 mb-1">Upcoming Events</h4>
                     <h4 className=" text-xl text-system-primary-text mb-2">Find answers, ask questions, and connect with our community aroundthe world.</h4>

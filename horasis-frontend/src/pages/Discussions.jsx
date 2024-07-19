@@ -5,8 +5,9 @@ import Button from "../components/ui/Button"
 import TabItem from "../components/ui/TabItem"
 import { useContext } from "react"
 import { AuthContext } from "../utils/AuthProvider"
-import SavedTab from "../components/Activities/Saved/SavedTab"
+import SavedTab from "../components/Activities/Saved/SavedActivityTab"
 import DiscussionsList from "../components/Discussions/DiscussionsList"
+import DiscussionSection from "../components/Discussions/DiscussionSection"
 
 const Discussions = () => {
     const { currentUserData, scrollToTop } = useContext(AuthContext)
@@ -26,23 +27,7 @@ const Discussions = () => {
                     <TodaysEventTab />
                 </div>
                 <div className="lg:col-span-2">
-                    <div className="flex-1 rounded-md p-2 px-4 border border-system-file-border flex items-center justify-between bg-system-secondary-bg">
-                        <h4 className="font-medium text-lg text-brand-gray-dim italic ">Search Discussions</h4>
-
-                    </div>
-                    <h4 className="font-bold text-2xl text-system-primary-accent mt-4 mb-2">Community Discussions</h4>
-                    <h4 className=" text-base text-system-primary-text mb-2">Find answers, ask questions, and connect with our community aroundthe world.</h4>
-                    <div className="flex gap-6 flex-wrap mt-4 mb-6">
-
-                        <TabItem variant="active">
-                            All Discussions
-                        </TabItem>
-                        <TabItem variant="inactive">
-                            Following
-                        </TabItem>
-                    </div>
-                    <h4 className="font-bold mb-3 text-xl text-system-primary-text">Trending Discussions</h4>
-                    <DiscussionsList data={[]} emptyText={'No discussions'} gap={'lg:gap-4'} cols={3} />
+                    <DiscussionSection />
                 </div>
                 <div>
                     <Button

@@ -4,6 +4,7 @@ import CurrentProfileTab from '../components/Profile/CurrentProfileTab'
 import EmptyMembers from '../components/Common/EmptyMembers'
 import TimeLineTab from '../components/Activities/TimeLineTab'
 import MentionedTab from '../components/Activities/Mentions/MentionedTab'
+import SavedActivityTab from '../components/Activities/Saved/SavedActivityTab'
 
 const Activities = () => {
 
@@ -74,6 +75,7 @@ const Activities = () => {
                         </div> */}
                         </div>
                         <MentionedTab />
+                        <SavedActivityTab bordered={true} />
                     </div>
                 </div>
             </div>

@@ -8,7 +8,7 @@ import Spinner from '../../ui/Spinner'
 import ActivityListComponent from '../ActivityListComponent'
 import EmptyMembers from '../../Common/EmptyMembers'
 
-const SavedTab = ({ bordered = false }) => {
+const SavedActivityTab = ({ bordered = false }) => {
     const { updateCurrentUser, currentUserData } = useContext(AuthContext)
     const toast = useToast()
     const [isLoading, setIsLoading] = useState(true)
@@ -126,4 +126,4 @@ const SavedTab = ({ bordered = false }) => {
     )
 }
 
-export default SavedTab
+export default SavedActivityTab

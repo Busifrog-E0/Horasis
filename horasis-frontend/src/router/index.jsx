@@ -46,8 +46,9 @@ export const router = createBrowserRouter(
           <Route path='/universalsearchdetails' element={<UniversalSearchDetails />} />
           <Route path='/Discussions' element={<Discussions />} />
           <Route path='/Discussions/create/new' element={<CreateDiscussion />} />
+          <Route path='/Discussions/:discussionid' element={<SingleDiscussion />} />
 
-          <Route path='/Events' element={<Events />} />
+          {/* <Route path='/Events' element={<Events />} /> */}
         </Route>
       </Route>
       <Route path='login' element={<UnAuthLayout />}>
