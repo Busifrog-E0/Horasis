@@ -5,6 +5,7 @@ import CurrentProfileTab from "../components/Profile/CurrentProfileTab"
 import DropdownMenu from "../components/ui/DropdownMenu"
 import { relativeTime } from "../utils/date"
 import SearchBar from "../components/SearchBar"
+import InsightsList from "../components/Insights/InsightsList"
 
 const Articles = () => {
     const navigate = useNavigate()
@@ -37,64 +38,7 @@ const Articles = () => {
                     </div>
                     <div className="p-5 bg-system-secondary-bg rounded-lg px-14">
                         <h4 className="font-semibold text-md text-brand-gray">Insights</h4>
-                        <div className="flex flex-col gap-10">
-                            <div className="mt-2">
-                                <div className="h-52 overflow-hidden rounded-lg">
-                                    <img src="https://th.bing.com/th/id/OIP.SgzRjfgw5p1_0XYONbExogHaE8?rs=1&pid=ImgDetMain" className="object-cover h-full w-full" />
-                                </div>
-                                <h4 className="font-semibold text-lg text-system-primary-accent mt-4">
-                                    Horasis Lorem ipsum dolor sit ame..
-                                </h4>
-                                <h4 className="text-base mt-2 text-system-primary-accent">
-                                    by Frank-Jurgen Richter
-                                </h4>
-                                <h4 className="text-xs text-brand-gray-dim mt-2">
-                                    March 15 2023
-                                </h4>
-                            </div>
-                            <div className="mt-2">
-                                <div className="h-52 overflow-hidden rounded-lg">
-                                    <img src="https://th.bing.com/th/id/OIP.SgzRjfgw5p1_0XYONbExogHaE8?rs=1&pid=ImgDetMain" className="object-cover h-full w-full" />
-                                </div>
-                                <h4 className="font-semibold text-lg text-system-primary-accent mt-4">
-                                    Horasis Lorem ipsum dolor sit ame..
-                                </h4>
-                                <h4 className="text-base mt-2 text-system-primary-accent">
-                                    by Frank-Jurgen Richter
-                                </h4>
-                                <h4 className="text-xs text-brand-gray-dim mt-2">
-                                    March 15 2023
-                                </h4>
-                            </div>
-                            <div className="mt-2">
-                                <div className="h-52 overflow-hidden rounded-lg">
-                                    <img src="https://th.bing.com/th/id/OIP.SgzRjfgw5p1_0XYONbExogHaE8?rs=1&pid=ImgDetMain" className="object-cover h-full w-full" />
-                                </div>
-                                <h4 className="font-semibold text-lg text-system-primary-accent mt-4">
-                                    Horasis Lorem ipsum dolor sit ame..
-                                </h4>
-                                <h4 className="text-base mt-2 text-system-primary-accent">
-                                    by Frank-Jurgen Richter
-                                </h4>
-                                <h4 className="text-xs text-brand-gray-dim mt-2">
-                                    March 15 2023
-                                </h4>
-                            </div>
-                            <div className="mt-2">
-                                <div className="h-52 overflow-hidden rounded-lg">
-                                    <img src="https://th.bing.com/th/id/OIP.SgzRjfgw5p1_0XYONbExogHaE8?rs=1&pid=ImgDetMain" className="object-cover h-full w-full" />
-                                </div>
-                                <h4 className="font-semibold text-lg text-system-primary-accent mt-4">
-                                    Horasis Lorem ipsum dolor sit ame..
-                                </h4>
-                                <h4 className="text-base mt-2 text-system-primary-accent">
-                                    by Frank-Jurgen Richter
-                                </h4>
-                                <h4 className="text-xs text-brand-gray-dim mt-2">
-                                    March 15 2023
-                                </h4>
-                            </div>
-                        </div>
+                        <InsightsList data={[]} emptyText={"No insights"} />
                     </div>
 
                 </div>

@@ -1,15 +1,12 @@
 import { useNavigate } from "react-router-dom"
-import DiscussionsMainTab from "../components/Discussions/DiscussionsMainTab"
 import TodaysEventTab from "../components/Events/TodaysEventTab"
-import PostTab from "../components/Posts/PostTab"
 import CurrentProfileTab from "../components/Profile/CurrentProfileTab"
 import Button from "../components/ui/Button"
-import DropdownMenu from "../components/ui/DropdownMenu"
 import TabItem from "../components/ui/TabItem"
-import { relativeTime } from "../utils/date"
 import { useContext } from "react"
 import { AuthContext } from "../utils/AuthProvider"
 import SavedTab from "../components/Activities/Saved/SavedTab"
+import DiscussionsList from "../components/Discussions/DiscussionsList"
 
 const Discussions = () => {
     const { currentUserData, scrollToTop } = useContext(AuthContext)
@@ -19,10 +16,6 @@ const Discussions = () => {
         navigate(path)
     }
 
-    const GoToSingleDiscussion = (id) => {
-        scrollToTop()
-        navigate(`/discussions/${id}`)
-    }
 
     return (<>
         <div className="p-2 lg:px-10 lg:py-6">
@@ -48,123 +41,8 @@ const Discussions = () => {
                             Following
                         </TabItem>
                     </div>
-                    <h4 className="font-bold text-xl text-system-primary-text">Trending Discussions</h4>
-                    <div className="grid lg:grid-cols-3 gap-2 lg:gap-4">
-
-                        <DiscussionsMainTab />
-                        <div className="rounded-lg mt-3 overflow-hidden h-full bg-system-secondary-bg cursor-pointer" onClick={() => GoToSingleDiscussion("12345")}>
-                            <div className="h-28 overflow-hidden rounded-lg">
-                                <img src="https://th.bing.com/th/id/OIP.FFchRAWwk-emGNqgImzwaAHaEK?rs=1&pid=ImgDetMain" className="object-cover h-full w-full" />
-                            </div>
-                            <div className="p-2 px-6">
-                                <div className="flex flex-wrap items-center gap-x-2">
-                                    <h4 className="text-xs text-brand-gray-dim">Public Discussion</h4>
-                                    <h4 className="tetx-xs text-brand-gray-dim">•</h4>
-                                    <h4 className="text-xs text-brand-gray-dim">104 Members</h4>
-                                </div>
-                                <h4 className="text-base font-semibold text-system-primary-text mb-1 leading-6">Artificial Intelligence </h4>
-                                <h4 className=" text-xs text-brand-gray-dim">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</h4>
-
-                            </div>
-                            <div className="flex items-center justify-center">
-                                <Button
-                                    variant="black"
-                                >
-                                    Follow
-                                </Button>
-                            </div>
-                        </div>
-                        <div className="rounded-lg mt-3 overflow-hidden h-full bg-system-secondary-bg">
-                            <div className="h-28 overflow-hidden rounded-lg">
-                                <img src="https://i1.wp.com/www.geopolitika.hu/wp-content/uploads/2018/05/shutterstock_1009265824.jpg?fit=1200%2C801" className="object-cover h-full w-full" />
-                            </div>
-                            <div className="p-2 px-6">
-                                <div className="flex flex-wrap items-center gap-x-2">
-                                    <h4 className="text-xs text-brand-gray-dim">Public Discussion</h4>
-                                    <h4 className="tetx-xs text-brand-gray-dim">•</h4>
-                                    <h4 className="text-xs text-brand-gray-dim">104 Members</h4>
-                                </div>
-                                <h4 className="text-base font-semibold text-system-primary-text mb-1 leading-6">Geopolitics </h4>
-                                <h4 className=" text-xs text-brand-gray-dim">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</h4>
-
-                            </div>
-                            <div className="flex items-center justify-center">
-                                <Button
-                                    variant="black"
-                                >
-                                    Follow
-                                </Button>
-                            </div>
-                        </div>
-                        <div className="rounded-lg mt-3 overflow-hidden h-full bg-system-secondary-bg">
-                            <div className="h-28 overflow-hidden rounded-lg">
-                                <img src="https://st.adda247.com/https://wpassets.adda247.com/wp-content/uploads/multisite/sites/2/2022/10/06181046/Trade-and-Commerce-01.png" className="object-cover h-full w-full" />
-                            </div>
-                            <div className="p-2 px-6">
-                                <div className="flex flex-wrap items-center gap-x-2">
-                                    <h4 className="text-xs text-brand-gray-dim">Public Discussion</h4>
-                                    <h4 className="tetx-xs text-brand-gray-dim">•</h4>
-                                    <h4 className="text-xs text-brand-gray-dim">104 Members</h4>
-                                </div>
-                                <h4 className="text-base font-semibold text-system-primary-text mb-1 leading-6">Trade & Commerce </h4>
-                                <h4 className=" text-xs text-brand-gray-dim">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</h4>
-
-                            </div>
-                            <div className="flex items-center justify-center">
-                                <Button
-                                    variant="secondary"
-                                >
-                                    Unfollow
-                                </Button>
-                            </div>
-                        </div>
-                        <div className="rounded-lg mt-3 overflow-hidden h-full bg-system-secondary-bg">
-                            <div className="h-28 overflow-hidden rounded-lg">
-                                <img src="https://denver-south.com/wp-content/uploads/2018/04/what_is_econ_dev_april_12_2018-2048x1152.jpg" className="object-cover h-full w-full" />
-                            </div>
-                            <div className="p-2 px-6">
-                                <div className="flex flex-wrap items-center gap-x-2">
-                                    <h4 className="text-xs text-brand-gray-dim">Public Discussion</h4>
-                                    <h4 className="tetx-xs text-brand-gray-dim">•</h4>
-                                    <h4 className="text-xs text-brand-gray-dim">104 Members</h4>
-                                </div>
-                                <h4 className="text-base font-semibold text-system-primary-text mb-1 leading-6">Economic Development </h4>
-                                <h4 className=" text-xs text-brand-gray-dim">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</h4>
-
-                            </div>
-                            <div className="flex items-center justify-center">
-                                <Button
-                                    variant="black"
-                                >
-                                    Follow
-                                </Button>
-                            </div>
-                        </div>
-                        <div className="rounded-lg mt-3 overflow-hidden h-full bg-system-secondary-bg">
-                            <div className="h-28 overflow-hidden rounded-lg">
-                                <img src="https://thumbs.dreamstime.com/b/multiple-national-country-flags-waving-several-top-flag-poles-62247929.jpg" className="object-cover h-full w-full" />
-                            </div>
-                            <div className="p-2 px-6">
-                                <div className="flex flex-wrap items-center gap-x-2">
-                                    <h4 className="text-xs text-brand-gray-dim">Public Discussion</h4>
-                                    <h4 className="tetx-xs text-brand-gray-dim">•</h4>
-                                    <h4 className="text-xs text-brand-gray-dim">104 Members</h4>
-                                </div>
-                                <h4 className="text-base font-semibold text-system-primary-text mb-1 leading-6">Horasis Global Discussion </h4>
-                                <h4 className=" text-xs text-brand-gray-dim">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</h4>
-
-                            </div>
-                            <div className="flex items-center justify-center">
-                                <Button
-                                    variant="black"
-                                >
-                                    Follow
-                                </Button>
-                            </div>
-                        </div>
-
-                    </div>
-
+                    <h4 className="font-bold mb-3 text-xl text-system-primary-text">Trending Discussions</h4>
+                    <DiscussionsList data={[]} emptyText={'No discussions'} gap={'lg:gap-4'} cols={3} />
                 </div>
                 <div>
                     <Button

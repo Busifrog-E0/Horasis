@@ -1,11 +1,10 @@
 import Button from "../ui/Button"
 
-const DiscussionsMainTab = () => {
-
-    return (<>
-        <div className="rounded-lg overflow-hidden h-full bg-system-secondary-bg">
+const DiscussionTab = ({ discussion, onClick }) => {
+    return (
+        <div className="rounded-lg mt-3 overflow-hidden h-full bg-system-secondary-bg" onClick={() => onClick(discussion.DocId)}>
             <div className="h-28 overflow-hidden rounded-lg">
-                <img src="https://www.charteredaccountants.ie/sf_images/default-source/sustainability-centre-images/bubble-sustainable-min.jpeg?sfvrsn=25dea27c_2" className="object-cover h-full w-full" />
+                <img src="https://thumbs.dreamstime.com/b/multiple-national-country-flags-waving-several-top-flag-poles-62247929.jpg" className="object-cover h-full w-full" />
             </div>
             <div className="p-2 px-6">
                 <div className="flex flex-wrap items-center gap-x-2">
@@ -13,7 +12,7 @@ const DiscussionsMainTab = () => {
                     <h4 className="tetx-xs text-brand-gray-dim">•</h4>
                     <h4 className="text-xs text-brand-gray-dim">104 Members</h4>
                 </div>
-                <h4 className="text-base font-semibold text-system-primary-text mb-1 leading-6">Sustainability </h4>
+                <h4 className="text-base font-semibold text-system-primary-text mb-1 leading-6">Horasis Global Discussion </h4>
                 <h4 className=" text-xs text-brand-gray-dim">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</h4>
 
             </div>
@@ -25,7 +24,7 @@ const DiscussionsMainTab = () => {
                 </Button>
             </div>
         </div>
-    </>)
+    )
 }
 
-export default DiscussionsMainTab
+export default DiscussionTab

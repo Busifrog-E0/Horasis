@@ -3,7 +3,7 @@ import { getItem } from '../../constants/operations'
 import { AuthContext } from '../../utils/AuthProvider'
 import { useToast } from '../Toast/ToastService'
 import { _retrieveData, MAINTAB, _storeData } from '../../utils/LocalStorage'
-import SearchComponent from '../SearchBox/SearchComponent'
+import SearchComponent from '../Search/SearchBox/SearchComponent'
 import Tab from '../ui/Tab'
 import FollowersTab from './Tabs/FollowersTab'
 import FollowingsTab from './Tabs/FollowingsTab'
@@ -315,7 +315,7 @@ const ConnectionSection = () => {
 				setSearchKey={(value) => setFilters({ ...filters, Keyword: value })}
 			/>
 			<h4 className='font-medium text-2xl text-system-primary-accent mt-4 mb-3 lg:mb-6'>Connections</h4>
-			<Tab name='connections' activeTab={activeTab} onTabChange={onTabChange} tabs={tabs()} />
+			<Tab name='universalsearch' activeTab={activeTab} onTabChange={onTabChange} tabs={tabs()} />
 		</>
 	)
 }

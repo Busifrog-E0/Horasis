@@ -40,7 +40,7 @@ const tabs = (user, getUserDetails) => [
 	//   title: 'Events',
 	//   render: () => (
 	//     <div className='bg-system-secondary-bg p-4 lg:p-10 rounded-b-lg '>
-	//       <EventsList cols={4} gap='gap-1 lg:gap-x-16 lg:gap-y-10' />
+	//       <EventsList cols={4} gap='gap-1 lg:gap-x-16 lg:gap-y-10' emptyText="No events" />
 	//     </div>
 	//   ),
 	// },

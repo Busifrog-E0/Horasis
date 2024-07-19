@@ -3,9 +3,7 @@ import TodaysEventTab from "../components/Events/TodaysEventTab"
 import RecentlyActiveMemebrsTab from "../components/Members/RecentlyActiveMemebrsTab"
 import CurrentProfileTab from "../components/Profile/CurrentProfileTab"
 import Button from "../components/ui/Button"
-import DropdownMenu from "../components/ui/DropdownMenu"
 import TabItem from "../components/ui/TabItem"
-import { relativeTime } from "../utils/date"
 import { AuthContext } from "../utils/AuthProvider"
 import { useNavigate } from "react-router-dom"
 import EventsList from "../components/Events/EventsList"
@@ -48,7 +46,7 @@ const Events = () => {
                             Popular Events
                         </TabItem>
                     </div>
-                    <EventsList />
+                    <EventsList data={[1]} emptyText={'No events'} />
 
                     {/* <h4 className="font-medium text-2xl text-system-primary-accent mt-4 mb-1">Upcoming Events</h4>
                     <h4 className=" text-xl text-system-primary-text mb-2">Find answers, ask questions, and connect with our community aroundthe world.</h4>
