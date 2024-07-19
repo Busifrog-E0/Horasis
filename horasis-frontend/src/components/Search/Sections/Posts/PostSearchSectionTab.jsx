@@ -298,7 +298,7 @@ const PostSearchSectionTab = ({
 					</div>
 				)}
 
-				{singleActivity?.Documents && singleActivity.Documents.length > 0 && (
+				{ShowImage && singleActivity?.Documents && singleActivity.Documents.length > 0 && (
 					<div>
 						<ActivityDocuments documents={singleActivity.Documents} />
 					</div>

@@ -291,16 +291,16 @@ const ActivityComponent = ({
 						<p className='text-system-primary-text font-normal text-xs m-0'>{singleActivity.Mentions?.length} Mentions</p>
 					</div>
 				} */}
-				{}
+				{ }
 				{ShowImage && singleActivity?.MediaFiles && singleActivity.MediaFiles.length > 0 && (
 					<div>
 						<ActivityCarousel slides={singleActivity.MediaFiles} />
 					</div>
 				)}
 
-				{singleActivity?.Documents && singleActivity.Documents.length > 0 && (
+				{ShowImage && singleActivity?.Documents && singleActivity.Documents.length > 0 && (
 					<div>
-						<ActivityDocuments	 documents={singleActivity.Documents} />
+						<ActivityDocuments documents={singleActivity.Documents} />
 					</div>
 				)}
 				<div className='flex items-center justify-between gap-10 mt-2'>
