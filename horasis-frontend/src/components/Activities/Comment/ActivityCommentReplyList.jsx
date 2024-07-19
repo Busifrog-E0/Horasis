@@ -82,7 +82,7 @@ const ActivityCommentReplyList = ({
 		)
 	}
 	return (
-		<div className='flex items-center justify-between flex-col w-full mt-4 pl-20'>
+		<div className='flex items-center justify-between flex-col w-full mt-4 pl-20  pr-4'>
 			<div
 				className={`flex-1 mt-2 rounded-md p-2 px-3 border ${
 					Object.values(errorOj).some((error) => error) ? 'border-system-error' : 'border-system-secondary-accent'

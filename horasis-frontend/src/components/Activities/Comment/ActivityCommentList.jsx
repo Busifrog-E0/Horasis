@@ -109,7 +109,7 @@ const ActivityCommentList = ({
 					<p className='m-0 text-system-error'>{Object.values(errorOj).find((error) => error)}</p>
 				)}
 			</div>
-			<div className='flex items-center  justify-between mt-4 flex-col gap-1 w-full'>
+			<div className='flex items-center  justify-between mt-4 flex-col gap-1 w-full h-80 overflow-y-scroll'>
 				{comments.map((item) => (
 					<ActivityComment key={item.DocId} comment={item} activity={activity} getSingleActivity={getSingleActivity} />
 				))}
