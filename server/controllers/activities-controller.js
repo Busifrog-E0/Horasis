@@ -1,12 +1,10 @@
 import e from 'express';
 
-import { ReadOneFromActivities, ReadActivities, UpdateActivities, CreateActivities, RemoveActivities, UpdateAndIncrementActivities, AggregateActivities, } from '../databaseControllers/activities-databaseController.js';
+import { ReadOneFromActivities, ReadActivities, UpdateActivities, CreateActivities, RemoveActivities, AggregateActivities, } from '../databaseControllers/activities-databaseController.js';
 import { fileTypeFromBuffer } from 'file-type';
 import { AsyncSaveFileToSpaces, fileFormats, } from './files-controller.js';
 import { ReadOneFromUsers, ReadUsers } from '../databaseControllers/users-databaseController.js';
 import { AlertBoxObject } from './common.js';
-import { ReadFollows } from '../databaseControllers/follow-databaseController.js';
-import { ReadConnections } from '../databaseControllers/connections-databaseController.js';
 import { ObjectId } from 'mongodb';
 import { ReadLikes } from '../databaseControllers/likes-databaseController.js';
 import { ReadSaves } from '../databaseControllers/saves-databaseController.js';
@@ -31,8 +29,8 @@ const GetOneFromActivities = async (req, res) => {
         ReadLikes({ ActivityId: Activity.DocId, UserId }, undefined, 1, undefined),
         ReadSaves({ ActivityId: Activity.DocId, UserId }, undefined, 1, undefined)
     ])
-    const HasLiked = checkLike.length > 0 ? true : false;
-    const HasSaved = checkSave.length > 0 ? true : false;
+    const HasLiked = checkLike.length > 0;
+    const HasSaved = checkSave.length > 0;
     return res.json({ ...Activity, UserDetails, HasLiked, HasSaved });
 }
 
@@ -45,7 +43,7 @@ const GetOneFromActivities = async (req, res) => {
 const GetActivities = async (req, res) => {
     //@ts-ignore
     const { UserId } = req.user;
-    const { Filter, NextId, Limit, OrderBy } = req.query;
+    const { NextId, Limit } = req.query;
     const AggregateArray = [
         {
             '$lookup': {
@@ -212,8 +210,8 @@ const GetFilteredActivities = async (req, res) => {
             ReadLikes({ ActivityId: Activity.DocId, UserId }, undefined, 1, undefined),
             ReadSaves({ ActivityId: Activity.DocId, UserId }, undefined, 1, undefined)
         ])
-        const HasSaved = checkSave.length > 0 ? true : false;
-        const HasLiked = checkLike.length > 0 ? true : false;
+        const HasSaved = checkSave.length > 0;
+        const HasLiked = checkLike.length > 0;
         return { ...Activity, UserDetails, HasLiked, HasSaved }
     }))
     return res.json(data)
@@ -344,18 +342,16 @@ const UploadFiles = async (MediaFiles, Documents, UserId, ActivityId) => {
  */
 const PostActivityForProfilePatch = async (Data, UserId) => {
     let Activity = {};
-
-    if (Data.CoverPicture && Data.CoverPicture !== "") {
-        Activity = { Content: "Updated their Cover Photo", MediaFiles: [{ FileUrl: Data.CoverPicture, Type: "image" }], UserId };
-    } else if (Data.ProfilePicture && Data.ProfilePicture !== "") {
-        Activity = { Content: "Updated their Profile Photo", MediaFiles: [{ FileUrl: Data.ProfilePicture, Type: "image" }], UserId };
-    } else {
-        return; 
+    if (!Data.ProfilePicture && !Data.CoverPicture) {
+        return;
     }
-
+    if (Data.CoverPicture) {
+        Activity = { Content: "Updated their Cover Photo", MediaFiles: [{ FileUrl: Data.CoverPicture, Type: "image" }], UserId };
+    } else {
+        Activity = { Content: "Updated their Profile Photo", MediaFiles: [{ FileUrl: Data.ProfilePicture, Type: "image" }], UserId };
+    }
     Activity = ActivityInit(Activity);
     await CreateActivities(Activity);
-    return;
 }
 
 const ActivityInit = (Activity) => {
@@ -392,5 +388,5 @@ const ExtractMentionedUsersFromContent = async (Content) => {
 
 export {
     GetOneFromActivities, GetActivities, PostActivities, PatchActivities, DeleteActivities,
-    PostActivityForProfilePatch, GetFilteredActivities
+    PostActivityForProfilePatch, GetFilteredActivities, ExtractMentionedUsersFromContent
 }
