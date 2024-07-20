@@ -1,6 +1,7 @@
 // styles
 import './style/global.css'
 import './style/scrollbar.css'
+import './style/chat.css'
 // lib
 import { RouterProvider } from 'react-router-dom'
 // routes
@@ -10,6 +11,7 @@ import { useEffect } from 'react'
 import { AuthProvider } from './utils/AuthProvider'
 import ToastProvider from './components/Toast/ToastProvider'
 import FollowProvider from './context/Follow/FollowProvider'
+import ThemeProvider from './utils/ThemeProvider'
 
 function App() {
 	useEffect(() => {
@@ -26,13 +28,15 @@ function App() {
 		return BreakWheel()
 	}, [])
 	return (
-		<ToastProvider>
-			<AuthProvider>
-				<FollowProvider>
-					<RouterProvider router={router} />
-				</FollowProvider>
-			</AuthProvider>
-		</ToastProvider>
+		<ThemeProvider>
+			<ToastProvider>
+				<AuthProvider>
+					<FollowProvider>
+						<RouterProvider router={router} />
+					</FollowProvider>
+				</AuthProvider>
+			</ToastProvider>
+		</ThemeProvider>
 	)
 }
 

@@ -57,12 +57,12 @@ const SelectBox = ({
             </Modal>
             <div className={`flex flex-col my-1 ${width === "full" ? "w-[100%]" : "w-max"}`}>
                 <div
-                    onClick={OnModalOpen}
+
                     className={twMerge(inputVariants({ variant, size, width, withIcon, className }))}
                 >
-                    {value ? value : <span className="text-brand-gray-dim">{placeholder}</span>}
-                    <svg
-                        className="w-3 h-3 text-system-primary-text"
+                    {value ? value : <span className="text-brand-gray-dim cursor-pointer" onClick={OnModalOpen}>{placeholder}</span>}
+                    <svg onClick={OnModalOpen}
+                        className="w-3 h-3 text-system-primary-text cursor-pointer"
                         aria-hidden="true"
                         xmlns="http://www.w3.org/2000/svg"
                         fill="currentColor"

@@ -28,6 +28,7 @@ import Register from '../pages/Register'
 import ShowUserProfile from '../pages/ShowUserProfile'
 import SingleActivity from '../pages/SingleActivity'
 import Mentions from '../pages/Mentions'
+import ChatPage from '../pages/ChatPage'
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -48,7 +49,10 @@ export const router = createBrowserRouter(
           <Route path='/Discussions/create/new' element={<CreateDiscussion />} />
           <Route path='/Discussions/:discussionid' element={<SingleDiscussion />} /> */}
 
-          {/* <Route path='/Events' element={<Events />} /> */}
+          {/* <Route path='/Events' element={<Events />} />
+          <Route path='/Events/create/new' element={<CreateEvent />} /> */}
+
+          <Route path='/Chat/:userid' element={<ChatPage />} />
         </Route>
       </Route>
       <Route path='login' element={<UnAuthLayout />}>
