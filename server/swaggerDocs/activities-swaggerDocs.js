@@ -85,6 +85,11 @@ const delete_Activities_ActivityId_Save = async (req, res, next) => {
 const get_User_UserId_Activities_Save = async (req, res, next) => {
     /* #swagger.security = [{ "BearerAuth": [] }] */
     // #swagger.tags = ['Activities']
+    /* #swagger.responses[200] = {
+                description: '',
+                schema: { $ref: '#/definitions/SavedActivitiesData' }
+        } 
+    */
     next();
 }
 
