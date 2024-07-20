@@ -87,7 +87,7 @@ const get_User_UserId_Activities_Save = async (req, res, next) => {
     // #swagger.tags = ['Activities']
     /* #swagger.responses[200] = {
                 description: '',
-                schema: { $ref: '#/definitions/SavedActivitiesData' }
+                schema: { $ref: '#/definitions/ActivityGetDataArray' }
         } 
     */
     next();

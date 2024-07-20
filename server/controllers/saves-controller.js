@@ -4,6 +4,7 @@ import { ReadSaves, CreateSaves, RemoveSaves, } from './../databaseControllers/s
 import { ReadOneFromActivities } from '../databaseControllers/activities-databaseController.js';
 import { ReadOneFromUsers } from '../databaseControllers/users-databaseController.js';
 import { AlertBoxObject } from './common.js';
+import { ReadLikes } from '../databaseControllers/likes-databaseController.js';
 /**
  * @typedef {import('./../databaseControllers/saves-databaseController.js').SaveData} SaveData 
  */
@@ -22,7 +23,18 @@ const GetSaves = async (req, res) => {
     // @ts-ignore
     Filter.UserId = UserId;
     //@ts-ignore
-    const data = await ReadSaves(Filter, NextId, Limit, OrderBy);
+    const Saves = await ReadSaves(Filter, NextId, Limit, OrderBy);
+    const data = await Promise.all(Saves.map(async Save => {
+        const Activity = await ReadOneFromActivities(Save.ActivityId);
+        const [UserDetails, checkLike, checkSave] = await Promise.all([
+            ReadOneFromUsers(Activity.UserId),
+            ReadLikes({ ActivityId: Activity.DocId, UserId }, undefined, 1, undefined),
+            ReadSaves({ ActivityId: Activity.DocId, UserId }, undefined, 1, undefined)
+        ])
+        const HasSaved = checkSave.length > 0;
+        const HasLiked = checkLike.length > 0;
+        return { ...Activity, UserDetails, HasLiked, HasSaved }
+    }));
     return res.json(data);
 }
 
@@ -40,7 +52,7 @@ const PostSaves = async (req, res) => {
     }
     const ActivityDetails = await ReadOneFromActivities(ActivityId);
     const UserDetails = await ReadOneFromUsers(ActivityDetails.UserId);
-    const data = { ActivityId, UserId, ActivityDetails: { UserDetails, ...ActivityDetails } };
+    const data = { ActivityId, UserId };
     await CreateSaves(data);
     return res.json(true);
 }

@@ -2118,7 +2118,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Activity Data",
+            "description": "OK",
             "schema": {
               "$ref": "#/definitions/ActivityGetDataArray"
             }
@@ -3092,6 +3092,10 @@
         "HasLiked": {
           "type": "boolean",
           "example": true
+        },
+        "HasSaved": {
+          "type": "boolean",
+          "example": false
         }
       }
     },
@@ -3214,6 +3218,10 @@
           "HasLiked": {
             "type": "boolean",
             "example": true
+          },
+          "HasSaved": {
+            "type": "boolean",
+            "example": false
           }
         }
       }
