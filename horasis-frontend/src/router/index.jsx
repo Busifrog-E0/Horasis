@@ -31,39 +31,39 @@ import Mentions from '../pages/Mentions'
 import ChatPage from '../pages/ChatPage'
 
 export const router = createBrowserRouter(
-  createRoutesFromElements(
-    <Route path='/' element={<RootLayout />}>
-      <Route path='/' element={<AuthLayout />}>
-        <Route path='/' element={<DashboardLayout />}>
-          <Route path='/' element={<Activities />} />
-          <Route path='/Activities' element={<Activities />} />
-          <Route path='/Mentions' element={<Mentions />} />
-          <Route path='/Activities/:activityid' element={<SingleActivity />} />
-          <Route path='/home' element={<Home />} />
+	createRoutesFromElements(
+		<Route path='/' element={<RootLayout />}>
+			<Route path='/' element={<AuthLayout />}>
+				<Route path='/' element={<DashboardLayout />}>
+					<Route path='/' element={<Activities />} />
+					<Route path='/Activities' element={<Activities />} />
+					<Route path='/Mentions' element={<Mentions />} />
+					<Route path='/Activities/:activityid' element={<SingleActivity />} />
 
-          <Route path='/Connections' element={<Connections />} />
-          <Route path='/MyProfile' element={<MyProfile />} />
-          <Route path='/ViewProfile/:userid' element={<ShowUserProfile />} />
-          {/* <Route path='/universalsearchdetails' element={<UniversalSearchDetails />} />
+					<Route path='/Connections' element={<Connections />} />
+					<Route path='/MyProfile' element={<MyProfile />} />
+					<Route path='/ViewProfile/:userid' element={<ShowUserProfile />} />
+					{/* <Route path='/universalsearchdetails' element={<UniversalSearchDetails />} />
           <Route path='/Discussions' element={<Discussions />} />
           <Route path='/Discussions/create/new' element={<CreateDiscussion />} />
           <Route path='/Discussions/:discussionid' element={<SingleDiscussion />} /> */}
 
-          {/* <Route path='/Events' element={<Events />} />
+					{/* <Route path='/Events' element={<Events />} />
           <Route path='/Events/create/new' element={<CreateEvent />} /> */}
 
-          <Route path='/Chat/:userid' element={<ChatPage />} />
-        </Route>
-      </Route>
-      <Route path='login' element={<UnAuthLayout />}>
-        <Route index element={<LogIn />} />
-      </Route>
-      <Route path='register' element={<UnAuthLayout />}>
-        <Route index element={<Register />} />
-      </Route>
-      <Route path='welcome' element={<UnAuthLayout />}>
-        <Route index element={<WelcomePage />} />
-      </Route>
-    </Route>
-  )
+					<Route path='/Chat/:userid' element={<ChatPage />} />
+				</Route>
+			</Route>
+			<Route path='/home' element={<Home />} />
+			<Route path='login' element={<UnAuthLayout />}>
+				<Route index element={<LogIn />} />
+			</Route>
+			<Route path='register' element={<UnAuthLayout />}>
+				<Route index element={<Register />} />
+			</Route>
+			<Route path='welcome' element={<UnAuthLayout />}>
+				<Route index element={<WelcomePage />} />
+			</Route>
+		</Route>
+	)
 )

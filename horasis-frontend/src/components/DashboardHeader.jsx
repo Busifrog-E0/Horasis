@@ -19,7 +19,7 @@ const DashboardHeader = () => {
 				<h1 className='text-4xl font-bold text-brand-violet'>
 					<Logo />
 				</h1>
-				<div className='px-10 hidden lg:flex flex-row flex-wrap gap-3 flex-1 gap-12'>
+				<div className='px-10 hidden lg:flex flex-row flex-wrap gap-3 flex-1'>
 					<div className='w-max flex flex-col items-center'>
 						<a
 							className={`cursor-pointer  font-medium text-2xl  ${location.pathname === '/Activities' || location.pathname === '/' ? 'text-system-primary-accent' : 'text-system-primary-text'
