@@ -20,7 +20,7 @@ import cover from '../assets/icons/cover.svg'
 import { useToast } from '../components/Toast/ToastService'
 import { useFollow } from '../context/Follow/FollowService'
 
-const UserProfileConnectComponent = ({ profile, connectCallback = () => {}, setIsLoading }) => {
+const UserProfileConnectComponent = ({ profile, connectCallback = () => { }, setIsLoading }) => {
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
 	const toast = useToast()
 
@@ -181,7 +181,7 @@ const UserProfileConnectComponent = ({ profile, connectCallback = () => {}, setI
 	}
 }
 
-const UserProfileFollowComponent = ({ profile, followCallback = () => {}, setIsLoading }) => {
+const UserProfileFollowComponent = ({ profile, followCallback = () => { }, setIsLoading }) => {
 	const { followUser, unFollowUser } = useFollow()
 
 	if (profile.IsFollowing) {
@@ -413,7 +413,7 @@ const ShowUserProfile = () => {
 												className='w-24 lg:w-60 h-24 lg:h-60 rounded-full object-cover'
 												src={user.ProfilePicture}
 												alt='Rounded avatar'
-												onClick={() => {}}
+												onClick={() => { }}
 											/>
 										</div>
 									</>
@@ -421,7 +421,7 @@ const ShowUserProfile = () => {
 									<>
 										<div
 											className='w-24 lg:w-60 h-24 lg:h-60 rounded-full flex items-center justify-center border-2 border-dashed bg-brand-light-gray'
-											onClick={() => {}}>
+											onClick={() => { }}>
 											<img src={avatar} className='object-cover h-full w-full rounded-lg' />
 										</div>
 									</>
