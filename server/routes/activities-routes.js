@@ -9,7 +9,7 @@ import { ValidatePostActivities, ValidatePatchActivities } from '../validations/
 import SwaggerDocs from '../swaggerDocs/activities-swaggerDocs.js'
 import e from 'express';
 import { CheckSameUser, QueryParameterFormatting, ValidateGetEntity } from '../middleware/common.js';
-import { GetFeedActivitiesMiddleware, GetMentionedActivitiesMiddleware, GetUserActivitiesMiddleware, PostFeedActivitiesMiddleware } from '../middleware/activities-middleware.js';
+import { GetFeedActivitiesMiddleware, GetMentionedActivitiesMiddleware, GetUserActivitiesMiddleware, PostActivitiesLikeMiddleware, PostFeedActivitiesMiddleware } from '../middleware/activities-middleware.js';
 import { DeleteLikes, GetLikes, PostLikes } from '../controllers/likes-controller.js';
 import { DeleteSaves, GetSaves, PostSaves } from '../controllers/saves-controller.js';
 const router = e.Router();
@@ -40,11 +40,12 @@ router.patch('/activities/:ActivityId', decodeIDToken, ensureAuthorized("User"),
     // @ts-ignore
     asyncHandler(PatchActivities));
 
-router.post('/users/:UserId/activities/:ActivityId/like', decodeIDToken, ensureAuthorized("User"), CheckSameUser, SwaggerDocs.post_Activities_ActivityId_Like,
+router.post('/users/:UserId/activities/:EntityId/like', decodeIDToken, ensureAuthorized("User"), CheckSameUser,
+    PostActivitiesLikeMiddleware, SwaggerDocs.post_Activities_ActivityId_Like,
     // @ts-ignore
     asyncHandler(PostLikes));
 
-router.delete('/users/:UserId/activities/:ActivityId/dislike', decodeIDToken, ensureAuthorized("User"), CheckSameUser, SwaggerDocs.delete_Activities_ActivityId_Dislike,
+router.delete('/users/:UserId/activities/:EntityId/dislike', decodeIDToken, ensureAuthorized("User"), CheckSameUser, SwaggerDocs.delete_Activities_ActivityId_Dislike,
     // @ts-ignore
     asyncHandler(DeleteLikes));
 
@@ -57,7 +58,7 @@ router.delete('/users/:UserId/activities/:ActivityId/save', decodeIDToken, ensur
     // @ts-ignore
     asyncHandler(DeleteSaves));
 
-router.get('/activities/:ActivityId/likedUsers', decodeIDToken, ensureAuthorized("User"), ValidateGetEntity, QueryParameterFormatting, SwaggerDocs.get_Activities_ActivityId_LikedUsers,
+router.get('/activities/:EntityId/likedUsers', decodeIDToken, ensureAuthorized("User"), ValidateGetEntity, QueryParameterFormatting, SwaggerDocs.get_Activities_ActivityId_LikedUsers,
     //@ts-ignore
     asyncHandler(GetLikes))
 

@@ -5,11 +5,12 @@ import dataHandling from './functions.js'
  */
 /**
  * @typedef {object} LikeData
- * @property {string} ActivityId
+ * @property {string} EntityId
  * @property {string} UserId
  * @property {UserData} UserDetails
  * @property {number} CreatedIndex
  * @property {string} DocId
+ * @property {'Activity'|'Comment'} Type
  */
 
 

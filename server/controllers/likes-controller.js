@@ -4,6 +4,7 @@ import { ReadOneFromLikes, ReadLikes, UpdateLikes, CreateLikes, RemoveLikes, } f
 import { IncrementActivities } from '../databaseControllers/activities-databaseController.js';
 import { ReadOneFromUsers } from '../databaseControllers/users-databaseController.js';
 import { AlertBoxObject } from './common.js';
+import { IncrementComments } from '../databaseControllers/comments-databaseController.js';
 /**
  * @typedef {import('./../databaseControllers/likes-databaseController.js').LikeData} LikeData 
  */
@@ -27,10 +28,10 @@ const GetOneFromLikes = async (req, res) => {
  * @returns {Promise<e.Response<Array<LikeData>>>}
  */
 const GetLikes = async (req, res) => {
-    const { ActivityId } = req.params;
+    const { EntityId } = req.params;
     const { Filter, NextId, Limit, OrderBy } = req.query;
     // @ts-ignore
-    Filter.ActivityId = ActivityId;
+    Filter.EntityId = EntityId;
     //@ts-ignore
     const data = await ReadLikes(Filter, NextId, Limit, OrderBy);
     return res.json(data);
@@ -43,15 +44,20 @@ const GetLikes = async (req, res) => {
  * @returns {Promise<e.Response<true>>}
  */
 const PostLikes = async (req, res) => {
-    const { ActivityId, UserId } = req.params;
-    const CheckLike = await ReadLikes({ ActivityId, UserId }, undefined, 1, undefined);
+    const { EntityId, UserId } = req.params;
+    const CheckLike = await ReadLikes({ EntityId, UserId }, undefined, 1, undefined);
     if (CheckLike.length > 0) {
         return res.status(444).json(AlertBoxObject("Cannot Like", "You cannot like twice"));
     }
     const UserDetails = await ReadOneFromUsers(UserId);
-    const data = { ActivityId, UserId,UserDetails };
+    const data = { EntityId, UserId,UserDetails ,Type:req.body.Type };
     await CreateLikes(data);
-    await IncrementActivities({ NoOfLikes: 1 }, ActivityId);
+    if (data.Type === 'Activity') {
+        await IncrementActivities({ NoOfLikes: 1 }, data.EntityId);
+    }
+    else {
+        await IncrementComments({ NoOfLikes: 1 }, data.EntityId);
+    }   
     return res.json(true);
 }
 
@@ -74,14 +80,19 @@ const PatchLikes = async (req, res) => {
  * @returns {Promise<e.Response<true>>}
  */
 const DeleteLikes = async (req, res) => {
-    const { ActivityId, UserId } = req.params;
-    const CheckLike = await ReadLikes({ ActivityId, UserId }, undefined, 1, undefined);
+    const { EntityId, UserId } = req.params;
+    const CheckLike = await ReadLikes({ EntityId, UserId }, undefined, 1, undefined);
     if (CheckLike.length === 0) {
         return res.status(444).json(AlertBoxObject("Cannot DisLike", "You have not liked this activity"));
     }
     const [Like] = CheckLike;
     await RemoveLikes(Like.DocId);
-    await IncrementActivities({ NoOfLikes: -1 }, Like.ActivityId);
+    if (Like.Type === 'Activity') {
+        await IncrementActivities({ NoOfLikes: -1 }, Like.EntityId);  
+    }
+    else {
+        await IncrementComments({ NoOfLikes: -1 }, Like.EntityId);
+    }   
     return res.json(true);
 }
 

@@ -38,8 +38,15 @@ const GetMentionedActivitiesMiddleware = (req, res, next) => {
     return next();
 }
 
+const PostActivitiesLikeMiddleware = (req, res, next) => {
+    req.body = { ...req.body, Type: 'Activity' };
+    return next();
+}
+
+
 export {
     GetFeedActivitiesMiddleware, GetEventActivitiesMiddleware, GetDiscussionActivitiesMiddleware,
     PostDiscussionActivitiesMiddleware, PostEventActivitiesMiddleware, PostFeedActivitiesMiddleware,
-    GetUserActivitiesMiddleware,GetMentionedActivitiesMiddleware
+    GetUserActivitiesMiddleware, GetMentionedActivitiesMiddleware, PostActivitiesLikeMiddleware,
+    
 }

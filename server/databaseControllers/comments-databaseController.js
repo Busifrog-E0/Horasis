@@ -7,6 +7,8 @@ import dataHandling from './functions.js'
  * @property {string} UserId
  * @property {string} DocId
  * @property {number} NoOfReplies
+ * @property {number} NoOfLikes
+ * @property {{Username : string,UserId: string,FullName : string}[]} Mentions
  * @property {'Comment'|'Reply'} Type
  */
 
