@@ -39,7 +39,7 @@ const PostSaves = async (req, res) => {
         return res.status(444).json(AlertBoxObject("Cannot Save", "You cannot Save twice"));
     }
     const [UserDetails, ActivityDetails] = await Promise.all([ReadOneFromUsers(UserId),ReadOneFromActivities(ActivityId)]) ;
-    const data = { ActivityId, ...{ UserDetails, ...ActivityDetails } };
+    const data = { ActivityId, ...{ UserDetails, ...ActivityDetails },UserId };
     await CreateSaves(data);
     return res.json(true);
 }
