@@ -3,9 +3,9 @@ import { AuthContext } from "../../utils/AuthProvider"
 import { useToast } from "../Toast/ToastService"
 import { getItem } from "../../constants/operations"
 import Spinner from "../ui/Spinner"
-import avatar from '../../assets/icons/avatar.svg'
 import InComingMessage from "./ChatElements/InComingMessage"
 import OutGoingMessage from "./ChatElements/OutGoingMessage"
+import UserDetailsTab from "./ChatElements/UserDetailsTab"
 
 const ChatView = ({ userId }) => {
     const [isLoading, setIsLoading] = useState(false)
@@ -52,45 +52,9 @@ const ChatView = ({ userId }) => {
         getUserDetails()
     }, [])
     return (<>
-        <div className='h-full flex flex-col px-3 pt-3 lg:px-10 lg:pt-6 bg-system-secondary-bg'>
-            <div>
-                <div className='flex justify-start items-center'>
-                    {user ? (
-                        <>
-                            {user.ProfilePicture ? (
-                                <>
-                                    <div className='w-16 h-16 rounded-full flex items-center justify-center bg-black'>
-                                        <img
-                                            className='w-16 h-16 rounded-full object-cover'
-                                            src={user.ProfilePicture}
-                                            alt='Rounded avatar'
-                                            onClick={() => { }}
-                                        />
-                                    </div>
-                                </>
-                            ) : (
-                                <>
-                                    <div
-                                        className='w-16 h-16 rounded-full flex items-center justify-center border-2 border-dashed bg-brand-light-gray'
-                                        onClick={() => { }}>
-                                        <img src={avatar} className='object-cover h-full w-full rounded-lg' />
-                                    </div>
-                                </>
-                            )}
-                        </>
-                    ) : (
-                        <>
-                            <div className='w-16 h-16 rounded-full flex items-center justify-center border-2 border-dashed bg-slate-100'>
-                                {isLoading ? <Spinner /> : <></>}
-                            </div>
-                        </>
-                    )}
-                </div>
-
-                <h4 className='font-medium text-base text-system-primary-text mt-2'>{user && user.FullName}</h4>
-                <h4 className='font-medium text-sm text-brand-gray-dim'>@{user && user.Username}</h4>
-            </div>
-            <div className="flex-1 overflow-auto py-6">
+        <div className='h-full flex flex-col bg-system-secondary-bg'>
+            <UserDetailsTab user={user} isLoading={isLoading} />
+            <div className="flex-1 overflow-auto px-3 pt-3">
                 {isLoading ? <Spinner /> : <></>}
 
                 {/* auto scroll to bottom if new message came */}
@@ -106,7 +70,7 @@ const ChatView = ({ userId }) => {
                 }} />
 
             </div>
-            <div className="py-3 lg:py-6">
+            <div className="p-3">
                 <div className="flex flex-row">
                     <div className="border border-system-primary-border bg-system-secondary-bg overflow-hidden rounded-lg flex-1">
                         <div className="flex gap-0 flex-row">

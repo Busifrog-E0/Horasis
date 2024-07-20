@@ -3,7 +3,6 @@ import { AuthContext } from '../utils/AuthProvider'
 import Logo from './Common/Logo'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import ChatList from './Chat/ChatList'
-import ThemeSwitcher from './Theme/ThemeSwitcher'
 
 
 const DashboardHeader = () => {
@@ -90,7 +89,6 @@ const DashboardHeader = () => {
           </button>
           <AlertList /> */}
 					<ChatList />
-					<ThemeSwitcher />
 					<button
 						type='button'
 						className='inline-flex justify-center rounded-md border-none bg-system-secondary-bg text-md px-0 font-medium text-brand-red'

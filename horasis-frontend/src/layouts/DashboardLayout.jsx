@@ -6,6 +6,7 @@ import DashboardHeader from "../components/DashboardHeader";
 import DashboardBottomNavbar from "../components/DashboardBottomNavbar";
 import { useContext } from "react";
 import { AuthContext } from "../utils/AuthProvider";
+import ChatPopup from "../components/Chat/ChatPopup";
 
 function DashboardLayout() {
   const { scrollRef } = useContext(AuthContext)
@@ -18,6 +19,7 @@ function DashboardLayout() {
           <Outlet />
         </div>
       </div>
+      <ChatPopup userId={'669a235e525967c06f6bfc06'} />
       <DashboardBottomNavbar />
     </div>
   );

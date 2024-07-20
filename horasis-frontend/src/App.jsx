@@ -11,7 +11,6 @@ import { useEffect } from 'react'
 import { AuthProvider } from './utils/AuthProvider'
 import ToastProvider from './components/Toast/ToastProvider'
 import FollowProvider from './context/Follow/FollowProvider'
-import ThemeProvider from './utils/ThemeProvider'
 
 function App() {
 	useEffect(() => {
@@ -28,15 +27,13 @@ function App() {
 		return BreakWheel()
 	}, [])
 	return (
-		<ThemeProvider>
-			<ToastProvider>
-				<AuthProvider>
-					<FollowProvider>
-						<RouterProvider router={router} />
-					</FollowProvider>
-				</AuthProvider>
-			</ToastProvider>
-		</ThemeProvider>
+		<ToastProvider>
+			<AuthProvider>
+				<FollowProvider>
+					<RouterProvider router={router} />
+				</FollowProvider>
+			</AuthProvider>
+		</ToastProvider>
 	)
 }
 
