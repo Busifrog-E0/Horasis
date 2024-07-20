@@ -62,7 +62,7 @@ router.get('/activities/:EntityId/likedUsers', decodeIDToken, ensureAuthorized("
     //@ts-ignore
     asyncHandler(GetLikes))
 
-router.get('/user/:UserId/activities/save', decodeIDToken, ensureAuthorized("User"), ValidateGetEntity, QueryParameterFormatting, SwaggerDocs.get_Activities,
+router.get('/user/:UserId/activities/save', decodeIDToken, ensureAuthorized("User"), ValidateGetEntity, QueryParameterFormatting, SwaggerDocs.get_User_UserId_Activities_Save,
     //@ts-ignore
     asyncHandler(GetSaves))
 
