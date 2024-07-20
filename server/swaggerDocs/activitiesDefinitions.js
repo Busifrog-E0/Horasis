@@ -17,23 +17,17 @@ const ActivityGetData = {
     NoOfComments: 2,
     DocId: "activity_1234", 
     UserDetails: usersDefinitions.UserData,
-    HasLiked: true
+    HasLiked: true,
+    HasSaved : false,
 };
 
 const ActivityGetDataArray = [ActivityGetData];
 
-const SavedActivitiesData = [
-    { 
-        CreatedIndex: 12345678987654,
-        ActivityId: "69ba6vsd6vfsadasdbs",
-        UserId: "user123",
-        ActivityDetails:ActivityGetData
-    }
-]
+
 
 export default {
     ActivityPostData,
     ActivityGetData,
     ActivityGetDataArray,
-    SavedActivitiesData
+
 }
