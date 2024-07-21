@@ -1,6 +1,9 @@
 import e from 'express';
 
-import { ReadOneFromComments, ReadComments, UpdateComments, CreateComments, RemoveComments, CommentCount, } from './../databaseControllers/comments-databaseController.js';
+import { ReadOneFromComments, ReadComments, UpdateComments, CreateComments, RemoveComments,  IncrementComments, } from './../databaseControllers/comments-databaseController.js';
+import { IncrementActivities } from '../databaseControllers/activities-databaseController.js';
+import { ReadOneFromUsers } from '../databaseControllers/users-databaseController.js';
+import { ExtractMentionedUsersFromContent } from './activities-controller.js';
 /**
  * @typedef {import('./../databaseControllers/comments-databaseController.js').CommentData} CommentData 
  */
@@ -25,8 +28,15 @@ const GetOneFromComments = async (req, res) => {
  */
 const GetComments = async (req, res) => {
     const { Filter, NextId, Limit, OrderBy } = req.query;
+    const { ParentId } = req.params;
     // @ts-ignore
-    const data = await ReadComments(Filter, NextId, Limit, OrderBy);
+    Filter.ParentId = ParentId;
+    // @ts-ignore
+    const Comments = await ReadComments(Filter, NextId, Limit, OrderBy);
+    const data = await Promise.all(Comments.map(async Comment => {
+        const UserDetails = await ReadOneFromUsers(Comment.UserId);
+        return { ...Comment, UserDetails }
+    }))
     return res.json(data);
 }
 
@@ -37,7 +47,16 @@ const GetComments = async (req, res) => {
  * @returns {Promise<e.Response<true>>}
  */
 const PostComments = async (req, res) => {
-    await CreateComments(req.body);
+    const { ActivityId } = req.params;
+    req.body.Type = "Comment";
+    await IncrementActivities({ NoOfComments: 1 }, ActivityId, );
+    if (req.params.CommentId) {
+        await IncrementComments({ NoOfReplies: 1 }, req.params.CommentId);
+        req.body.Type = "Reply";
+    }
+    const Mentions = await ExtractMentionedUsersFromContent(req.body.Content);
+    req.body = CommentInit(req.body);
+    await CreateComments({...req.body,Mentions});
     return res.json(true);
 }
 
@@ -60,21 +79,24 @@ const PatchComments = async (req, res) => {
  * @returns {Promise<e.Response<true>>}
  */
 const DeleteComments = async (req, res) => {
-    const { CommentId } = req.params;
+    const { CommentId, ActivityId } = req.params;
+    const Comment = await ReadOneFromComments(CommentId);
+    if (Comment.Type == "Reply") {
+        await IncrementComments({ NoOfReplies: -1 }, Comment.ParentId);
+    }
     await RemoveComments(CommentId);
+    await IncrementActivities({ NoOfComments: -1 }, ActivityId);
     return res.json(true);
 }
 
-const GetActivityCommentCount = async (ActivityId) => {
-    let NoOfComments = 0;
-    const CommentsData = await ReadComments({ ParentId: ActivityId }, undefined, -1, undefined);
-    CommentsData.forEach(async Comment => {
-        const ReplyCount = await CommentCount({ ParentId: Comment.DocId });
-        NoOfComments += ReplyCount + 1;
-    })
-    return NoOfComments;
+const CommentInit = (CommentData) => {
+    return {
+        NoOfReplies: 0,
+        NoOfLikes : 0,
+        ...CommentData
+    }
 }
 export {
     GetOneFromComments, GetComments, PostComments, PatchComments, DeleteComments,
-    GetActivityCommentCount
+
 }

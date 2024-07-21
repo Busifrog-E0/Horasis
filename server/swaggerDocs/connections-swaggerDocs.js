@@ -36,6 +36,17 @@ const delete_connections = async (req, res, next) => {
     return next();
 }
 
+const get_Connections_Count = async (req, res, next) => {
+    // #swagger.tags = ['Connections']
+    /* #swagger.responses[200] = {
+             description: 'User Data',
+             schema:  5 
+     } 
+ */
+    next();
+}
+
+
 export default {
     get_users_UserId_connections,
     post_connections_send,
@@ -43,4 +54,5 @@ export default {
     delete_connections_reject,
     delete_connections_cancel,
     delete_connections,
+    get_Connections_Count,
 }

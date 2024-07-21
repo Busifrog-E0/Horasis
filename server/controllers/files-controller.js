@@ -3,13 +3,23 @@ import { fileTypeFromBuffer } from 'file-type';
 import dotenv from 'dotenv';
 dotenv.config();
 
-const documentExtensions = [
-    'pdf'];
-
-const mediaExtensions = [
-    'jpeg', 'jpg', 'mp4', 'mkv'];
-
-
+const fileFormats = {
+    document: {
+        extensions: [
+            'pdf'],
+        size: 123456789
+    },
+    image: {
+        extensions: [
+            'jpeg', 'jpg','png'],
+        size: 1234556789
+    },
+    video: {
+        extensions: [
+            'mp4'],
+        size: 123456789
+    }
+}
 /**
  * Converts a byte array to a file and saves it to the specified file path.
  * @param {ArrayBufferView} byteArray - The byte array to be converted to a file.
@@ -54,14 +64,14 @@ const SaveFileToSpaces = async (FirstFolderName, FilePath, FileData, ContentType
             if (err) {
                 return Response.status(400).json(false);
             }
-            return Response.json({ "FileUrl": `${process.env.DO_SPACES_FILEURL}/${FirstFolderName}/${FilePath}?${Date.now()}${Math.floor(Math.random() * 10000) + 1}` });
+            return Response.json({ "FileUrl": `${process.env.DO_SPACES_FILEURL}/${FirstFolderName}/${FilePath}` });
         }
         if (err) {
             console.log("An error", err)
             return false;
         }
         // https://oxydebug.sgp1.cdn.digitaloceanspaces.com/Users/idName/input.pdf
-        return `${process.env.DO_SPACES_FILEURL}/${FirstFolderName}/${FilePath}?${Date.now()}${Math.floor(Math.random() * 10000) + 1}`;
+        return `${process.env.DO_SPACES_FILEURL}/${FirstFolderName}/${FilePath}`;
     });
 
 }
@@ -89,7 +99,7 @@ const AsyncSaveFileToSpaces = async (FirstFolderName, FilePath, FileData, Conten
                 reject(false);
             }
             // https://oxydebug.sgp1.cdn.digitaloceanspaces.com/Users/idName/input.pdf
-            resolve(`${process.env.DO_SPACES_FILEURL}/${FirstFolderName}/${FilePath}?${Date.now()}${Math.floor(Math.random() * 10000) + 1}`);
+            resolve(`${process.env.DO_SPACES_FILEURL}/${FirstFolderName}/${FilePath}`);
         });
     })
 
@@ -156,6 +166,5 @@ export {
     AsyncSaveFileToSpaces,
     getFileArrayBuffer,
     FileDelete,
-    documentExtensions,
-    mediaExtensions
+    fileFormats
 }

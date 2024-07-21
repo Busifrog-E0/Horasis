@@ -1,11 +1,14 @@
 import e from 'express';
 
-import { ReadOneFromActivities, ReadActivities, UpdateActivities, CreateActivities, RemoveActivities, } from '../databaseControllers/activities-databaseController.js';
-import { GetFileFromURI } from './common.js';
+import { ReadOneFromActivities, ReadActivities, UpdateActivities, CreateActivities, RemoveActivities, AggregateActivities, } from '../databaseControllers/activities-databaseController.js';
 import { fileTypeFromBuffer } from 'file-type';
-import { AsyncSaveFileToSpaces, documentExtensions, mediaExtensions } from './files-controller.js';
-import { CommentCount, ReadComments } from '../databaseControllers/comments-databaseController.js';
-import { GetActivityCommentCount } from './comments-controller.js';
+import { AsyncSaveFileToSpaces, fileFormats, } from './files-controller.js';
+import { ReadOneFromUsers, ReadUsers } from '../databaseControllers/users-databaseController.js';
+import { AlertBoxObject } from './common.js';
+import { ObjectId } from 'mongodb';
+import { ReadLikes } from '../databaseControllers/likes-databaseController.js';
+import { ReadSaves } from '../databaseControllers/saves-databaseController.js';
+
 /**
  * @typedef {import('../databaseControllers/activities-databaseController.js').ActivityData} ActivityData 
  */
@@ -18,10 +21,17 @@ import { GetActivityCommentCount } from './comments-controller.js';
  */
 const GetOneFromActivities = async (req, res) => {
     const { ActivityId } = req.params;
+    //@ts-ignore
+    const { UserId } = req.user;
     const Activity = await ReadOneFromActivities(ActivityId);
-    const NoOfComments = await GetActivityCommentCount(ActivityId);
-    const data = {...Activity,NoOfComments}
-    return res.json(data);
+    const [UserDetails, checkLike, checkSave] = await Promise.all([
+        ReadOneFromUsers(Activity.UserId),
+        ReadLikes({ EntityId: Activity.DocId, UserId }, undefined, 1, undefined),
+        ReadSaves({ ActivityId: Activity.DocId, UserId }, undefined, 1, undefined)
+    ])
+    const HasLiked = checkLike.length > 0;
+    const HasSaved = checkSave.length > 0;
+    return res.json({ ...Activity, UserDetails, HasLiked, HasSaved });
 }
 
 /**
@@ -31,15 +41,183 @@ const GetOneFromActivities = async (req, res) => {
  * @returns {Promise<e.Response<Array<ActivityData>>>}
  */
 const GetActivities = async (req, res) => {
+    //@ts-ignore
+    const { UserId } = req.user;
+    const { NextId, Limit } = req.query;
+    const AggregateArray = [
+        {
+            '$lookup': {
+                'from': 'Follows',
+                'pipeline': [
+                    { '$match': { '$expr': { '$eq': ['$FollowerId', UserId] } } }       //INSERTS FOLLOWEES ARRAY
+                ],
+                'as': 'Followees'
+            }
+        },
+        {
+            '$lookup': {
+                'from': 'Connections',
+                'pipeline': [
+                    {
+                        '$match': {
+                            '$expr': {
+                                '$and': [
+                                    { '$in': [UserId, '$UserIds'] },
+                                    { '$eq': ['$Status', 'Connected'] }
+                                ]
+                            }
+                        }
+                    }      //INSERTS CONNECTIONS ARRAY
+                ],
+                'as': 'Connections'
+            }
+        },
+        {
+            $addFields: {
+                Followees: { $map: { input: '$Followees', as: 'f', in: '$$f.FolloweeId' } },    //CHANGES FOLLOWEES ARRAY TO CONTAIN IDS
+                Connections: {                                                                  //CHANGES CONNECTION ARRAY TO CONTAIN IDS
+                    $reduce: {
+                        input: '$Connections',
+                        initialValue: [],
+                        in: { $setUnion: ['$$value', '$$this.UserIds'] }                //UNIONS ARRAY WITH USERIDS ARRAY
+                    }
+                }
+            }
+        },
+        {
+            $addFields: {
+                UserIds: { $setUnion: ['$Followees', '$Connections', [UserId]] }
+            }
+        },
+        {
+            $match: {
+                $expr: { $in: ['$UserId', '$UserIds'] }
+            }
+        },
+        { $sort: { Index: -1, _id: -1 } },
+        { $limit: Limit },
+        {
+            $lookup: {
+                from: 'Users',
+                let: { userObjectId: { $toObjectId: '$UserId' } },
+                pipeline: [
+                    { $match: { $expr: { $eq: ['$_id', '$$userObjectId'] } } }
+                ],
+                as: 'UserDetails'                                                                 //INSERTS USERDETAILS ARRAY
+            }
+        },
+        {
+            $addFields: {
+                UserDetails: { $arrayElemAt: ['$UserDetails', 0] }                                 //ARRAY TO OBJECT
+            }
+        },
+        {
+            $lookup: {
+                from: 'Likes',
+                let: { activityId: { $toString: '$_id' }, userId: UserId },
+                pipeline: [
+                    {
+                        $match: {
+                            $expr: {
+                                $and: [                                                                     //INSERTS HASLIKED ARRAY
+                                    { $eq: ['$EntityId', '$$activityId'] },
+                                    { $eq: ['$UserId', '$$userId'] }
+                                ]
+                            }
+                        }
+                    }
+                ],
+                as: 'HasLiked'
+            }
+        },
+        {
+            $addFields: {
+                HasLiked: { $gt: [{ $size: '$HasLiked' }, 0] }                              //CONVERTS TO BOOLEAN
+            }
+        },
+        {
+            $lookup: {
+                from: 'Saves',
+                let: { activityId: { $toString: '$_id' }, userId: UserId },
+                pipeline: [
+                    {
+                        $match: {
+                            $expr: {
+                                $and: [                                                                     //INSERTS HASLIKED ARRAY
+                                    { $eq: ['$ActivityId', '$$activityId'] },
+                                    { $eq: ['$UserId', '$$userId'] }
+                                ]
+                            }
+                        }
+                    }
+                ],
+                as: 'HasSaved'
+            }
+        },
+        {
+            $addFields: {
+                HasSaved: { $gt: [{ $size: '$HasSaved' }, 0] }                              //CONVERTS TO BOOLEAN
+            }
+        },
+        {
+            $project: {
+                Followees: 0,
+                Connections: 0,                                                             //REMOVE UNNECESSARY FIELDS
+                UserIds: 0
+            }
+        }
+
+    ]
+    if (NextId) {
+        //@ts-ignore
+        const [Index, nextId] = NextId.split('--');
+        AggregateArray.splice(5, 0, {
+            $match:
+            {//@ts-ignore
+                $expr: {
+                    $or: [
+                        { $lt: ['$Index', Index] },
+                        {
+                            $and: [
+                                { $eq: ['$Index', Index] },
+                                { $lt: ['$_id', new ObjectId(nextId)] }
+                            ]
+                        }
+                    ],
+                }
+            }
+        });
+    }
+    const data = await AggregateActivities(AggregateArray);
+    return res.json(data);
+};
+
+
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ * @returns 
+ */
+const GetFilteredActivities = async (req, res) => {
+    const { UserId } = req.params;
     const { Filter, NextId, Limit, OrderBy } = req.query;
-    // @ts-ignore
+    //@ts-ignore
     const Activities = await ReadActivities(Filter, NextId, Limit, OrderBy);
     const data = await Promise.all(Activities.map(async Activity => {
-        const NoOfComments = await GetActivityCommentCount(Activity.DocId);
-        return { ...Activity, NoOfComments }
+        const [UserDetails, checkLike, checkSave] = await Promise.all([
+            ReadOneFromUsers(Activity.UserId),
+            ReadLikes({ EntityId: Activity.DocId, UserId }, undefined, 1, undefined),
+            ReadSaves({ ActivityId: Activity.DocId, UserId }, undefined, 1, undefined)
+        ])
+        const HasSaved = checkSave.length > 0;
+        const HasLiked = checkLike.length > 0;
+        return { ...Activity, UserDetails, HasLiked, HasSaved }
     }))
-    return res.json(data);
+    return res.json(data)
 }
+
+
 
 /**
  * 
@@ -48,17 +226,20 @@ const GetActivities = async (req, res) => {
  * @returns {Promise<e.Response<true>>}
  */
 const PostActivities = async (req, res) => {
-    const { Attachments } = req.body;
+    const { Content } = req.body;
+    let { MediaFiles, Documents } = req.body;
+    const ActivityId = (new ObjectId()).toString();
     //@ts-ignore
     const { UserId } = req.user;
-    const AttachmentsLinksObject = await SeperateAttachments(Attachments, UserId);
-    if (!AttachmentsLinksObject) {
-        return res.status(444).json("Cannot Upload this file");
+    const ValidateFiles = await CheckFileType(MediaFiles, Documents);
+    if (!ValidateFiles) {
+        return res.status(444).json(AlertBoxObject("Can't upload", "File(s) cannot be uploaded"))
     }
+    const Attachments = await UploadFiles(MediaFiles, Documents, UserId, ActivityId);
+    const Mentions = await ExtractMentionedUsersFromContent(Content);
     req.body = ActivityInit(req.body);
-    const { Documents, MediaFiles, AttachmentLinks } = AttachmentsLinksObject;
-    req.body.Attatchments = AttachmentLinks;
-    const data = { ...req.body, Documents, MediaFiles };
+    //@ts-ignore
+    const data = { ...req.body, Documents: Attachments.DocumentsLinks, MediaFiles: Attachments.MediaFilesLinks, Mentions };
     await CreateActivities(data);
     return res.json(true);
 }
@@ -71,6 +252,7 @@ const PostActivities = async (req, res) => {
  */
 const PatchActivities = async (req, res) => {
     const { ActivityId } = req.params;
+    req.body.Mentions = await ExtractMentionedUsersFromContent(req.body.Content);
     await UpdateActivities(req.body, ActivityId);
     return res.json(true);
 }
@@ -83,47 +265,128 @@ const PatchActivities = async (req, res) => {
  */
 const DeleteActivities = async (req, res) => {
     const { ActivityId } = req.params;
+    //@ts-ignore
+    const { UserId } = req.user;
+    const Activity = await ReadOneFromActivities(ActivityId);
+    if (Activity.UserId !== UserId) {
+        return res.status(444).json(AlertBoxObject("Cannot Delete", "Cannot delete other User's Activity"))
+    }
     await RemoveActivities(ActivityId);
     return res.json(true);
 }
 
 /**
  * 
- * @param {{FileData : Array,FileName : string}[]} Attachments 
- * @param {string} UserId 
- * @returns {Promise<{Documents : Array,MediaFiles : Array,AttachmentLinks : Array}|false>}
+ * @param {{FileData : Array,FileName : string}[]} MediaFiles 
+ * @param {{FileData : Array,FileName : string}[]} Documents 
+ * @returns {Promise<boolean>}
  */
-const SeperateAttachments = async (Attachments, UserId) => {
-    let Documents = [], MediaFiles = [];
+const CheckFileType = async (MediaFiles, Documents) => {
+    const validate = async (FileData, Format) => {
+        const FileDataBuffer = new Uint8Array(FileData);
+        //@ts-ignore
+        const { ext } = await fileTypeFromBuffer(FileDataBuffer);
+        const Size = FileData.length;
+        console.log(Format.extensions.includes(ext) && Size <= Format.size)
+        return Format.extensions.includes(ext) && Size <= Format.size;
+    }
+    for (const File of MediaFiles) {
+        if (!(await validate(File.FileData, fileFormats.image)) &&
+            !(await validate(File.FileData, fileFormats.video))) {
+            return false
+        }
+    };
+    for (const File of Documents) {
+        if (!(await validate(File.FileData, fileFormats.document))) {
+            return false
+        }
+    };
+    return true;
+}
 
-    Attachments.forEach(File => {
+/**
+ * 
+ * @param {{FileData : Array,FileName : string}[]} MediaFiles 
+ * @param {{FileData : Array,FileName : string}[]} Documents  
+ * @param {string} UserId 
+ * @param {string} ActivityId 
+ * @returns 
+ */
+const UploadFiles = async (MediaFiles, Documents, UserId, ActivityId) => {
+    const MediaFilesLinks = await Promise.all(MediaFiles.map(async File => {
         const { FileData, FileName } = File;
         const FileBuffer = new Uint8Array(FileData)
         //@ts-ignore
-        const { ext, mime } = fileTypeFromBuffer(FileBuffer);
-        if (documentExtensions.includes(ext)) {
-            const FileURI = AsyncSaveFileToSpaces(UserId, `doc_${FileName}`, FileData, mime)
-            Documents.push(FileURI);
-        }
-        else if (mediaExtensions.includes(ext)) {
-            const FileURI = AsyncSaveFileToSpaces(UserId, `media_${FileName}`, FileData, mime)
-            MediaFiles.push(FileURI);
-        }
-        else {
-            return false;
-        }
-    });
-    const AttachmentLinks = [...Documents, ...MediaFiles];
-    return { Documents, MediaFiles, AttachmentLinks };
+        const { mime } = await fileTypeFromBuffer(FileBuffer);
+        const Type = mime.split('/')[0];
+        const Link = await AsyncSaveFileToSpaces(UserId, `${ActivityId}/${FileName}`, FileData, mime)
+        return { FileUrl: Link, Type }
+    }));
+    const DocumentsLinks = await Promise.all(Documents.map(async File => {
+        const { FileData, FileName } = File;
+        const FileBuffer = new Uint8Array(FileData)
+        //@ts-ignore
+        const { mime } = await fileTypeFromBuffer(FileBuffer);
+        return AsyncSaveFileToSpaces(UserId, `${ActivityId}/${FileName}`, FileData, mime)
+    }));
+    return { MediaFilesLinks, DocumentsLinks };
+}
+
+
+
+/**
+ * 
+ * @param {object} Data 
+ * @param {string} UserId 
+ * @returns 
+ */
+const PostActivityForProfilePatch = async (Data, UserId) => {
+    let Activity = {};
+    if (!Data.ProfilePicture && !Data.CoverPicture) {
+        return;
+    }
+    if (Data.CoverPicture) {
+        Activity = { Content: "Updated their Cover Photo", MediaFiles: [{ FileUrl: Data.CoverPicture, Type: "image" }], UserId };
+    } else {
+        Activity = { Content: "Updated their Profile Photo", MediaFiles: [{ FileUrl: Data.ProfilePicture, Type: "image" }], UserId };
+    }
+    Activity = ActivityInit(Activity);
+    await CreateActivities(Activity);
 }
 
 const ActivityInit = (Activity) => {
     return {
         NoOfLikes: 0,
-        ...Activity
+        ...Activity,
+        NoOfComments: 0,
     }
 }
+/**
+ * 
+ * @param {string} Content 
+ * @returns 
+ */
+const ExtractMentionedUsersFromContent = async (Content) => {
+    const mentionPattern = /(?<=\s|^)@([\w.]+)/g;
+    const mentions = Content.match(mentionPattern);
+    let Users = [];
+    if (mentions) {
+        await Promise.all(mentions.map(async mention => {
+            const Username = mention.slice(1);
+            const User = await ReadUsers({ Username }, undefined, 1, undefined);
+            if (User.length > 0) {
+                Users.push({ Username, UserId: User[0].DocId, FullName: User[0].FullName })
+            }
+        }))
+    }
+    return Users;
+};
+
+
+
+
 
 export {
-    GetOneFromActivities, GetActivities, PostActivities, PatchActivities, DeleteActivities
+    GetOneFromActivities, GetActivities, PostActivities, PatchActivities, DeleteActivities,
+    PostActivityForProfilePatch, GetFilteredActivities, ExtractMentionedUsersFromContent
 }

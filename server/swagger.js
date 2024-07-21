@@ -1,6 +1,8 @@
 import swaggerAutogen from 'swagger-autogen';
 
 import usersDefinitions from './swaggerDocs/usersDefinitions.js';
+import activitiesDefinitions from './swaggerDocs/activitiesDefinitions.js';
+import commentsDefinitions from './swaggerDocs/commentsDefinitions.js';
 
 const doc = {
     info: {
@@ -29,18 +31,34 @@ const doc = {
         {
             "name": "Files",
             "description": "",
+        },
+        {
+            "name": "Activities",
+            "description": "",
+        },
+        {
+            "name": "Comments",
+            "description": "",
         }
     ],
     securityDefinitions: {
-        api_key: {
-            type: "apiKey",
-            name: "api_key",
-            in: "header"
+        BearerAuth: {
+            type: 'apiKey',
+            name: 'Authorization',
+            in: 'header',
+            description: 'Enter your bearer token in the format **Bearer &lt;token&gt;**',
         },
     },
+    security: [
+        {
+            BearerAuth: [],
+        },
+    ],
     definitions: {
         LoginData: { Token: "string", RefreshToken: "string", CurrentUser: { Role: "User", UserId: "" } },
-        ...usersDefinitions
+        ...usersDefinitions,
+        ...activitiesDefinitions,
+        ...commentsDefinitions
     }
 }
 

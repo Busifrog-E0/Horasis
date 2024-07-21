@@ -1,5 +1,6 @@
 const post_Follow = async (req, res, next) => {
     // #swagger.tags = ['Follow']
+    /* #swagger.security = [{ "BearerAuth": [] }] */
     /* #swagger.parameters['body'] = {
                     in: 'body',
                     schema: { 'FolloweeId' : 'string' }
@@ -10,6 +11,7 @@ const post_Follow = async (req, res, next) => {
 
 const delete_Follow = async (req, res, next) => {
     // #swagger.tags = ['Follow']
+    /* #swagger.security = [{ "BearerAuth": [] }] */
     /* #swagger.parameters['body'] = {
                     in: 'body',
                     schema: { 'FolloweeId' : 'string' }
@@ -20,6 +22,7 @@ const delete_Follow = async (req, res, next) => {
 
 const get_Followers = async (req, res, next) => {
     // #swagger.tags = ['Follow']
+    /* #swagger.security = [{ "BearerAuth": [] }] */
     /* #swagger.responses[200] = {
              description: 'User Data',
              schema: { $ref: '#/definitions/UserDataArray' }
@@ -30,6 +33,7 @@ const get_Followers = async (req, res, next) => {
 
 const get_Followings = async (req, res, next) => {
     // #swagger.tags = ['Follow']
+    /* #swagger.security = [{ "BearerAuth": [] }] */
     /* #swagger.responses[200] = {
              description: 'User Data',
              schema: { $ref: '#/definitions/UserDataArray' }
@@ -40,6 +44,7 @@ const get_Followings = async (req, res, next) => {
 
 const get_Follow_Count = async (req, res, next) => {
     // #swagger.tags = ['Follow']
+    /* #swagger.security = [{ "BearerAuth": [] }] */
     /* #swagger.responses[200] = {
              description: 'User Data',
              schema: { NoOfFollowers : 5,NoOfFollowings : 5 }

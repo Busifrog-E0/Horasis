@@ -1,8 +1,11 @@
 import dataHandling from './functions.js'
 
+/**@typedef {import('./users-databaseController.js').UserData} UserData*/
+
 /**
  * @typedef {object} ConnectionData
  * @property {[string,string]} UserIds
+ * @property {[UserData,UserData]} UserDetails
  * @property {string} SenderId
  * @property {string} ReceiverId
  * @property {number} CreatedIndex
@@ -64,11 +67,21 @@ const RemoveConnections = async (DocId) => {
     return dataHandling.Delete('Connections', DocId);
 }
 
+/**
+ * 
+ * @param {object} Where 
+ * @returns {Promise<number>}
+ */
+const GetConnectionsCount = async (Where = {}) => {
+    return dataHandling.ReadCount('Connections', Where);
+}
+
 
 export {
     ReadConnections,
     ReadOneFromConnections,
     UpdateConnections,
     CreateConnections,
-    RemoveConnections
+    RemoveConnections,
+    GetConnectionsCount,
 }

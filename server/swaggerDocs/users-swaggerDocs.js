@@ -31,6 +31,7 @@ const post_Users_Login = async (req, res, next) => {
 
 const get_Users_UserId = async (req, res, next) => {
     // #swagger.tags = ['Users']
+    /* #swagger.security = [{ "BearerAuth": [] }] */
     /* #swagger.responses[200] = {
                  description: 'User Data',
                  schema: { $ref: '#/definitions/UserData' }
@@ -41,6 +42,7 @@ const get_Users_UserId = async (req, res, next) => {
 
 const get_Users = async (req, res, next) => {
     // #swagger.tags = ['Users']
+    /* #swagger.security = [{ "BearerAuth": [] }] */
     /* #swagger.responses[200] = {
                  description: 'User Data',
                  schema: { $ref: '#/definitions/UserDataArray' }
@@ -51,6 +53,7 @@ const get_Users = async (req, res, next) => {
 
 const get_Users_Suggested = async (req, res, next) => {
     // #swagger.tags = ['Users']
+    /* #swagger.security = [{ "BearerAuth": [] }] */
     /* #swagger.responses[200] = {
                  description: 'User Data',
                  schema: { $ref: '#/definitions/UserDataArray' }
@@ -61,6 +64,7 @@ const get_Users_Suggested = async (req, res, next) => {
 
 const post_Users_Verify = async (req, res, next) => {
     // #swagger.tags = ['Users']
+    /* #swagger.security = [{ "BearerAuth": [] }] */
     /* #swagger.parameters['body'] = {
                     in: 'body',
                     schema: { $ref: '#/definitions/OTPVerifyData' }
@@ -76,6 +80,7 @@ const post_Users_Verify = async (req, res, next) => {
 
 const post_Users_CheckUsername = async (req, res, next) => {
     // #swagger.tags = ['Users']
+    /* #swagger.security = [{ "BearerAuth": [] }] */
     /* #swagger.parameters['body'] = {
                     in: 'body',
                     schema: { 'Username' : "JohnDoe" }
@@ -87,6 +92,7 @@ const post_Users_CheckUsername = async (req, res, next) => {
 
 const patch_Users_UserId = async (req, res, next) => {
     // #swagger.tags = ['Users']
+    /* #swagger.security = [{ "BearerAuth": [] }] */
     /* #swagger.parameters['body'] = {
                     in: 'body',
                     schema: { $ref: '#/definitions/PatchUserData' }
@@ -98,6 +104,7 @@ const patch_Users_UserId = async (req, res, next) => {
 
 const patch_Users_UserId_Picture = async (req, res, next) => {
     // #swagger.tags = ['Users']
+    /* #swagger.security = [{ "BearerAuth": [] }] */
     /* #swagger.parameters['body'] = {
                     in: 'body',
                     schema: {'CoverPicture' : 'string','ProfilePicture' : 'string'}

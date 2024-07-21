@@ -1,0 +1,52 @@
+const GetFeedActivitiesMiddleware = (req, res, next) => {
+    req.query.Filter = { Type: "Feed", ...req.query.Filter };
+    return next();
+}
+
+const GetEventActivitiesMiddleware = (req, res, next) => {
+    req.query.Filter = { Type: "Event", ...req.query.Filter };
+    return next();
+}
+
+const GetDiscussionActivitiesMiddleware = (req, res, next) => {
+    req.query.Filter = { Type: "Discussion", ...req.query.Filter };
+    return next();
+}
+
+const PostFeedActivitiesMiddleware = (req, res, next) => {
+    req.body = { Type: "Feed", ...req.body };
+    return next();
+}
+
+const PostEventActivitiesMiddleware = (req, res, next) => {
+    req.body = { Type: "Event", ...req.body };
+    return next();
+}
+
+const PostDiscussionActivitiesMiddleware = (req, res, next) => {
+    req.body = { Type: "Discussion", ...req.body };
+    return next();
+}
+
+const GetUserActivitiesMiddleware = (req, res, next) => {
+    req.query.Filter = { UserId: req.params.UserId, ...req.query.Filter };
+    return next();
+}
+
+const GetMentionedActivitiesMiddleware = (req, res, next) => {
+    req.query.Filter = { Mentions : { $elemMatch: { UserId: req.params.UserId } }, ...req.query.Filter };
+    return next();
+}
+
+const PostActivitiesLikeMiddleware = (req, res, next) => {
+    req.body = { ...req.body, Type: 'Activity' };
+    return next();
+}
+
+
+export {
+    GetFeedActivitiesMiddleware, GetEventActivitiesMiddleware, GetDiscussionActivitiesMiddleware,
+    PostDiscussionActivitiesMiddleware, PostEventActivitiesMiddleware, PostFeedActivitiesMiddleware,
+    GetUserActivitiesMiddleware, GetMentionedActivitiesMiddleware, PostActivitiesLikeMiddleware,
+    
+}
