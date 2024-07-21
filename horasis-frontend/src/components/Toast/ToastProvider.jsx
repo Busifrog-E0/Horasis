@@ -14,7 +14,7 @@ const ToastProvider = ({ children }) => {
 	return (
 		<ToastContext.Provider value={{ open, close }}>
 			{children}
-			<div className='space-y-2 absolute bottom-4 right-4 transition-all z-50'>
+			<div className='space-y-2 absolute bottom-4 right-2 sm:right-4 left-auto transition-all z-50 '>
 				{toasts.map(({ id, message, type, title }) => {
 					return (
 						<div key={id} className='relative'>
@@ -31,7 +31,7 @@ const ToastProvider = ({ children }) => {
 										close
 									</button>
 									<div
-										className={`flex min-w-[400px] gap-2 bg-red-100 text-red-500 border border-red-500 p-4 rounded-lg shadow-lg`}>
+										className={`flex w-full max-w-[400px] gap-2 bg-red-100 text-red-500 border border-red-500 p-4 rounded-lg shadow-lg`}>
 										<div>
 											<h3 className='font-bold'>{title}</h3>
 											<p className='text-md'>{message}</p>
