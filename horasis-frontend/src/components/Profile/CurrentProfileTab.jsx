@@ -46,11 +46,10 @@ const CurrentProfileTab = () => {
 				// console.log(err)
 			},
 			updateCurrentUser,
-			currentUserData, toast
+			currentUserData,
+			toast
 		)
 	}
-
-
 
 	useEffect(() => {
 		getUserDetails()
@@ -65,57 +64,67 @@ const CurrentProfileTab = () => {
 				) : (
 					<>
 						{' '}
-						<div className='flex justify-center items-center cursor-pointer' onClick={GoToProfilePage}>
-							<div className='w-28 h-28 rounded-full bg-brand-light-gray overflow-hidden'>
-								{user ? (
-									<>
-										{user.ProfilePicture ? (
-											<div className='bg-black'>
-												<img
-													className='w-28 h-28 rounded-full object-cover'
-													src={user.ProfilePicture}
-													alt='Rounded avatar'
-												/>
-											</div>
-										) : (
-											<div className='bg-brand-light-gray'>
-												<img src={avatar} className='object-cover h-full w-full rounded-lg' />
-											</div>
-										)}
-									</>
-								) : (
-									<></>
-								)}
-								{/* {user && user.ProfilePicture && (
+						<div className='flex flex-row lg:flex-col gap-6'>
+							<div className='flex justify-center items-center cursor-pointer' onClick={GoToProfilePage}>
+								<div className='w-28 h-28 rounded-full bg-brand-light-gray overflow-hidden'>
+									{user ? (
+										<>
+											{user.ProfilePicture ? (
+												<div className='bg-black'>
+													<img
+														className='w-28 h-28 rounded-full object-cover'
+														src={user.ProfilePicture}
+														alt='Rounded avatar'
+													/>
+												</div>
+											) : (
+												<div className='bg-brand-light-gray'>
+													<img src={avatar} className='object-cover h-full w-full rounded-lg' />
+												</div>
+											)}
+										</>
+									) : (
+										<></>
+									)}
+									{/* {user && user.ProfilePicture && (
                   <img
                     className='w-28 h-28 rounded-full'
                     src={user.ProfilePicture}
                     alt='Rounded avatar'
                   />
                 )} */}
-								{/* <img
+									{/* <img
                   className='w-28 h-28 rounded-full'
                   src='https://flowbite.com/docs/images/people/profile-picture-5.jpg'
                   alt='Rounded avatar'
                 /> */}
+								</div>
+							</div>
+							<div>
+								<h4 className='font-medium text-xl lg:text-center text-system-primary-text mt-2'>
+									{user && user.FullName}
+								</h4>
+								<h4 className='font-medium text-xl text-brand-gray-dim lg:text-center'>@{user && user.Username}</h4>
+								{currentUserData.CurrentUser.Role === 'Admin' && (
+									<div className='flex justify-center items-center mt-2'>
+										<div className='px-20 py-1 rounded-full bg-system-secondary-accent text-center inline-block'>
+											<span className='text-system-primary-accent font-semibold'>
+												{currentUserData.CurrentUser.Role}
+											</span>
+										</div>
+									</div>
+								)}
+								<div className='flex justify-center items-center mt-2 gap-3'>
+									<h4 className='font-semibold text-base text-center text-system-primary-text mt-2'>
+										{followCount && followCount.NoOfFollowings} Following
+									</h4>
+									<h4 className='font-semibold text-base text-center text-system-primary-text mt-2'>
+										{followCount && followCount.NoOfFollowers} Followers
+									</h4>
+								</div>
 							</div>
 						</div>
-						<h4 className='font-medium text-xl text-center text-system-primary-text mt-2'>{user && user.FullName}</h4>
-						<h4 className='font-medium text-xl text-brand-gray-dim text-center'>@{user && user.Username}</h4>
-						<div className='flex justify-center items-center mt-2'>
-							<div className='px-20 py-1 rounded-full bg-system-secondary-accent text-center inline-block'>
-								<span className='text-system-primary-accent font-semibold'>{currentUserData.CurrentUser.Role}</span>
-							</div>
-						</div>
-						<div className='flex justify-center items-center mt-2 gap-3'>
-							<h4 className='font-semibold text-base text-center text-system-primary-text mt-2'>
-								{followCount && followCount.NoOfFollowings} Following
-							</h4>
-							<h4 className='font-semibold text-base text-center text-system-primary-text mt-2'>
-								{followCount && followCount.NoOfFollowers} Followers
-							</h4>
-						</div>
-						{user && user?.ProfileCompletionPercentage != 100 &&
+						{user && user?.ProfileCompletionPercentage != 100 && (
 							<div className='p-3 pb-2 px-5 bg-system-secondary-bg rounded-lg shadow-lg'>
 								<div
 									className='flex justify-between items-center mt-2 gap-3 cursor-pointer'
@@ -133,8 +142,7 @@ const CurrentProfileTab = () => {
 									<div
 										className='bg-brand-green h-2 rounded-full'
 										style={{
-											width: `${user?.ProfileCompletionPercentage ? user.ProfileCompletionPercentage : '0'
-												}%`,
+											width: `${user?.ProfileCompletionPercentage ? user.ProfileCompletionPercentage : '0'}%`,
 										}}></div>
 								</div>
 								{expand && (
@@ -143,13 +151,15 @@ const CurrentProfileTab = () => {
 											<div className='relative '>
 												<div className='flex flex-row items-center gap-1'>
 													<div
-														className={`w-4 h-4 p-2 rounded-full flex items-center justify-center bg-${user.JobTitle === '' || user.CompanyName === '' || user.Industry === ''
-															? 'brand-gray-dim'
-															: 'brand-green'
-															} text-${user.JobTitle === '' || user.CompanyName === '' || user.Industry === ''
+														className={`w-4 h-4 p-2 rounded-full flex items-center justify-center bg-${
+															user.JobTitle === '' || user.CompanyName === '' || user.Industry === ''
+																? 'brand-gray-dim'
+																: 'brand-green'
+														} text-${
+															user.JobTitle === '' || user.CompanyName === '' || user.Industry === ''
 																? 'brand-gray-dim'
 																: 'white'
-															}`}>
+														}`}>
 														{user.JobTitle === '' || user.CompanyName === '' || user.Industry === '' ? (
 															<></>
 														) : (
@@ -157,36 +167,41 @@ const CurrentProfileTab = () => {
 														)}
 													</div>
 													<p
-														className={`text-sm font-medium text-${user.JobTitle === '' || user.CompanyName === '' || user.Industry === ''
-															? 'brand-gray-dim'
-															: 'brand-green'
-															} text-system-primary-text`}>
+														className={`text-sm font-medium text-${
+															user.JobTitle === '' || user.CompanyName === '' || user.Industry === ''
+																? 'brand-gray-dim'
+																: 'brand-green'
+														} text-system-primary-text`}>
 														Work Information
 													</p>
 												</div>
 												<div className=' pt-3 '></div>
 												<div className='flex flex-row items-center gap-1'>
 													<div
-														className={`w-4 h-4 p-2 rounded-full flex items-center justify-center bg-${user.ProfilePicture !== '' ? 'brand-green' : 'brand-gray-dim'
-															} text-${user.ProfilePicture !== '' ? 'white' : 'brand-gray-dim'}`}>
+														className={`w-4 h-4 p-2 rounded-full flex items-center justify-center bg-${
+															user.ProfilePicture !== '' ? 'brand-green' : 'brand-gray-dim'
+														} text-${user.ProfilePicture !== '' ? 'white' : 'brand-gray-dim'}`}>
 														{user.ProfilePicture !== '' && <span>✓</span>}
 													</div>
 													<p
-														className={`text-sm font-medium text-${user.ProfilePicture !== '' ? 'brand-green' : 'brand-gray-dim'
-															} text-system-primary-text`}>
+														className={`text-sm font-medium text-${
+															user.ProfilePicture !== '' ? 'brand-green' : 'brand-gray-dim'
+														} text-system-primary-text`}>
 														Profile Photo
 													</p>
 												</div>
 												<div className='pt-3 '></div>
 												<div className='flex flex-row items-center gap-1'>
 													<div
-														className={`w-4 h-4 p-2 rounded-full flex items-center justify-center bg-${user.About !== '' ? 'brand-green' : 'brand-gray-dim'
-															} text-${user.About !== '' ? 'white' : 'brand-gray-dim'}`}>
+														className={`w-4 h-4 p-2 rounded-full flex items-center justify-center bg-${
+															user.About !== '' ? 'brand-green' : 'brand-gray-dim'
+														} text-${user.About !== '' ? 'white' : 'brand-gray-dim'}`}>
 														{user.About !== '' && <span>✓</span>}
 													</div>
 													<p
-														className={`text-sm font-medium text-${user.About !== '' ? 'brand-green' : 'brand-gray-dim'
-															} text-system-primary-text`}>
+														className={`text-sm font-medium text-${
+															user.About !== '' ? 'brand-green' : 'brand-gray-dim'
+														} text-system-primary-text`}>
 														Biography
 													</p>
 												</div>
@@ -221,7 +236,7 @@ const CurrentProfileTab = () => {
 									</>
 								)}
 							</div>
-						}
+						)}
 					</>
 				)}
 			</div>

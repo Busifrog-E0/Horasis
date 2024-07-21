@@ -22,7 +22,7 @@ const Activities = () => {
                         </div>
                     </div>
                     <div className='lg:col-span-2'>
-                        <TimeLineTab api={'activities'} gapBnTabs="gap-3" classNameForPost='p-5 pr-10 ' header="All Updates" />
+                        <TimeLineTab api={'activities'} gapBnTabs="gap-3" classNameForPost='p-5 ' header="All Updates" />
                     </div>
                     <div>
                         <div className='p-5 bg-system-secondary-bg rounded-lg'>

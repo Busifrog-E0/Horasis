@@ -533,13 +533,13 @@ const MyProfile = () => {
 			</Modal>
 			<div className='p-2 lg:px-10 lg:py-6 pt-6'>
 				<div className='grid lg:grid-cols-4 gap-3 lg:gap-12 '>
-					<div className='py-5 lg:py-8 px-16 bg-system-secondary-bg rounded-lg mb-3 lg:mb-8 h-max'>
+					<div className='py-5 lg:py-8 px-8 lg:px-12 bg-system-secondary-bg rounded-lg mb-3 lg:mb-8 h-max'>
 						{isLoading ? (
 							<Spinner />
 						) : (
 							<>
-								<h4 className='font-medium text-2xl text-center text-system-primary-text'>{user && user.FullName}</h4>
-								<h4 className='font-medium text-xl text-brand-gray-dim text-center'>@{user && user.Username}</h4>
+								<h4 className='font-medium text-2xl lg:text-center text-system-primary-text'>{user && user.FullName}</h4>
+								<h4 className='font-medium text-xl text-brand-gray-dim lg:text-center'>@{user && user.Username}</h4>
 								{currentUserData.CurrentUser.Role === 'Admin' && (
 									<div className='flex justify-center items-center mt-2 lg:mt-6'>
 										<div className='w-full p-3 rounded-full bg-system-secondary-accent text-center inline-block'>
