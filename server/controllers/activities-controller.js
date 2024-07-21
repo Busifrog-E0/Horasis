@@ -120,7 +120,7 @@ const GetActivities = async (req, res) => {
                         $match: {
                             $expr: {
                                 $and: [                                                                     //INSERTS HASLIKED ARRAY
-                                    { $eq: ['$ActivityId', '$$activityId'] },
+                                    { $eq: ['$EntityId', '$$activityId'] },
                                     { $eq: ['$UserId', '$$userId'] }
                                 ]
                             }
