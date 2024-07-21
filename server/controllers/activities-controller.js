@@ -207,7 +207,7 @@ const GetFilteredActivities = async (req, res) => {
     const data = await Promise.all(Activities.map(async Activity => {
         const [UserDetails, checkLike, checkSave] = await Promise.all([
             ReadOneFromUsers(Activity.UserId),
-            ReadLikes({ ActivityId: Activity.DocId, UserId }, undefined, 1, undefined),
+            ReadLikes({ EntityId: Activity.DocId, UserId }, undefined, 1, undefined),
             ReadSaves({ ActivityId: Activity.DocId, UserId }, undefined, 1, undefined)
         ])
         const HasSaved = checkSave.length > 0;
