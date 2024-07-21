@@ -64,7 +64,7 @@ const CurrentProfileTab = () => {
 				) : (
 					<>
 						{' '}
-						<div className='flex flex-row lg:flex-col gap-6'>
+						<div className='flex flex-col lg:flex-col gap-6'>
 							<div className='flex justify-center items-center cursor-pointer' onClick={GoToProfilePage}>
 								<div className='w-28 h-28 rounded-full bg-brand-light-gray overflow-hidden'>
 									{user ? (
@@ -101,10 +101,10 @@ const CurrentProfileTab = () => {
 								</div>
 							</div>
 							<div>
-								<h4 className='font-medium text-xl lg:text-center text-system-primary-text mt-2'>
+								<h4 className='font-medium text-xl text-center text-system-primary-text mt-2'>
 									{user && user.FullName}
 								</h4>
-								<h4 className='font-medium text-xl text-brand-gray-dim lg:text-center'>@{user && user.Username}</h4>
+								<h4 className='font-medium text-xl text-brand-gray-dim text-center'>@{user && user.Username}</h4>
 								{currentUserData.CurrentUser.Role === 'Admin' && (
 									<div className='flex justify-center items-center mt-2'>
 										<div className='px-20 py-1 rounded-full bg-system-secondary-accent text-center inline-block'>
