@@ -26,12 +26,11 @@ const GetSaves = async (req, res) => {
     const Saves = await ReadSaves(Filter, NextId, Limit, OrderBy);
     const data = await Promise.all(Saves.map(async Save => {
         const Activity = await ReadOneFromActivities(Save.ActivityId);
-        const [UserDetails, checkLike, checkSave] = await Promise.all([
+        const [UserDetails, checkLike] = await Promise.all([
             ReadOneFromUsers(Activity.UserId),
-            ReadLikes({ ActivityId: Activity.DocId, UserId }, undefined, 1, undefined),
-            ReadSaves({ ActivityId: Activity.DocId, UserId }, undefined, 1, undefined)
+            ReadLikes({ EntityId: Activity.DocId, UserId }, undefined, 1, undefined),
         ])
-        const HasSaved = checkSave.length > 0;
+        const HasSaved = true;
         const HasLiked = checkLike.length > 0;
         return { ...Activity, UserDetails, HasLiked, HasSaved }
     }));
@@ -50,8 +49,6 @@ const PostSaves = async (req, res) => {
     if (CheckSave.length > 0) {
         return res.status(444).json(AlertBoxObject("Cannot Save", "You cannot Save twice"));
     }
-    const ActivityDetails = await ReadOneFromActivities(ActivityId);
-    const UserDetails = await ReadOneFromUsers(ActivityDetails.UserId);
     const data = { ActivityId, UserId };
     await CreateSaves(data);
     return res.json(true);
