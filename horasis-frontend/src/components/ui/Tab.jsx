@@ -28,7 +28,7 @@ const Tab = ({ tabs, gap = 'lg:gap-4', activeTab, onTabChange = () => {}, name, 
 	const TabContent = ({ children }) => {
 		// px-4  my-4
 
-		return <div className={`max-w-screen pr-4`}>{children}</div>
+		return <div className={`max-w-screen pr-6 md:pr-0`}>{children}</div>
 	}
 
 	return (
