@@ -26,7 +26,7 @@ const GetOneFromActivities = async (req, res) => {
     const Activity = await ReadOneFromActivities(ActivityId);
     const [UserDetails, checkLike, checkSave] = await Promise.all([
         ReadOneFromUsers(Activity.UserId),
-        ReadLikes({ ActivityId: Activity.DocId, UserId }, undefined, 1, undefined),
+        ReadLikes({ EntityId: Activity.DocId, UserId }, undefined, 1, undefined),
         ReadSaves({ ActivityId: Activity.DocId, UserId }, undefined, 1, undefined)
     ])
     const HasLiked = checkLike.length > 0;
