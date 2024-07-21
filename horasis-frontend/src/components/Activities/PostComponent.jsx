@@ -224,12 +224,12 @@ const PostComponent = ({ onSuccess, className = "" }) => {
 					ref={imageFileInputRef}
 				/>
 				{user?.ProfilePicture ? (
-					<div className='w-16 h-16 rounded-full bg-black'>
+					<div className='w-16 h-16 rounded-full bg-black hidden md:block'>
 						<img className='w-16 h-16  rounded-full object-cover' src={user?.ProfilePicture} alt='avatar' />
 					</div>
 				) : (
 					<>
-						<div className='w-16 h-16 rounded-full bg-brand-light-gray'>
+						<div className='w-16 h-16 rounded-full bg-brand-light-gray hidden md:block'>
 							<img src={avatar} className='object-cover h-full w-full rounded-lg' alt='No avatar' />
 						</div>
 					</>
