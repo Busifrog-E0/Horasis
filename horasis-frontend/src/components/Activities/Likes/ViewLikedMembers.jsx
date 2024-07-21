@@ -123,7 +123,7 @@ const ViewLikedMembers = ({ activity }) => {
                                     tabName='members'
                                 />
                                 :
-                                <EmptyMembers emptyText={"No one likes you :/"} />
+                                <EmptyMembers emptyText={"No likes received."} />
                         }
                     </div>
                 </Modal.Body>

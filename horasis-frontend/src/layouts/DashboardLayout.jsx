@@ -19,7 +19,7 @@ function DashboardLayout() {
           <Outlet />
         </div>
       </div>
-      <ChatPopup userId={'669a235e525967c06f6bfc06'} />
+      {/* <ChatPopup userId={'669a235e525967c06f6bfc06'} /> */}
       <DashboardBottomNavbar />
     </div>
   );

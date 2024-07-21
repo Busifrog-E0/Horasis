@@ -8,7 +8,7 @@ import Spinner from '../../ui/Spinner'
 import ActivityListComponent from '../ActivityListComponent'
 import EmptyMembers from '../../Common/EmptyMembers'
 
-const SavedActivityTab = ({ bordered = false }) => {
+const SavedActivityTab = () => {
     const { updateCurrentUser, currentUserData } = useContext(AuthContext)
     const toast = useToast()
     const [isLoading, setIsLoading] = useState(true)
@@ -105,18 +105,18 @@ const SavedActivityTab = ({ bordered = false }) => {
                     <Spinner />
                 ) : activitiesData.length > 0 ? (
                     <>
-                        {/* <ActivityListComponent\
-                         ShowImage={false}
-                        className={`p-5 bg-system-secondary-bg rounded-lg ${bordered && 'border border-system-file-border'} relative`}
-                        avatarSize='w-10 h-10'
-                        titleSize="text-md"
-                        descriptionSize="text-sm"
-                        onDelete={onDelete}
-                        gapBnTabs={'gap-3'}
-                        bordered={true}
-                        activitiesData={activitiesData}
-                    /> */}
-                        <EmptyMembers emptyText={`${activitiesData.length} saved posts. But some error occured!`} />
+                        <ActivityListComponent
+                            ShowImage={false}
+                            className={`p-5 bg-system-secondary-bg rounded-lg border border-system-file-border relative`}
+                            avatarSize='w-10 h-10'
+                            titleSize="text-md"
+                            descriptionSize="text-sm"
+                            onDelete={onDelete}
+                            gapBnTabs={'gap-3'}
+                            bordered={true}
+                            activitiesData={activitiesData}
+                        />
+                        {/* <EmptyMembers emptyText={`${activitiesData.length} saved posts. But some error occured!`} /> */}
                     </>
                 ) : (
                     <EmptyMembers emptyText={'No saved posts'} />
