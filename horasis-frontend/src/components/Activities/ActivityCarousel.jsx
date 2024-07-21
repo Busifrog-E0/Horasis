@@ -33,7 +33,7 @@ const ActivityCarousel = ({ slides }) => {
 					key={slides[currentIndex].FileUrl}
 					playsInline
 					className='w-full h-full rounded-2xl bg-center bg-cover duration-500 bg-system-primary-text'
-					autoPlay
+					// autoPlay
 					muted
 					controls
 					controlsList='nodownload'>
