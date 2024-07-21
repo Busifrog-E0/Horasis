@@ -26,6 +26,7 @@ const ActivityComponent = ({
 	avatarSize,
 	descriptionSize,
 	ShowImage = true,
+	onSaveRemoveCallback = () => { }
 }) => {
 	const [showComment, setShowComment] = useState(false)
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
@@ -97,6 +98,7 @@ const ActivityComponent = ({
 				console.log(result)
 				if (result === true) {
 					getSingleActivity()
+					onSaveRemoveCallback()
 				}
 				setIsSaving(false)
 			},

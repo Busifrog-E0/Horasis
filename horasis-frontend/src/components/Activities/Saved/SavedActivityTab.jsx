@@ -106,6 +106,7 @@ const SavedActivityTab = () => {
                 ) : activitiesData.length > 0 ? (
                     <>
                         <ActivityListComponent
+                            onSaveRemoveCallback={fetch}
                             ShowImage={false}
                             className={`p-5 bg-system-secondary-bg rounded-lg border border-system-file-border relative`}
                             avatarSize='w-10 h-10'

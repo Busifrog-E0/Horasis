@@ -12,11 +12,13 @@ const ActivityListComponent = ({
 	avatarSize,
 	border = false,
 	ShowImage = true,
+	onSaveRemoveCallback = () => { }
 }) => {
 	return (
 		<div className={`flex flex-col ${gapBnTabs} my-3`}>
 			{activitiesData.map((activity, index) => (
 				<ActivityComponent
+					onSaveRemoveCallback={onSaveRemoveCallback}
 					ShowImage={ShowImage}
 					titleSize={titleSize}
 					onDelete={onDelete}
