@@ -3,7 +3,7 @@ import ActivityComponent from './ActivityComponent'
 
 const ActivityListComponent = ({
 	titleSize = 'text-xl',
-	descriptionSize = 'text-lg font-medium',
+	descriptionSize = 'text-md',
 	bordered,
 	activitiesData,
 	gapBnTabs,

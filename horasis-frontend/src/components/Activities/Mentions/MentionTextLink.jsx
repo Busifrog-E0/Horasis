@@ -28,7 +28,7 @@ const MentionTextLink = ({ descriptionSize, singleActivity }) => {
 		})
 	}
 
-	return <p className={`text-system-primary-text m-0 ${descriptionSize}`}>{parseContent(singleActivity)}</p>
+	return <p className={`text-system-primary-text m-0 leading-relaxed ${descriptionSize}`}>{parseContent(singleActivity)}</p>
 }
 
 export default MentionTextLink

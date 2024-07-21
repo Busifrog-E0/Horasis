@@ -9,6 +9,9 @@ const HomeHeader = () => {
 	const handleNavigate = () => {
 		navigate('/')
 	}
+	const handleLoginNavigate = () => {
+		navigate('/welcome')
+	}
 	return (
 		<div className='flex items-center justify-center bg-system-primary-accent-transparent  px-4 sm:px-8 md:px-16 lg:px-20 py-4'>
 			<div className='flex items-center justify-between w-full max-w-screen-2xl'>
@@ -33,7 +36,9 @@ const HomeHeader = () => {
 					) : (
 						<>
 							<div>
-								<button className='text-system-secondary-bg py-3 px-8 border rounded-full' onClick={handleNavigate}>
+								<button
+									className='text-system-secondary-bg py-3 px-8 border rounded-full'
+									onClick={handleLoginNavigate}>
 									Login
 								</button>
 							</div>
@@ -53,7 +58,9 @@ const HomeHeader = () => {
 					) : (
 						<>
 							<div>
-								<button className='text-system-secondary-bg py-3 px-8 border rounded-full' onClick={handleNavigate}>
+								<button
+									className='text-system-secondary-bg py-3 px-8 border rounded-full'
+									onClick={handleLoginNavigate}>
 									Login
 								</button>
 							</div>
