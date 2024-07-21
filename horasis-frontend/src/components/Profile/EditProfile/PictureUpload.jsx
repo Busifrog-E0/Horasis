@@ -165,7 +165,7 @@ const PictureUpload = ({
 				)}
 			</div>
 
-			<div className='p-2 flex items-center justify-between w-full'>
+			<div className='p-2 flex flex-col-reverse sm:flex-row items-start sm:items-center gap-4 justify-between w-full'>
 				<p
 					className='font-medium text-brand-gray-dim text-lg cursor-pointer'
 					onClick={onImageDelete}

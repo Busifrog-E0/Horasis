@@ -21,7 +21,7 @@ const tabs = (user, getUserDetails) => [
 		title: 'Timeline',
 		render: () => (
 			<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
-				<TimeLineTab api={`user/${user?.DocId}/activities`} gapBnTabs="gap-7" classNameForPost="py-5" bordered={true} />
+				<TimeLineTab api={`user/${user?.DocId}/activities`} gapBnTabs='gap-7' classNameForPost='py-5' bordered={true} />
 			</div>
 		),
 	},
@@ -540,13 +540,15 @@ const MyProfile = () => {
 							<>
 								<h4 className='font-medium text-2xl text-center text-system-primary-text'>{user && user.FullName}</h4>
 								<h4 className='font-medium text-xl text-brand-gray-dim text-center'>@{user && user.Username}</h4>
-								<div className='flex justify-center items-center mt-2 lg:mt-6'>
-									<div className='w-full p-3 rounded-full bg-system-secondary-accent text-center inline-block'>
-										<span className='text-system-primary-accent text-md font-semibold'>
-											{currentUserData.CurrentUser.Role}
-										</span>
+								{currentUserData.CurrentUser.Role === 'Admin' && (
+									<div className='flex justify-center items-center mt-2 lg:mt-6'>
+										<div className='w-full p-3 rounded-full bg-system-secondary-accent text-center inline-block'>
+											<span className='text-system-primary-accent text-md font-semibold'>
+												{currentUserData.CurrentUser.Role}
+											</span>
+										</div>
 									</div>
-								</div>
+								)}
 								<h4 className='font-semibold text-xl text-system-primary-text mt-3 lg:mt-6'>About</h4>
 								<div className='mt-4 flex  flex-col gap-4'>
 									<div className='flex items-center gap-2'>

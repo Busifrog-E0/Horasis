@@ -3,7 +3,7 @@ import { useState } from 'react'
 const Tab = ({ tabs, gap = 'lg:gap-4', activeTab, onTabChange = () => {}, name, alignment = 'justify-start' }) => {
 	const TabList = () => {
 		return (
-			<div className={`flex ${alignment} ${gap} overflow-x-scroll md:overflow-x-auto w-screen md:w-full`}>
+			<div className={`flex ${alignment} ${gap} overflow-x-auto md:overflow-x-auto w-screen md:w-full`}>
 				{tabs.map((item, index) => {
 					return (
 						<p
