@@ -4,6 +4,7 @@ import city from '../assets/tempimages/city.jpg'
 import HomeMidSection from '../components/Home/HomeMidSection'
 import HomeUpcomingEvents from '../components/Home/HomeUpcomingEvents'
 import HomeDiscussionsSection from '../components/Home/HomeDiscussionsSection'
+import HomeFooter from '../components/Home/HomeFooter'
 const Home = () => {
 	return (
 		<div>
@@ -14,6 +15,7 @@ const Home = () => {
 			<HomeMidSection />
 			<HomeUpcomingEvents />
 			<HomeDiscussionsSection />
+			<HomeFooter />
 		</div>
 	)
 }
