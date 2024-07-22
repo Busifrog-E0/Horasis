@@ -4,7 +4,6 @@ import Logo from './Common/Logo'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import ChatList from './Chat/ChatList'
 
-
 const DashboardHeader = () => {
 	const { logout, currentUserData, scrollToTop } = useContext(AuthContext)
 	const location = useLocation()
@@ -13,23 +12,30 @@ const DashboardHeader = () => {
 		scrollToTop()
 		navigate(path)
 	}
+
 	return (
 		<div className='bg-system-secondary-bg py-3 px-5 lg:px-10 shadow border-b border-system-file-border'>
 			<div className='flex flex-row justify-between items-center'>
-				<h1 className='text-4xl font-bold text-brand-violet'>
+				<h1 className='text-4xl font-bold text-brand-violet' onClick={() => OnClickItem('/home')}>
 					<Logo />
 				</h1>
 				<div className='px-10 hidden lg:flex flex-row flex-wrap gap-3 flex-1'>
 					<div className='w-max flex flex-col items-center'>
 						<a
-							className={`cursor-pointer  font-medium text-2xl  ${location.pathname === '/Activities' || location.pathname === '/' ? 'text-system-primary-accent' : 'text-system-primary-text'
-								}`}
+							className={`cursor-pointer  font-medium text-2xl  ${
+								location.pathname === '/Activities' || location.pathname === '/'
+									? 'text-system-primary-accent'
+									: 'text-system-primary-text'
+							}`}
 							onClick={() => OnClickItem('/Activities')}>
 							Activities
 						</a>
 						<div
-							className={`h-1 w-10 rounded-full ${location.pathname === '/Activities' || location.pathname === '/' ? 'bg-system-primary-accent' : 'bg-transparent'
-								}`}></div>
+							className={`h-1 w-10 rounded-full ${
+								location.pathname === '/Activities' || location.pathname === '/'
+									? 'bg-system-primary-accent'
+									: 'bg-transparent'
+							}`}></div>
 					</div>
 					{/* <div className='w-max flex flex-col items-center'>
 						<a
@@ -57,14 +63,16 @@ const DashboardHeader = () => {
 					</div> */}
 					<div className='w-max flex flex-col items-center'>
 						<a
-							className={`cursor-pointer  font-medium text-2xl  ${location.pathname === '/Connections' ? 'text-system-primary-accent' : 'text-system-primary-text'
-								}`}
+							className={`cursor-pointer  font-medium text-2xl  ${
+								location.pathname === '/Connections' ? 'text-system-primary-accent' : 'text-system-primary-text'
+							}`}
 							onClick={() => OnClickItem('/Connections')}>
 							Connections
 						</a>
 						<div
-							className={`h-1 w-10 rounded-full ${location.pathname === '/Connections' ? 'bg-system-primary-accent' : 'bg-transparent'
-								}`}></div>
+							className={`h-1 w-10 rounded-full ${
+								location.pathname === '/Connections' ? 'bg-system-primary-accent' : 'bg-transparent'
+							}`}></div>
 					</div>
 					{/* <div className='w-max flex flex-col items-center'>
 						<a
@@ -77,7 +85,6 @@ const DashboardHeader = () => {
 							className={`h-1 w-10 rounded-full ${location.pathname === '/Analytics' ? 'bg-system-primary-accent' : 'bg-transparent'
 								}`}></div>
 					</div> */}
-
 				</div>
 				<div className='flex flex-row flex-wrap gap-2'>
 					{/* <button
