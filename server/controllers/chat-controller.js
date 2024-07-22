@@ -2,7 +2,7 @@ import { CreateConversations, ReadConversations, ReadOneFromConversations, Updat
 import { CreateMessages, ReadMessages } from "../databaseControllers/messages-databaseController";
 import e from 'express'
 import { ReadOneFromUsers } from "../databaseControllers/users-databaseController";
-import { UpdateAndIncrementActivities } from "../databaseControllers/activities-databaseController.js";
+
 
 /**
  * @typedef {import('../databaseControllers/conversations-databaseController.js').ConversationData} ConversationData 
@@ -42,12 +42,11 @@ const GetConversations = async (req, res) => {
 
 /**
  * 
- * @param {e.Request} req 
- * @param {e.Response} res 
- * @returns {Promise<e.Response<true>>}
+ * @param {object} data
+ * @returns {Promise<boolean>}
  */
-const PostMessages = async (req, res) => {
-    const { SenderId, ReceiverId } = req.params;
+const PostMessages = async (data) => {
+    const { SenderId, ReceiverId } = data;
     const ParticipantIds = [SenderId, ReceiverId];
     const ConversationData = await ReadConversations({ '$all': ParticipantIds }, undefined, 1, undefined);
     let ConversationId;
@@ -61,10 +60,10 @@ const PostMessages = async (req, res) => {
     else {
         ConversationId = ConversationData[0].DocId;
     }
-    req.body = MessageInit(req.body, SenderId, ConversationId);
-    await CreateMessages(req.body);
-    await UpdateAndIncrementConversations({ LatestMessage: req.body }, { UnreadMessages: 1 }, ConversationId);
-    return res.json(true);
+    data = MessageInit(data, SenderId, ConversationId);
+    await CreateMessages(data);
+    await UpdateAndIncrementConversations({ LatestMessage: data }, { UnreadMessages: 1 }, ConversationId);
+    return true;
 }
 
 /**
@@ -100,4 +99,11 @@ const MessageInit = (Message, SenderId, ConversationId) => {
         ConversationId,
         HasSeen: false,
     }
+}
+
+export {
+    PostMessages,
+    GetMessages,
+    GetConversations,
+    GetOneFromConversations
 }
