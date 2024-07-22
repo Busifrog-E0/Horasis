@@ -7,7 +7,7 @@ import asyncHandler from 'express-async-handler';
 import SwaggerDocs from '../swaggerDocs/chat-swaggerDocs.js'
 import e from 'express';
 import { decodeIDToken, ensureAuthorized } from '../middleware/auth-middleware.js';
-import { QueryParameterFormatting, ValidateGetEntity } from '../middleware/common';
+import { QueryParameterFormatting, ValidateGetEntity } from '../middleware/common.js';
 const router = e.Router();
 
 router.get('/chat', decodeIDToken, ensureAuthorized("User"), ValidateGetEntity, QueryParameterFormatting,SwaggerDocs.get_Chat,
