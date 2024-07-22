@@ -5,8 +5,8 @@ const HeroSection = () => {
 	return (
 		<>
 			<div className='bg-system-primary-accent-transparent px-4 sm:px-8 md:px-16 lg:px-20 h-[calc(100vh-5rem)] flex items-center justify-center'>
-				<div className='grid lg:grid-cols-2 max-w-screen-2xl'>
-					<div className='flex flex-col gap-10 justify-center'>
+				<div className='grid lg:grid-cols-2 max-w-screen-2xl gap-10'>
+					<div className='flex flex-col gap-10 justify-center order-last md:order-first'>
 						<div>
 							<div className='flex flex-col gap-2'>
 								<h4 className='font-bold text-6xl text-system-secondary-bg'>Horasis</h4>
@@ -28,7 +28,7 @@ const HeroSection = () => {
 							</div>
 						</div>
 					</div>
-					<div className=' w-full h-full hidden lg:block'>
+					<div className=' w-full h-full'>
 						<img src={people} alt='' />
 					</div>
 				</div>
