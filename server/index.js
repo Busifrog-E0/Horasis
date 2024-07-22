@@ -2,6 +2,7 @@ import ENV from "./Env.js";
 
 import cors from "cors";
 import express, { json, urlencoded } from 'express';
+import { Server } from "socket.io";
 
 
 import db from './databaseControllers/db.config.js';
@@ -41,26 +42,39 @@ app.use(errorHandler);
 
 
 
-(async () => {
+
+
+
+const expressServer = app.listen(PORT, async (err) => {
     await db.init();
     // await FirstSetupAdminInfo();
 
-
-    app.listen(PORT, (err) => {
-        console.log(`Server is up at localhost ${PORT}`);
-        const CurrentUser = {
-            // Role: 'Admin',
-            // UserId: "Admin",
-            Role: 'User',
-            UserId: "669a03f7b05b8ea2857b56e1",
-            RegistrationStatus: "",
-            Subscription: null
-        }
-        GenerateToken(CurrentUser);
-    });
+    console.log(`Server is up at localhost ${PORT}`);
+    const CurrentUser = {
+        // Role: 'Admin',
+        // UserId: "Admin",
+        Role: 'User',
+        UserId: "669a03f7b05b8ea2857b56e1",
+        RegistrationStatus: "",
+        Subscription: null
+    }
+    GenerateToken(CurrentUser);
+});
 
 
-})();
+const io = new Server(expressServer)
+
+io.on('connection', socket => {
+    console.log(`User ${socket.id} connected`)
+
+    socket.on('message', data => {
+        console.log(data)
+        io.emit('message', `${socket.id.substring(0, 5)}: ${data}`)
+    })
+})
+
+
+
 
 
 
