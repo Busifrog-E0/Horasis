@@ -12,6 +12,14 @@ const io = new Server(server, {
     }
 });
 
+io.engine.use((req, res, next) => {
+    
+})
+
+io.use((socket, next) => {
+    
+})
+
 io.on('connection', (socket) => {
     console.log('a user connected:', socket.id);
 
