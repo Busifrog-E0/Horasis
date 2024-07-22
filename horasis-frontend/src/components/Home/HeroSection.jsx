@@ -1,5 +1,7 @@
+import { useNavigate } from 'react-router-dom'
 import people from '../../assets/tempimages/people.jpg'
 const HeroSection = () => {
+	const navigate = useNavigate()
 	return (
 		<>
 			<div className='bg-system-primary-accent-transparent px-4 sm:px-8 md:px-16 lg:px-20 h-[calc(100vh-5rem)] flex items-center justify-center'>
@@ -17,7 +19,9 @@ const HeroSection = () => {
 						</div>
 						<div className='flex flex-row flex-wrap gap-6'>
 							<div className='rounded-full p-4 px-12 border border-system-secondary-bg bg-system-secondary-bg'>
-								<p className='text-system-primary-accent text-xl font-bold'>Register</p>
+								<p className='text-system-primary-accent text-xl font-bold cursor-pointer' onClick={() => navigate('/welcome')}>
+									Register
+								</p>
 							</div>
 							<div className='rounded-full p-4 px-12 border border-system-secondary-bg'>
 								<p className='text-xl font-bold text-system-secondary-bg'>Learn More</p>
