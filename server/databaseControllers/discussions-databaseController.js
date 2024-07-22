@@ -2,7 +2,8 @@ import dataHandling from './functions.js'
 
 /**
  * @typedef {object} DiscussionData
- * @property {string} Name
+ * @property {string} DiscussionName
+ * @property {string} Brief
  * @property {string} Description
  * @property {string} DocId
  * @property {string} Privacy

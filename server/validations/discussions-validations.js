@@ -1,9 +1,10 @@
 import Joi from "joi";
 
 const PostDiscussionSchema = Joi.object({
-    Name: Joi.string().required(),
+    DiscussionName: Joi.string().required(),
     Description: Joi.string().required(),
-    CoverPicture: Joi.string().required(),
+    Brief: Joi.string().required(),
+    Privacy : Joi.string().valid("Public", "Private").required(),
 });
 
 const DiscussionCoverPhotoSchema = Joi.object({
