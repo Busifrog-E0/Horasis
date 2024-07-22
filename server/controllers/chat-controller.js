@@ -1,7 +1,10 @@
-import { CreateConversations, ReadConversations, ReadOneFromConversations, UpdateAndIncrementConversations, UpdateConversations } from "../databaseControllers/conversations-databaseController";
-import { CreateMessages, ReadMessages } from "../databaseControllers/messages-databaseController";
+import {
+    CreateConversations, ReadConversations, ReadOneFromConversations,
+    UpdateAndIncrementConversations, UpdateConversations
+} from "../databaseControllers/conversations-databaseController.js";
+import { CreateMessages, ReadMessages } from "../databaseControllers/messages-databaseController.js";
 import e from 'express'
-import { ReadOneFromUsers } from "../databaseControllers/users-databaseController";
+import { ReadOneFromUsers } from "../databaseControllers/users-databaseController.js";
 
 
 /**
