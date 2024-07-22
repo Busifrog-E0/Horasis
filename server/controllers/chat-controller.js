@@ -31,15 +31,27 @@ const GetOneFromConversations = async (req, res) => {
  * @returns {Promise<e.Response<Array<ConversationData>>>}
  */
 const GetConversations = async (req, res) => {
-    const { Filter, NextId, Limit, OrderBy } = req.query;
+    const { Filter, NextId,Keyword, Limit, OrderBy } = req.query;
     const { UserId } = req.params;
+    if (Keyword) {
+        //@ts-ignore
+        Filter.$or = [
+            { 'UserDetails.Username': { '$regex': Keyword, '$options': 'i' } },
+            { 'UserDetails.FullName': { '$regex': Keyword, '$options': 'i' } }
+        ];
+    }
     // @ts-ignore
     Filter.ParticipantIds = { '$in': [UserId] }
     //@ts-ignore
     const data = await ReadConversations(Filter, NextId, Limit, OrderBy);
     return res.json(data);
 }
-
+/*
+const updateUserDetails = async (userId, updatedUserDetails) => {
+    await Conversation.updateMany({ "ParticipantIds": { "$in": [userId] } }, { $set: { "UserDetails.$[elem]": updatedUserDetails } }, { arrayFilters: [{ "elem.UserId": userId }] });
+    await Activity.updateMany({ "UserId": userId }, { $set: { "UserDetails": updatedUserDetails } });
+}
+    */
 /**
  * 
  * @param {object} data
@@ -48,7 +60,7 @@ const GetConversations = async (req, res) => {
 const PostMessages = async (data) => {
     const { SenderId, ReceiverId } = data;
     const ParticipantIds = [SenderId, ReceiverId];
-    const ConversationData = await ReadConversations({ '$all': ParticipantIds }, undefined, 1, undefined);
+    const ConversationData = await ReadConversations({ ParticipantIds: { '$all': ParticipantIds } }, undefined, 1, undefined);
     let ConversationId;
     if (ConversationData.length == 0) {
         const UserDetails = await Promise.all(ParticipantIds.map(async UserId => {
@@ -60,7 +72,8 @@ const PostMessages = async (data) => {
     else {
         ConversationId = ConversationData[0].DocId;
     }
-    data = MessageInit(data, SenderId, ConversationId);
+    data = MessageInit(data);
+    data = { ...data, ConversationId, SenderId, ReceiverId };
     await CreateMessages(data);
     await UpdateAndIncrementConversations({ LatestMessage: data }, { UnreadMessages: 1 }, ConversationId);
     return true;
@@ -92,12 +105,9 @@ const ConversationInit = (Conversation) => {
     }
 }
 
-const MessageInit = (Message, SenderId, ConversationId) => {
+const MessageInit = (Message) => {
     return {
         ...Message,
-        SenderId,
-        ConversationId,
-        HasSeen: false,
     }
 }
 

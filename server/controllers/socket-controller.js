@@ -1,4 +1,3 @@
-
 import { Socket,Server } from "socket.io";
 import { PostMessages } from "./chat-controller";
 
@@ -7,7 +6,7 @@ import { PostMessages } from "./chat-controller";
  * @param {Socket} socket 
  * @param {Server} io 
  */
-const JoinRoom = async (socket,io) => {
+const JoinRoom =  (socket,io) => {
     socket.on('join_room', ({ ConversationId }) => {
         socket.join(ConversationId);
         console.log(`User joined room: ${ConversationId}`);
