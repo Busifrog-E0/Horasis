@@ -43,10 +43,12 @@ export const router = createBrowserRouter(
 					<Route path='/Connections' element={<Connections />} />
 					<Route path='/MyProfile' element={<MyProfile />} />
 					<Route path='/ViewProfile/:userid' element={<ShowUserProfile />} />
+					<Route path='/Discussions' element={<Discussions />} />
+					<Route path='/Discussions/create/new' element={<CreateDiscussion />} />
+					<Route path='/Discussions/:discussionid' element={<SingleDiscussion />} />
 					{/* <Route path='/universalsearchdetails' element={<UniversalSearchDetails />} />
-          <Route path='/Discussions' element={<Discussions />} />
-          <Route path='/Discussions/create/new' element={<CreateDiscussion />} />
-          <Route path='/Discussions/:discussionid' element={<SingleDiscussion />} /> */}
+					
+					*/}
 
 					{/* <Route path='/Events' element={<Events />} />
           <Route path='/Events/create/new' element={<CreateEvent />} /> */}

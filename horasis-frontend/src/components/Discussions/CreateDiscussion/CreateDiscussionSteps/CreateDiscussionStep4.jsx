@@ -1,41 +1,62 @@
-import InviteMemberTab from "../../../Common/InviteMemberTab"
+import { useState } from "react"
+import SelectDiscussionMembers from "../SelectDiscussionMembers"
+import SelectDiscussionPrivacy from "../SelectDiscussionPrivacy"
+import SelectEventMembers from "../../../Events/CreateEvent/SelectEventMembers"
 
-const CreateDiscussionStep4 = ({ changeStep, activeStep }) => {
+const CreateDiscussionStep4 = ({ }) => {
+
+    const [groupInvitationMembers, setGroupInvitationMembers] = useState([])
+    const onSelectGroupInvitationMembers = (value) => {
+        setGroupInvitationMembers(value)
+    }
+    const [activityFeedsMembers, setActivityFeedsMembers] = useState([])
+    const onSelectActivityFeedsMembers = (value) => {
+        setActivityFeedsMembers(value)
+    }
+    const [groupPhotosMembers, setGroupPhotosMembers] = useState([])
+    const onSelectGroupPhotosMembers = (value) => {
+        setGroupPhotosMembers(value)
+    }
+    const [groupAlbumsMembers, setGroupAlbumsMembers] = useState([])
+    const onSelectGroupAlbumsMembers = (value) => {
+        setGroupAlbumsMembers(value)
+    }
+    const [groupVideosMembers, setGroupVideosMembers] = useState([])
+    const onSelectGroupVideosMembers = (value) => {
+        setGroupVideosMembers(value)
+    }
 
 
-    return (<div className="flex flex-col gap-0">
-        <div className="mb-2">
-            <div className="flex-1">
-                <h1 className="text-system-primary-text font-medium text-lg">Invite Members</h1>
-                <p className="text-system-primary-text mt-1 mb-2 text-base">Invite by clicking the 'Invite'. Once done, click 'Done'</p>
-            </div>
-
+    return (<div className="flex flex-col gap-4">
+        <div>
+            <h1 className="text-system-primary-text font-medium text-lg">Privacy<span className="text-brand-red">*</span></h1>
+            <SelectDiscussionPrivacy />
         </div>
-        {/* <div className="flex flex-row items-center gap-5 mb-4">
-            <Button
-                onClick={() => changeStep(activeStep - 1)}
-                variant="outline"
-            >
-                Back
-            </Button>
-            <div className="flex-1">
-                <h1 className="text-system-primary-text font-medium text-lg">Invite Members</h1>
-                <p className="text-system-primary-text mt-1 mb-2 text-base">Invite by clicking the 'Invite'. Once done, click 'Next'</p>
-            </div>
-            <Button
-                onClick={() => changeStep(activeStep + 1)}
-                variant="black"
-                className="px-16"
-            >
-                Next
-            </Button>
-        </div> */}
-        <div className="flex-1 rounded-md p-2 px-4 border border-system-file-border flex items-center justify-between bg-system-secondary-bg mb-2">
-            <h4 className="font-medium text-lg text-brand-gray-dim italic ">Search Members</h4>
-
+        <div>
+            <h1 className="text-system-primary-text font-medium text-lg">Group Invitations</h1>
+            <p className="text-brand-gray mt-1 mb-2 text-base">Which members of this group are allowed to invite others?</p>
+            <SelectEventMembers multiSelect={true} onSelect={onSelectGroupInvitationMembers} selectedValue={groupInvitationMembers} />
         </div>
-        <InviteMemberTab />
-        <InviteMemberTab />
+        <div>
+            <h1 className="text-system-primary-text font-medium text-lg">Activity Feeds</h1>
+            <p className="text-brand-gray mt-1 mb-2 text-base">Which members of this group are allowed to post into the activity feed?</p>
+            <SelectEventMembers multiSelect={true} onSelect={onSelectActivityFeedsMembers} selectedValue={activityFeedsMembers} />
+        </div>
+        <div>
+            <h1 className="text-system-primary-text font-medium text-lg">Group Photos</h1>
+            <p className="text-brand-gray mt-1 mb-2 text-base">Which members of this group are allowed to upload albums?</p>
+            <SelectEventMembers multiSelect={true} onSelect={onSelectGroupPhotosMembers} selectedValue={groupPhotosMembers} />
+        </div>
+        <div>
+            <h1 className="text-system-primary-text font-medium text-lg">Group Albums</h1>
+            <p className="text-brand-gray mt-1 mb-2 text-base">Which members of this group are allowed to create albums?</p>
+            <SelectEventMembers multiSelect={true} onSelect={onSelectGroupAlbumsMembers} selectedValue={groupAlbumsMembers} />
+        </div>
+        <div>
+            <h1 className="text-system-primary-text font-medium text-lg">Group Videos</h1>
+            <p className="text-brand-gray mt-1 mb-2 text-base">Which members of this group are allowed to upload videos?</p>
+            <SelectEventMembers multiSelect={true} onSelect={onSelectGroupVideosMembers} selectedValue={groupVideosMembers} />
+        </div>
     </div>)
 }
 

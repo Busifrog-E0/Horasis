@@ -73,7 +73,6 @@ const DiscussionSection = () => {
 
     const fetchData = (initialRender = false) => {
         getDiscussions(initialRender ? [] : discussions)
-
     }
 
     const fetch = () => fetchData(true)

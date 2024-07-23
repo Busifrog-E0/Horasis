@@ -50,17 +50,19 @@ const DashboardHeader = () => {
 								location.pathname === '/Events' ? 'bg-system-primary-accent' : 'bg-transparent'
 							}`}></div>
 					</div> */}
-					{/* <div className='w-max flex flex-col items-center'>
+					<div className='w-max flex flex-col items-center'>
 						<a
-							className={`cursor-pointer  font-medium text-2xl  ${location.pathname === '/Discussions' ? 'text-system-primary-accent' : 'text-system-primary-text'
-								}`}
+							className={`cursor-pointer  font-medium text-2xl  ${
+								location.pathname === '/Discussions' ? 'text-system-primary-accent' : 'text-system-primary-text'
+							}`}
 							onClick={() => OnClickItem('/Discussions')}>
 							Discussions
 						</a>
 						<div
-							className={`h-1 w-10 rounded-full ${location.pathname === '/Discussions' ? 'bg-system-primary-accent' : 'bg-transparent'
-								}`}></div>
-					</div> */}
+							className={`h-1 w-10 rounded-full ${
+								location.pathname === '/Discussions' ? 'bg-system-primary-accent' : 'bg-transparent'
+							}`}></div>
+					</div>
 					<div className='w-max flex flex-col items-center'>
 						<a
 							className={`cursor-pointer  font-medium text-2xl  ${

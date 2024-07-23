@@ -6,12 +6,9 @@ const HomeHeader = () => {
 	const [menuOpen, setMenuOpen] = useState(false)
 	const { currentUserData } = useContext(AuthContext)
 	const navigate = useNavigate()
-	const handleNavigate = () => {
-		navigate('/')
-	}
-	const handleLoginNavigate = () => {
-		navigate('/welcome')
-	}
+	const handleNavigate = () => navigate('/')
+	const handleLoginNavigate = () => navigate('/login')
+
 	return (
 		<div className='flex items-center justify-center bg-system-primary-accent-transparent  px-4 sm:px-8 md:px-16 lg:px-20 py-4'>
 			<div className='flex items-center justify-between w-full max-w-screen-2xl'>

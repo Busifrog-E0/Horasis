@@ -25,6 +25,7 @@ const colors = {
 
   "system-primary-bg": "var(--system-primary-bg)",
   "system-secondary-bg": "var(--system-secondary-bg)",
+  "system-secondary-bg-transparent": "var(--system-secondary-bg-transparent)",
   "system-tertiary-bg": "var(--system-tertiary-bg)",
   "system-primary-text": "var(--system-primary-text)",
   "system-secondary-text": "var(--system-secondary-text)",
