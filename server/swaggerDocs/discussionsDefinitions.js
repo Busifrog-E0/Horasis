@@ -3,6 +3,7 @@ const PostDiscussionsData = {
     Brief: 'This is a brief',
     Description: 'This is a description',
     Privacy: 'Public',
+    CoverPicture: "https://example.com/images/cover.jpg"
 }
 
 const PatchDiscussionsCoverData = {
