@@ -16,9 +16,16 @@ import { ReadOneFromUsers, ReadUsers } from '../databaseControllers/users-databa
  * @returns {Promise<e.Response<Array<ConnectionData>>>}
  */
 const GetAUsersConnections = async (req, res) => {
-    const { Filter, NextId, Limit, OrderBy } = req.query;
+    const { Filter, Keyword ,NextId, Limit, OrderBy } = req.query;
     // @ts-ignore
     const UserId = req.user.UserId;
+    if (Keyword) {
+        //@ts-ignore
+        Filter['$or'] = [
+            { 'UserDetails.FullName': { $regex: Keyword, $options: 'i' } },
+            { 'UserDetails.Username': { $regex: Keyword, $options: 'i' } },
+        ]
+    }
     // @ts-ignore
     const data = await ReadConnections(Filter, NextId, Limit, OrderBy);
 
