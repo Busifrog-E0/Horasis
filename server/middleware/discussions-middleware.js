@@ -6,10 +6,18 @@ const GetDiscussionsActivitiesMiddleware = async (req, res, next) => {
     if (Member[0].Status !== "Accepted") {
         return res.status(444).json(AlertBoxObject("Cannot See Discussion", "You cannot see this discussion"));
     }
-    req.query.Filter = {...req.query.Filter , ParentId : req.params.DiscussionId};
+    req.query.Filter = {...req.query.Filter , Entityīd : req.params.DiscussionId};
     return next();
 }
 
+const PostDiscussionActivitiesMiddleware = (req, res, next) => {
+    req.body = { Type: "Discussion", EntityId: req.params.EntityId, ...req.body };
+    return next();
+};
+
+
 export { 
-    GetDiscussionsActivitiesMiddleware
+    GetDiscussionsActivitiesMiddleware,
+    PostDiscussionActivitiesMiddleware,
+    
 }
