@@ -19,7 +19,7 @@ const DiscussionsList = ({ cols = 3, gap = "gap-1 lg:gap-4", data = [], emptyTex
                 <>
                     {data.length > 0 ? (
                         <>
-                            <div className={`grid lg:grid-cols-${cols} ${gap}`}>
+                            <div className={`grid ${cols} ${gap}`}>
                                 {data.map((item, index) => {
                                     return (
                                         <DiscussionTab discussion={item} key={index} onClick={() => GoToSingleDiscussion(item.DocId)} />

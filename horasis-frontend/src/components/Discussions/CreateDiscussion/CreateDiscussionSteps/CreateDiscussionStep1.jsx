@@ -3,7 +3,7 @@ import Input from '../../../ui/Input'
 import TextArea from '../../../ui/TextArea'
 import SelectDiscussionPrivacy from '../SelectDiscussionPrivacy'
 
-const CreateDiscussionStep1 = ({ postDiscussionData, setPostDiscussionData }) => {
+const CreateDiscussionStep1 = ({ postDiscussionData, setPostDiscussionData, validateSingle, errorObj }) => {
 	const onSelectPrivacy = (value) => {
 		setPostDiscussionData({ ...postDiscussionData, Privacy: value })
 	}
@@ -19,9 +19,10 @@ const CreateDiscussionStep1 = ({ postDiscussionData, setPostDiscussionData }) =>
 					width='full'
 					variant='primary_outlined'
 					onChange={(e) => {
-						setPostDiscussionData({ ...postDiscussionData, DiscussionName: e.target.value })
+						validateSingle({ ['DiscussionName']: e.target.value }, 'DiscussionName')
 					}}
 				/>
+				{errorObj['DiscussionName'] != undefined && <p className='text-brand-red m-0'>{errorObj['DiscussionName']}</p>}
 			</div>
 			<div>
 				<h1 className='text-system-primary-text font-medium text-lg'>
@@ -34,9 +35,10 @@ const CreateDiscussionStep1 = ({ postDiscussionData, setPostDiscussionData }) =>
 					variant='primary_outlined'
 					value={postDiscussionData.Brief}
 					onChange={(e) => {
-						setPostDiscussionData({ ...postDiscussionData, Brief: e.target.value })
+						validateSingle({ ['Brief']: e.target.value }, 'Brief')
 					}}
 				/>
+				{errorObj['Brief'] != undefined && <p className='text-brand-red m-0'>{errorObj['Brief']}</p>}
 			</div>
 			<div>
 				<h1 className='text-system-primary-text font-medium text-lg'>
@@ -49,9 +51,10 @@ const CreateDiscussionStep1 = ({ postDiscussionData, setPostDiscussionData }) =>
 					variant='primary_outlined'
 					value={postDiscussionData.Description}
 					onChange={(e) => {
-						setPostDiscussionData({ ...postDiscussionData, Description: e.target.value })
+						validateSingle({ ['Description']: e.target.value }, 'Description')
 					}}
 				/>
+				{errorObj['Description'] != undefined && <p className='text-brand-red m-0'>{errorObj['Description']}</p>}
 			</div>
 			<div>
 				<h1 className='text-system-primary-text font-medium text-lg'>

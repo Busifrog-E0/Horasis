@@ -15,12 +15,16 @@ import { patchItem, postItem } from '../constants/operations'
 import { AuthContext } from '../utils/AuthProvider'
 import { useToast } from '../components/Toast/ToastService'
 import Spinner from '../components/ui/Spinner'
+import Modal from '../components/ui/Modal'
+import { PostDiscussionSchema } from '../utils/schema/discussions/discussionValidation'
 
 const CreateDiscussion = () => {
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
 	const toast = useToast()
 	const [activeStep, setActiveStep] = useState(1)
+	const [isModalOpen, setIsModalOpen] = useState(false)
 	const navigate = useNavigate()
+	const [errorObj, setErrorObj] = useState({})
 	const [postDiscussionData, setPostDiscussionData] = useState({
 		DiscussionName: '',
 		Brief: '',
@@ -51,7 +55,8 @@ const CreateDiscussion = () => {
 	const isThirdStep = activeStep === 3
 	const isFourthStep = activeStep === 4
 
-	const secondStepFunction = () => {
+	const postDiscussion = () => {
+		setIsModalOpen(false)
 		onCoverImageUpload()
 	}
 
@@ -74,6 +79,7 @@ const CreateDiscussion = () => {
 			{ ...postDiscussionData, CoverPicture: url },
 			(result) => {
 				if (result === true) {
+					setIsModalOpen(false)
 					changeStep(activeStep + 1)
 				}
 				setIsImageUploading(false)
@@ -107,8 +113,58 @@ const CreateDiscussion = () => {
 			onCoverImageSet('')
 		}
 	}
+
+	const validate = (callback) => {
+		const { error, warning } = PostDiscussionSchema.validate(postDiscussionData, {
+			abortEarly: false,
+			stripUnknown: true,
+		})
+		if (error && error.details) {
+			let obj = {}
+			error.details.forEach((val) => (obj[val.context.key] = val.message))
+			setErrorObj(obj)
+		} else {
+			setErrorObj({})
+			if (callback) {
+				callback()
+			}
+		}
+	}
+
+	const validateSingle = (value, key, callback) => {
+		setPostDiscussionData({ ...postDiscussionData, ...value })
+		const { error, warning } = PostDiscussionSchema.extract(key).validate(value[key], {
+			abortEarly: false,
+			stripUnknown: true,
+		})
+		if (error && error.details) {
+			let obj = {}
+			error.details.forEach((val) => (obj[key] = val.message))
+			setErrorObj(obj)
+		} else {
+			setErrorObj({})
+			if (callback) {
+				callback()
+			}
+		}
+	}
 	return (
 		<>
+			<Modal isOpen={isModalOpen}>
+				<Modal.Header>
+					<p className='font-medium text-lg'>Confirm discussion creation ?</p>
+				</Modal.Header>
+				<Modal.Body>
+					<div className='flex items-center gap-2 justify-end'>
+						<Button variant='outline' size='md' onClick={() => setIsModalOpen(false)}>
+							Cancel
+						</Button>
+						<Button variant='black' size='md' onClick={() => postDiscussion()}>
+							Confirm
+						</Button>
+					</div>
+				</Modal.Body>
+			</Modal>
 			<div className='p-2 lg:px-10 lg:py-6'>
 				<div className='grid lg:grid-cols-4 gap-3 lg:gap-12'>
 					<div className='hidden lg:block'>
@@ -129,6 +185,8 @@ const CreateDiscussion = () => {
 								<CreateDiscussionStep1
 									postDiscussionData={postDiscussionData}
 									setPostDiscussionData={setPostDiscussionData}
+									validateSingle={validateSingle}
+									errorObj={errorObj}
 								/>
 							)}
 							{activeStep === 2 && (
@@ -153,12 +211,12 @@ const CreateDiscussion = () => {
 								</div>
 								<div className='col-span-1'>
 									{isFirstStep && (
-										<Button onClick={() => changeStep(activeStep + 1)} width='full' variant='black'>
+										<Button onClick={() => validate(() => changeStep(activeStep + 1))} width='full' variant='black'>
 											Next
 										</Button>
 									)}
 									{isSecondStep && (
-										<Button onClick={() => secondStepFunction()} width='full' variant='black'>
+										<Button onClick={() => setIsModalOpen(true)} width='full' variant='black'>
 											Create Discussion
 										</Button>
 									)}
