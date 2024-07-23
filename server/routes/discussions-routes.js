@@ -10,6 +10,7 @@ import { decodeIDToken, ensureAuthorized } from '../middleware/auth-middleware.j
 import { ValidatePatchDiscussionCoverPhoto, ValidatePatchMemberPermission, ValidatePostDiscussion } from '../validations/discussions-validations.js';
 import { QueryParameterFormatting, ValidateGetEntity } from '../middleware/common.js';
 import { AcceptMemberInvitation, InviteMembers, PostMembers, UpdateMemberPermissions } from '../controllers/members-controller.js';
+import { GetDiscussionsActivitiesMiddleware } from '../middleware/discussions-middleware.js';
 const router = e.Router();
 
 
@@ -48,7 +49,12 @@ router.patch('/discussions/:EntityId/invite/accept', decodeIDToken, ensureAuthor
 router.patch('/discussions/:EntityId/member/permissions', decodeIDToken, ensureAuthorized("User"),ValidatePatchMemberPermission,
    SwaggerDocs.patch_Discussions_EntityId_Member_Permissions,
     //@ts-ignore
-    asyncHandler(UpdateMemberPermissions));    
+    asyncHandler(UpdateMemberPermissions));
+    
+router.get('/discussions/:DiscussionId/activities', decodeIDToken, ensureAuthorized("User"),GetDiscussionsActivitiesMiddleware , ValidateGetEntity, QueryParameterFormatting,
+    SwaggerDocs.get_Activities,
+    //@ts-ignore
+    asyncHandler(GetFilteredActivities));    
 
 router.delete('/discussions/:DiscussionId', decodeIDToken, ensureAuthorized("User"),
     // @ts-ignore
