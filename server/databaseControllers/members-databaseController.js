@@ -1,7 +1,12 @@
 import dataHandling from './functions.js'
 
 /**
+ * @typedef {import('./users-databaseController.js').UserData} UserData
+ */
+
+/**
  * @typedef {object} PermissionData
+ * @property {boolean} IsAdmin
  * @property {boolean} CanInviteOthers
  * @property {boolean} CanPostActivity
  * @property {boolean} CanUploadPhoto
@@ -15,6 +20,7 @@ import dataHandling from './functions.js'
  * @typedef {object} MemberData
  * @property {string} EntityId
  * @property {string} MemberId
+ * @property {UserData} UserDetails
  * @property {string} DocId
  * @property {string} Dob
  * @property {number} CreatedIndex

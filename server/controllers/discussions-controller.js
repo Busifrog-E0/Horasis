@@ -2,6 +2,7 @@ import e from 'express';
 
 import { ReadOneFromDiscussions, ReadDiscussions, UpdateDiscussions, CreateDiscussions, RemoveDiscussions, } from './../databaseControllers/discussions-databaseController.js';
 import { ReadOneFromUsers } from '../databaseControllers/users-databaseController.js';
+import { CreateMembers } from '../databaseControllers/members-databaseController.js';
 /**
  * @typedef {import('./../databaseControllers/discussions-databaseController.js').DiscussionData} DiscussionData 
  */
@@ -38,8 +39,12 @@ const GetDiscussions = async (req, res) => {
  * @returns {Promise<e.Response<true>>}
  */
 const PostDiscussions = async (req, res) => {
-    const UserDetails = await ReadOneFromUsers(req.body.OrganiserId);
-    await CreateDiscussions({...req.body,UserDetails});
+    const { OrganiserId } = req.body;
+    const UserDetails = await ReadOneFromUsers(OrganiserId);
+    const Permissions = PermissionObjectInit();
+    Permissions.IsAdmin = true
+    const DiscussionId = await CreateDiscussions({ ...req.body, UserDetails });
+    await CreateMembers({ MemberId: OrganiserId,EntityId : DiscussionId , UserDetails,Permissions})
     return res.json(true);
 }
 
@@ -67,6 +72,16 @@ const DeleteDiscussions = async (req, res) => {
     return res.json(true);
 }
 
+const PermissionObjectInit = () => {
+    return {
+        IsAdmin: false,
+        CanInviteOthers: false,
+        CanPostActivity: false,
+        CanUploadPhoto: false,
+        CanCreateAlbum: false,
+        CanUploadVideo: false
+    }
+}
 
 export {
     GetOneFromDiscussions, GetDiscussions, PostDiscussions, PatchDiscussions, DeleteDiscussions
