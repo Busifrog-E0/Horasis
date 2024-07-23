@@ -1,0 +1,71 @@
+import e from 'express';
+
+import { ReadOneFromDiscussions, ReadDiscussions, UpdateDiscussions, CreateDiscussions, RemoveDiscussions, } from './../databaseControllers/discussions-databaseController.js';
+/**
+ * @typedef {import('./../databaseControllers/discussions-databaseController.js').DiscussionData} DiscussionData 
+ */
+
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ * @returns {Promise<e.Response<DiscussionData>>}
+ */
+const GetOneFromDiscussions = async (req, res) => {
+    const { DiscussionId } = req.params;
+    const data = await ReadOneFromDiscussions(DiscussionId);
+    return res.json(data);
+}
+
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ * @returns {Promise<e.Response<Array<DiscussionData>>>}
+ */
+const GetDiscussions = async (req, res) => {
+    const { Filter, NextId, Limit, OrderBy } = req.query;
+    // @ts-ignore
+    const data = await ReadDiscussions(Filter, NextId, Limit, OrderBy);
+    return res.json(data);
+}
+
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ * @returns {Promise<e.Response<true>>}
+ */
+const PostDiscussions = async (req, res) => {
+    await CreateDiscussions(req.body);
+    return res.json(true);
+}
+
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ * @returns {Promise<e.Response<true>>}
+ */
+const PatchDiscussions = async (req, res) => {
+    const { DiscussionId } = req.params;
+    await UpdateDiscussions(req.body, DiscussionId);
+    return res.json(true);
+}
+
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ * @returns {Promise<e.Response<true>>}
+ */
+const DeleteDiscussions = async (req, res) => {
+    const { DiscussionId } = req.params;
+    await RemoveDiscussions(DiscussionId);
+    return res.json(true);
+}
+
+
+export {
+    GetOneFromDiscussions, GetDiscussions, PostDiscussions, PatchDiscussions, DeleteDiscussions
+}
