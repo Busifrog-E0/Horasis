@@ -1,0 +1,59 @@
+name: Create PR on Branch Update
+
+on:
+  push:
+    branches:
+      - Develop-Vedanth  # Replace with your source branch name
+
+jobs:
+  create-pull-request:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20'  # Use the version of Node.js you need
+
+      - name: Install dependencies
+        run: npm install -g @octokit/core
+
+      - name: Create pull request
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          node <<'EOF'
+          const { Octokit } = require("@octokit/core");
+          const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
+          
+          const owner = process.env.GITHUB_REPOSITORY.split('/')[0];
+          const repo = process.env.GITHUB_REPOSITORY.split('/')[1];
+          const sourceBranch = "DevelopVedanth";  // Replace with your source branch name
+          const targetBranch = "DebugServer";  // Replace with your target branch name
+
+          (async () => {
+            const { data: pullRequests } = await octokit.request('GET /repos/{owner}/{repo}/pulls', {
+              owner,
+              repo,
+              state: 'open',
+              head: `${owner}:${sourceBranch}`,
+              base: targetBranch
+            });
+
+            if (pullRequests.length === 0) {
+              await octokit.request('POST /repos/{owner}/{repo}/pulls', {
+                owner,
+                repo,
+                head: sourceBranch,
+                base: targetBranch,
+                title: `Auto PR from ${sourceBranch} to ${targetBranch}`,
+                body: `This PR was automatically created by a GitHub Action.`
+              });
+            } else {
+              console.log(`PR from ${sourceBranch} to ${targetBranch} already exists.`);
+            }
+          })();
+          EOF
