@@ -10,6 +10,14 @@ const PostDiscussionSchema = Joi.object({
 
 });
 
+const UpdatePermissionSchema = Joi.object({
+    CanInviteOthers: Joi.array().items(Joi.string()).required(),
+    CanPostActivity: Joi.array().items(Joi.string()).required(),
+    CanUploadPhoto: Joi.array().items(Joi.string()).required(),
+    CanCreateAlbum: Joi.array().items(Joi.string()).required(),
+    CanUploadVideo: Joi.array().items(Joi.string()).required()
+})
+
 const DiscussionCoverPhotoSchema = Joi.object({
     CoverPicture: Joi.string().required(),
 });
@@ -38,9 +46,22 @@ const ValidatePatchDiscussionCoverPhoto = async (req, res, next) => {
     }
 };
 
+const ValidatePatchMemberPermission = async (req, res, next) => {
+    const Result = UpdatePermissionSchema.validate(req.body, { stripUnknown: true });
+    if (Result.error) {
+        const message = Result.error.details.map((detail) => detail.message).join(', ');
+        return res.status(400).json(message);
+    }
+    else {
+        req.body = Result.value;
+        return next();
+    }
+}
+
 export {
     ValidatePostDiscussion,
-    ValidatePatchDiscussionCoverPhoto
+    ValidatePatchDiscussionCoverPhoto,
+    ValidatePatchMemberPermission
 }
 
 

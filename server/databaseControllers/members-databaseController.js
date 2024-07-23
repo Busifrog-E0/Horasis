@@ -81,11 +81,21 @@ const RemoveMembers = async (DocId) => {
     return dataHandling.Delete('Members', DocId);
 }
 
+/**
+ * 
+ * @param {object} data 
+ * @param {object} where 
+ * @returns 
+ */
+const UpdateManyMembers = async (data, where) => {
+    return dataHandling.UpdateMany('Members', data, where);
+}
 
 export {
     ReadMembers,
     ReadOneFromMembers,
     UpdateMembers,
     CreateMembers,
-    RemoveMembers
+    RemoveMembers,
+    UpdateManyMembers
 }

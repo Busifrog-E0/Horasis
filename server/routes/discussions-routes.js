@@ -7,8 +7,9 @@ import asyncHandler from 'express-async-handler';
 import SwaggerDocs from '../swaggerDocs/discussion-swaggerDocs.js'
 import e from 'express';
 import { decodeIDToken, ensureAuthorized } from '../middleware/auth-middleware.js';
-import { ValidatePatchDiscussionCoverPhoto, ValidatePostDiscussion } from '../validations/discussions-validations.js';
+import { ValidatePatchDiscussionCoverPhoto, ValidatePatchMemberPermission, ValidatePostDiscussion } from '../validations/discussions-validations.js';
 import { QueryParameterFormatting, ValidateGetEntity } from '../middleware/common.js';
+import { AcceptMemberInvitation, InviteMembers, PostMembers, UpdateMemberPermissions } from '../controllers/members-controller.js';
 const router = e.Router();
 
 
@@ -28,6 +29,26 @@ router.patch('/discussions/:DiscussionId/coverPicture', decodeIDToken, ensureAut
     SwaggerDocs.patch_Discussion_DiscussionId_CoverPicture,
     // @ts-ignore
     asyncHandler(PatchDiscussions));
+
+router.post('/discussions/:EntityId/join', decodeIDToken, ensureAuthorized("User"),
+    SwaggerDocs.post_Discussions_EntityId_Join,
+    //@ts-ignore
+    asyncHandler(PostMembers));
+    
+router.post('/discussions/:EntityId/invite/:InviteeId', decodeIDToken, ensureAuthorized("User"),
+    SwaggerDocs.post_Discussions_EntityId_Invite_InviteeId,
+    //@ts-ignore
+    asyncHandler(InviteMembers));
+
+router.patch('/discussions/:EntityId/invite/accept', decodeIDToken, ensureAuthorized("User"),
+   SwaggerDocs.patch_Discussions_EntityId_Invite_Accept,
+    //@ts-ignore
+    asyncHandler(AcceptMemberInvitation));
+
+router.patch('/discussions/:EntityId/member/permissions', decodeIDToken, ensureAuthorized("User"),ValidatePatchMemberPermission,
+   SwaggerDocs.patch_Discussions_EntityId_Member_Permissions,
+    //@ts-ignore
+    asyncHandler(UpdateMemberPermissions));    
 
 router.delete('/discussions/:DiscussionId', decodeIDToken, ensureAuthorized("User"),
     // @ts-ignore
