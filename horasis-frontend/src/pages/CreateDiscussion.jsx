@@ -21,7 +21,7 @@ import { PostDiscussionSchema } from '../utils/schema/discussions/discussionVali
 const CreateDiscussion = () => {
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
 	const toast = useToast()
-	const [activeStep, setActiveStep] = useState(1)
+	const [activeStep, setActiveStep] = useState(3)
 	const [isModalOpen, setIsModalOpen] = useState(false)
 	const navigate = useNavigate()
 	const [errorObj, setErrorObj] = useState({})
@@ -203,7 +203,7 @@ const CreateDiscussion = () => {
 							<div className='grid grid-cols-2 lg:grid-cols-3 gap-4 py-8'>
 								<div className='hidden lg:block'></div>
 								<div className='col-span-1'>
-									{!isFirstStep && (
+									{(!isFirstStep && !isThirdStep) && (
 										<Button onClick={() => changeStep(activeStep - 1)} variant='outline' width='full'>
 											Back
 										</Button>
