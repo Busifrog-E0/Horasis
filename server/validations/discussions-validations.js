@@ -4,7 +4,9 @@ const PostDiscussionSchema = Joi.object({
     DiscussionName: Joi.string().required(),
     Description: Joi.string().required(),
     Brief: Joi.string().required(),
-    Privacy : Joi.string().valid("Public", "Private").required(),
+    Privacy: Joi.string().valid("Public", "Private").required(),
+    CoverPicture: Joi.string().required(),
+
 });
 
 const DiscussionCoverPhotoSchema = Joi.object({
