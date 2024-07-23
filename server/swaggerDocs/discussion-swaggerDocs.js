@@ -60,6 +60,17 @@ const patch_Discussions_EntityId_Member_Permissions = async (req, res, next) => 
     next();
 }
 
+const get_Discussions_DiscussionId_Activities = async (req, res, next) => {
+    // #swagger.tags = ['Discussions']
+    /* #swagger.security = [{ "BearerAuth": [] }] */
+    /* #swagger.parameters['body'] = {
+               in: 'body',
+               schema: {  $ref: '#/definitions/ActivityGetDataArray' }
+   } 
+*/
+    next();
+}
+
 export default {
     post_Discussion,
     patch_Discussion_DiscussionId_CoverPicture,
@@ -67,5 +78,6 @@ export default {
     post_Discussions_EntityId_Join,
     post_Discussions_EntityId_Invite_InviteeId,
     patch_Discussions_EntityId_Invite_Accept,
-    patch_Discussions_EntityId_Member_Permissions
+    patch_Discussions_EntityId_Member_Permissions,
+    get_Discussions_DiscussionId_Activities
 }
