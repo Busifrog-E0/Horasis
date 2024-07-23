@@ -1,6 +1,6 @@
 import { createServer } from 'http';
 import { Server  } from 'socket.io';
-import { HandleMessageEvent, JoinRoom } from './controllers/socket-controller';
+import { decodeSocketIdToken, ensureSocketAuthorized, HandleMessageEvent, JoinRoom } from './controllers/socket-controller';
 
 const SOCKET_PORT = 3001;  
 
@@ -12,13 +12,10 @@ const io = new Server(server, {
     }
 });
 
-io.engine.use((req, res, next) => {
-    
-})
 
-io.use((socket, next) => {
-    
-})
+
+io.use(decodeSocketIdToken);
+io.use(ensureSocketAuthorized("User"));
 
 io.on('connection', (socket) => {
     console.log('a user connected:', socket.id);

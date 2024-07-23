@@ -1,6 +1,7 @@
 import e from 'express';
 
 import { ReadOneFromDiscussions, ReadDiscussions, UpdateDiscussions, CreateDiscussions, RemoveDiscussions, } from './../databaseControllers/discussions-databaseController.js';
+import { ReadOneFromUsers } from '../databaseControllers/users-databaseController.js';
 /**
  * @typedef {import('./../databaseControllers/discussions-databaseController.js').DiscussionData} DiscussionData 
  */
@@ -37,7 +38,8 @@ const GetDiscussions = async (req, res) => {
  * @returns {Promise<e.Response<true>>}
  */
 const PostDiscussions = async (req, res) => {
-    await CreateDiscussions(req.body);
+    const UserDetails = await ReadOneFromUsers(req.body.OrganiserId);
+    await CreateDiscussions({...req.body,UserDetails});
     return res.json(true);
 }
 

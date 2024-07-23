@@ -4047,6 +4047,10 @@
           "type": "string",
           "example": "This is a brief"
         },
+        "Organiserīd": {
+          "type": "string",
+          "example": "user1234"
+        },
         "Description": {
           "type": "string",
           "example": "This is a description"
@@ -4054,6 +4058,10 @@
         "Privacy": {
           "type": "string",
           "example": "Public"
+        },
+        "CoverPicture": {
+          "type": "string",
+          "example": "https://example.com/images/cover.jpg"
         }
       }
     },
