@@ -12,7 +12,7 @@ import dataHandling from './functions.js'
  * @property {UserData} UserDetails
  * @property {string} Description
  * @property {string} DocId
- * @property {string} Privacy
+ * @property {"Public"|"Private"} Privacy
  * @property {number} CreatedIndex
  * @property {string} CoverPicture
  * @property {number} NoOfMembers
