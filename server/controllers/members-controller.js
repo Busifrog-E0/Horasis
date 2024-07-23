@@ -45,8 +45,8 @@ const PostMembers = async (req, res) => {
     let EntityId = ""
     if (req.params.DiscussionId) {
         const Discussion = await ReadOneFromDiscussions(req.params.DiscussionId);
-        EntityId = Discussion[0].DocId;
-        if (Discussion[0].Privacy === "Private") {
+        EntityId = Discussion.DocId;
+        if (Discussion.Privacy === "Private") {
             return res.status(444).json(AlertBoxObject("Cannot Join Private Discussion", "You cannot join a private discussion"));
         }
     }
