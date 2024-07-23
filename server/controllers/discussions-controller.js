@@ -24,6 +24,7 @@ const GetOneFromDiscussions = async (req, res) => {
     if (Member.length > 0) {
         DiscussionMemberObject.IsMember = true;
         DiscussionMemberObject.Permissions = Member[0].Permissions
+        DiscussionMemberObject.Status = Member[0].Status
     }
     const data = { ...Discussion, ...DiscussionMemberObject };
     return res.json(data);
@@ -46,14 +47,15 @@ const GetDiscussions = async (req, res) => {
     // @ts-ignore
     const Discussions = await ReadDiscussions(Filter, NextId, Limit, OrderBy);
     const data = await Promise.all(Discussions.map(async Discussion => {
-        const DiscussionMemberObject = { IsMember: false, Permissions: {} };
+        const DiscussionMemberObject = { IsMember: false, };
         const Member = await ReadMembers({ MemberId: UserId, EntityId: Discussion.DocId }, undefined, 1, undefined);
         if (Member.length > 0) {
             DiscussionMemberObject.IsMember = true;
             DiscussionMemberObject.Permissions = Member[0].Permissions
+            DiscussionMemberObject.Status = Member[0].Status
         }
         return { ...Discussion, ...DiscussionMemberObject }
-     }))
+    }))
     return res.json(data);
 }
 
@@ -69,7 +71,7 @@ const PostDiscussions = async (req, res) => {
     const Permissions = PermissionObjectInit();
     Permissions.IsAdmin = true
     const DiscussionId = await CreateDiscussions({ ...req.body, UserDetails });
-    await CreateMembers({ MemberId: OrganiserId,EntityId : DiscussionId , UserDetails,Permissions})
+    await CreateMembers({ MemberId: OrganiserId, EntityId: DiscussionId, UserDetails, Permissions })
     return res.json(DiscussionId);
 }
 
