@@ -71,6 +71,9 @@ const RemoveDiscussions = async (DocId) => {
     return dataHandling.Delete('Discussions', DocId);
 }
 
+const IncrementDiscussions = async (data, DocId) => {
+    return dataHandling.Update("Discussions", data, DocId, ["$inc"], false);
+}
 
 export {
     ReadDiscussions,
@@ -78,4 +81,5 @@ export {
     UpdateDiscussions,
     CreateDiscussions,
     RemoveDiscussions,
+    IncrementDiscussions
 }

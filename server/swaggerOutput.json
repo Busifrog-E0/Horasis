@@ -3005,6 +3005,203 @@
           }
         ]
       }
+    },
+    "/api/discussions/{EntityId}/join": {
+      "post": {
+        "tags": [
+          "Discussions"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "EntityId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "402": {
+            "description": "Payment Required"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "444": {
+            "description": "Connection Closed Without Response"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/discussions/{EntityId}/invite/{InviteeId}": {
+      "post": {
+        "tags": [
+          "Discussions"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "EntityId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "InviteeId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Status": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "402": {
+            "description": "Payment Required"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "444": {
+            "description": "Connection Closed Without Response"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/discussions/{EntityId}/invite/accept": {
+      "patch": {
+        "tags": [
+          "Discussions"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "EntityId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "402": {
+            "description": "Payment Required"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "444": {
+            "description": "Connection Closed Without Response"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/discussions/{EntityId}/member/permissions": {
+      "patch": {
+        "tags": [
+          "Discussions"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "EntityId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/UpdatePermissionData"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "402": {
+            "description": "Payment Required"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "444": {
+            "description": "Connection Closed Without Response"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
     }
   },
   "definitions": {
@@ -4298,6 +4495,61 @@
           "NoOfMembers": {
             "type": "number",
             "example": 10
+          }
+        }
+      }
+    },
+    "UpdatePermissionData": {
+      "type": "object",
+      "properties": {
+        "CanInviteOthers": {
+          "type": "array",
+          "example": [
+            "user1",
+            "user2",
+            "user3"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
+        "CanPostActivity": {
+          "type": "array",
+          "example": [
+            "user4",
+            "user5"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
+        "CanUploadPhoto": {
+          "type": "array",
+          "example": [
+            "user6",
+            "user7"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
+        "CanCreateAlbum": {
+          "type": "array",
+          "example": [
+            "user8"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
+        "CanUploadVideo": {
+          "type": "array",
+          "example": [
+            "user9",
+            "user10"
+          ],
+          "items": {
+            "type": "string"
           }
         }
       }

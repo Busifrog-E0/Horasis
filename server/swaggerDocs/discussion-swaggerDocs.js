@@ -31,8 +31,41 @@ const get_Discussions = async (req, res, next) => {
     next();
 }
 
+const post_Discussions_EntityId_Join = async (req, res, next) => {
+    // #swagger.tags = ['Discussions']
+    /* #swagger.security = [{ "BearerAuth": [] }] */
+    next();
+}
+
+const post_Discussions_EntityId_Invite_InviteeId = async (req, res, next) => {
+    // #swagger.tags = ['Discussions']
+    /* #swagger.security = [{ "BearerAuth": [] }] */
+    next();
+}
+
+const patch_Discussions_EntityId_Invite_Accept = async (req, res, next) => {
+    // #swagger.tags = ['Discussions']
+    /* #swagger.security = [{ "BearerAuth": [] }] */
+    next();
+}
+
+const patch_Discussions_EntityId_Member_Permissions = async (req, res, next) => {
+    // #swagger.tags = ['Discussions']
+    /* #swagger.security = [{ "BearerAuth": [] }] */
+    /* #swagger.parameters['body'] = {
+               in: 'body',
+               schema: {  $ref: '#/definitions/UpdatePermissionData' }
+   } 
+*/
+    next();
+}
+
 export default {
     post_Discussion,
     patch_Discussion_DiscussionId_CoverPicture,
-    get_Discussions
+    get_Discussions,
+    post_Discussions_EntityId_Join,
+    post_Discussions_EntityId_Invite_InviteeId,
+    patch_Discussions_EntityId_Invite_Accept,
+    patch_Discussions_EntityId_Member_Permissions
 }

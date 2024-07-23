@@ -28,8 +28,17 @@ const DiscussionsData = {
 
 const DiscussionDataArray = [DiscussionsData];
 
+const UpdatePermissionData = {
+    CanInviteOthers: ['user1', 'user2', 'user3'],
+    CanPostActivity: ['user4', 'user5'],
+    CanUploadPhoto: ['user6', 'user7'],
+    CanCreateAlbum: ['user8'],
+    CanUploadVideo: ['user9', 'user10']
+}
+
 export default {
     PostDiscussionsData,
     PatchDiscussionsCoverData,
-    DiscussionsData,DiscussionDataArray
+    DiscussionsData, DiscussionDataArray,
+    UpdatePermissionData
 }
