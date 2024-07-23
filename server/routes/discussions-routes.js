@@ -8,10 +8,11 @@ import SwaggerDocs from '../swaggerDocs/discussion-swaggerDocs.js'
 import e from 'express';
 import { decodeIDToken, ensureAuthorized } from '../middleware/auth-middleware.js';
 import { ValidatePatchDiscussionCoverPhoto, ValidatePostDiscussion } from '../validations/discussions-validations.js';
+import { QueryParameterFormatting, ValidateGetEntity } from '../middleware/common.js';
 const router = e.Router();
 
 
-router.get('/discussions', decodeIDToken, ensureAuthorized("User"),
+router.get('/discussions', decodeIDToken, ensureAuthorized("User"),ValidateGetEntity,QueryParameterFormatting,SwaggerDocs.get_Discussions,
     //@ts-ignore
     asyncHandler(GetDiscussions));
 

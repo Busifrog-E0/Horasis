@@ -3,6 +3,7 @@ import e from 'express';
 import { ReadOneFromDiscussions, ReadDiscussions, UpdateDiscussions, CreateDiscussions, RemoveDiscussions, } from './../databaseControllers/discussions-databaseController.js';
 import { ReadOneFromUsers } from '../databaseControllers/users-databaseController.js';
 import { CreateMembers } from '../databaseControllers/members-databaseController.js';
+import { PermissionObjectInit } from './members-controller.js';
 /**
  * @typedef {import('./../databaseControllers/discussions-databaseController.js').DiscussionData} DiscussionData 
  */
@@ -72,16 +73,7 @@ const DeleteDiscussions = async (req, res) => {
     return res.json(true);
 }
 
-const PermissionObjectInit = () => {
-    return {
-        IsAdmin: false,
-        CanInviteOthers: false,
-        CanPostActivity: false,
-        CanUploadPhoto: false,
-        CanCreateAlbum: false,
-        CanUploadVideo: false
-    }
-}
+
 
 export {
     GetOneFromDiscussions, GetDiscussions, PostDiscussions, PatchDiscussions, DeleteDiscussions
