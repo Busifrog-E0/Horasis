@@ -62,6 +62,10 @@ const CreateDiscussions = async (data, DocId = undefined) => {
     return dataHandling.Create('Discussions', data, DocId);
 }
 
+const AggregateDiscussions =  (AggregateArray)=> {
+    return dataHandling.Aggregate('Discussions', AggregateArray);
+}
+
 /**
  * 
  * @param {string} DocId 
@@ -81,5 +85,6 @@ export {
     UpdateDiscussions,
     CreateDiscussions,
     RemoveDiscussions,
-    IncrementDiscussions
+    IncrementDiscussions,
+    AggregateDiscussions
 }

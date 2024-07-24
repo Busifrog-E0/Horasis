@@ -7,7 +7,7 @@ const GetDiscussionsActivitiesMiddleware = async (req, res, next) => {
     const Discussion = await ReadOneFromDiscussions(EntityId);
     if (Discussion.Privacy === "Private") {
         const Member = await ReadMembers({ MemberId: req.user.UserId, EntityId: req.params.EntityId }, undefined, 1, undefined);
-        if (Member[0].Status !== "Accepted") {
+        if (Member[0].MembershipStatus !== "Accepted") {
             return res.status(444).json(AlertBoxObject("Cannot See Discussion", "You cannot see this discussion"));
         }
     }

@@ -3023,11 +3023,29 @@
             "name": "authorization",
             "in": "header",
             "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Type": {
+                  "example": "any"
+                },
+                "MembershipStatus": {
+                  "example": "any"
+                }
+              }
+            }
           }
         ],
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "244": {
+            "description": ""
           },
           "401": {
             "description": "Unauthorized"
@@ -3079,7 +3097,7 @@
             "schema": {
               "type": "object",
               "properties": {
-                "Status": {
+                "MembershipStatus": {
                   "example": "any"
                 }
               }
@@ -4598,6 +4616,14 @@
         "NoOfMembers": {
           "type": "number",
           "example": 10
+        },
+        "isMember": {
+          "type": "boolean",
+          "example": true
+        },
+        "MembershipStatus": {
+          "type": "string",
+          "example": "Accepted"
         }
       }
     },
@@ -4694,6 +4720,14 @@
           "NoOfMembers": {
             "type": "number",
             "example": 10
+          },
+          "isMember": {
+            "type": "boolean",
+            "example": true
+          },
+          "MembershipStatus": {
+            "type": "string",
+            "example": "Accepted"
           }
         }
       }
