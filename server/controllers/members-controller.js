@@ -137,17 +137,17 @@ const MemberInit = (Member) => {
     return {
         ...Member,
         Status: "Accepted",
-        Permissions: PermissionObjectInit()
+        Permissions: PermissionObjectInit(false)
     }
 }
-const PermissionObjectInit = () => {
+const PermissionObjectInit = (IsAdmin) => {
     return {
-        IsAdmin: false,
-        CanInviteOthers: false,
-        CanPostActivity: false,
-        CanUploadPhoto: false,
-        CanCreateAlbum: false,
-        CanUploadVideo: false
+        IsAdmin: IsAdmin,
+        CanInviteOthers: IsAdmin,
+        CanPostActivity: IsAdmin,
+        CanUploadPhoto: IsAdmin,
+        CanCreateAlbum: IsAdmin,
+        CanUploadVideo: IsAdmin
     }
 }
 
