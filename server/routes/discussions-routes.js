@@ -11,6 +11,7 @@ import { ValidatePatchDiscussionCoverPhoto, ValidatePatchMemberPermission, Valid
 import { QueryParameterFormatting, ValidateGetEntity } from '../middleware/common.js';
 import { AcceptMemberInvitation, InviteMembers, PostMembers, UpdateMemberPermissions } from '../controllers/members-controller.js';
 import { GetDiscussionsActivitiesMiddleware } from '../middleware/discussions-middleware.js';
+import { GetFilteredActivities } from '../controllers/activities-controller.js';
 const router = e.Router();
 
 
@@ -52,7 +53,7 @@ router.patch('/discussions/:EntityId/member/permissions', decodeIDToken, ensureA
     asyncHandler(UpdateMemberPermissions));
     
 router.get('/discussions/:DiscussionId/activities', decodeIDToken, ensureAuthorized("User"),GetDiscussionsActivitiesMiddleware , ValidateGetEntity, QueryParameterFormatting,
-    SwaggerDocs.get_Activities,
+    SwaggerDocs.get_Discussions_DiscussionId_Activities,
     //@ts-ignore
     asyncHandler(GetFilteredActivities));    
 

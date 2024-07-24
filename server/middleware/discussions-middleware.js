@@ -1,5 +1,5 @@
-import { AlertBoxObject } from "../controllers/common";
-import { ReadMembers, ReadOneFromMembers } from "../databaseControllers/members-databaseController";
+import { AlertBoxObject } from "../controllers/common.js";
+import { ReadMembers, ReadOneFromMembers } from "../databaseControllers/members-databaseController.js";
 
 const GetDiscussionsActivitiesMiddleware = async (req, res, next) => {
     const Member = await ReadMembers({ MemberId: req.user.UserId, EntityId: req.params.DiscussionId }, undefined, 1, undefined);
