@@ -3006,7 +3006,7 @@
         ]
       }
     },
-    "/api/discussions/{EntityId}/join": {
+    "/api/discussions/{DiscussionId}/join": {
       "post": {
         "tags": [
           "Discussions"
@@ -3014,7 +3014,7 @@
         "description": "",
         "parameters": [
           {
-            "name": "EntityId",
+            "name": "DiscussionId",
             "in": "path",
             "required": true,
             "type": "string"
@@ -3153,6 +3153,77 @@
         ]
       }
     },
+    "/api/discussions/{EntityId}/members": {
+      "get": {
+        "tags": [
+          "Discussions"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "EntityId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "NextId",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "Limit",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "Keyword",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "OrderBy",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "Filter",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Discussion Data",
+            "schema": {
+              "$ref": "#/definitions/MemberData"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "402": {
+            "description": "Payment Required"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
     "/api/discussions/{EntityId}/member/permissions": {
       "patch": {
         "tags": [
@@ -3206,15 +3277,15 @@
         ]
       }
     },
-    "/api/discussions/{DiscussionId}/activities": {
-      "get": {
+    "/api/discussions/{EntityId}/activities": {
+      "post": {
         "tags": [
           "Discussions"
         ],
         "description": "",
         "parameters": [
           {
-            "name": "DiscussionId",
+            "name": "EntityId",
             "in": "path",
             "required": true,
             "type": "string"
@@ -3225,8 +3296,54 @@
             "type": "string"
           },
           {
-            "name": "Filter",
-            "in": "query",
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/ActivityGetDataArray"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "402": {
+            "description": "Payment Required"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "444": {
+            "description": "Connection Closed Without Response"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "get": {
+        "tags": [
+          "Discussions"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "EntityId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
             "type": "string"
           },
           {
@@ -3250,16 +3367,17 @@
             "type": "string"
           },
           {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "$ref": "#/definitions/ActivityGetDataArray"
-            }
+            "name": "Filter",
+            "in": "query",
+            "type": "string"
           }
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "Discussion Data",
+            "schema": {
+              "$ref": "#/definitions/ActivityGetDataArray"
+            }
           },
           "400": {
             "description": "Bad Request"
@@ -4631,6 +4749,117 @@
           ],
           "items": {
             "type": "string"
+          }
+        }
+      }
+    },
+    "MemberData": {
+      "type": "object",
+      "properties": {
+        "EntityId": {
+          "type": "string",
+          "example": "discussion123"
+        },
+        "MemberId": {
+          "type": "string",
+          "example": "user456"
+        },
+        "UserDetails": {
+          "type": "object",
+          "properties": {
+            "FullName": {
+              "type": "string",
+              "example": "Jane Doe"
+            },
+            "Username": {
+              "type": "string",
+              "example": "janedoe"
+            },
+            "Email": {
+              "type": "string",
+              "example": "jane.doe@example.com"
+            },
+            "DocId": {
+              "type": "string",
+              "example": "abc123DEF"
+            },
+            "Country": {
+              "type": "string",
+              "example": "Canada"
+            },
+            "City": {
+              "type": "string",
+              "example": "Toronto"
+            },
+            "JobTitle": {
+              "type": "string",
+              "example": "Product Manager"
+            },
+            "Industry": {
+              "type": "string",
+              "example": "Software"
+            },
+            "CompanyName": {
+              "type": "string",
+              "example": "InnovateTech"
+            },
+            "About": {
+              "type": "string",
+              "example": "Seasoned product manager with over 10 years of experience in the software industry."
+            },
+            "CoverPicture": {
+              "type": "string",
+              "example": "string"
+            },
+            "ProfilePicture": {
+              "type": "string",
+              "example": "string"
+            }
+          }
+        },
+        "Status": {
+          "type": "string",
+          "example": "Accepted"
+        },
+        "DocId": {
+          "type": "string",
+          "example": "member789"
+        },
+        "Type": {
+          "type": "string",
+          "example": "Discussion"
+        },
+        "CreatedIndex": {
+          "type": "number",
+          "example": 1672531200
+        },
+        "Permissions": {
+          "type": "object",
+          "properties": {
+            "IsAdmin": {
+              "type": "boolean",
+              "example": false
+            },
+            "CanInviteOthers": {
+              "type": "boolean",
+              "example": false
+            },
+            "CanPostActivity": {
+              "type": "boolean",
+              "example": true
+            },
+            "CanUploadPhoto": {
+              "type": "boolean",
+              "example": true
+            },
+            "CanCreateAlbum": {
+              "type": "boolean",
+              "example": true
+            },
+            "CanUploadVideo": {
+              "type": "boolean",
+              "example": false
+            }
           }
         }
       }

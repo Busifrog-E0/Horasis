@@ -5,6 +5,7 @@ import activitiesDefinitions from './swaggerDocs/activitiesDefinitions.js';
 import commentsDefinitions from './swaggerDocs/commentsDefinitions.js';
 import chatDefinitions from './swaggerDocs/chatDefinitions.js';
 import discussionsDefinitions from './swaggerDocs/discussionsDefinitions.js';
+import membersDefinitions from './swaggerDocs/membersDefinitions.js';
 
 const doc = {
     info: {
@@ -70,7 +71,8 @@ const doc = {
         ...activitiesDefinitions,
         ...commentsDefinitions,
         ...chatDefinitions,
-        ...discussionsDefinitions
+        ...discussionsDefinitions,
+        ...membersDefinitions
     }
 }
 

@@ -252,6 +252,11 @@ const PostActivities = async (req, res) => {
  */
 const PatchActivities = async (req, res) => {
     const { ActivityId } = req.params;
+    const Activity = await ReadOneFromActivities(ActivityId);
+    //@ts-ignore
+    if (Activity.UserId !== req.user.UserId) {
+        return res.status(444).json(AlertBoxObject("Cannot Edit", "Cannot edit other User's Activity"))
+    }
     req.body.Mentions = await ExtractMentionedUsersFromContent(req.body.Content);
     await UpdateActivities(req.body, ActivityId);
     return res.json(true);
