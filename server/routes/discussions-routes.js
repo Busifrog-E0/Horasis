@@ -10,12 +10,14 @@ import { decodeIDToken, ensureAuthorized } from '../middleware/auth-middleware.j
 import { ValidatePatchDiscussionCoverPhoto, ValidatePatchMemberPermission, ValidatePostDiscussion } from '../validations/discussions-validations.js';
 import { QueryParameterFormatting, ValidateGetEntity } from '../middleware/common.js';
 import { AcceptMemberInvitation, InviteMembers, PostMembers, UpdateMemberPermissions } from '../controllers/members-controller.js';
-import { GetDiscussionsActivitiesMiddleware } from '../middleware/discussions-middleware.js';
-import { GetFilteredActivities } from '../controllers/activities-controller.js';
+import { GetDiscussionsActivitiesMiddleware, PostDiscussionActivitiesMiddleware } from '../middleware/discussions-middleware.js';
+import { GetFilteredActivities, PostActivities } from '../controllers/activities-controller.js';
+import { ValidatePostActivities } from '../validations/activities-validations.js';
+import { MemberPostActivityMiddleware } from '../middleware/members-middleware.js';
 const router = e.Router();
 
 
-router.get('/discussions', decodeIDToken, ensureAuthorized("User"),ValidateGetEntity,QueryParameterFormatting,SwaggerDocs.get_Discussions,
+router.get('/discussions', decodeIDToken, ensureAuthorized("User"), ValidateGetEntity, QueryParameterFormatting, SwaggerDocs.get_Discussions,
     //@ts-ignore
     asyncHandler(GetDiscussions));
 
@@ -32,30 +34,35 @@ router.patch('/discussions/:DiscussionId/coverPicture', decodeIDToken, ensureAut
     // @ts-ignore
     asyncHandler(PatchDiscussions));
 
-router.post('/discussions/:EntityId/join', decodeIDToken, ensureAuthorized("User"),
+router.post('/discussions/:DiscussionID/join', decodeIDToken, ensureAuthorized("User"),
     SwaggerDocs.post_Discussions_EntityId_Join,
     //@ts-ignore
     asyncHandler(PostMembers));
-    
+
 router.post('/discussions/:EntityId/invite/:InviteeId', decodeIDToken, ensureAuthorized("User"),
     SwaggerDocs.post_Discussions_EntityId_Invite_InviteeId,
     //@ts-ignore
     asyncHandler(InviteMembers));
 
 router.patch('/discussions/:EntityId/invite/accept', decodeIDToken, ensureAuthorized("User"),
-   SwaggerDocs.patch_Discussions_EntityId_Invite_Accept,
+    SwaggerDocs.patch_Discussions_EntityId_Invite_Accept,
     //@ts-ignore
     asyncHandler(AcceptMemberInvitation));
 
-router.patch('/discussions/:EntityId/member/permissions', decodeIDToken, ensureAuthorized("User"),ValidatePatchMemberPermission,
-   SwaggerDocs.patch_Discussions_EntityId_Member_Permissions,
+router.patch('/discussions/:EntityId/member/permissions', decodeIDToken, ensureAuthorized("User"), ValidatePatchMemberPermission,
+    SwaggerDocs.patch_Discussions_EntityId_Member_Permissions,
     //@ts-ignore
     asyncHandler(UpdateMemberPermissions));
-    
-router.get('/discussions/:DiscussionId/activities', decodeIDToken, ensureAuthorized("User"),GetDiscussionsActivitiesMiddleware , ValidateGetEntity, QueryParameterFormatting,
-    SwaggerDocs.get_Discussions_DiscussionId_Activities,
+
+router.post('/discussions/:EntityId/activities', decodeIDToken, ensureAuthorized("User"), ValidatePostActivities, PostDiscussionActivitiesMiddleware,
+    MemberPostActivityMiddleware, SwaggerDocs.post_Discussions_EntityId_Invite_InviteeId,
     //@ts-ignore
-    asyncHandler(GetFilteredActivities));    
+    asyncHandler(PostActivities));
+
+router.get('/discussions/:EntityId/activities', decodeIDToken, ensureAuthorized("User"), GetDiscussionsActivitiesMiddleware,
+    ValidateGetEntity, QueryParameterFormatting, SwaggerDocs.get_Discussions_DiscussionId_Activities,
+    //@ts-ignore
+    asyncHandler(GetFilteredActivities));
 
 router.delete('/discussions/:DiscussionId', decodeIDToken, ensureAuthorized("User"),
     // @ts-ignore

@@ -27,9 +27,14 @@ const GetOneFromDiscussions = async (req, res) => {
  * @returns {Promise<e.Response<Array<DiscussionData>>>}
  */
 const GetDiscussions = async (req, res) => {
-    const { Filter, NextId, Limit, OrderBy } = req.query;
+    const { Filter, NextId, Keyword, Limit, OrderBy } = req.query;
+    if (Keyword) {
+        // @ts-ignore
+        Filter["DiscussionName"] = { $regex: Keyword, $options: 'i' };
+    }
     // @ts-ignore
-    const data = await ReadDiscussions(Filter, NextId, Limit, OrderBy);
+    const Discussions = await ReadDiscussions(Filter, NextId, Limit, OrderBy);
+    const data = await Promise.all(Discussions.map(async Discussion => { }))
     return res.json(data);
 }
 

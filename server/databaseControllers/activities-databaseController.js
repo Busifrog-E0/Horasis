@@ -13,7 +13,7 @@ import dataHandling from "./functions.js";
  * @property {number} NoOfComments
  * @property {string} DocId
  * @property {'Feed'|'Event'|'Discussion'} Type
- * @property {string} ParentId
+ * @property {string} EntityId
  */
 
 /**
