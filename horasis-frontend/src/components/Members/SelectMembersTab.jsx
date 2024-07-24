@@ -13,7 +13,7 @@ const SelectMembersTab = ({ onSelect, profile, selected }) => {
 
 
     return (
-        <div className={`${selected ? "bg-red-200" : "bg-system-secondary-bg"} cursor-pointer`} onClick={() => onSelect(profile)}>
+        <div className={`${selected ? "bg-system-primary-bg" : "bg-system-secondary-bg"} cursor-pointer px-4 py-2 rounded-lg`} onClick={() => onSelect(profile)}>
             <div className='flex items-start gap-4'>
                 {profile ? (
                     <>

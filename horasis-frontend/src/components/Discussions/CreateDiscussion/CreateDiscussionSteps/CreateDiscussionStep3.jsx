@@ -4,11 +4,12 @@ import { AuthContext } from '../../../../utils/AuthProvider'
 import { useToast } from '../../../Toast/ToastService'
 import { getNextId } from '../../../../utils/URLParams'
 import { jsonToQuery } from '../../../../utils/searchParams/extractSearchParams'
-import { getItem } from '../../../../constants/operations'
+import { getItem, postItem } from '../../../../constants/operations'
 import EmptyMembers from '../../../Common/EmptyMembers'
 import Spinner from '../../../ui/Spinner'
+import SearchComponent from '../../../Search/SearchBox/SearchComponent'
 
-const CreateDiscussionStep3 = ({}) => {
+const CreateDiscussionStep3 = ({ discussionId }) => {
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
 	const toast = useToast()
 	const [isLoading, setIsLoading] = useState(true)
@@ -36,7 +37,6 @@ const CreateDiscussionStep3 = ({}) => {
 			(data) => {
 				setData([...tempData, ...data])
 				setLoadingCom(tempData, false)
-				console.log(data)
 			},
 			(err) => {
 				setLoadingCom(tempData, false)
@@ -96,7 +96,7 @@ const CreateDiscussionStep3 = ({}) => {
 				<div className='flex-1'>
 					<h1 className='text-system-primary-text font-medium text-lg'>Invite Members</h1>
 					<p className='text-system-primary-text mt-1 mb-2 text-base'>
-						Invite by clicking the 'Invite'. Once done, click 'Done'
+						Invite by clicking the 'Invite'. Once done, click 'Next'
 					</p>
 				</div>
 			</div>
@@ -119,16 +119,26 @@ const CreateDiscussionStep3 = ({}) => {
                 Next
             </Button>
         </div> */}
-			<div className='flex-1 rounded-md p-2 px-4 border border-system-file-border flex items-center justify-between bg-system-secondary-bg mb-2'>
-				<h4 className='font-medium text-lg text-brand-gray-dim italic '>Search Members</h4>
-			</div>
+			<SearchComponent
+				searchKey={filters.Keyword}
+				setSearchKey={(value) => setFilters((prev) => ({ ...prev, Keyword: value }))}
+				placeholder='Search Members'
+			/>
 			{connections ? (
 				<>
 					{connections.length > 0 ? (
 						<>
-							{connections.map((item) => {
-								return <InviteMemberTab connection={item} key={item.DocId} />
-							})}
+							{isLoading ? (
+								<div className='bg-system-secondary-bg p-4 rounded-b-lg '>
+									<Spinner />
+								</div>
+							) : (
+								<>
+									{connections.map((item) => {
+										return <InviteMemberTab connection={item} key={item.DocId} discussionId={discussionId} />
+									})}
+								</>
+							)}
 						</>
 					) : (
 						<>

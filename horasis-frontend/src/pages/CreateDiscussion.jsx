@@ -21,7 +21,7 @@ import { PostDiscussionSchema } from '../utils/schema/discussions/discussionVali
 const CreateDiscussion = () => {
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
 	const toast = useToast()
-	const [activeStep, setActiveStep] = useState(3)
+	const [activeStep, setActiveStep] = useState(1)
 	const [isModalOpen, setIsModalOpen] = useState(false)
 	const navigate = useNavigate()
 	const [errorObj, setErrorObj] = useState({})
@@ -33,13 +33,14 @@ const CreateDiscussion = () => {
 		Privacy: 'Public',
 		CoverPicture: '',
 	})
+	const [discussionId, setDiscussionId] = useState('')
 
 	const changeStep = (step) => {
 		if (step >= 1 && step <= 4) {
 			setActiveStep(step)
 		}
 		if (step === 5) {
-			navigate(`/discussions/${123}`)
+			navigate(`/discussions/${discussionId}`)
 		}
 	}
 
@@ -78,7 +79,8 @@ const CreateDiscussion = () => {
 			'discussions',
 			{ ...postDiscussionData, CoverPicture: url },
 			(result) => {
-				if (result === true) {
+				if (result) {
+					setDiscussionId(result)
 					setIsModalOpen(false)
 					changeStep(activeStep + 1)
 				}
@@ -196,14 +198,14 @@ const CreateDiscussion = () => {
 									fileFieldName='CoverPicture'
 								/>
 							)}
-							{activeStep === 3 && <CreateDiscussionStep3 />}
+							{activeStep === 3 && <CreateDiscussionStep3 discussionId={discussionId} />}
 							{activeStep === 4 && <CreateDiscussionStep4 />}
 
 							{/* {activeStep !== 4 && */}
 							<div className='grid grid-cols-2 lg:grid-cols-3 gap-4 py-8'>
 								<div className='hidden lg:block'></div>
 								<div className='col-span-1'>
-									{(!isFirstStep && !isThirdStep) && (
+									{!isFirstStep && !isThirdStep && (
 										<Button onClick={() => changeStep(activeStep - 1)} variant='outline' width='full'>
 											Back
 										</Button>

@@ -1,10 +1,33 @@
+import { useContext, useState } from 'react'
 import Button from '../ui/Button'
+import { postItem } from '../../constants/operations'
+import { AuthContext } from '../../utils/AuthProvider'
+import { useToast } from '../Toast/ToastService'
 
-const InviteMemberTab = ({ connection }) => {
+const InviteMemberTab = ({ connection, discussionId }) => {
+	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
+	const toast = useToast()
+	const [inviteSent, setInviteSent] = useState(false)
+
+	const sentInvite = () => {
+		postItem(
+			`discussions/${discussionId}/invite/${connection.DocId}`,
+			{},
+			(result) => {
+				setInviteSent(result)
+			},
+			(err) => {
+				toast.open('error', 'Invite failed', `Couldn't sent  invite to ${connection.FullName}. Try again.`)
+			},
+			updateCurrentUser,
+			currentUserData,
+			toast
+		)
+	}
 	return (
 		<>
 			<div className='border-b border-system-file-border pb-4 pt-4'>
-				<div className='flex items-start gap-3'>
+				<div className='flex items-center gap-3'>
 					{connection ? (
 						<>
 							{connection.ProfilePicture ? (
@@ -34,7 +57,15 @@ const InviteMemberTab = ({ connection }) => {
 							{connection && connection.Country}
 						</h4>
 					</div>
-					<Button variant='outline'>Invite</Button>
+					{!inviteSent ? (
+						<Button variant='outline' onClick={() => sentInvite(connection.DocId)}>
+							Invite
+						</Button>
+					) : (
+						<>
+							<p className='text-system-secondary-text font-medium'>Invite sent</p>
+						</>
+					)}
 				</div>
 			</div>
 		</>

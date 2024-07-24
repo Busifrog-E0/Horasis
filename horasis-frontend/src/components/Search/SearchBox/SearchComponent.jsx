@@ -1,10 +1,10 @@
-import Input from "../../ui/Input"
+import Input from '../../ui/Input'
 
-const SearchComponent = ({ searchKey, setSearchKey }) => {
+const SearchComponent = ({ searchKey, setSearchKey, placeholder = 'Search Connections' }) => {
 	return (
 		<Input
 			className='py-3 rounded-xl border-2 border-system-secondary-accent'
-			placeholder='Search Connections'
+			placeholder={placeholder}
 			width='full'
 			value={searchKey}
 			onChange={(e) => {
