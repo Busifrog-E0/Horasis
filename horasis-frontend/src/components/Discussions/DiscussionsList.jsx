@@ -4,7 +4,7 @@ import { AuthContext } from "../../utils/AuthProvider"
 import { useNavigate } from "react-router-dom"
 import DiscussionTab from "./DiscussionTab"
 
-const DiscussionsList = ({ cols = 3, gap = "gap-1 lg:gap-4", data = [], emptyText }) => {
+const DiscussionsList = ({ cols = 3, gap = "gap-1 lg:gap-4", data = [], emptyText,fetch }) => {
     const { currentUserData, scrollToTop } = useContext(AuthContext)
     const navigate = useNavigate()
 
@@ -22,7 +22,7 @@ const DiscussionsList = ({ cols = 3, gap = "gap-1 lg:gap-4", data = [], emptyTex
                             <div className={`grid ${cols} ${gap}`}>
                                 {data.map((item, index) => {
                                     return (
-                                        <DiscussionTab discussion={item} key={index} onClick={() => GoToSingleDiscussion(item.DocId)} />
+                                        <DiscussionTab discussion={item} key={index} onClick={() => GoToSingleDiscussion(item.DocId)} fetch={fetch} />
                                     )
                                 })}
                             </div>

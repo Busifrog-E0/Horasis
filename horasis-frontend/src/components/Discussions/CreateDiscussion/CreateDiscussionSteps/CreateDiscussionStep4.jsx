@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import SelectDiscussionMembers from '../SelectDiscussionMembers'
-import SelectDiscussionPrivacy from '../SelectDiscussionPrivacy'
 import SelectEventMembers from '../../../Events/CreateEvent/SelectEventMembers'
 
 const CreateDiscussionStep4 = ({}) => {

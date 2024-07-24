@@ -7,11 +7,13 @@ import DropdownMenu from '../components/ui/DropdownMenu'
 import { relativeTime } from '../utils/date'
 import Button from '../components/ui/Button'
 import { useToast } from '../components/Toast/ToastService'
-import { getItem, patchItem } from '../constants/operations'
+import { getItem, patchItem, postItem } from '../constants/operations'
 import cover from '../assets/icons/cover.svg'
 import { _retrieveData, _storeData, MAINTAB } from '../utils/LocalStorage'
 import Tab from '../components/ui/Tab'
 import Spinner from '../components/ui/Spinner'
+import DiscussionActivities from '../components/Discussions/SingleDiscussionTabs/DiscussionActivities'
+import TimeLineTab from '../components/Activities/TimeLineTab'
 
 const SingleDiscussion = () => {
 	const [activeTab, setActiveTab] = useState(0)
@@ -25,21 +27,6 @@ const SingleDiscussion = () => {
 	const handleGoBack = () => {
 		navigate(-1)
 	}
-	const miniEventTabs = () => [
-		{
-			title: "Speakers' Profile",
-			render: () => (
-				<div className='py-3 pt-6 flex flex-col gap-8'>
-					<SpeakerProfileTab />
-					<SpeakerProfileTab />
-				</div>
-			),
-		},
-		{
-			title: 'Event Agenda',
-			render: () => <div className='py-3 pt-6'></div>,
-		},
-	]
 
 	const onTabChange = (item) => {
 		setActiveTab(item.key)
@@ -104,7 +91,14 @@ const SingleDiscussion = () => {
 					key: 1,
 					title: 'Activities',
 					render: () => (
-						<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>Activities</div>
+						<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
+							<TimeLineTab
+								api={`discussions/${discussion?.DocId}/activities`}
+								gapBnTabs='gap-7'
+								classNameForPost='py-5'
+								bordered={true}
+							/>
+						</div>
 					),
 				},
 				{
@@ -164,7 +158,15 @@ const SingleDiscussion = () => {
 					key: 1,
 					title: 'Activities',
 					render: () => (
-						<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>Activities</div>
+						<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
+							<TimeLineTab
+								api={`discussions/${discussion?.DocId}/activities`}
+								gapBnTabs='gap-7'
+								classNameForPost='py-5'
+								bordered={true}
+								permissions={discussion.Permissions}
+							/>
+						</div>
 					),
 				},
 				{
@@ -222,6 +224,22 @@ const SingleDiscussion = () => {
 			toast
 		)
 	}
+	const joinDiscussion = () => {
+		postItem(
+			`discussions/${discussion.DocId}/join`,
+			{},
+			(result) => {
+				if (result === true) {
+					getDiscussion()
+				}
+			},
+			(err) => console.log(err),
+			updateCurrentUser,
+			currentUserData,
+			toast
+		)
+	}
+	const unFollowDiscussion = () => {}
 
 	return (
 		<>
@@ -235,10 +253,7 @@ const SingleDiscussion = () => {
 						<img src={cover} className='object-cover h-full w-full' />
 					</>
 				)}
-				{/* <img
-					src='https://th.bing.com/th/id/OIP.FFchRAWwk-emGNqgImzwaAHaEK?rs=1&pid=ImgDetMain'
-					className='object-cover h-full w-full'
-				/> */}
+
 				<div className='absolute top-0 right-0 left-0 bottom-0 flex flex-col justify-between items-start p-4 lg:px-10 lg:py-6 bg-brand-blue-transparent h-100 overflow-hidden overflow-y-auto'>
 					<div className='flex w-full items-start justify-between'>
 						<div className='flex items-center cursor-pointer' onClick={handleGoBack}>
@@ -260,13 +275,13 @@ const SingleDiscussion = () => {
 					</div>
 					<div>
 						<h4 className='font-medium shadow-lg text-4xl text-white mb-3'>{discussion.DiscussionName}</h4>
-						{/* <div className="flex flex-row flex-wrap gap-3">
-                        <h4 className="text-2xl text-white">Virtual Event</h4>
-                        <h4 className="text-2xl text-white">•</h4>
-                        <h4 className="text-2xl text-white">140 Participants</h4>
-                        <h4 className="text-2xl text-white">•</h4>
-                        <h4 className="text-2xl text-white">Public</h4>
-                    </div> */}
+						<div className='flex flex-row flex-wrap gap-3'>
+							{/* <h4 className='text-2xl text-white'>Virtual Event</h4>
+							<h4 className='text-2xl text-white'>•</h4> */}
+							<h4 className='text-2xl text-white'>{discussion.NoOfMembers} Participants</h4>
+							<h4 className='text-2xl text-white'>•</h4>
+							<h4 className='text-2xl text-white'>{discussion.Privacy}</h4>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -292,14 +307,32 @@ const SingleDiscussion = () => {
 												</Button>
 											</>
 										) : (
-											<></>
+											<>
+												<Button
+													onClick={() => unFollowDiscussion()}
+													width='full'
+													variant='black'
+													className='bg-system-secondary-text border-system-secondary-text'>
+													Unfollow
+												</Button>
+											</>
 										)}
 									</>
 								) : (
 									<>
-										<Button onClick={() => OnClickFollow()} width='full' variant='black'>
-											Follow
-										</Button>
+										{!discussion.IsMember ? (
+											<Button onClick={() => joinDiscussion()} width='full' variant='black'>
+												Follow
+											</Button>
+										) : (
+											<Button
+												onClick={() => unFollowDiscussion()}
+												width='full'
+												variant='black'
+												className='bg-system-secondary-text border-system-secondary-text'>
+												Unfollow
+											</Button>
+										)}
 									</>
 								)}
 							</div>
@@ -323,3 +356,21 @@ const SingleDiscussion = () => {
 }
 
 export default SingleDiscussion
+
+// UNUSED PREVIOUS CODE
+
+// const miniEventTabs = () => [
+// 	{
+// 		title: "Speakers' Profile",
+// 		render: () => (
+// 			<div className='py-3 pt-6 flex flex-col gap-8'>
+// 				<SpeakerProfileTab />
+// 				<SpeakerProfileTab />
+// 			</div>
+// 		),
+// 	},
+// 	{
+// 		title: 'Event Agenda',
+// 		render: () => <div className='py-3 pt-6'></div>,
+// 	},
+// ]

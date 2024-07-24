@@ -4,20 +4,27 @@ import Button from '../ui/Button'
 import { AuthContext } from '../../utils/AuthProvider'
 import { useToast } from '../Toast/ToastService'
 
-const DiscussionTab = ({ discussion, onClick }) => {
+const DiscussionTab = ({ discussion, onClick, fetch }) => {
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
 	const toast = useToast()
 	const joinDiscussion = () => {
 		postItem(
 			`discussions/${discussion.DocId}/join`,
 			{},
-			(result) => console.log(result),
-			(err) => console.log(err),
+			(result) => {
+				if (result === true) {
+					fetch()
+				}
+			},
+			(err) => {},
 			updateCurrentUser,
 			currentUserData,
 			toast
 		)
 	}
+
+	const unFollowDiscussion = () => {}
+
 	return (
 		<div className='rounded-lg mt-3 overflow-hidden h-full bg-system-secondary-bg '>
 			<div className='h-28 overflow-hidden rounded-t-lg cursor-pointer' onClick={() => onClick(discussion.DocId)}>
@@ -32,13 +39,44 @@ const DiscussionTab = ({ discussion, onClick }) => {
 				<h4 className='text-base font-semibold text-system-primary-text mb-1 leading-6'>{discussion.DiscussionName}</h4>
 				<h4 className=' text-xs text-brand-gray-dim min-h-16 max-h-16 overflow-hidden'>{discussion.Brief}</h4>
 			</div>
-			{!discussion.IsMember && (
-				<div className='flex items-center justify-center my-2'>
-					<Button variant='black' onClick={() => joinDiscussion()}>
-						Follow
-					</Button>
-				</div>
-			)}
+
+			<div className='flex items-center justify-center my-2'>
+				{discussion.Privacy === 'Private' ? (
+					<>
+						{discussion.Status === 'Invited' ? (
+							<>
+								<Button onClick={() => acceptInvite()} variant='black'>
+									Accept invite
+								</Button>
+							</>
+						) : (
+							<>
+								<Button
+									onClick={() => unFollowDiscussion()}
+									variant='black'
+									className='bg-system-secondary-text border-system-secondary-text'>
+									Unfollow
+								</Button>
+							</>
+						)}
+					</>
+				) : (
+					<>
+						{!discussion.IsMember ? (
+							<Button onClick={() => joinDiscussion()} variant='black'>
+								Follow
+							</Button>
+						) : (
+							<Button
+								onClick={() => unFollowDiscussion()}
+								variant='black'
+								className='bg-system-secondary-text border-system-secondary-text'>
+								Unfollow
+							</Button>
+						)}
+					</>
+				)}
+			</div>
 		</div>
 	)
 }
