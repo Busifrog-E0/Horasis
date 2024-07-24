@@ -3,7 +3,7 @@ name: Create PR on Branch Update
 on:
   push:
     branches:
-      - Develop-Vedanth  # Replace with your source branch name
+      - source-branch  # Replace with your source branch name
 
 jobs:
   create-pull-request:
@@ -11,28 +11,28 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v3  # Updated to the latest version
 
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v3  # Updated to the latest version
         with:
-          node-version: '20'  # Use the version of Node.js you need
+          node-version: '16'  # Explicitly set the Node.js version to 16
 
       - name: Install dependencies
-        run: npm install -g @octokit/core
+        run: |
+          npm install @octokit/core
 
       - name: Create pull request
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          node <<'EOF'
-          const { Octokit } = require("@octokit/core");
+          node -e "
+          const { Octokit } = require('@octokit/core');
           const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
           
-          const owner = process.env.GITHUB_REPOSITORY.split('/')[0];
-          const repo = process.env.GITHUB_REPOSITORY.split('/')[1];
-          const sourceBranch = "DevelopVedanth";  // Replace with your source branch name
-          const targetBranch = "DebugServer";  // Replace with your target branch name
+          const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/');
+          const sourceBranch = 'source-branch';  // Replace with your source branch name
+          const targetBranch = 'target-branch';  // Replace with your target branch name
 
           (async () => {
             const { data: pullRequests } = await octokit.request('GET /repos/{owner}/{repo}/pulls', {
@@ -50,10 +50,10 @@ jobs:
                 head: sourceBranch,
                 base: targetBranch,
                 title: `Auto PR from ${sourceBranch} to ${targetBranch}`,
-                body: `This PR was automatically created by a GitHub Action.`
+                body: 'This PR was automatically created by a GitHub Action.'
               });
             } else {
               console.log(`PR from ${sourceBranch} to ${targetBranch} already exists.`);
             }
           })();
-          EOF
+          "
