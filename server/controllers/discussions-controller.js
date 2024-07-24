@@ -69,6 +69,7 @@ const PostDiscussions = async (req, res) => {
     const { OrganiserId } = req.body;
     const UserDetails = await ReadOneFromUsers(OrganiserId);
     const Permissions = PermissionObjectInit(true);
+    req.body = DiscussionInit(req.body);
     const DiscussionId = await CreateDiscussions({ ...req.body, UserDetails });
     await CreateMembers({ MemberId: OrganiserId, EntityId: DiscussionId, UserDetails, Permissions, Status: "Accepted" })
     return res.json(DiscussionId);
@@ -98,6 +99,12 @@ const DeleteDiscussions = async (req, res) => {
     return res.json(true);
 }
 
+const DiscussionInit = (Discussion) => {
+    return {
+        ...Discussion,
+        NoOfMembers : 1
+    }
+}
 
 
 export {
