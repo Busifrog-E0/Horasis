@@ -58,7 +58,7 @@ const GetDiscussions = async (req, res) => {
     }))
     return res.json(data);
 }
-
+/*
 const GetUserDiscussions = async (req, res) => { 
     const { UserId } = req.params;
     const { Filter, NextId, Keyword, Limit, OrderBy } = req.query;
@@ -88,7 +88,7 @@ const GetUserDiscussions = async (req, res) => {
     }))
     return res.json(data);
 }
-
+*/
 /**
  * 
  * @param {e.Request} req 
@@ -101,7 +101,7 @@ const PostDiscussions = async (req, res) => {
     const Permissions = PermissionObjectInit(true);
     req.body = DiscussionInit(req.body);
     const DiscussionId = await CreateDiscussions({ ...req.body, UserDetails });
-    await CreateMembers({ MemberId: OrganiserId, EntityId: DiscussionId, UserDetails, Permissions, Status: "Accepted" })
+    await CreateMembers({ MemberId: OrganiserId, EntityId: DiscussionId, UserDetails, Permissions, MembershipStatus: "Accepted" })
     return res.json(DiscussionId);
 }
 
