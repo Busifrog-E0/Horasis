@@ -60,7 +60,7 @@ const patch_Discussions_EntityId_Member_Permissions = async (req, res, next) => 
     next();
 }
 
-const get_Discussions_DiscussionId_Activities = async (req, res, next) => {
+const post_Discussions_DiscussionId_Activities = async (req, res, next) => {
     // #swagger.tags = ['Discussions']
     /* #swagger.security = [{ "BearerAuth": [] }] */
     /* #swagger.parameters['body'] = {
@@ -68,6 +68,28 @@ const get_Discussions_DiscussionId_Activities = async (req, res, next) => {
                schema: {  $ref: '#/definitions/ActivityGetDataArray' }
    } 
 */
+    next();
+}
+
+const get_Discussions_DiscussionId_Activities = async (req, res, next) => {
+    // #swagger.tags = ['Discussions']
+    /* #swagger.security = [{ "BearerAuth": [] }] */
+    /* #swagger.responses[200] = {
+                   description: 'Discussion Data',
+                   schema: { $ref: '#/definitions/ActivityGetDataArray' }
+           } 
+       */
+    next();
+}
+
+const get_Discussions_DiscussionId_Members = async (req, res, next) => {
+    // #swagger.tags = ['Discussions']
+    /* #swagger.security = [{ "BearerAuth": [] }] */
+    /* #swagger.responses[200] = {
+                   description: 'Discussion Data',
+                   schema: { $ref: '#/definitions/MemberData' }
+           } 
+       */
     next();
 }
 
@@ -79,5 +101,7 @@ export default {
     post_Discussions_EntityId_Invite_InviteeId,
     patch_Discussions_EntityId_Invite_Accept,
     patch_Discussions_EntityId_Member_Permissions,
-    get_Discussions_DiscussionId_Activities
+    get_Discussions_DiscussionId_Activities,
+    post_Discussions_DiscussionId_Activities,
+    get_Discussions_DiscussionId_Members
 }

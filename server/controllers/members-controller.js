@@ -29,6 +29,8 @@ const GetOneFromMembers = async (req, res) => {
 const GetMembers = async (req, res) => {
     const { Filter, NextId, Limit, OrderBy } = req.query;
     // @ts-ignore
+    Filter.EntityId = req.params.EntityId;
+    //@ts-ignore
     const data = await ReadMembers(Filter, NextId, Limit, OrderBy);
     return res.json(data);
 }
@@ -49,6 +51,14 @@ const PostMembers = async (req, res) => {
         if (Discussion.Privacy === "Private") {
             return res.status(444).json(AlertBoxObject("Cannot Join Private Discussion", "You cannot join a private discussion"));
         }
+    }
+    const Member = await ReadMembers({ MemberId: UserId, EntityId }, undefined, 1, undefined);
+    if (Member.length > 0 && Member[0].Status === "Invited") {
+        await UpdateMembers({ Status: "Accepted" }, Member[0].DocId);
+        await IncrementDiscussions({ NoOfMembers: 1 }, EntityId);
+    }
+    if (Member.length > 0) {
+        return res.status(444).json(AlertBoxObject("Cannot Join", "You are already a member of this discussion"));
     }
     const UserDetails = await ReadOneFromUsers(UserId);
     req.body = { ...MemberInit(req.body), MemberId: UserId, EntityId, UserDetails };
