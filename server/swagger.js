@@ -3,6 +3,9 @@ import swaggerAutogen from 'swagger-autogen';
 import usersDefinitions from './swaggerDocs/usersDefinitions.js';
 import activitiesDefinitions from './swaggerDocs/activitiesDefinitions.js';
 import commentsDefinitions from './swaggerDocs/commentsDefinitions.js';
+import chatDefinitions from './swaggerDocs/chatDefinitions.js';
+import discussionsDefinitions from './swaggerDocs/discussionsDefinitions.js';
+import membersDefinitions from './swaggerDocs/membersDefinitions.js';
 
 const doc = {
     info: {
@@ -39,6 +42,14 @@ const doc = {
         {
             "name": "Comments",
             "description": "",
+        },
+        {
+            "name": "Chat",
+            "description": "",
+        },
+        {
+            "name": "Discussions",
+            "description": "",
         }
     ],
     securityDefinitions: {
@@ -58,7 +69,10 @@ const doc = {
         LoginData: { Token: "string", RefreshToken: "string", CurrentUser: { Role: "User", UserId: "" } },
         ...usersDefinitions,
         ...activitiesDefinitions,
-        ...commentsDefinitions
+        ...commentsDefinitions,
+        ...chatDefinitions,
+        ...discussionsDefinitions,
+        ...membersDefinitions
     }
 }
 

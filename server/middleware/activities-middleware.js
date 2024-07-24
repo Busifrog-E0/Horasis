@@ -8,10 +8,7 @@ const GetEventActivitiesMiddleware = (req, res, next) => {
     return next();
 }
 
-const GetDiscussionActivitiesMiddleware = (req, res, next) => {
-    req.query.Filter = { Type: "Discussion", ...req.query.Filter };
-    return next();
-}
+
 
 const PostFeedActivitiesMiddleware = (req, res, next) => {
     req.body = { Type: "Feed", ...req.body };
@@ -23,10 +20,6 @@ const PostEventActivitiesMiddleware = (req, res, next) => {
     return next();
 }
 
-const PostDiscussionActivitiesMiddleware = (req, res, next) => {
-    req.body = { Type: "Discussion", ...req.body };
-    return next();
-}
 
 const GetUserActivitiesMiddleware = (req, res, next) => {
     req.query.Filter = { UserId: req.params.UserId, ...req.query.Filter };
@@ -45,8 +38,7 @@ const PostActivitiesLikeMiddleware = (req, res, next) => {
 
 
 export {
-    GetFeedActivitiesMiddleware, GetEventActivitiesMiddleware, GetDiscussionActivitiesMiddleware,
-    PostDiscussionActivitiesMiddleware, PostEventActivitiesMiddleware, PostFeedActivitiesMiddleware,
+    GetFeedActivitiesMiddleware, GetEventActivitiesMiddleware, PostEventActivitiesMiddleware, PostFeedActivitiesMiddleware,
     GetUserActivitiesMiddleware, GetMentionedActivitiesMiddleware, PostActivitiesLikeMiddleware,
     
 }

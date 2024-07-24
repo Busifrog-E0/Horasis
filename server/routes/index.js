@@ -11,6 +11,8 @@ import connectionsRoutes from './connections-routes.js';
 import filesRoutes from './files-routes.js'
 import activitiesRoutes from './activities-routes.js'
 import commentsRoutes from './comments-routes.js'
+import chatsRoutes from './chat-routes.js'
+import discussionRoutes from './discussions-routes.js'
 
 
 router.use("/api", authRoutes);
@@ -22,6 +24,8 @@ router.use("/api", connectionsRoutes);
 router.use("/api", filesRoutes);
 router.use("/api", activitiesRoutes);
 router.use("/api", commentsRoutes);
+router.use("/api", chatsRoutes);
+router.use("/api", discussionRoutes);
 
 
 

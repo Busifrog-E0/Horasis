@@ -5,6 +5,7 @@ import dataHandling from './functions.js'
  * @property {boolean} HasSeen
  * @property {string} ConversationId
  * @property {string} SenderId
+ * @property {string} RecieverId
  * @property {string} Content
  * @property {number} CreatedIndex
  * @property {string} DocId
