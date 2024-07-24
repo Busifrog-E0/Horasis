@@ -53,12 +53,13 @@ const PostMembers = async (req, res) => {
         }
     }
     const Member = await ReadMembers({ MemberId: UserId, EntityId }, undefined, 1, undefined);
-    if (Member.length > 0 && Member[0].Status === "Invited") {
-        await UpdateMembers({ Status: "Accepted" }, Member[0].DocId);
-        await IncrementDiscussions({ NoOfMembers: 1 }, EntityId);
-    }
     if (Member.length > 0) {
-        return res.status(444).json(AlertBoxObject("Cannot Join", "You are already a member of this discussion"));
+        if (Member[0].Status === "Invited") {
+            await UpdateMembers({ Status: "Accepted" }, Member[0].DocId);
+            await IncrementDiscussions({ NoOfMembers: 1 }, EntityId);
+            return res.json(true);
+        }
+        return res.status(444).json(AlertBoxObject("Cannot Join", "You have already joined this discussion"));
     }
     const UserDetails = await ReadOneFromUsers(UserId);
     req.body = { ...MemberInit(req.body), MemberId: UserId, EntityId, UserDetails };
@@ -78,7 +79,7 @@ const InviteMembers = async (req, res) => {
         return res.status(444).json(AlertBoxObject("Cannot Invite", "You cannot invite others to this discussion"));
     }
     const Invitee = await ReadMembers({ MemberId: InviteeId, EntityId }, undefined, 1, undefined);
-    if (Invitee[0] &&Invitee[0].Status==="Invited") {
+    if (Invitee[0] && Invitee[0].Status === "Invited") {
         return res.status(444).json(AlertBoxObject("Cannot Invite", "This user has already been invited to this discussion"));
     }
     const UserDetails = await ReadOneFromUsers(InviteeId);

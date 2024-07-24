@@ -22,7 +22,7 @@ const GetOneFromDiscussions = async (req, res) => {
     const DiscussionMemberObject = { IsMember: false, Permissions: {} };
     const Member = await ReadMembers({ MemberId: UserId, EntityId: Discussion.DocId }, undefined, 1, undefined);
     if (Member.length > 0) {
-        DiscussionMemberObject.IsMember = true;
+        DiscussionMemberObject.IsMember = Member[0].Status === "Accepted";
         DiscussionMemberObject.Permissions = Member[0].Permissions
         DiscussionMemberObject.Status = Member[0].Status
     }
@@ -50,7 +50,7 @@ const GetDiscussions = async (req, res) => {
         const DiscussionMemberObject = { IsMember: false, };
         const Member = await ReadMembers({ MemberId: UserId, EntityId: Discussion.DocId }, undefined, 1, undefined);
         if (Member.length > 0) {
-            DiscussionMemberObject.IsMember = true;
+            DiscussionMemberObject.IsMember = Member[0].Status === "Accepted";
             DiscussionMemberObject.Permissions = Member[0].Permissions
             DiscussionMemberObject.Status = Member[0].Status
         }
