@@ -46,7 +46,7 @@ const PostDiscussions = async (req, res) => {
     Permissions.IsAdmin = true
     const DiscussionId = await CreateDiscussions({ ...req.body, UserDetails });
     await CreateMembers({ MemberId: OrganiserId,EntityId : DiscussionId , UserDetails,Permissions})
-    return res.json(true);
+    return res.json(DiscussionId);
 }
 
 /**
