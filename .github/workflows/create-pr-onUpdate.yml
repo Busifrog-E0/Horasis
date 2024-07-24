@@ -1,60 +1,31 @@
-name: Create PR on Branch Update
+name: Create Pull Request
 
 on:
   push:
     branches:
-      - Develop-Vedanth  # Replace with your source branch name
+      - Develop-Vedanth # Replace with your source branch name
 
 jobs:
-  create-pull-request:
+  create-pr:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3  # Updated to the latest version
+        uses: actions/checkout@v3
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3  # Updated to the latest version
-        with:
-          node-version: '16'  # Explicitly set the Node.js version to 16
-
-      - name: Install dependencies
-        run: |
-          npm install @octokit/core
-
-      - name: Create pull request
+      - name: Create Pull Request
         env:
-          GITHUB_TOKEN: ${{ secrets.Haris_Token }}
+          GH_PAT: ${{ secrets.Haris_Token }}
         run: |
-          node -e "
-          const { Octokit } = require('@octokit/core');
-          const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
-          
-          const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/');
-          console.log(`Creating PR from ${owner}:${sourceBranch} to ${targetBranch}`);
-          const sourceBranch = 'Develop-Vedanth';  // Replace with your source branch name
-          const targetBranch = 'DebugServer';  // Replace with your target branch name
+          PR_EXISTS=$(curl -s -H "Authorization: token $GH_PAT" \
+          "https://api.github.com/repos/${{ github.repository }}/pulls?state=open&head=${{ github.repository_owner }}:Develop-Vedanth&base=DebugServer" | jq '. | length')
 
-          (async () => {
-            const { data: pullRequests } = await octokit.request('GET /repos/{owner}/{repo}/pulls', {
-              owner,
-              repo,
-              state: 'open',
-              head: `${owner}:${sourceBranch}`,
-              base: targetBranch
-            });
+          if [ "$PR_EXISTS" -eq 0 ]; then
+            curl -X POST -H "Authorization: token $GH_PAT" \
+            -H "Accept: application/vnd.github.v3+json" \
+            -d '{"title":"Auto PR from Develop-Vedanth to DebugServer","head":"Develop-Vedanth","base":"DebugServer","body":"This PR was automatically created by a GitHub Action."}' \
+            https://api.github.com/repos/${{ github.repository }}/pulls
+          else
+            echo "Pull request already exists."
+          fi
 
-            if (pullRequests.length === 0) {
-              await octokit.request('POST /repos/{owner}/{repo}/pulls', {
-                owner,
-                repo,
-                head: sourceBranch,
-                base: targetBranch,
-                title: `Auto PR from ${sourceBranch} to ${targetBranch}`,
-                body: 'This PR was automatically created by a GitHub Action.'
-              });
-            } else {
-              console.log(`PR from ${sourceBranch} to ${targetBranch} already exists.`);
-            }
-          })();
-          "
