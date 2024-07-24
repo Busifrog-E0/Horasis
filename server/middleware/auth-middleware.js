@@ -49,6 +49,42 @@ const ensureAuthorized = (...Roles) => (req, res, next) => {
     }
 }
 
+
+
+/**
+ * 
+ * @param {object} socket 
+ * @param {Function} next 
+ * @returns 
+ */
+const decodeSocketIdToken = (socket, next) => {
+    const authHeader = socket.handshake.auth.token || "";
+    const token = authHeader.split(" ")[1];
+    if (!token) {
+        const Message = 'Authentication token is missing';
+        const err = new Error(Message);
+        // @ts-ignore
+        err.data = { Message, StatusCode: 403 };
+        return next(err);
+    }
+    try {
+        const user = jwt.verify(token, ENV.TOKEN_KEY);
+        // @ts-ignore
+        socket.user = user;
+        // @ts-ignore
+    } catch (error) {
+        const Message = 'Invalid Token';
+        const err = new Error(Message);
+        // @ts-ignore
+        err.data = { Message, StatusCode: 401 };
+        return next(err);
+    }
+    return next();
+}
+
+
+
 export {
     decodeIDToken, ensureAuthorized,
+    decodeSocketIdToken,
 };

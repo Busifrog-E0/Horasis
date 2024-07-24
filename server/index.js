@@ -2,7 +2,7 @@ import ENV from "./Env.js";
 
 import cors from "cors";
 import express, { json, urlencoded } from 'express';
-import { Server } from "socket.io";
+import { Socket, Server } from "socket.io";
 
 
 import db from './databaseControllers/db.config.js';
@@ -28,6 +28,7 @@ import swaggerUi from 'swagger-ui-express';
 import swaggerFile from './swaggerOutput.json' assert { type: 'json' };
 // import { FirstSetupAdminInfo } from "./databaseControllers/admins-databaseController.js";
 import { GenerateToken } from "./controllers/auth-controller.js";
+import { decodeSocketIdToken } from "./middleware/auth-middleware.js";
 app.use('/doc', swaggerUi.serve, swaggerUi.setup(swaggerFile));
 
 app.use((req, res, next) => {
@@ -64,14 +65,25 @@ const expressServer = app.listen(PORT, async (err) => {
 
 const io = new Server(expressServer)
 
+io.use(decodeSocketIdToken);
+
 io.on('connection', socket => {
     console.log(`User ${socket.id} connected`)
 
     socket.on('message', data => {
         console.log(data)
-        io.emit('message', `${socket.id.substring(0, 5)}: ${data}`)
+        io.to(data.ConversationId).emit('message', data);
     })
+
+    socket.on('JoinRoom', ({ ConversationId }) => {
+        socket.join(ConversationId);
+    });
+
+    socket.on('LeaveRoom', ({ ConversationId }) => {
+        socket.leave(ConversationId);
+    });
 })
+
 
 
 
