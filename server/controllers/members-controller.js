@@ -51,21 +51,25 @@ const PostMembers = async (req, res) => {
         }
     }
     const UserDetails = await ReadOneFromUsers(UserId);
-    req.body = { ...MemberInit(req.body), MemberId: UserId,EntityId,  UserDetails };
+    req.body = { ...MemberInit(req.body), MemberId: UserId, EntityId, UserDetails };
     await CreateMembers(req.body);
     await IncrementDiscussions({ NoOfMembers: 1 }, EntityId);
     return res.json(true);
 }
 
-const InviteMembers = async (req, res) => { 
+const InviteMembers = async (req, res) => {
     const { UserId } = req.user;
-    const { EntityId,InviteeId } = req.params;
-    const Member = await ReadMembers({ MemberId: UserId ,EntityId}, undefined, 1, undefined);
+    const { EntityId, InviteeId } = req.params;
+    const Member = await ReadMembers({ MemberId: UserId, EntityId }, undefined, 1, undefined);
     if (Member.length === 0) {
         return res.status(444).json(AlertBoxObject("Cannot Invite", "You are not a member of this discussion"));
     }
     if (!Member[0].Permissions.CanInviteOthers) {
         return res.status(444).json(AlertBoxObject("Cannot Invite", "You cannot invite others to this discussion"));
+    }
+    const Invitee = await ReadMembers({ MemberId: InviteeId, EntityId }, undefined, 1, undefined);
+    if (Invitee[0] &&Invitee[0].Status==="Invited") {
+        return res.status(444).json(AlertBoxObject("Cannot Invite", "This user has already been invited to this discussion"));
     }
     const UserDetails = await ReadOneFromUsers(InviteeId);
     req.body = { ...MemberInit(req.body), MemberId: InviteeId, EntityId, UserDetails };
@@ -102,8 +106,8 @@ const UpdateMemberPermissions = async (req, res) => {
     if (!Member[0].Permissions.IsAdmin) {
         return res.status(444).json(AlertBoxObject("Cannot Update Permissions", "You are not an admin of this discussion"));
     }
-    await Promise.all(Object.keys(req.body).map(async (PermissionArray) => { 
-        await UpdateManyMembers({ [PermissionArray] : true},{EntityId,MemberId : { $in : PermissionArray}})
+    await Promise.all(Object.keys(req.body).map(async (PermissionArray) => {
+        await UpdateManyMembers({ [PermissionArray]: true }, { EntityId, MemberId: { $in: PermissionArray } })
     }))
     return res.json(true);
 
@@ -153,5 +157,5 @@ const PermissionObjectInit = (IsAdmin) => {
 
 export {
     GetOneFromMembers, GetMembers, PostMembers, PatchMembers, DeleteMembers,
-    PermissionObjectInit,InviteMembers,AcceptMemberInvitation,UpdateMemberPermissions
+    PermissionObjectInit, InviteMembers, AcceptMemberInvitation, UpdateMemberPermissions
 }
