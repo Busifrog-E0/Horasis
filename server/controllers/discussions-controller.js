@@ -70,7 +70,7 @@ const PostDiscussions = async (req, res) => {
     const UserDetails = await ReadOneFromUsers(OrganiserId);
     const Permissions = PermissionObjectInit(true);
     const DiscussionId = await CreateDiscussions({ ...req.body, UserDetails });
-    await CreateMembers({ MemberId: OrganiserId, EntityId: DiscussionId, UserDetails, Permissions })
+    await CreateMembers({ MemberId: OrganiserId, EntityId: DiscussionId, UserDetails, Permissions, Status: "Accepted" })
     return res.json(DiscussionId);
 }
 
