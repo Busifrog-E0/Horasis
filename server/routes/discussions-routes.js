@@ -42,12 +42,12 @@ router.post('/discussions/:EntityId/join', decodeIDToken, ensureAuthorized("User
     //@ts-ignore
     asyncHandler(PostMembers));
 
-router.delete('/discussions/:EntityId/join/reject', decodeIDToken, ensureAuthorized("User"), 
+router.delete('/discussions/:EntityId/join/:UserId/reject', decodeIDToken, ensureAuthorized("User"), 
     SwaggerDocs.delete_Discussions_DiscussionId_Join_Reject,
     //@ts-ignore
     asyncHandler(RejectJoinRequest));
 
-router.patch('/discussions/:EntityId/join/accept', decodeIDToken, ensureAuthorized("User"),DiscussionAcceptJoinMiddleware,
+router.patch('/discussions/:EntityId/join/:UserId/accept', decodeIDToken, ensureAuthorized("User"),DiscussionAcceptJoinMiddleware,
     SwaggerDocs.patch_Discussions_DiscussionId_Join_Accept,
     //@ts-ignore
     asyncHandler(AcceptJoinRequest));

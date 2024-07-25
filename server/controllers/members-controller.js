@@ -98,8 +98,7 @@ const CancelJoinRequest = async (req, res) => {
 
 const AcceptJoinRequest = async (req, res) => {
     //@ts-ignore
-    const { UserId } = req.user;
-    const { EntityId } = req.params;
+    const { EntityId, UserId } = req.params;
     const Member = await ReadMembers({ MemberId: UserId, EntityId, MembershipStatus: "Requested" }, undefined, 1, undefined);
     if (Member.length === 0) {
         return res.status(444).json(AlertBoxObject("Cannot Accept", "User have not requested to join this discussion"));
@@ -113,8 +112,7 @@ const AcceptJoinRequest = async (req, res) => {
 
 const RejectJoinRequest = async (req, res) => {
     //@ts-ignore
-    const { UserId } = req.user;
-    const { EntityId } = req.params;
+    const { EntityId,UserId } = req.params;
     const Member = await ReadMembers({ MemberId: UserId, EntityId, MembershipStatus: "Requested" }, undefined, 1, undefined);
     if (Member.length === 0) {
         return res.status(444).json(AlertBoxObject("Cannot Cancel", "User have not requested to join this discussion"));
