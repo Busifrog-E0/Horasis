@@ -93,6 +93,24 @@ const get_Discussions_DiscussionId_Members = async (req, res, next) => {
     next();
 }
 
+const delete_Discussions_DiscussionId_Invite_Reject = async (req, res, next) => {
+    // #swagger.tags = ['Discussions']
+    /* #swagger.security = [{ "BearerAuth": [] }] */
+    next();
+}
+
+const delete_Discussions_DiscussionId_Invite_Cancel = async (req, res, next) => {
+    // #swagger.tags = ['Discussions']
+    /* #swagger.security = [{ "BearerAuth": [] }] */
+    next();
+}
+
+const delete_Discussions_DiscussionId_Leave = async (req, res, next) => {
+    // #swagger.tags = ['Discussions']
+    /* #swagger.security = [{ "BearerAuth": [] }] */
+    next();
+}
+
 export default {
     post_Discussion,
     patch_Discussion_DiscussionId_CoverPicture,
@@ -103,5 +121,8 @@ export default {
     patch_Discussions_EntityId_Member_Permissions,
     get_Discussions_DiscussionId_Activities,
     post_Discussions_DiscussionId_Activities,
-    get_Discussions_DiscussionId_Members
+    get_Discussions_DiscussionId_Members,
+    delete_Discussions_DiscussionId_Invite_Cancel,
+    delete_Discussions_DiscussionId_Invite_Reject,
+    delete_Discussions_DiscussionId_Leave
 }
