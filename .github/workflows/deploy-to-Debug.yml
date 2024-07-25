@@ -1,0 +1,29 @@
+name: Deploy DebugServer
+
+on:
+  push:
+    branches:
+      - DebugServer  # Trigger on push to DebugServer branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up SSH key
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.DEBUG_SSH_TOKEN }}
+
+      - name: Deploy to DigitalOcean
+        run: |
+          ssh -o StrictHostKeyChecking=no root@139.59.46.32 << 'EOF'
+            cd /Horissa
+            git fetch
+            git checkout DebugServer
+            git pull origin DebugServer
+            # Add additional deployment commands here if needed
+          EOF
