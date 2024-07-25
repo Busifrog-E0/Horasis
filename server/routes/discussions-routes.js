@@ -103,7 +103,7 @@ router.post('/discussions/:EntityId/save', decodeIDToken, ensureAuthorized("User
     //@ts-ignore
     asyncHandler(PostSaves)); 
     
-router.get('/discussions/save', decodeIDToken, ensureAuthorized("User"),
+router.get('/users/:UserId/discussions/save', decodeIDToken, ensureAuthorized("User"),
     SwaggerDocs.get_Discussions_DiscussionId_Save,
     //@ts-ignore
     asyncHandler(GetSaves));
