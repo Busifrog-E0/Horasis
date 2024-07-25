@@ -208,7 +208,54 @@ const GetMembersToInvite = async (req, res) => {
     const { Filter, NextId, Limit, OrderBy } = req.query;
     
     const AggregateArray = [
+        {
+            $lookup: {
+                from: "Connections",
+                pipeline: [
+                    {
+                        $match: {
+                            $expr: {
+                                $in: [ UserId, '$UserIds']
+                            }
+                        }
+                    }
+                ],
+                as: "UserConnections"
+            }
+        },
+        { $unwind: "$UserConnections" },
+        { $unwind: "$UserConnections.UserIds" },
+        { $match: { "UserConnections.UserIds": { $ne: UserId } } },
+        {
+            $lookup: {
+                from: 'Members',
+                pipeline: [
+                    {
+                        $match: {
+                            $expr: { $eq: ["$EntityId", EntityId] }
+                        }
+                    },
+                    {
+                        $project: { MemberId: 1, _id: 0 }
+                    }
+                ],
+                as: 'DiscussionMembers'
+            }
+        },
+        {
+            $addFields: {
+                IsMember: {
+                    $in: ["$UserrConnections.UserIds", "$DiscussionMembers.MemberId"]
+                }
+            }
+        },
+        {
+            $match: {
+                isMember: false,
 
+
+            }
+        },
     ]
 }
 
