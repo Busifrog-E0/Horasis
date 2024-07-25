@@ -122,7 +122,19 @@ const GetUserDiscussions = async (req, res) => {
         { $limit: Limit },
         { $project: { Member: 0 } }
     );
-    const data = await AggregateDiscussions(AggregateArray);
+    const Discussions = await AggregateDiscussions(AggregateArray);
+    const data = await Promise.all(Discussions.map(async Discussion => {
+        const DiscussionMemberObject = { IsMember: false, };
+        const Member = await ReadMembers({ MemberId: UserId, EntityId: Discussion.DocId }, undefined, 1, undefined);
+        if (Member.length > 0) {
+            DiscussionMemberObject.IsMember = Member[0].MembershipStatus === "Accepted";
+            DiscussionMemberObject.Permissions = Member[0].Permissions
+            DiscussionMemberObject.MembershipStatus = Member[0].MembershipStatus
+        }
+        const Save = await ReadSaves({ EntityId: Discussion.DocId, UserId }, undefined, 1, undefined);
+        const IsSaved = Save.length > 0;
+        return { ...Discussion, ...DiscussionMemberObject, IsSaved }
+    }))
     return res.json(data);
 }
 
@@ -183,7 +195,19 @@ const GetInvitedDiscussions = async (req, res) => {
         { $limit: Limit },
         { $project: { Member: 0 } }
     );
-    const data = await AggregateDiscussions(AggregateArray);
+    const Discussions = await AggregateDiscussions(AggregateArray);
+    const data = await Promise.all(Discussions.map(async Discussion => {
+        const DiscussionMemberObject = { IsMember: false, };
+        const Member = await ReadMembers({ MemberId: UserId, EntityId: Discussion.DocId }, undefined, 1, undefined);
+        if (Member.length > 0) {
+            DiscussionMemberObject.IsMember = Member[0].MembershipStatus === "Accepted";
+            DiscussionMemberObject.Permissions = Member[0].Permissions
+            DiscussionMemberObject.MembershipStatus = Member[0].MembershipStatus
+        }
+        const Save = await ReadSaves({ EntityId: Discussion.DocId, UserId }, undefined, 1, undefined);
+        const IsSaved = Save.length > 0;
+        return { ...Discussion, ...DiscussionMemberObject, IsSaved }
+    }))
     return res.json(data);
 }
 
