@@ -1,5 +1,5 @@
 import { useContext } from 'react'
-import { patchItem, postItem } from '../../constants/operations'
+import { deleteItem, patchItem, postItem } from '../../constants/operations'
 import Button from '../ui/Button'
 import { AuthContext } from '../../utils/AuthProvider'
 import { useToast } from '../Toast/ToastService'
@@ -30,6 +30,8 @@ const DiscussionTab = ({ discussion, onClick, fetch }) => {
 			(result) => {
 				if (result === true) {
 					fetch()
+				} else if (typeof result === 'object') {
+					fetch()
 				}
 			},
 			(err) => {},
@@ -38,11 +40,37 @@ const DiscussionTab = ({ discussion, onClick, fetch }) => {
 			toast
 		)
 	}
-	const rejectInvite = () => {}
+	const rejectInvite = () => {
+		deleteItem(
+			`discussions/${discussion.DocId}/invite/reject`,
+			(result) => {
+				if (result === true) {
+					fetch()
+				}
+			},
+			(err) => {},
+			updateCurrentUser,
+			currentUserData,
+			toast
+		)
+	}
 
 	const cancelJoinRequest = () => {}
 
-	const unFollowDiscussion = () => {}
+	const unFollowDiscussion = () => {
+		deleteItem(
+			`discussions/${discussion.DocId}/leave`,
+			(result) => {
+				if (result === true) {
+					fetch()
+				}
+			},
+			(err) => {},
+			updateCurrentUser,
+			currentUserData,
+			toast
+		)
+	}
 
 	return (
 		<div className='rounded-lg mt-3 overflow-hidden h-full bg-system-secondary-bg '>
@@ -60,19 +88,19 @@ const DiscussionTab = ({ discussion, onClick, fetch }) => {
 			</div>
 
 			<div className='flex items-center justify-center my-2 gap-2'>
-				{discussion.isMember ? (
-					<Button variant='black' onClick={() => unFollowDiscussion()}>
-						Unfollow
+				{discussion.IsMember ? (
+					<Button variant='outline' onClick={() => unFollowDiscussion()}>
+						Leave
 					</Button>
-				) : discussion.Status === undefined ? (
+				) : discussion.MembershipStatus === undefined ? (
 					<Button variant='black' onClick={() => joinDiscussion()}>
 						Join
 					</Button>
-				) : discussion.Status === 'Requested' ? (
+				) : discussion.MembershipStatus === 'Requested' ? (
 					<Button variant='outline' onClick={() => cancelJoinRequest()}>
 						Cancel Request
 					</Button>
-				) : discussion.Status === 'Invited' ? (
+				) : discussion.MembershipStatus === 'Invited' ? (
 					<>
 						<Button variant='outline' onClick={() => rejectInvite()}>
 							Reject
