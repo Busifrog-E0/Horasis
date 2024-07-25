@@ -3732,13 +3732,19 @@
         ]
       }
     },
-    "/api/discussions/invited": {
+    "/api/user/{UserId}/discussions/invited": {
       "get": {
         "tags": [
           "Discussions"
         ],
         "description": "",
         "parameters": [
+          {
+            "name": "UserId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
           {
             "name": "authorization",
             "in": "header",
