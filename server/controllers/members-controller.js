@@ -190,8 +190,13 @@ const PatchMembers = async (req, res) => {
  * @returns {Promise<e.Response<true>>}
  */
 const DeleteMembers = async (req, res) => {
-    const { MemberId } = req.params;
-    await RemoveMembers(MemberId);
+    const { EntityId } = req.params;
+    const { UserId } = req.user;
+    const Member = await ReadMembers({ MemberId: UserId, EntityId }, undefined, 1, undefined);
+    if (Member.length === 0) {
+        return res.status(444).json(AlertBoxObject("Cannot leave", "You are not an member of this discussion"));
+    }
+    await RemoveMembers(Member[0].DocId);
     return res.json(true);
 }
 
@@ -217,5 +222,5 @@ const PermissionObjectInit = (IsAdmin) => {
 export {
     GetOneFromMembers, GetMembers, PostMembers, PatchMembers, DeleteMembers,
     PermissionObjectInit, InviteMembers, AcceptMemberInvitation, UpdateMemberPermissions,
-    DeclineInvitation,CancelInvitation
+    DeclineInvitation,CancelInvitation,
 }

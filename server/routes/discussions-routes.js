@@ -9,7 +9,7 @@ import e from 'express';
 import { decodeIDToken, ensureAuthorized } from '../middleware/auth-middleware.js';
 import { ValidatePatchDiscussionCoverPhoto, ValidatePatchMemberPermission, ValidatePostDiscussion } from '../validations/discussions-validations.js';
 import { QueryParameterFormatting, ValidateGetEntity } from '../middleware/common.js';
-import { AcceptMemberInvitation, GetMembers, InviteMembers, PostMembers, UpdateMemberPermissions } from '../controllers/members-controller.js';
+import { AcceptMemberInvitation, CancelInvitation, DeclineInvitation, DeleteMembers, GetMembers, InviteMembers, PostMembers, UpdateMemberPermissions } from '../controllers/members-controller.js';
 import { DiscussionJoinMiddleware, GetDiscussionsActivitiesMiddleware, PostDiscussionActivitiesMiddleware } from '../middleware/discussions-middleware.js';
 import { GetFilteredActivities, PostActivities } from '../controllers/activities-controller.js';
 import { ValidatePostActivities } from '../validations/activities-validations.js';
@@ -49,6 +49,20 @@ router.patch('/discussions/:EntityId/invite/accept', decodeIDToken, ensureAuthor
     //@ts-ignore
     asyncHandler(AcceptMemberInvitation));
 
+router.delete('/discussions/:EntityId/invite/reject', decodeIDToken, ensureAuthorized("User"),
+    SwaggerDocs.delete_Discussions_DiscussionId_Invite_Reject,
+    //@ts-ignore
+    asyncHandler(DeclineInvitation));
+
+router.delete('/discussions/:EntityId/invite/:InviteeId/cancel', decodeIDToken, ensureAuthorized("User"),
+ SwaggerDocs.delete_Discussions_DiscussionId_Invite_Cancel,
+    // @ts-ignore
+    asyncHandler(CancelInvitation));
+
+router.delete('/discussions/:EntityId/leave', decodeIDToken, ensureAuthorized("User"),
+    SwaggerDocs.delete_Discussions_DiscussionId_Leave,
+    // @ts-ignore
+    asyncHandler(DeleteMembers));    
 
 router.get('/discussions/:EntityId/members', decodeIDToken, ensureAuthorized("User"),
     ValidateGetEntity, QueryParameterFormatting, SwaggerDocs.get_Discussions_DiscussionId_Members,
