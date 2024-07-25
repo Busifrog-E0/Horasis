@@ -14,6 +14,7 @@ import Tab from '../components/ui/Tab'
 import Spinner from '../components/ui/Spinner'
 import DiscussionActivities from '../components/Discussions/SingleDiscussionTabs/DiscussionActivities'
 import TimeLineTab from '../components/Activities/TimeLineTab'
+import DiscussionMembers from '../components/Discussions/SingleDiscussionTabs/DiscussionMembers'
 
 const SingleDiscussion = () => {
 	const [activeTab, setActiveTab] = useState(0)
@@ -105,7 +106,9 @@ const SingleDiscussion = () => {
 					key: 2,
 					title: 'Members',
 					render: () => (
-						<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>Members</div>
+						<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
+							<DiscussionMembers discussionId={discussion.DocId} />
+						</div>
 					),
 				},
 				{
@@ -173,7 +176,9 @@ const SingleDiscussion = () => {
 					key: 2,
 					title: 'Members',
 					render: () => (
-						<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>Members</div>
+						<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
+							<DiscussionMembers discussionId={discussion.DocId} />
+						</div>
 					),
 				},
 			]
