@@ -240,6 +240,12 @@ const DeleteMembers = async (req, res) => {
     if (Member.length === 0) {
         return res.status(444).json(AlertBoxObject("Cannot leave", "You are not an member of this discussion"));
     }
+    if (req.body.Type === "Discussion") {
+        const Discussion = await ReadOneFromDiscussions(EntityId);
+        if (Discussion.OrganiserId === UserId) {
+            return res.status(444).json(AlertBoxObject("Cannot leave", "Organiser cannot leave the discussion"));
+        }
+    }
     await RemoveMembers(Member[0].DocId);
     return res.json(true);
 }
