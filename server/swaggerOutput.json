@@ -3067,7 +3067,7 @@
         ]
       }
     },
-    "/api/discussions/{EntityId}/join/reject": {
+    "/api/discussions/{EntityId}/join/{UserId}/reject": {
       "delete": {
         "tags": [
           "Discussions"
@@ -3076,6 +3076,12 @@
         "parameters": [
           {
             "name": "EntityId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "UserId",
             "in": "path",
             "required": true,
             "type": "string"
@@ -3110,7 +3116,7 @@
         ]
       }
     },
-    "/api/discussions/{EntityId}/join/accept": {
+    "/api/discussions/{EntityId}/join/{UserId}/accept": {
       "patch": {
         "tags": [
           "Discussions"
@@ -3119,6 +3125,12 @@
         "parameters": [
           {
             "name": "EntityId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "UserId",
             "in": "path",
             "required": true,
             "type": "string"
