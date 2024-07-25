@@ -69,6 +69,8 @@ async function Update(collectionName, data, docName, operation = ["$set"], LastU
 async function UpdateMany(collectionName, data, filter) {
     return new Promise(async (resolve, reject) => {
         try {
+            console.log(filter);
+            console.log(data)
             await db.collection(collectionName).updateMany(filter, data);
             resolve(true);
         } catch (error) {

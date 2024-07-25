@@ -31,6 +31,8 @@ const GetMembers = async (req, res) => {
     // @ts-ignore
     Filter.EntityId = req.params.EntityId;
     //@ts-ignore
+    Filter.MembershipStatus = "Accepted";
+    //@ts-ignore
     const data = await ReadMembers(Filter, NextId, Limit, OrderBy);
     return res.json(data);
 }
@@ -302,7 +304,7 @@ const UpdateMemberPermissions = async (req, res) => {
         return res.status(444).json(AlertBoxObject("Cannot Update Permissions", "You are not an admin of this discussion"));
     }
     await Promise.all(Object.keys(req.body).map(async (PermissionArray) => {
-        await UpdateManyMembers({ [PermissionArray]: true }, { EntityId, MemberId: { $in: req.body[PermissionArray] } })
+        await UpdateManyMembers({ [`Permissions.${PermissionArray}`]: true }, { EntityId, MemberId: { $in: req.body[PermissionArray] } })
     }))
     return res.json(true);
 

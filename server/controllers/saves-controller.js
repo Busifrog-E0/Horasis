@@ -5,6 +5,7 @@ import { ReadOneFromActivities } from '../databaseControllers/activities-databas
 import { ReadOneFromUsers } from '../databaseControllers/users-databaseController.js';
 import { AlertBoxObject } from './common.js';
 import { ReadLikes } from '../databaseControllers/likes-databaseController.js';
+import { ReadOneFromDiscussions } from '../databaseControllers/discussions-databaseController.js';
 /**
  * @typedef {import('./../databaseControllers/saves-databaseController.js').SaveData} SaveData 
  */
@@ -19,21 +20,36 @@ import { ReadLikes } from '../databaseControllers/likes-databaseController.js';
  */
 const GetSaves = async (req, res) => {
     const { UserId } = req.params;
+    let data = {};
     const { Filter, NextId, Limit, OrderBy } = req.query;
     // @ts-ignore
     Filter.UserId = UserId;
     //@ts-ignore
     const Saves = await ReadSaves(Filter, NextId, Limit, OrderBy);
-    const data = await Promise.all(Saves.map(async Save => {
-        const Activity = await ReadOneFromActivities(Save.EntityId);
-        const [UserDetails, checkLike] = await Promise.all([
-            ReadOneFromUsers(Activity.UserId),
-            ReadLikes({ EntityId: Activity.DocId, UserId }, undefined, 1, undefined),
-        ])
-        const HasSaved = true;
-        const HasLiked = checkLike.length > 0;
-        return { ...Activity, UserDetails, HasLiked, HasSaved }
-    }));
+    if (req.body.Type === "Activity") {
+         data = await Promise.all(Saves.map(async Save => {
+            const Activity = await ReadOneFromActivities(Save.EntityId);
+            const [UserDetails, checkLike] = await Promise.all([
+                ReadOneFromUsers(Activity.UserId),
+                ReadLikes({ EntityId: Activity.DocId, UserId }, undefined, 1, undefined),
+            ])
+            const HasSaved = true;
+            const HasLiked = checkLike.length > 0;
+            return { ...Activity, UserDetails, HasLiked, HasSaved }
+        }));
+
+    }
+     if (req.body.Type === "Discussion") {
+         data = await Promise.all(Saves.map(async Save => {
+            const Discussion = await ReadOneFromDiscussions(Save.EntityId);
+            const [UserDetails] = await Promise.all([
+                ReadOneFromUsers(Discussion.OrganiserId),
+            ])
+            const HasSaved = true;
+            return { ...Discussion, UserDetails, HasSaved }
+        }));
+
+    }
     return res.json(data);
 }
 
