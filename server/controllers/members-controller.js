@@ -94,6 +94,34 @@ const CancelJoinRequest = async (req, res) => {
     return res.json(true);
 }
 
+const AcceptJoinRequest = async (req, res) => {
+    //@ts-ignore
+    const { UserId } = req.user;
+    const { EntityId } = req.params;
+    const Member = await ReadMembers({ MemberId: UserId, EntityId, MembershipStatus: "Requested" }, undefined, 1, undefined);
+    if (Member.length === 0) {
+        return res.status(444).json(AlertBoxObject("Cannot Accept", "User have not requested to join this discussion"));
+    }
+    await UpdateMembers({ MembershipStatus: "Accepted" }, Member[0].DocId);
+    if (req.body.Type === "Discussion") { 
+        await IncrementDiscussions({ NoOfMembers: 1 }, EntityId);
+    }
+    return res.json(true);
+}
+
+const RejectJoinRequest = async (req, res) => {
+    //@ts-ignore
+    const { UserId } = req.user;
+    const { EntityId } = req.params;
+    const Member = await ReadMembers({ MemberId: UserId, EntityId, MembershipStatus: "Requested" }, undefined, 1, undefined);
+    if (Member.length === 0) {
+        return res.status(444).json(AlertBoxObject("Cannot Cancel", "User have not requested to join this discussion"));
+    }
+    await RemoveMembers(Member[0].DocId);
+    return res.json(true);
+}
+
+
 /**
  * 
  * @param {e.Request} req 
@@ -338,5 +366,6 @@ const PermissionObjectInit = (IsAdmin) => {
 export {
     GetOneFromMembers, GetMembers, PostMembers, PatchMembers, DeleteMembers,
     PermissionObjectInit, InviteMembers, AcceptMemberInvitation, UpdateMemberPermissions,
-    DeclineInvitation,CancelInvitation,CancelJoinRequest,GetJoinRequests,
+    DeclineInvitation, CancelInvitation, CancelJoinRequest, GetJoinRequests,
+    RejectJoinRequest,AcceptJoinRequest,
 }
