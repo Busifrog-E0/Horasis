@@ -147,6 +147,7 @@ const get_Discussions_DiscussionId_Members_Requested = async (req, res, next) =>
                  schema: { $ref: '#/definitions/MemberData' }
          } 
      */
+    next();
 }
 
 const post_Discussions_DiscussionId_Save = async (req, res, next) => {

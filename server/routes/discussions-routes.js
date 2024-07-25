@@ -42,7 +42,7 @@ router.post('/discussions/:EntityId/join', decodeIDToken, ensureAuthorized("User
     //@ts-ignore
     asyncHandler(PostMembers));
 
-router.get('/discussions/:EntityId/members/requested', decodeIDToken, ensureAuthorized("User"),
+router.get('/discussions/:EntityId/members/requested', decodeIDToken, ensureAuthorized("User"),ValidateGetEntity,QueryParameterFormatting,
     SwaggerDocs.get_Discussions_DiscussionId_Members_Requested,
     //@ts-ignore
     asyncHandler(GetJoinRequests));
