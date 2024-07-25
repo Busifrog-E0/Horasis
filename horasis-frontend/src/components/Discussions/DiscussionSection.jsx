@@ -93,22 +93,35 @@ const DiscussionSection = () => {
 			</div>
 			<h4 className='font-bold text-2xl text-system-primary-accent mt-4 mb-2'>Community Discussions</h4>
 			<h4 className=' text-base text-system-primary-text mb-2'>
-				Find answers, ask questions, and connect with our community aroundthe world.
+				Find answers, ask questions, and connect with our community around the world.
 			</h4>
 			<div className='flex gap-6 flex-wrap mt-4 mb-6'>
-				<TabItem variant={`${activeTab === 'all' ? 'active' : 'inactive'}`} onClick={() => setActiveTab('all')}>
+				<TabItem
+					className='rounded-full'
+					variant={`${activeTab === 'all' ? 'active' : 'inactive'}`}
+					onClick={() => setActiveTab('all')}>
 					All Discussions
 				</TabItem>
 				<TabItem
+					className='rounded-full'
 					variant={`${activeTab === 'following' ? 'active' : 'inactive'}`}
 					onClick={() => setActiveTab('following')}>
 					Following
 				</TabItem>
-				<TabItem variant={`${activeTab === 'invited' ? 'active' : 'inactive'}`} onClick={() => setActiveTab('invited')}>
+				<TabItem
+					className='rounded-full'
+					variant={`${activeTab === 'invited' ? 'active' : 'inactive'}`}
+					onClick={() => setActiveTab('invited')}>
 					Invitations
 				</TabItem>
 			</div>
-			<h4 className='font-bold mb-3 text-xl text-system-primary-text'>Trending Discussions</h4>
+			{activeTab === 'all' && <h4 className='font-bold mb-3 text-xl text-system-primary-text'>Trending Discussions</h4>}
+			{activeTab === 'following' && (
+				<h4 className='font-bold mb-3 text-xl text-system-primary-text'>Discussions you are following</h4>
+			)}
+			{activeTab === 'invited' && (
+				<h4 className='font-bold mb-3 text-xl text-system-primary-text'>Discussion Invites</h4>
+			)}
 			{activeTab === 'all' && (
 				<div className='mb-4'>
 					{isLoading ? (

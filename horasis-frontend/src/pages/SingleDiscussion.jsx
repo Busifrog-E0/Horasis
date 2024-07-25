@@ -16,6 +16,7 @@ import DiscussionActivities from '../components/Discussions/SingleDiscussionTabs
 import TimeLineTab from '../components/Activities/TimeLineTab'
 import DiscussionMembers from '../components/Discussions/SingleDiscussionTabs/DiscussionMembers'
 import DiscussionSettings from '../components/Discussions/SingleDiscussionTabs/DiscussionSettings'
+import CreateDiscussionStep3 from '../components/Discussions/CreateDiscussion/CreateDiscussionSteps/CreateDiscussionStep3'
 
 const SingleDiscussion = () => {
 	const [activeTab, setActiveTab] = useState(0)
@@ -108,7 +109,14 @@ const SingleDiscussion = () => {
 					title: 'Members',
 					render: () => (
 						<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
-							<DiscussionMembers discussionId={discussion.DocId} />
+							<div>
+								<CreateDiscussionStep3 discussionId={discussion.DocId} from='tab' />
+							</div>
+							<div className='my-4 flex flex-col gap-2'>
+								<h1 className='text-system-primary-text font-medium text-lg'>Current Members</h1>
+
+								<DiscussionMembers discussionId={discussion.DocId} />
+							</div>
 						</div>
 					),
 				},
@@ -180,7 +188,16 @@ const SingleDiscussion = () => {
 					title: 'Members',
 					render: () => (
 						<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
-							<DiscussionMembers discussionId={discussion.DocId} />
+							{discussion.Permissions.CanInviteOthers && (
+								<div>
+									<CreateDiscussionStep3 discussionId={discussion.DocId} from='tab' />
+								</div>
+							)}
+							<div className='my-4 flex flex-col gap-2'>
+								<h1 className='text-system-primary-text font-medium text-lg'>Current Members</h1>
+
+								<DiscussionMembers discussionId={discussion.DocId} />
+							</div>
 						</div>
 					),
 				},
@@ -248,6 +265,9 @@ const SingleDiscussion = () => {
 		)
 	}
 	const unFollowDiscussion = () => {}
+	const rejectInvite = () => {}
+
+	const cancelJoinRequest = () => {}
 
 	return (
 		<>
@@ -307,17 +327,25 @@ const SingleDiscussion = () => {
 								</div>
 								<h4 className='text-xl text-brand-gray mt-2 mb-12 leading-8'>{discussion.Brief}</h4>
 								{discussion.isMember ? (
-									<Button variant='black'>Unfollow</Button>
+									<Button variant='black' onClick={() => unFollowDiscussion()}>
+										Unfollow
+									</Button>
 								) : discussion.Status === undefined ? (
 									<Button variant='black' onClick={() => joinDiscussion()}>
 										Join
 									</Button>
 								) : discussion.Status === 'Requested' ? (
-									<Button variant='outline'>Cancel Request</Button>
+									<Button variant='outline' onClick={() => cancelJoinRequest()}>
+										Cancel Request
+									</Button>
 								) : discussion.Status === 'Invited' ? (
 									<>
-										<Button variant='outline'>Reject</Button>
-										<Button variant='black'>Accept</Button>
+										<Button variant='outline' onClick={() => rejectInvite()}>
+											Reject
+										</Button>
+										<Button variant='black' onClick={() => acceptInvite()}>
+											Accept
+										</Button>
 									</>
 								) : null}
 								{/* {discussion.Privacy === 'Private' ? (

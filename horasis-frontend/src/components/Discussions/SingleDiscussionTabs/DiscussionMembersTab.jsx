@@ -2,7 +2,7 @@ import avatar from '../../../assets/icons/avatar.svg'
 
 const DiscussionMembersTab = ({ profile }) => {
 	return (
-		<div className={` cursor-pointer px-4 py-2 rounded-lg`}>
+		<div className={` cursor-pointer px-2 py-2 rounded-lg`}>
 			<div className='flex items-start gap-4'>
 				{profile ? (
 					<>

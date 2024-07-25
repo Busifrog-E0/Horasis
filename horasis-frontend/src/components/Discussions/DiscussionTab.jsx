@@ -1,5 +1,5 @@
 import { useContext } from 'react'
-import { postItem } from '../../constants/operations'
+import { patchItem, postItem } from '../../constants/operations'
 import Button from '../ui/Button'
 import { AuthContext } from '../../utils/AuthProvider'
 import { useToast } from '../Toast/ToastService'
@@ -7,6 +7,22 @@ import { useToast } from '../Toast/ToastService'
 const DiscussionTab = ({ discussion, onClick, fetch }) => {
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
 	const toast = useToast()
+
+	const acceptInvite = () => {
+		patchItem(
+			`discussions/${discussion.DocId}/invite/accept`,
+			{},
+			(result) => {
+				if (result === true) {
+					fetch()
+				}
+			},
+			(err) => {},
+			updateCurrentUser,
+			currentUserData,
+			toast
+		)
+	}
 	const joinDiscussion = () => {
 		postItem(
 			`discussions/${discussion.DocId}/join`,
@@ -22,6 +38,9 @@ const DiscussionTab = ({ discussion, onClick, fetch }) => {
 			toast
 		)
 	}
+	const rejectInvite = () => {}
+
+	const cancelJoinRequest = () => {}
 
 	const unFollowDiscussion = () => {}
 
@@ -40,19 +59,27 @@ const DiscussionTab = ({ discussion, onClick, fetch }) => {
 				<h4 className=' text-xs text-brand-gray-dim min-h-16 max-h-16 overflow-hidden'>{discussion.Brief}</h4>
 			</div>
 
-			<div className='flex items-center justify-center my-2'>
+			<div className='flex items-center justify-center my-2 gap-2'>
 				{discussion.isMember ? (
-					<Button variant='black'>Unfollow</Button>
+					<Button variant='black' onClick={() => unFollowDiscussion()}>
+						Unfollow
+					</Button>
 				) : discussion.Status === undefined ? (
 					<Button variant='black' onClick={() => joinDiscussion()}>
 						Join
 					</Button>
 				) : discussion.Status === 'Requested' ? (
-					<Button variant='outline'>Cancel Request</Button>
+					<Button variant='outline' onClick={() => cancelJoinRequest()}>
+						Cancel Request
+					</Button>
 				) : discussion.Status === 'Invited' ? (
 					<>
-						<Button variant='outline'>Reject</Button>
-						<Button variant='black'>Accept</Button>
+						<Button variant='outline' onClick={() => rejectInvite()}>
+							Reject
+						</Button>
+						<Button variant='black' onClick={() => acceptInvite()}>
+							Accept
+						</Button>
 					</>
 				) : null}
 

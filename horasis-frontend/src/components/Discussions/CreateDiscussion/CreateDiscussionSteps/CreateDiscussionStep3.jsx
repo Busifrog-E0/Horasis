@@ -9,7 +9,7 @@ import EmptyMembers from '../../../Common/EmptyMembers'
 import Spinner from '../../../ui/Spinner'
 import SearchComponent from '../../../Search/SearchBox/SearchComponent'
 
-const CreateDiscussionStep3 = ({ discussionId }) => {
+const CreateDiscussionStep3 = ({ discussionId, from = 'create' }) => {
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
 	const toast = useToast()
 	const [isLoading, setIsLoading] = useState(true)
@@ -95,9 +95,11 @@ const CreateDiscussionStep3 = ({ discussionId }) => {
 			<div className='mb-2'>
 				<div className='flex-1'>
 					<h1 className='text-system-primary-text font-medium text-lg'>Invite Members</h1>
-					<p className='text-system-primary-text mt-1 mb-2 text-base'>
-						Invite by clicking the 'Invite'. Once done, click 'Next'
-					</p>
+					{from === 'create' && (
+						<p className='text-system-primary-text mt-1 mb-2 text-base'>
+							Invite by clicking the 'Invite'. Once done, click 'Next'
+						</p>
+					)}
 				</div>
 			</div>
 			{/* <div className="flex flex-row items-center gap-5 mb-4">
