@@ -45,7 +45,7 @@ const PostMembers = async (req, res) => {
     //@ts-ignore
     const { UserId } = req.user;
     const { EntityId } = req.params;
-    const MemberCheck = await ReadMembers({ MemberId: UserId, EntityId }, undefined, 1, undefined);
+    const MemberCheck = await ReadMembers({ MemberId: UserId, EntityId, MembershipStatus: "Accepted" }, undefined, 1, undefined);
     if (MemberCheck.length > 0) {
         return res.status(444).json(AlertBoxObject("Cannot Join", "You have already joined this discussion"));
     }
