@@ -188,10 +188,28 @@ const GetJoinRequests = async (req, res) => {
     //@ts-ignore
     const { Filter, NextId, Limit, OrderBy } = req.query;
     //@ts-ignore
-    Filter = {...Filter , MembershipStatus : "Requested",EntityId}
+    Filter.MembershipStatus = "Requested";
+    //@ts-ignore
+    Filter.EntityId = EntityId;
     //@ts-ignore
     const Member = await ReadMembers(Filter, NextId, Limit, OrderBy);
     return res.json(Member);
+}
+
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ */
+const GetMembersToInvite = async (req, res) => { 
+    const { EntityId } = req.params;
+    //@ts-ignore
+    const { UserId } = req.user;
+    const { Filter, NextId, Limit, OrderBy } = req.query;
+    
+    const AggregateArray = [
+
+    ]
 }
 
 /**
@@ -245,6 +263,7 @@ const DeleteMembers = async (req, res) => {
         if (Discussion.OrganiserId === UserId) {
             return res.status(444).json(AlertBoxObject("Cannot leave", "Organiser cannot leave the discussion"));
         }
+        await IncrementDiscussions({ NoOfMembers: -1 }, EntityId);
     }
     await RemoveMembers(Member[0].DocId);
     return res.json(true);
@@ -272,5 +291,5 @@ const PermissionObjectInit = (IsAdmin) => {
 export {
     GetOneFromMembers, GetMembers, PostMembers, PatchMembers, DeleteMembers,
     PermissionObjectInit, InviteMembers, AcceptMemberInvitation, UpdateMemberPermissions,
-    DeclineInvitation,CancelInvitation,CancelJoinRequest
+    DeclineInvitation,CancelInvitation,CancelJoinRequest,GetJoinRequests,
 }
