@@ -34,7 +34,7 @@ router.patch('/discussions/:DiscussionId/coverPicture', decodeIDToken, ensureAut
     // @ts-ignore
     asyncHandler(PatchDiscussions));
 
-router.post('/discussions/:DiscussionId/join', decodeIDToken, ensureAuthorized("User"),
+router.post('/discussions/:EntityId/join', decodeIDToken, ensureAuthorized("User"),
     SwaggerDocs.post_Discussions_EntityId_Join,
     //@ts-ignore
     asyncHandler(PostMembers));
