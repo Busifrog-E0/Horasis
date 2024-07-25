@@ -76,7 +76,32 @@ const PostMembers = async (req, res) => {
 
 }
 
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ * @returns 
+ */
+const CancelJoinRequest = async (req, res) => {
+    //@ts-ignore
+    const { UserId } = req.user;
+    const { EntityId } = req.params;
+    const Member = await ReadMembers({ MemberId: UserId, EntityId , MembershipStatus : "Requested" }, undefined, 1, undefined);
+    if (Member.length === 0) {
+        return res.status(444).json(AlertBoxObject("Cannot Cancel", "You have not requested to join this discussion"));
+    }
+    await RemoveMembers(Member[0].DocId);
+    return res.json(true);
+}
+
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ * @returns 
+ */
 const InviteMembers = async (req, res) => {
+    //@ts-ignore
     const { UserId } = req.user;
     const { EntityId, InviteeId } = req.params;
     const Member = await ReadMembers({ MemberId: UserId, EntityId }, undefined, 1, undefined);
@@ -151,6 +176,24 @@ const CancelInvitation = async (req, res) => {
     await RemoveMembers(Member[0].DocId);
     return res.json(true);
 }
+
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ * @returns 
+ */
+const GetJoinRequests = async (req, res) => {
+    const { EntityId } = req.params;
+    //@ts-ignore
+    const { Filter, NextId, Limit, OrderBy } = req.query;
+    //@ts-ignore
+    Filter = {...Filter , MembershipStatus : "Requested",EntityId}
+    //@ts-ignore
+    const Member = await ReadMembers(Filter, NextId, Limit, OrderBy);
+    return res.json(Member);
+}
+
 /**
  * 
  * @param {e.Request} req 
@@ -191,6 +234,7 @@ const PatchMembers = async (req, res) => {
  */
 const DeleteMembers = async (req, res) => {
     const { EntityId } = req.params;
+    //@ts-ignore
     const { UserId } = req.user;
     const Member = await ReadMembers({ MemberId: UserId, EntityId }, undefined, 1, undefined);
     if (Member.length === 0) {
@@ -222,5 +266,5 @@ const PermissionObjectInit = (IsAdmin) => {
 export {
     GetOneFromMembers, GetMembers, PostMembers, PatchMembers, DeleteMembers,
     PermissionObjectInit, InviteMembers, AcceptMemberInvitation, UpdateMemberPermissions,
-    DeclineInvitation,CancelInvitation,
+    DeclineInvitation,CancelInvitation,CancelJoinRequest
 }

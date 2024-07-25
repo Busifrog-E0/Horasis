@@ -1,9 +1,10 @@
 import e from 'express';
 
-import { ReadOneFromDiscussions, ReadDiscussions, UpdateDiscussions, CreateDiscussions, RemoveDiscussions, } from './../databaseControllers/discussions-databaseController.js';
+import { ReadOneFromDiscussions, ReadDiscussions, UpdateDiscussions, CreateDiscussions, RemoveDiscussions, AggregateDiscussions, } from './../databaseControllers/discussions-databaseController.js';
 import { ReadOneFromUsers } from '../databaseControllers/users-databaseController.js';
 import { CreateMembers, ReadMembers } from '../databaseControllers/members-databaseController.js';
 import { PermissionObjectInit } from './members-controller.js';
+import { ObjectId } from 'mongodb';
 /**
  * @typedef {import('./../databaseControllers/discussions-databaseController.js').DiscussionData} DiscussionData 
  */
@@ -58,8 +59,8 @@ const GetDiscussions = async (req, res) => {
     }))
     return res.json(data);
 }
-/*
-const GetUserDiscussions = async (req, res) => { 
+
+const GetUserDiscussions = async (req, res) => {
     const { UserId } = req.params;
     const { Filter, NextId, Keyword, Limit, OrderBy } = req.query;
     if (Keyword) {
@@ -71,24 +72,116 @@ const GetUserDiscussions = async (req, res) => {
         {
             $lookup: {
                 from: "Members",
-                
+                let: { discussionIdString: { $toString: '$_id' } },
+                pipeline: [
+                    {
+                        $match: {
+                            $expr: {
+                                $and: [
+                                    { $eq: ["$EntityId", "$$discussionIdString"] }
+                                ]
+                            }
+                        }
+                    }
+                ],
+                as: "Member"
+            }
+        },
+        {
+            $match: {
+                ...Filter,
+                "Member.MemberId": UserId,
+                "Member.MembershipStatus": "Accepted"
             }
         }
     ]
-    const Discussions = await ReadDiscussions(Filter, NextId, Limit, OrderBy);
-    const data = await Promise.all(Discussions.map(async Discussion => {
-        const DiscussionMemberObject = { IsMember: false, };
-        const Member = await ReadMembers({ MemberId: UserId, EntityId: Discussion.DocId }, undefined, 1, undefined);
-        if (Member.length > 0) {
-            DiscussionMemberObject.IsMember = Member[0].MembershipStatus === "Accepted";
-            DiscussionMemberObject.Permissions = Member[0].Permissions
-            DiscussionMemberObject.Status = Member[0].MembershipStatus
-        }
-        return { ...Discussion, ...DiscussionMemberObject }
-    }))
+    if (NextId) {
+        const [Index, nextId] = NextId.split('--');
+        AggregateArray.push({
+            $match: {
+                $or: [
+                    { Index: { $lt: Index } },
+                    {
+                        $and: [
+                            { Index: Index },
+                            { _id: { $lt: new ObjectId(nextId) } }
+                        ]
+                    }
+                ]
+            }
+        });
+    }
+
+    AggregateArray.push(
+        { $sort: { Index: -1, _id: -1 } },
+        { $limit: Limit },
+        { $project: { Member: 0 } }
+    );
+    const data = await AggregateDiscussions(AggregateArray);
     return res.json(data);
 }
-*/
+
+const GetInvitedDiscussions = async (req, res) => {
+    const { UserId } = req.params;
+    const { Filter, NextId, Keyword, Limit, OrderBy } = req.query;
+    if (Keyword) {
+        // @ts-ignore
+        Filter["DiscussionName"] = { $regex: Keyword, $options: 'i' };
+    }
+    // @ts-ignore
+    const AggregateArray = [
+        {
+            $lookup: {
+                from: "Members",
+                let: { discussionIdString: { $toString: '$_id' } },
+                pipeline: [
+                    {
+                        $match: {
+                            $expr: {
+                                $and: [
+                                    { $eq: ["$EntityId", "$$discussionIdString"] }
+                                ]
+                            }
+                        }
+                    }
+                ],
+                as: "Member"
+            }
+        },
+        {
+            $match: {
+                ...Filter,
+                "Member.MemberId": UserId,
+                "Member.MembershipStatus": "Invited"
+            }
+        }
+    ]
+    if (NextId) {
+        const [Index, nextId] = NextId.split('--');
+        AggregateArray.push({
+            $match: {
+                $or: [
+                    { Index: { $lt: Index } },
+                    {
+                        $and: [
+                            { Index: Index },
+                            { _id: { $lt: new ObjectId(nextId) } }
+                        ]
+                    }
+                ]
+            }
+        });
+    }
+
+    AggregateArray.push(
+        { $sort: { Index: -1, _id: -1 } },
+        { $limit: Limit },
+        { $project: { Member: 0 } }
+    );
+    const data = await AggregateDiscussions(AggregateArray);
+    return res.json(data);
+}
+
 /**
  * 
  * @param {e.Request} req 
@@ -132,11 +225,12 @@ const DeleteDiscussions = async (req, res) => {
 const DiscussionInit = (Discussion) => {
     return {
         ...Discussion,
-        NoOfMembers : 1
+        NoOfMembers: 1
     }
 }
 
 
 export {
-    GetOneFromDiscussions, GetDiscussions, PostDiscussions, PatchDiscussions, DeleteDiscussions
+    GetOneFromDiscussions, GetDiscussions, PostDiscussions, PatchDiscussions, DeleteDiscussions,
+    GetUserDiscussions,GetInvitedDiscussions
 }
