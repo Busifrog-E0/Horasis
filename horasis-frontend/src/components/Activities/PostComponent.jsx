@@ -18,7 +18,7 @@ const PostComponent = ({
 		CanUploadPhoto: true,
 		CanUploadVideo: true,
 		CanCreateAlbum: true,
-	},
+	},api='activites'
 }) => {
 	const { currentUserData, updateCurrentUser, scrollToTop } = useContext(AuthContext)
 	const imageFileInputRef = useRef(null)
@@ -298,7 +298,7 @@ const PostComponent = ({
 	const onSendBtnClicked = () => {
 		setIsLoading(true)
 		postItem(
-			'activities',
+			api,
 			newPost,
 			(result) => {
 				console.log(result)

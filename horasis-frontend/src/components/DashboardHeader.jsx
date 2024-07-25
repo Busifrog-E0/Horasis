@@ -22,7 +22,7 @@ const DashboardHeader = () => {
 				<div className='px-10 hidden lg:flex flex-row flex-wrap gap-3 flex-1'>
 					<div className='w-max flex flex-col items-center'>
 						<a
-							className={`cursor-pointer  font-medium text-2xl  ${
+							className={`cursor-pointer  font-medium text-xl  ${
 								location.pathname === '/Activities' || location.pathname === '/'
 									? 'text-system-primary-accent'
 									: 'text-system-primary-text'
@@ -39,7 +39,7 @@ const DashboardHeader = () => {
 					</div>
 					{/* <div className='w-max flex flex-col items-center'>
 						<a
-							className={`cursor-pointer  font-medium text-2xl  ${
+							className={`cursor-pointer  font-medium text-xl  ${
 								location.pathname === '/Events' ? 'text-system-primary-accent' : 'text-system-primary-text'
 							}`}
 							onClick={() => OnClickItem('/Events')}>
@@ -52,7 +52,7 @@ const DashboardHeader = () => {
 					</div> */}
 					<div className='w-max flex flex-col items-center'>
 						<a
-							className={`cursor-pointer  font-medium text-2xl  ${
+							className={`cursor-pointer  font-medium text-xl  ${
 								location.pathname === '/Discussions' ? 'text-system-primary-accent' : 'text-system-primary-text'
 							}`}
 							onClick={() => OnClickItem('/Discussions')}>
@@ -65,7 +65,7 @@ const DashboardHeader = () => {
 					</div>
 					<div className='w-max flex flex-col items-center'>
 						<a
-							className={`cursor-pointer  font-medium text-2xl  ${
+							className={`cursor-pointer  font-medium text-xl  ${
 								location.pathname === '/Connections' ? 'text-system-primary-accent' : 'text-system-primary-text'
 							}`}
 							onClick={() => OnClickItem('/Connections')}>
@@ -78,7 +78,7 @@ const DashboardHeader = () => {
 					</div>
 					{/* <div className='w-max flex flex-col items-center'>
 						<a
-							className={`cursor-pointer  font-medium text-2xl  ${location.pathname === '/Analytics' ? 'text-system-primary-accent' : 'text-system-primary-text'
+							className={`cursor-pointer  font-medium text-xl  ${location.pathname === '/Analytics' ? 'text-system-primary-accent' : 'text-system-primary-text'
 								}`}
 							onClick={() => OnClickItem('/Analytics')}>
 							Analytics

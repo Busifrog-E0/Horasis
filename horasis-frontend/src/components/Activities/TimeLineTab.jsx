@@ -106,7 +106,7 @@ const TimeLineTab = ({
 
 	return (
 		<div>
-			<PostComponent className={classNameForPost} onSuccess={fetch} permissions={permissions} />
+			<PostComponent className={classNameForPost} onSuccess={fetch} permissions={permissions} api={api} />
 
 			{header && <h4 className='font-medium text-2xl text-system-primary-text mt-3 lg:mt-9 mb-4'>All Updates</h4>}
 
