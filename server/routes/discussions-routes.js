@@ -10,7 +10,7 @@ import { decodeIDToken, ensureAuthorized } from '../middleware/auth-middleware.j
 import { ValidatePatchDiscussionCoverPhoto, ValidatePatchMemberPermission, ValidatePostDiscussion } from '../validations/discussions-validations.js';
 import { QueryParameterFormatting, ValidateGetEntity } from '../middleware/common.js';
 import { AcceptMemberInvitation, GetMembers, InviteMembers, PostMembers, UpdateMemberPermissions } from '../controllers/members-controller.js';
-import { GetDiscussionsActivitiesMiddleware, PostDiscussionActivitiesMiddleware } from '../middleware/discussions-middleware.js';
+import { DiscussionJoinMiddleware, GetDiscussionsActivitiesMiddleware, PostDiscussionActivitiesMiddleware } from '../middleware/discussions-middleware.js';
 import { GetFilteredActivities, PostActivities } from '../controllers/activities-controller.js';
 import { ValidatePostActivities } from '../validations/activities-validations.js';
 import { MemberPostActivityMiddleware } from '../middleware/members-middleware.js';
@@ -34,7 +34,7 @@ router.patch('/discussions/:DiscussionId/coverPicture', decodeIDToken, ensureAut
     // @ts-ignore
     asyncHandler(PatchDiscussions));
 
-router.post('/discussions/:EntityId/join', decodeIDToken, ensureAuthorized("User"),
+router.post('/discussions/:EntityId/join', decodeIDToken, ensureAuthorized("User"),DiscussionJoinMiddleware,
     SwaggerDocs.post_Discussions_EntityId_Join,
     //@ts-ignore
     asyncHandler(PostMembers));
