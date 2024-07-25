@@ -104,7 +104,7 @@ router.get('/user/:UserId/discussions', decodeIDToken, ensureAuthorized("User"),
     //@ts-ignore
     asyncHandler(GetUserDiscussions))   
 
-router.get('/discussions/invited',decodeIDToken, ensureAuthorized("User"), ValidateGetEntity, QueryParameterFormatting,
+router.get('/user/:UserId/discussions/invited',decodeIDToken, ensureAuthorized("User"), ValidateGetEntity, QueryParameterFormatting,
     SwaggerDocs.get_Discussions_Invited,
     //@ts-ignore
     asyncHandler(GetInvitedDiscussions));
