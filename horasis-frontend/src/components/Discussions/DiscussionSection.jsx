@@ -11,6 +11,7 @@ import DiscussionsList from './DiscussionsList'
 
 const DiscussionSection = () => {
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
+	const [activeTab, setActiveTab] = useState('all')
 	const toast = useToast()
 	const [isLoading, setIsLoading] = useState(true)
 	const [isLoadingMore, setIsLoadingMore] = useState(false)
@@ -95,41 +96,54 @@ const DiscussionSection = () => {
 				Find answers, ask questions, and connect with our community aroundthe world.
 			</h4>
 			<div className='flex gap-6 flex-wrap mt-4 mb-6'>
-				<TabItem variant='active'>All Discussions</TabItem>
-				<TabItem variant='inactive'>Following</TabItem>
+				<TabItem variant={`${activeTab === 'all' ? 'active' : 'inactive'}`} onClick={() => setActiveTab('all')}>
+					All Discussions
+				</TabItem>
+				<TabItem
+					variant={`${activeTab === 'following' ? 'active' : 'inactive'}`}
+					onClick={() => setActiveTab('following')}>
+					Following
+				</TabItem>
+				<TabItem variant={`${activeTab === 'invited' ? 'active' : 'inactive'}`} onClick={() => setActiveTab('invited')}>
+					Invitations
+				</TabItem>
 			</div>
 			<h4 className='font-bold mb-3 text-xl text-system-primary-text'>Trending Discussions</h4>
-			<div className='mb-4'>
-				{isLoading ? (
-					<Spinner />
-				) : discussions.length > 0 ? (
-					<>
-						<DiscussionsList
-							data={discussions}
-							emptyText={'No discussions'}
-							gap={'gap-2 lg:gap-4'}
-							cols={'grid-cols-2 md:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3'}
-							fetch={fetch}
-						/>
-						<div className='my-4'>
-							{isLoadingMore && (
-								<div className='bg-system-primary-bg p-4 rounded-b-lg '>
-									<Spinner />
-								</div>
-							)}
-							{!pageDisabled && (
-								<div onClick={fetchMore} className='flex flex-row justify-end mt-4 mb-2'>
-									<div className='cursor-pointer flex items-center gap-2'>
-										<h4 className='font-semibold text-xl text-system-primary-accent'>Load More</h4>
+			{activeTab === 'all' && (
+				<div className='mb-4'>
+					{isLoading ? (
+						<Spinner />
+					) : discussions.length > 0 ? (
+						<>
+							<DiscussionsList
+								data={discussions}
+								emptyText={'No discussions'}
+								gap={'gap-2 lg:gap-4'}
+								cols={'grid-cols-2 md:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3'}
+								fetch={fetch}
+							/>
+							<div className='my-4'>
+								{isLoadingMore && (
+									<div className='bg-system-primary-bg p-4 rounded-b-lg '>
+										<Spinner />
 									</div>
-								</div>
-							)}
-						</div>
-					</>
-				) : (
-					<EmptyMembers emptyText={"You don't have any discussions available."} />
-				)}
-			</div>
+								)}
+								{!pageDisabled && (
+									<div onClick={fetchMore} className='flex flex-row justify-end mt-4 mb-2'>
+										<div className='cursor-pointer flex items-center gap-2'>
+											<h4 className='font-semibold text-xl text-system-primary-accent'>Load More</h4>
+										</div>
+									</div>
+								)}
+							</div>
+						</>
+					) : (
+						<EmptyMembers emptyText={"You don't have any discussions available."} />
+					)}
+				</div>
+			)}
+			{activeTab === 'following' && <>Following Tab</>}
+			{activeTab === 'invited' && <>Invited Tab</>}
 		</>
 	)
 }
