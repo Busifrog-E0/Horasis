@@ -20,9 +20,14 @@ const PostDiscussionActivitiesMiddleware = (req, res, next) => {
     return next();
 };
 
+const DiscussionJoinMiddleware = (req, res, next) => {
+    req.body.Type = "Discussion";
+    return next();
+}
+
 
 export { 
     GetDiscussionsActivitiesMiddleware,
     PostDiscussionActivitiesMiddleware,
-    
+    DiscussionJoinMiddleware
 }
