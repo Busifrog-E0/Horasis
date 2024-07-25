@@ -15,6 +15,7 @@ import Spinner from '../components/ui/Spinner'
 import DiscussionActivities from '../components/Discussions/SingleDiscussionTabs/DiscussionActivities'
 import TimeLineTab from '../components/Activities/TimeLineTab'
 import DiscussionMembers from '../components/Discussions/SingleDiscussionTabs/DiscussionMembers'
+import DiscussionSettings from '../components/Discussions/SingleDiscussionTabs/DiscussionSettings'
 
 const SingleDiscussion = () => {
 	const [activeTab, setActiveTab] = useState(0)
@@ -113,10 +114,10 @@ const SingleDiscussion = () => {
 				},
 				{
 					key: 3,
-					title: 'Invitation Requests',
+					title: 'Join Requests',
 					render: () => (
 						<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
-							Invitation Requests
+							Join Requests
 						</div>
 					),
 				},
@@ -125,7 +126,9 @@ const SingleDiscussion = () => {
 					key: 4,
 					title: 'Settings',
 					render: () => (
-						<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>Settings</div>
+						<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
+							<DiscussionSettings discussionId={discussion.DocId} />
+						</div>
 					),
 				},
 			]

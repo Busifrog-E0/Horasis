@@ -17,6 +17,7 @@ import { useToast } from '../components/Toast/ToastService'
 import Spinner from '../components/ui/Spinner'
 import Modal from '../components/ui/Modal'
 import { PostDiscussionSchema } from '../utils/schema/discussions/discussionValidation'
+import DiscussionSettings from '../components/Discussions/SingleDiscussionTabs/DiscussionSettings'
 
 const CreateDiscussion = () => {
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
@@ -199,7 +200,7 @@ const CreateDiscussion = () => {
 								/>
 							)}
 							{activeStep === 3 && <CreateDiscussionStep3 discussionId={discussionId} />}
-							{activeStep === 4 && <CreateDiscussionStep4 />}
+							{activeStep === 4 && <DiscussionSettings discussionId={discussionId} />}
 
 							{/* {activeStep !== 4 && */}
 							<div className='grid grid-cols-2 lg:grid-cols-3 gap-4 py-8'>

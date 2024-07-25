@@ -17,11 +17,11 @@ const SelectMembersTab = ({ onSelect, profile, selected }) => {
             <div className='flex items-start gap-4'>
                 {profile ? (
                     <>
-                        {profile.ProfilePicture ? (
+                        {profile.UserDetails.ProfilePicture ? (
                             <div className='w-11 h-11 rounded-full bg-black'>
                                 <img
                                     className='w-11 h-11 rounded-full object-cover'
-                                    src={profile.ProfilePicture}
+                                    src={profile.UserDetails.ProfilePicture}
                                     alt='Rounded avatar'
                                 />
                             </div>
@@ -45,9 +45,9 @@ const SelectMembersTab = ({ onSelect, profile, selected }) => {
 
                 <div className='flex-1'>
                     <h4 className='font-semibold text-lg text-system-primary-accent ' >
-                        {profile && profile.FullName}
+                        {profile && profile.UserDetails.FullName}
                     </h4>
-                    <h4 className='font-semibold text-sm text-brand-gray-dim'>@{profile && profile.Username}</h4>
+                    <h4 className='font-semibold text-sm text-brand-gray-dim'>@{profile && profile.UserDetails.Username}</h4>
                 </div>
             </div>
         </div>
