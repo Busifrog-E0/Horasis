@@ -22,9 +22,9 @@ const GetOneFromDiscussions = async (req, res) => {
     const DiscussionMemberObject = { IsMember: false, Permissions: {} };
     const Member = await ReadMembers({ MemberId: UserId, EntityId: Discussion.DocId }, undefined, 1, undefined);
     if (Member.length > 0) {
-        DiscussionMemberObject.IsMember = Member[0].Status === "Accepted";
+        DiscussionMemberObject.IsMember = Member[0].MembershipStatus === "Accepted";
         DiscussionMemberObject.Permissions = Member[0].Permissions
-        DiscussionMemberObject.Status = Member[0].Status
+        DiscussionMemberObject.Status = Member[0].MembershipStatus
     }
     const data = { ...Discussion, ...DiscussionMemberObject };
     return res.json(data);
@@ -50,9 +50,39 @@ const GetDiscussions = async (req, res) => {
         const DiscussionMemberObject = { IsMember: false, };
         const Member = await ReadMembers({ MemberId: UserId, EntityId: Discussion.DocId }, undefined, 1, undefined);
         if (Member.length > 0) {
-            DiscussionMemberObject.IsMember = Member[0].Status === "Accepted";
+            DiscussionMemberObject.IsMember = Member[0].MembershipStatus === "Accepted";
             DiscussionMemberObject.Permissions = Member[0].Permissions
-            DiscussionMemberObject.Status = Member[0].Status
+            DiscussionMemberObject.Status = Member[0].MembershipStatus
+        }
+        return { ...Discussion, ...DiscussionMemberObject }
+    }))
+    return res.json(data);
+}
+
+const GetUserDiscussions = async (req, res) => { 
+    const { UserId } = req.params;
+    const { Filter, NextId, Keyword, Limit, OrderBy } = req.query;
+    if (Keyword) {
+        // @ts-ignore
+        Filter["DiscussionName"] = { $regex: Keyword, $options: 'i' };
+    }
+    // @ts-ignore
+    const AggregateArray = [
+        {
+            $lookup: {
+                from: "Members",
+                
+            }
+        }
+    ]
+    const Discussions = await ReadDiscussions(Filter, NextId, Limit, OrderBy);
+    const data = await Promise.all(Discussions.map(async Discussion => {
+        const DiscussionMemberObject = { IsMember: false, };
+        const Member = await ReadMembers({ MemberId: UserId, EntityId: Discussion.DocId }, undefined, 1, undefined);
+        if (Member.length > 0) {
+            DiscussionMemberObject.IsMember = Member[0].MembershipStatus === "Accepted";
+            DiscussionMemberObject.Permissions = Member[0].Permissions
+            DiscussionMemberObject.Status = Member[0].MembershipStatus
         }
         return { ...Discussion, ...DiscussionMemberObject }
     }))

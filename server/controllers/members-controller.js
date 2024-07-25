@@ -44,63 +44,111 @@ const GetMembers = async (req, res) => {
 const PostMembers = async (req, res) => {
     //@ts-ignore
     const { UserId } = req.user;
-    let EntityId = ""
-    if (req.params.DiscussionId) {
-        const Discussion = await ReadOneFromDiscussions(req.params.DiscussionId);
-        EntityId = Discussion.DocId;
-        if (Discussion.Privacy === "Private") {
-            return res.status(444).json(AlertBoxObject("Cannot Join Private Discussion", "You cannot join a private discussion"));
-        }
-    }
-    const Member = await ReadMembers({ MemberId: UserId, EntityId }, undefined, 1, undefined);
-    if (Member.length > 0) {
-        if (Member[0].Status === "Invited") {
-            await UpdateMembers({ Status: "Accepted" }, Member[0].DocId);
-            await IncrementDiscussions({ NoOfMembers: 1 }, EntityId);
-            return res.json(true);
-        }
+    const { EntityId } = req.params;
+    const MemberCheck = await ReadMembers({ MemberId: UserId, EntityId }, undefined, 1, undefined);
+    if (MemberCheck.length > 0) {
         return res.status(444).json(AlertBoxObject("Cannot Join", "You have already joined this discussion"));
     }
+    let Entity = {};
     const UserDetails = await ReadOneFromUsers(UserId);
     req.body = { ...MemberInit(req.body), MemberId: UserId, EntityId, UserDetails };
+    switch (req.body.Type) {
+        case "Discussion":
+            Entity = await ReadOneFromDiscussions(EntityId);
+            break;
+        case "Event":
+            Entity = {};
+            break;
+        default:
+            break;
+    }
+    if (Entity.Privacy === "Private") {
+        req.body.MembershipStatus = "Requested";
+    }
     await CreateMembers(req.body);
-    await IncrementDiscussions({ NoOfMembers: 1 }, EntityId);
-    return res.json(true);
+    if (Entity.Privacy === "Public") {
+        await IncrementDiscussions({ NoOfMembers: 1 }, EntityId);
+        return res.json(true);
+    }
+    else {
+        return res.status(244).json(AlertBoxObject("Request Sent", "Request has been sent"));
+    }
+
 }
 
 const InviteMembers = async (req, res) => {
     const { UserId } = req.user;
     const { EntityId, InviteeId } = req.params;
     const Member = await ReadMembers({ MemberId: UserId, EntityId }, undefined, 1, undefined);
-    if (Member.length === 0) {
-        return res.status(444).json(AlertBoxObject("Cannot Invite", "You are not a member of this discussion"));
-    }
+
     if (!Member[0].Permissions.CanInviteOthers) {
         return res.status(444).json(AlertBoxObject("Cannot Invite", "You cannot invite others to this discussion"));
     }
+
     const Invitee = await ReadMembers({ MemberId: InviteeId, EntityId }, undefined, 1, undefined);
-    if (Invitee[0] && Invitee[0].Status === "Invited") {
-        return res.status(444).json(AlertBoxObject("Cannot Invite", "This user has already been invited to this discussion"));
-    }
+    if (Invitee[0]) { 
+        if (Invitee[0].MembershipStatus === "Requested") {
+            await UpdateMembers({ MembershipStatus: "Accepted" }, Invitee[0].DocId);
+            await IncrementDiscussions({ NoOfMembers: 1 }, EntityId);
+            return res.json(true);
+        }
+        else if (Invitee[0].MembershipStatus === "Invited") { 
+            return res.status(444).json(AlertBoxObject("Cannot Invite", "User has already been invited to this discussion"));
+        }
+        return res.status(444).json(AlertBoxObject("Cannot Invite", "User is already a member of this discussion"));
+    } 
     const UserDetails = await ReadOneFromUsers(InviteeId);
     req.body = { ...MemberInit(req.body), MemberId: InviteeId, EntityId, UserDetails };
-    req.body.Status = "Invited";
+    req.body.MembershipStatus = "Invited";
     await CreateMembers(req.body);
     return res.json(true);
 }
-
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ * @returns 
+ */
 const AcceptMemberInvitation = async (req, res) => {
     const { EntityId } = req.params;
+    //@ts-ignore
+    const { UserId } = req.user;
+    const Member = await ReadMembers({ MemberId: UserId, EntityId }, undefined, 1, undefined);
+    if (Member[0].MembershipStatus === "Accepted") {
+        return res.status(444).json(AlertBoxObject("Cannot Accept", "You have already joined this discussion"));
+    }
+    await UpdateMembers({ MembershipStatus: "Accepted" }, Member[0].DocId);
+    await IncrementDiscussions({ NoOfMembers: 1 }, EntityId);
+    return res.json(true);
+}
+
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ * @returns 
+ */
+const DeclineInvitation = async (req, res) => {
+    const { EntityId } = req.params;
+    //@ts-ignore
     const { UserId } = req.user;
     const Member = await ReadMembers({ MemberId: UserId, EntityId }, undefined, 1, undefined);
     if (Member.length === 0) {
-        return res.status(444).json(AlertBoxObject("Cannot Accept", "You have not been invited to discussion"));
+        return res.status(444).json(AlertBoxObject("Cannot Decline", "You have not been invited to discussion"));
     }
-    if (Member[0].Status === "Accepted") {
-        return res.status(444).json(AlertBoxObject("Cannot Accept", "You have already joined this discussion"));
-    }
-    await UpdateMembers({ Status: "Accepted" }, Member[0].DocId);
-    await IncrementDiscussions({ NoOfMembers: 1 }, EntityId);
+    await RemoveMembers(Member[0].DocId);
+    return res.json(true);
+}
+
+const CancelInvitation = async (req, res) => {
+    const { EntityId } = req.params;
+    //@ts-ignore
+    const { UserId } = req.user;
+    const Member = await ReadMembers({ MemberId: UserId, EntityId }, undefined, 1, undefined);
+    if (Member.length === 0) {
+        return res.status(444).json(AlertBoxObject("Cannot Cancel", "You have not invited the User"))
+    };
+    await RemoveMembers(Member[0].DocId);
     return res.json(true);
 }
 /**
@@ -118,7 +166,7 @@ const UpdateMemberPermissions = async (req, res) => {
         return res.status(444).json(AlertBoxObject("Cannot Update Permissions", "You are not an admin of this discussion"));
     }
     await Promise.all(Object.keys(req.body).map(async (PermissionArray) => {
-        await UpdateManyMembers({ [PermissionArray]: true }, { EntityId, MemberId: { $in: PermissionArray } })
+        await UpdateManyMembers({ [PermissionArray]: true }, { EntityId, MemberId: { $in: req.body[PermissionArray] } })
     }))
     return res.json(true);
 
@@ -151,7 +199,7 @@ const DeleteMembers = async (req, res) => {
 const MemberInit = (Member) => {
     return {
         ...Member,
-        Status: "Accepted",
+        MembershipStatus: "Accepted",
         Permissions: PermissionObjectInit(false)
     }
 }
@@ -168,5 +216,6 @@ const PermissionObjectInit = (IsAdmin) => {
 
 export {
     GetOneFromMembers, GetMembers, PostMembers, PatchMembers, DeleteMembers,
-    PermissionObjectInit, InviteMembers, AcceptMemberInvitation, UpdateMemberPermissions
+    PermissionObjectInit, InviteMembers, AcceptMemberInvitation, UpdateMemberPermissions,
+    DeclineInvitation,CancelInvitation
 }

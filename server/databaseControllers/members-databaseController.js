@@ -21,7 +21,7 @@ import dataHandling from './functions.js'
  * @property {string} EntityId
  * @property {string} MemberId
  * @property {UserData} UserDetails
- * @property {"Invited"|"Accepted"} Status
+ * @property {"Invited"|"Accepted"|"Requested"} MembershipStatus
  * @property {string} DocId
  * @property {"Discussion"|"Event"} Type
  * @property {number} CreatedIndex

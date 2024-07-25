@@ -24,6 +24,8 @@ const DiscussionsData = {
     CreatedIndex: 1234567890,
     CoverPicture: "https://example.com/images/cover.jpg",
     NoOfMembers: 10,
+    isMember: true,
+    MembershipStatus : "Accepted",
 };
 
 const DiscussionDataArray = [DiscussionsData];
