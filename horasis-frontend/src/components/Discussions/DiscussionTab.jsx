@@ -41,7 +41,22 @@ const DiscussionTab = ({ discussion, onClick, fetch }) => {
 			</div>
 
 			<div className='flex items-center justify-center my-2'>
-				{discussion.Privacy === 'Private' ? (
+				{discussion.isMember ? (
+					<Button variant='black'>Unfollow</Button>
+				) : discussion.Status === undefined ? (
+					<Button variant='black' onClick={() => joinDiscussion()}>
+						Join
+					</Button>
+				) : discussion.Status === 'Requested' ? (
+					<Button variant='outline'>Cancel Request</Button>
+				) : discussion.Status === 'Invited' ? (
+					<>
+						<Button variant='outline'>Reject</Button>
+						<Button variant='black'>Accept</Button>
+					</>
+				) : null}
+
+				{/* {discussion.Privacy === 'Private' ? (
 					<>
 						{discussion.Status === 'Invited' ? (
 							<>
@@ -75,7 +90,7 @@ const DiscussionTab = ({ discussion, onClick, fetch }) => {
 							</Button>
 						)}
 					</>
-				)}
+				)} */}
 			</div>
 		</div>
 	)

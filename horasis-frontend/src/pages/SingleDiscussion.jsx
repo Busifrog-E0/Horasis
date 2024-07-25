@@ -306,7 +306,21 @@ const SingleDiscussion = () => {
 									<h4 className='font-semibold text-2xl text-system-primary-text'>Brief</h4>
 								</div>
 								<h4 className='text-xl text-brand-gray mt-2 mb-12 leading-8'>{discussion.Brief}</h4>
-								{discussion.Privacy === 'Private' ? (
+								{discussion.isMember ? (
+									<Button variant='black'>Unfollow</Button>
+								) : discussion.Status === undefined ? (
+									<Button variant='black' onClick={() => joinDiscussion()}>
+										Join
+									</Button>
+								) : discussion.Status === 'Requested' ? (
+									<Button variant='outline'>Cancel Request</Button>
+								) : discussion.Status === 'Invited' ? (
+									<>
+										<Button variant='outline'>Reject</Button>
+										<Button variant='black'>Accept</Button>
+									</>
+								) : null}
+								{/* {discussion.Privacy === 'Private' ? (
 									<>
 										{discussion.Status === 'Invited' ? (
 											<>
@@ -342,7 +356,7 @@ const SingleDiscussion = () => {
 											</Button>
 										)}
 									</>
-								)}
+								)} */}
 							</div>
 						</div>
 						<div className='lg:col-span-3'>

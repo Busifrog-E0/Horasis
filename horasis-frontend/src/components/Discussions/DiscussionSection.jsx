@@ -111,18 +111,20 @@ const DiscussionSection = () => {
 							cols={'grid-cols-2 md:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3'}
 							fetch={fetch}
 						/>
-						{isLoadingMore && (
-							<div className='bg-system-secondary-bg p-4 rounded-b-lg '>
-								<Spinner />
-							</div>
-						)}
-						{!pageDisabled && (
-							<div onClick={fetchMore} className='flex flex-row justify-end mt-4 mb-2'>
-								<div className='cursor-pointer flex items-center gap-2'>
-									<h4 className='font-semibold text-xl text-system-primary-accent'>Load More</h4>
+						<div className='my-4'>
+							{isLoadingMore && (
+								<div className='bg-system-primary-bg p-4 rounded-b-lg '>
+									<Spinner />
 								</div>
-							</div>
-						)}
+							)}
+							{!pageDisabled && (
+								<div onClick={fetchMore} className='flex flex-row justify-end mt-4 mb-2'>
+									<div className='cursor-pointer flex items-center gap-2'>
+										<h4 className='font-semibold text-xl text-system-primary-accent'>Load More</h4>
+									</div>
+								</div>
+							)}
+						</div>
 					</>
 				) : (
 					<EmptyMembers emptyText={"You don't have any discussions available."} />
