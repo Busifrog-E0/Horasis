@@ -2630,7 +2630,7 @@
         ]
       }
     },
-    "/api/chat": {
+    "/api/chats": {
       "get": {
         "tags": [
           "Chat"
@@ -2695,50 +2695,7 @@
         ]
       }
     },
-    "/api/chat/{ConversationId}": {
-      "get": {
-        "tags": [
-          "Chat"
-        ],
-        "description": "",
-        "parameters": [
-          {
-            "name": "ConversationId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Chat Data",
-            "schema": {
-              "$ref": "#/definitions/ConversationData"
-            }
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "402": {
-            "description": "Payment Required"
-          },
-          "403": {
-            "description": "Forbidden"
-          }
-        },
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ]
-      }
-    },
-    "/api/chat/{ConversationId}/messages": {
+    "/api/chats/{ConversationId}/messages": {
       "get": {
         "tags": [
           "Chat"
@@ -2775,6 +2732,11 @@
             "name": "OrderBy",
             "in": "query",
             "type": "string"
+          },
+          {
+            "name": "Filter",
+            "in": "query",
+            "type": "string"
           }
         ],
         "responses": {
@@ -2795,6 +2757,68 @@
           },
           "403": {
             "description": "Forbidden"
+          },
+          "444": {
+            "description": "Connection Closed Without Response"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/reterieveConversationId": {
+      "post": {
+        "tags": [
+          "Chat"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "ReceiverId": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Chat Data",
+            "schema": {
+              "type": "string",
+              "example": "60c72b345f1b2c0015a4e7d3",
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "402": {
+            "description": "Payment Required"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "444": {
+            "description": "Connection Closed Without Response"
           }
         },
         "security": [
@@ -4253,10 +4277,6 @@
               "type": "string",
               "example": "60c72b2f5f1b2c0015a4e7d0"
             },
-            "ReceiverId": {
-              "type": "string",
-              "example": "60c72b305f1b2c0015a4e7d1"
-            },
             "Content": {
               "type": "string",
               "example": "Hello, Bob!"
@@ -4265,9 +4285,21 @@
               "type": "number",
               "example": 1
             },
-            "HasSeen": {
-              "type": "boolean",
-              "example": false
+            "SeenUsers": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "UserId": {
+                    "type": "string",
+                    "example": "60c72b345f1b2c0015a4e7d3"
+                  },
+                  "SeenIndex": {
+                    "type": "number",
+                    "example": 5
+                  }
+                }
+              }
             },
             "DocId": {
               "type": "string",
@@ -4275,7 +4307,11 @@
             }
           }
         },
-        "UnreadMessages": {
+        "OneMessageSent": {
+          "type": "boolean",
+          "example": true
+        },
+        "CreatedIndex": {
           "type": "number",
           "example": 1
         },
@@ -4296,10 +4332,6 @@
           "type": "string",
           "example": "60c72b2f5f1b2c0015a4e7d0"
         },
-        "ReceiverId": {
-          "type": "string",
-          "example": "60c72b305f1b2c0015a4e7d1"
-        },
         "Content": {
           "type": "string",
           "example": "Hello, Bob!"
@@ -4308,9 +4340,21 @@
           "type": "number",
           "example": 1
         },
-        "HasSeen": {
-          "type": "boolean",
-          "example": false
+        "SeenUsers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "UserId": {
+                "type": "string",
+                "example": "60c72b345f1b2c0015a4e7d3"
+              },
+              "SeenIndex": {
+                "type": "number",
+                "example": 5
+              }
+            }
+          }
         },
         "DocId": {
           "type": "string",
@@ -4400,10 +4444,6 @@
                 "type": "string",
                 "example": "60c72b2f5f1b2c0015a4e7d0"
               },
-              "ReceiverId": {
-                "type": "string",
-                "example": "60c72b305f1b2c0015a4e7d1"
-              },
               "Content": {
                 "type": "string",
                 "example": "Hello, Bob!"
@@ -4412,9 +4452,21 @@
                 "type": "number",
                 "example": 1
               },
-              "HasSeen": {
-                "type": "boolean",
-                "example": false
+              "SeenUsers": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "UserId": {
+                      "type": "string",
+                      "example": "60c72b345f1b2c0015a4e7d3"
+                    },
+                    "SeenIndex": {
+                      "type": "number",
+                      "example": 5
+                    }
+                  }
+                }
               },
               "DocId": {
                 "type": "string",
@@ -4422,7 +4474,11 @@
               }
             }
           },
-          "UnreadMessages": {
+          "OneMessageSent": {
+            "type": "boolean",
+            "example": true
+          },
+          "CreatedIndex": {
             "type": "number",
             "example": 1
           },
@@ -4446,10 +4502,6 @@
             "type": "string",
             "example": "60c72b2f5f1b2c0015a4e7d0"
           },
-          "ReceiverId": {
-            "type": "string",
-            "example": "60c72b305f1b2c0015a4e7d1"
-          },
           "Content": {
             "type": "string",
             "example": "Hello, Bob!"
@@ -4458,9 +4510,21 @@
             "type": "number",
             "example": 1
           },
-          "HasSeen": {
-            "type": "boolean",
-            "example": false
+          "SeenUsers": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "UserId": {
+                  "type": "string",
+                  "example": "60c72b345f1b2c0015a4e7d3"
+                },
+                "SeenIndex": {
+                  "type": "number",
+                  "example": 5
+                }
+              }
+            }
           },
           "DocId": {
             "type": "string",
