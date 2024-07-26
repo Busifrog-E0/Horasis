@@ -55,8 +55,6 @@ const DiscussionTab = ({ discussion, onClick, fetch }) => {
 		)
 	}
 
-	const cancelJoinRequest = () => {}
-
 	const unFollowDiscussion = () => {
 		deleteItem(
 			`discussions/${discussion.DocId}/leave`,
@@ -71,6 +69,8 @@ const DiscussionTab = ({ discussion, onClick, fetch }) => {
 			toast
 		)
 	}
+	const cancelJoinRequest = () => {}
+
 
 	return (
 		<div className='rounded-lg mt-3 overflow-hidden h-full bg-system-secondary-bg '>

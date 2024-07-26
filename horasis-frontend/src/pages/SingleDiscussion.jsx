@@ -7,7 +7,7 @@ import DropdownMenu from '../components/ui/DropdownMenu'
 import { relativeTime } from '../utils/date'
 import Button from '../components/ui/Button'
 import { useToast } from '../components/Toast/ToastService'
-import { getItem, patchItem, postItem } from '../constants/operations'
+import { deleteItem, getItem, patchItem, postItem } from '../constants/operations'
 import cover from '../assets/icons/cover.svg'
 import { _retrieveData, _storeData, MAINTAB } from '../utils/LocalStorage'
 import Tab from '../components/ui/Tab'
@@ -202,8 +202,34 @@ const SingleDiscussion = () => {
 			toast
 		)
 	}
-	const unFollowDiscussion = () => {}
-	const rejectInvite = () => {}
+	const unFollowDiscussion = () => {
+		deleteItem(
+			`discussions/${discussion.DocId}/leave`,
+			(result) => {
+				if (result === true) {
+					fetch()
+				}
+			},
+			(err) => {},
+			updateCurrentUser,
+			currentUserData,
+			toast
+		)
+	}
+	const rejectInvite = () => {
+		deleteItem(
+			`discussions/${discussion.DocId}/invite/reject`,
+			(result) => {
+				if (result === true) {
+					fetch()
+				}
+			},
+			(err) => {},
+			updateCurrentUser,
+			currentUserData,
+			toast
+		)
+	}
 
 	const cancelJoinRequest = () => {}
 
