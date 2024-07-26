@@ -4,7 +4,7 @@ import Joi from "joi";
 
 const PostReterieveConversationId = (req, res, next) => {
     const Result = Joi.object({
-        RecieverId: Joi.string().required(),
+        ReceiverId: Joi.string().required(),
     }).validate(req.body, { stripUnknown: true });
     if (Result.error) {
         const message = Result.error.details.map((detail) => detail.message).join(', ');
