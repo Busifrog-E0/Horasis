@@ -64,7 +64,7 @@ const SingleDiscussion = () => {
 		const isMember = discussion.IsMember
 		const isAccepted = discussion.MembershipStatus === 'Accepted'
 		const isAdmin = discussion?.Permissions?.IsAdmin
-		if (isAdmin) {
+		if (isAdmin && isPrivate) {
 			return [
 				{
 					key: 0,
@@ -113,6 +113,54 @@ const SingleDiscussion = () => {
 
 				{
 					key: 4,
+					title: 'Settings',
+					render: () => (
+						<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
+							<DiscussionSettings discussionId={discussion.DocId} />
+						</div>
+					),
+				},
+			]
+		} else if (isAdmin && !isPrivate) {
+			return [
+				{
+					key: 0,
+					title: 'About',
+					render: () => <DiscussionAbout discussion={discussion} />,
+				},
+				{
+					key: 1,
+					title: 'Activities',
+					render: () => (
+						<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
+							<TimeLineTab
+								api={`discussions/${discussion?.DocId}/activities`}
+								gapBnTabs='gap-7'
+								classNameForPost='py-5'
+								bordered={true}
+							/>
+						</div>
+					),
+				},
+				{
+					key: 2,
+					title: 'Members',
+					render: () => (
+						<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
+							<div>
+								<CreateDiscussionStep3 discussionId={discussion.DocId} from='tab' />
+							</div>
+							<div className='my-4 flex flex-col gap-2'>
+								<h1 className='text-system-primary-text font-medium text-lg'>Current Members</h1>
+
+								<DiscussionMembers discussionId={discussion.DocId} />
+							</div>
+						</div>
+					),
+				},
+
+				{
+					key: 3,
 					title: 'Settings',
 					render: () => (
 						<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>

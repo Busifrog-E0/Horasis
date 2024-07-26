@@ -118,6 +118,7 @@ const DiscussionTab = ({ discussion, onClick, fetch }) => {
 					</Button>
 				) : discussion.MembershipStatus === 'Invited' ? (
 					<>
+					
 						<Button variant='outline' onClick={() => rejectInvite()}>
 							Reject
 						</Button>
