@@ -1,5 +1,7 @@
 import {
     GetOneFromDiscussions, GetDiscussions, PostDiscussions, PatchDiscussions, DeleteDiscussions,
+    GetUserDiscussions,
+    GetInvitedDiscussions,
 } from '../controllers/discussions-controller.js';
 import asyncHandler from 'express-async-handler';
 
@@ -9,7 +11,7 @@ import e from 'express';
 import { decodeIDToken, ensureAuthorized } from '../middleware/auth-middleware.js';
 import { ValidatePatchDiscussionCoverPhoto, ValidatePatchMemberPermission, ValidatePostDiscussion } from '../validations/discussions-validations.js';
 import { QueryParameterFormatting, ValidateGetEntity } from '../middleware/common.js';
-import { AcceptMemberInvitation, CancelInvitation, DeclineInvitation, DeleteMembers, GetMembers, InviteMembers, PostMembers, UpdateMemberPermissions } from '../controllers/members-controller.js';
+import { AcceptMemberInvitation, CancelInvitation, CancelJoinRequest, DeclineInvitation, DeleteMembers, GetMembers, InviteMembers, PostMembers, UpdateMemberPermissions } from '../controllers/members-controller.js';
 import { DiscussionJoinMiddleware, GetDiscussionsActivitiesMiddleware, PostDiscussionActivitiesMiddleware } from '../middleware/discussions-middleware.js';
 import { GetFilteredActivities, PostActivities } from '../controllers/activities-controller.js';
 import { ValidatePostActivities } from '../validations/activities-validations.js';
@@ -38,6 +40,11 @@ router.post('/discussions/:EntityId/join', decodeIDToken, ensureAuthorized("User
     SwaggerDocs.post_Discussions_EntityId_Join,
     //@ts-ignore
     asyncHandler(PostMembers));
+
+router.delete('/discussions/:EntityId/join/cancel', decodeIDToken, ensureAuthorized("User"), DiscussionJoinMiddleware,
+    SwaggerDocs.delete_Discussion_DiscussionId_Join_Cancel,
+    //@ts-ignore
+    asyncHandler(CancelJoinRequest));    
 
 router.post('/discussions/:EntityId/invite/:InviteeId', decodeIDToken, ensureAuthorized("User"),
     SwaggerDocs.post_Discussions_EntityId_Invite_InviteeId,
@@ -73,6 +80,16 @@ router.patch('/discussions/:EntityId/member/permissions', decodeIDToken, ensureA
     SwaggerDocs.patch_Discussions_EntityId_Member_Permissions,
     //@ts-ignore
     asyncHandler(UpdateMemberPermissions));
+
+router.get('/user/:UserId/discussions', decodeIDToken, ensureAuthorized("User"), ValidateGetEntity, QueryParameterFormatting,
+    SwaggerDocs.get_User_UserId_Discussions,
+    //@ts-ignore
+    asyncHandler(GetUserDiscussions))   
+
+router.get('/discussions/invited',decodeIDToken, ensureAuthorized("User"), ValidateGetEntity, QueryParameterFormatting,
+    SwaggerDocs.get_Discussions_Invited,
+    //@ts-ignore
+    asyncHandler(GetInvitedDiscussions));
 
 router.post('/discussions/:EntityId/activities', decodeIDToken, ensureAuthorized("User"), ValidatePostActivities, PostDiscussionActivitiesMiddleware,
     MemberPostActivityMiddleware, SwaggerDocs.post_Discussions_DiscussionId_Activities,
