@@ -69,9 +69,9 @@ const GetMessages = async (req, res) => {
     Filter.ConversationId = ConversationId;
     // @ts-ignore
     const data = await ReadMessages(Filter, NextId, Limit, OrderBy);
-    if (!NextId) {
-        await UpdateAllNotSeenMessages(UserId);
-    }
+    // if (!NextId) {
+    //     await UpdateAllNotSeenMessages(UserId);
+    // }
     return res.json(data);
 }
 
