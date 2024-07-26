@@ -25,6 +25,9 @@ const ConnectSocket = (expressServer) => {
             const MessageData = await PostMessages(data);
             if (MessageData.Success === true) {
                 io.to(data.ConversationId).emit('Messsage', MessageData.Data);
+                MessageData.ParticipantIds.map(id => {
+                    io.to(id).emit('CoversationList', true);
+                })
             }
         })
 

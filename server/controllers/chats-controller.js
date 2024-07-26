@@ -112,20 +112,20 @@ const ReterieveConversationId = async (req, res) => {
 /**
  * 
  * @param {{ConversationId:string,SenderId:string,Content:string}} data
- * @returns {Promise<{Success:boolean,Data:object}>}
+ * @returns {Promise<{Success:boolean,Data:object,ParticipantIds:Array}>}
  */
 const PostMessages = async (data) => {
     const { ConversationId, SenderId } = data;
     const ConversationData = await ReadOneFromConversations(ConversationId);
     if (!CheckUserInConversation(ConversationData, SenderId)) {
-        return { Success: false, Data: {} };
+        return { Success: false, Data: {}, ParticipantIds: [] };
     }
     data = MessageInit(data);
     await Promise.all([
         CreateMessages(data),
         UpdateConversations({ LatestMessage: data }, ConversationId),
     ])
-    return { Success: true, Data: data };
+    return { Success: true, Data: data, ParticipantIds: ConversationData.ParticipantIds };
 }
 
 const ConversationInit = (Conversation) => {
