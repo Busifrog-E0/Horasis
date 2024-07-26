@@ -18,6 +18,7 @@ import DiscussionMembers from '../components/Discussions/SingleDiscussionTabs/Di
 import DiscussionSettings from '../components/Discussions/SingleDiscussionTabs/DiscussionSettings'
 import CreateDiscussionStep3 from '../components/Discussions/CreateDiscussion/CreateDiscussionSteps/CreateDiscussionStep3'
 import DiscussionAbout from '../components/Discussions/SingleDiscussionTabs/DiscussionAbout'
+import DiscussionJoinRequest from '../components/Discussions/SingleDiscussionTabs/DiscussionJoinRequest'
 
 const SingleDiscussion = () => {
 	const [activeTab, setActiveTab] = useState(0)
@@ -105,7 +106,7 @@ const SingleDiscussion = () => {
 					title: 'Join Requests',
 					render: () => (
 						<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
-							Join Requests
+							<DiscussionJoinRequest discussionId={discussion.DocId} />
 						</div>
 					),
 				},
@@ -313,7 +314,6 @@ const SingleDiscussion = () => {
 													Leave
 												</Button>
 											)}
-											
 										</>
 									) : discussion.MembershipStatus === undefined ? (
 										<Button variant='black' onClick={() => joinDiscussion()}>
