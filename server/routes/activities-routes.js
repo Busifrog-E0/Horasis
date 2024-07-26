@@ -50,11 +50,11 @@ router.delete('/users/:UserId/activities/:EntityId/dislike', decodeIDToken, ensu
     asyncHandler(DeleteLikes));
 
 
-router.post('/users/:UserId/activities/:ActivityId/save', decodeIDToken, ensureAuthorized("User"), CheckSameUser, SwaggerDocs.post_Activities_ActivityId_Save,
+router.post('/users/:UserId/activities/:EntityId/save', decodeIDToken, ensureAuthorized("User"), CheckSameUser, SwaggerDocs.post_Activities_ActivityId_Save,
     // @ts-ignore
     asyncHandler(PostSaves));
 
-router.delete('/users/:UserId/activities/:ActivityId/save', decodeIDToken, ensureAuthorized("User"), CheckSameUser, SwaggerDocs.delete_Activities_ActivityId_Save,
+router.delete('/users/:UserId/activities/:EntityId/save', decodeIDToken, ensureAuthorized("User"), CheckSameUser, SwaggerDocs.delete_Activities_ActivityId_Save,
     // @ts-ignore
     asyncHandler(DeleteSaves));
 

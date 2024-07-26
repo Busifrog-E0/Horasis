@@ -10,7 +10,7 @@ import dataHandling from './functions.js'
 
 /**
  * @typedef {object} SaveData
- * @property {string} ActivityId
+ * @property {string} EntityId
  * @property {string} UserId
  * @property {number} CreatedIndex
  * @property {string} DocId

@@ -139,11 +139,46 @@ const get_Discussions_Invited = async (req, res, next) => {
     next();
 }
 
+const get_Discussions_DiscussionId_Members_Requested = async (req, res, next) => {
+    // #swagger.tags = ['Discussions']
+    /* #swagger.security = [{ "BearerAuth": [] }] */
+    /* #swagger.responses[200] = {
+                 description: 'Discussion Data',
+                 schema: { $ref: '#/definitions/MemberData' }
+         } 
+     */
+}
+
+const post_Discussions_DiscussionId_Save = async (req, res, next) => {
+    // #swagger.tags = ['Discussions']
+    /* #swagger.security = [{ "BearerAuth": [] }] */
+    next();
+}
+
+const get_Discussions_DiscussionId_Save = async (req, res, next) => {
+    // #swagger.tags = ['Discussions']
+    /* #swagger.security = [{ "BearerAuth": [] }] */
+    /* #swagger.responses[200] = {
+                description: 'Discussion Data',
+                schema: { $ref: '#/definitions/DiscussionDataArray' }
+        } 
+    */
+    next();
+}
+
+const delete_Discussions_DiscussionId_Save = async (req, res, next) => {
+    // #swagger.tags = ['Discussions']
+    /* #swagger.security = [{ "BearerAuth": [] }] */
+    next();
+}
+
+
 
 export default {
-    post_Discussion,get_User_UserId_Discussions,
-    patch_Discussion_DiscussionId_CoverPicture,
-    get_Discussions,delete_Discussion_DiscussionId_Join_Cancel,
+    post_Discussion,get_User_UserId_Discussions,get_Discussions_DiscussionId_Members_Requested,
+    patch_Discussion_DiscussionId_CoverPicture,post_Discussions_DiscussionId_Save,
+    get_Discussions, delete_Discussion_DiscussionId_Join_Cancel, get_Discussions_DiscussionId_Save,
+    delete_Discussions_DiscussionId_Save,
     post_Discussions_EntityId_Join,get_Discussions_Invited,
     post_Discussions_EntityId_Invite_InviteeId,
     patch_Discussions_EntityId_Invite_Accept,

@@ -5,6 +5,7 @@ import { ReadOneFromUsers } from '../databaseControllers/users-databaseControlle
 import { CreateMembers, ReadMembers } from '../databaseControllers/members-databaseController.js';
 import { PermissionObjectInit } from './members-controller.js';
 import { ObjectId } from 'mongodb';
+import { ReadSaves } from '../databaseControllers/saves-databaseController.js';
 /**
  * @typedef {import('./../databaseControllers/discussions-databaseController.js').DiscussionData} DiscussionData 
  */
@@ -27,7 +28,9 @@ const GetOneFromDiscussions = async (req, res) => {
         DiscussionMemberObject.Permissions = Member[0].Permissions
         DiscussionMemberObject.MembershipStatus = Member[0].MembershipStatus
     }
-    const data = { ...Discussion, ...DiscussionMemberObject };
+    const Save = await ReadSaves({ EntityId: Discussion.DocId, UserId }, undefined, 1, undefined);
+    const IsSaved = Save.length > 0;
+    const data = { ...Discussion, ...DiscussionMemberObject,IsSaved };
     return res.json(data);
 }
 
@@ -55,7 +58,9 @@ const GetDiscussions = async (req, res) => {
             DiscussionMemberObject.Permissions = Member[0].Permissions
             DiscussionMemberObject.MembershipStatus = Member[0].MembershipStatus
         }
-        return { ...Discussion, ...DiscussionMemberObject }
+        const Save = await ReadSaves({ EntityId: Discussion.DocId, UserId }, undefined, 1, undefined);
+        const IsSaved = Save.length > 0;
+        return { ...Discussion, ...DiscussionMemberObject,IsSaved }
     }))
     return res.json(data);
 }

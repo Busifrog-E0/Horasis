@@ -1913,7 +1913,7 @@
         ]
       }
     },
-    "/api/users/{UserId}/activities/{ActivityId}/save": {
+    "/api/users/{UserId}/activities/{EntityId}/save": {
       "post": {
         "tags": [
           "Activities"
@@ -1927,7 +1927,7 @@
             "type": "string"
           },
           {
-            "name": "ActivityId",
+            "name": "EntityId",
             "in": "path",
             "required": true,
             "type": "string"
@@ -1974,7 +1974,7 @@
             "type": "string"
           },
           {
-            "name": "ActivityId",
+            "name": "EntityId",
             "in": "path",
             "required": true,
             "type": "string"
@@ -3067,6 +3067,69 @@
         ]
       }
     },
+    "/api/discussions/{EntityId}/members/requested": {
+      "get": {
+        "tags": [
+          "Discussions"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "EntityId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "Filter",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "NextId",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "Limit",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "OrderBy",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Discussion Data",
+            "schema": {
+              "$ref": "#/definitions/MemberData"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "402": {
+            "description": "Payment Required"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
     "/api/discussions/{EntityId}/join/cancel": {
       "delete": {
         "tags": [
@@ -3335,6 +3398,18 @@
             "name": "authorization",
             "in": "header",
             "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Type": {
+                  "example": "any"
+                }
+              }
+            }
           }
         ],
         "responses": {
@@ -3602,6 +3677,153 @@
           },
           "403": {
             "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/discussions/{EntityId}/save": {
+      "post": {
+        "tags": [
+          "Discussions"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "EntityId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "402": {
+            "description": "Payment Required"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "444": {
+            "description": "Connection Closed Without Response"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "get": {
+        "tags": [
+          "Discussions"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "EntityId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "Filter",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "NextId",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "Limit",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "OrderBy",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Discussion Data",
+            "schema": {
+              "$ref": "#/definitions/DiscussionDataArray"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "402": {
+            "description": "Payment Required"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/apiusers/{UserId}/discussions/save": {
+      "delete": {
+        "tags": [
+          "Discussions"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "UserId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "402": {
+            "description": "Payment Required"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "444": {
+            "description": "Connection Closed Without Response"
           }
         },
         "security": [
