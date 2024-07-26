@@ -127,16 +127,28 @@ const UserProfileConnectComponent = ({ profile, connectCallback = () => { }, set
 		)
 	} else if (profile.ConnectionStatus === 'Connected') {
 		return (
-			<Button
-				variant='white'
-				width='full'
-				className='rounded-full font-semibold shadow-sm text-system-primary-accent bg-system-secondary-accent'
-				size='md'
-				onClick={() => {
-					deleteConnection()
-				}}>
-				Remove Connection
-			</Button>
+			<>
+				<Button
+					variant='white'
+					width='full'
+					className='rounded-full font-semibold shadow-sm text-system-primary-accent bg-system-secondary-accent'
+					size='md'
+					onClick={() => {
+						deleteConnection()
+					}}>
+					Remove Connection
+				</Button>
+				<Button
+					variant='white'
+					width='full'
+					className='rounded-full font-semibold shadow-sm text-system-primary-accent bg-system-secondary-accent'
+					size='md'
+					onClick={() => {
+
+					}}>
+					Chat
+				</Button>
+			</>
 		)
 	} else if (profile.ConnectionStatus === 'Connection Received') {
 		return (
