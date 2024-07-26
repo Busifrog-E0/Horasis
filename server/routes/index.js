@@ -11,7 +11,7 @@ import connectionsRoutes from './connections-routes.js';
 import filesRoutes from './files-routes.js'
 import activitiesRoutes from './activities-routes.js'
 import commentsRoutes from './comments-routes.js'
-import chatsRoutes from './chat-routes.js'
+import chatsRoutes from './chats-routes.js'
 import discussionRoutes from './discussions-routes.js'
 
 

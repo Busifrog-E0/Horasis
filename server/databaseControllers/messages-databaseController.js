@@ -2,10 +2,9 @@ import dataHandling from './functions.js'
 
 /**
  * @typedef {object} MessageData
- * @property {boolean} HasSeen
+ * @property {Array<{UserId:string,SeenIndex:number}>} SeenUsers
  * @property {string} ConversationId
  * @property {string} SenderId
- * @property {string} RecieverId
  * @property {string} Content
  * @property {number} CreatedIndex
  * @property {string} DocId
@@ -45,6 +44,15 @@ const UpdateMessages = async (data, DocId) => {
     return dataHandling.Update('Messages', data, DocId);
 }
 
+/**
+ * 
+ * @param {MessageData|object} data 
+ * @param {object} filter 
+ * @returns {Promise<boolean>}
+ */
+const UpdateManyMessage = async (filter, data, operation = ["$set"]) => {
+    return dataHandling.UpdateMany("Messages", data, filter, operation);
+}
 
 /**
  * 
@@ -70,6 +78,7 @@ export {
     ReadMessages,
     ReadOneFromMessages,
     UpdateMessages,
+    UpdateManyMessage,
     CreateMessages,
     RemoveMessages
 }

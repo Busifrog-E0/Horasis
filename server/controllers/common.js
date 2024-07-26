@@ -74,9 +74,23 @@ const GetFileFromURI = async (URI) => {
     return File;
 }
 
+/**
+ * 
+ * @param {string} Message 
+ * @param {number} StatusCode 
+ * @returns 
+ */
+const SocketError = (Message, StatusCode) => {
+    const err = new Error(Message);
+    // @ts-ignore
+    err.data = { Message, StatusCode };
+    return err;
+}
+
 export {
     AlertBoxObject,
     getOTP,
     GetUserNonEmptyFieldsPercentage,
-    GetFileFromURI
+    GetFileFromURI,
+    SocketError,
 }

@@ -2,6 +2,7 @@ import ENV from "./Env.js";
 
 import cors from "cors";
 import express, { json, urlencoded } from 'express';
+import { Socket, Server } from "socket.io";
 
 
 import db from './databaseControllers/db.config.js';
@@ -27,6 +28,7 @@ import swaggerUi from 'swagger-ui-express';
 import swaggerFile from './swaggerOutput.json' assert { type: 'json' };
 // import { FirstSetupAdminInfo } from "./databaseControllers/admins-databaseController.js";
 import { GenerateToken } from "./controllers/auth-controller.js";
+import { decodeSocketIdToken } from "./middleware/auth-middleware.js";
 app.use('/doc', swaggerUi.serve, swaggerUi.setup(swaggerFile));
 
 app.use((req, res, next) => {
@@ -41,26 +43,50 @@ app.use(errorHandler);
 
 
 
-(async () => {
+
+
+
+const expressServer = app.listen(PORT, async (err) => {
     await db.init();
     // await FirstSetupAdminInfo();
 
+    console.log(`Server is up at localhost ${PORT}`);
+    const CurrentUser = {
+        // Role: 'Admin',
+        // UserId: "Admin",
+        Role: 'User',
+        UserId: "669a03f7b05b8ea2857b56e1",
+        RegistrationStatus: "",
+        Subscription: null
+    }
+    GenerateToken(CurrentUser);
+});
 
-    app.listen(PORT, (err) => {
-        console.log(`Server is up at localhost ${PORT}`);
-        const CurrentUser = {
-            // Role: 'Admin',
-            // UserId: "Admin",
-            Role: 'User',
-            UserId: "669f7589352378db64eb2c7b",
-            RegistrationStatus: "",
-            Subscription: null
-        }
-        GenerateToken(CurrentUser);
+
+const io = new Server(expressServer)
+
+io.use(decodeSocketIdToken);
+
+io.on('connection', socket => {
+    console.log(`User ${socket.id} connected`)
+
+    socket.on('message', data => {
+        console.log(data)
+        io.to(data.ConversationId).emit('message', data);
+    })
+
+    socket.on('JoinRoom', ({ ConversationId }) => {
+        socket.join(ConversationId);
     });
 
+    socket.on('LeaveRoom', ({ ConversationId }) => {
+        socket.leave(ConversationId);
+    });
+})
 
-})();
+
+
+
 
 
 
