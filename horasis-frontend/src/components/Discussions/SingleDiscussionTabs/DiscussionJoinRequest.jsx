@@ -99,7 +99,7 @@ const DiscussionJoinRequest = ({ discussionId }) => {
 						{members.length > 0 ? (
 							<>
 								{members.map((item, index) => {
-									return <DiscussionJoinMembers profile={item} key={item.DocId} />
+									return <DiscussionJoinMembers profile={item} key={item.DocId} discussionId={discussionId} fetch={fetch} />
 								})}
 							</>
 						) : (
