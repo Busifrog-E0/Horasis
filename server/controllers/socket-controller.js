@@ -9,7 +9,11 @@ import { ReadOneFromConversations } from "../databaseControllers/conversations-d
 const ConnectSocket = (expressServer) => {
 
 
-    const io = new Server(expressServer);
+    const io = new Server(expressServer, {
+        cors: {
+            origin: false,
+        }
+    });
     io.use(decodeSocketIdToken);
 
 
