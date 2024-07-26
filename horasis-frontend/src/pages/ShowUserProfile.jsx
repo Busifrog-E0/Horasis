@@ -27,7 +27,7 @@ const UserProfileConnectComponent = ({ profile, connectCallback = () => { }, set
 	const navigate = useNavigate()
 
 	const goToChat = () => {
-		navigate(`/Chat${profile.DocId}`)
+		navigate(`/Chat/${profile.DocId}`)
 	}
 
 	const sendConnectionRequest = () => {
@@ -150,7 +150,7 @@ const UserProfileConnectComponent = ({ profile, connectCallback = () => { }, set
 					className='rounded-full font-semibold shadow-sm text-system-primary-accent bg-system-secondary-accent'
 					size='md'
 					onClick={() => {
-
+						goToChat()
 					}}>
 					Chat
 				</Button>
