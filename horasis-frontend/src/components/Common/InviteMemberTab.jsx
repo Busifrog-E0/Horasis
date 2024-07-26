@@ -3,6 +3,7 @@ import Button from '../ui/Button'
 import { postItem } from '../../constants/operations'
 import { AuthContext } from '../../utils/AuthProvider'
 import { useToast } from '../Toast/ToastService'
+import avatar from '../../assets/icons/avatar.svg'
 
 const InviteMemberTab = ({ connection, discussionId }) => {
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
