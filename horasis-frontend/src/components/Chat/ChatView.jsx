@@ -48,6 +48,47 @@ const ChatView = ({ userId }) => {
         )
     }
 
+
+    const wsUrl = `wss://vnh4efm413.execute-api.eu-central-1.amazonaws.com/development`
+
+    useEffect(() => {
+        let ws = new WebSocket(wsUrl, [])
+        ws.onopen = () => {
+            console.log("ws opened")
+            let data = {
+                action: "listen",
+                messageType: "event",
+                robot: robotForAction?.id,
+                token: currentUserData.AccessToken,
+            }
+            ws.send(JSON.stringify(data))
+        }
+        ws.onclose = (e) => console.log("ws closed")
+        ws.onerror = (event) => {
+            console.log("ws error", event)
+        }
+        ws.onmessage = (event) => {
+            // console.log("ws message", JSON.parse(event.data))
+            if (event.data) {
+                let eventData = JSON.parse(event.data)
+                // console.log(eventData)
+                if (eventData.type === "system") {
+                    // setWsCPUData((prev) => [...prev, eventData.data.cpu])
+                    // setWsMemoryData((prev) => [...prev, eventData.data.memory])
+                    // setWsBatteryData((prev) => [...prev, eventData.data.battery])
+                }
+            }
+        }
+
+        return () => {
+            if (ws.readyState === 1) {
+                ws.close()
+            }
+        }
+    }, [])
+
+
+
     useEffect(() => {
         getUserDetails()
     }, [])

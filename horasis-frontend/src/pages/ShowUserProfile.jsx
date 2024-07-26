@@ -24,6 +24,12 @@ const UserProfileConnectComponent = ({ profile, connectCallback = () => { }, set
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
 	const toast = useToast()
 
+	const navigate = useNavigate()
+
+	const goToChat = () => {
+		navigate(`/Chat${profile.DocId}`)
+	}
+
 	const sendConnectionRequest = () => {
 		setIsLoading(true)
 		postItem(
