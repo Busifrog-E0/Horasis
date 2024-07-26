@@ -29,6 +29,7 @@ import swaggerFile from './swaggerOutput.json' assert { type: 'json' };
 // import { FirstSetupAdminInfo } from "./databaseControllers/admins-databaseController.js";
 import { GenerateToken } from "./controllers/auth-controller.js";
 import { decodeSocketIdToken } from "./middleware/auth-middleware.js";
+import { ConnectSocket } from "./controllers/socket-controller.js";
 app.use('/doc', swaggerUi.serve, swaggerUi.setup(swaggerFile));
 
 app.use((req, res, next) => {
@@ -62,27 +63,7 @@ const expressServer = app.listen(PORT, async (err) => {
     GenerateToken(CurrentUser);
 });
 
-
-const io = new Server(expressServer)
-
-io.use(decodeSocketIdToken);
-
-io.on('connection', socket => {
-    console.log(`User ${socket.id} connected`)
-
-    socket.on('message', data => {
-        console.log(data)
-        io.to(data.ConversationId).emit('message', data);
-    })
-
-    socket.on('JoinRoom', ({ ConversationId }) => {
-        socket.join(ConversationId);
-    });
-
-    socket.on('LeaveRoom', ({ ConversationId }) => {
-        socket.leave(ConversationId);
-    });
-})
+ConnectSocket(expressServer);
 
 
 
