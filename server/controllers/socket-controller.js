@@ -1,5 +1,5 @@
 import { Socket,Server } from "socket.io";
-import { PostMessages } from "./chat-controller";
+import { PostMessages } from "./chats-controller.js";
 import jwt from "jsonwebtoken";
 import ENV from "./../Env.js";
 import { decodeSocketIdToken } from "../middleware/auth-middleware.js";

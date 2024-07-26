@@ -1,6 +1,6 @@
 import {
     GetConversations, GetMessages, ReterieveConversationId,
-} from '../controllers/chat-controller.js';
+} from '../controllers/chats-controller.js';
 import asyncHandler from 'express-async-handler';
 import SwaggerDocs from '../swaggerDocs/chat-swaggerDocs.js'
 import e from 'express';

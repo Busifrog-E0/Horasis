@@ -12,7 +12,7 @@ import { AlertBoxObject } from "./common.js";
  * @typedef {import('../databaseControllers/conversations-databaseController.js').ConversationData} ConversationData 
  */
 /**
- * @typedef {import("../databaseControllers/messages-databaseController").MessageData}  MessageData
+ * @typedef {import("../databaseControllers/messages-databaseController.js").MessageData}  MessageData
  */
 
 
@@ -24,7 +24,7 @@ import { AlertBoxObject } from "./common.js";
  * @returns {Promise<e.Response<Array<ConversationData>>>}
  */
 const GetConversations = async (req, res) => {
-    const { Filter, NextId,Keyword, Limit, OrderBy } = req.query;
+    const { Filter, NextId, Keyword, Limit, OrderBy } = req.query;
     //@ts-ignore
     const { UserId } = req.user;
     if (Keyword) {
