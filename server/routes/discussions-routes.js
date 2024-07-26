@@ -12,7 +12,7 @@ import { decodeIDToken, ensureAuthorized } from '../middleware/auth-middleware.j
 import { ValidatePatchDiscussionCoverPhoto, ValidatePatchMemberPermission, ValidatePostDiscussion } from '../validations/discussions-validations.js';
 import { QueryParameterFormatting, ValidateGetEntity } from '../middleware/common.js';
 import { AcceptMemberInvitation, CancelInvitation, CancelJoinRequest, DeclineInvitation, DeleteMembers, GetMembers, InviteMembers, PostMembers, UpdateMemberPermissions } from '../controllers/members-controller.js';
-import { DiscussionJoinMiddleware, GetDiscussionsActivitiesMiddleware, PostDiscussionActivitiesMiddleware } from '../middleware/discussions-middleware.js';
+import { DiscussionJoinMiddleware, DiscussionLeaveMiddleware, GetDiscussionsActivitiesMiddleware, PostDiscussionActivitiesMiddleware } from '../middleware/discussions-middleware.js';
 import { GetFilteredActivities, PostActivities } from '../controllers/activities-controller.js';
 import { ValidatePostActivities } from '../validations/activities-validations.js';
 import { MemberPostActivityMiddleware } from '../middleware/members-middleware.js';
@@ -66,7 +66,7 @@ router.delete('/discussions/:EntityId/invite/:InviteeId/cancel', decodeIDToken, 
     // @ts-ignore
     asyncHandler(CancelInvitation));
 
-router.delete('/discussions/:EntityId/leave', decodeIDToken, ensureAuthorized("User"),
+router.delete('/discussions/:EntityId/leave', decodeIDToken, ensureAuthorized("User"),DiscussionLeaveMiddleware,
     SwaggerDocs.delete_Discussions_DiscussionId_Leave,
     // @ts-ignore
     asyncHandler(DeleteMembers));    

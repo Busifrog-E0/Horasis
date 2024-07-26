@@ -25,7 +25,7 @@ const GetOneFromDiscussions = async (req, res) => {
     if (Member.length > 0) {
         DiscussionMemberObject.IsMember = Member[0].MembershipStatus === "Accepted";
         DiscussionMemberObject.Permissions = Member[0].Permissions
-        DiscussionMemberObject.Status = Member[0].MembershipStatus
+        DiscussionMemberObject.MembershipStatus = Member[0].MembershipStatus
     }
     const data = { ...Discussion, ...DiscussionMemberObject };
     return res.json(data);
