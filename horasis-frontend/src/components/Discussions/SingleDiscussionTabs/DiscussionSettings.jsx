@@ -6,14 +6,17 @@ import { useToast } from '../../Toast/ToastService'
 import { getNextId } from '../../../utils/URLParams'
 import { jsonToQuery } from '../../../utils/searchParams/extractSearchParams'
 import { getItem, patchItem } from '../../../constants/operations'
+import { useNavigate } from 'react-router-dom'
 
-const DiscussionSettings = ({ discussionId }) => {
+const DiscussionSettings = ({ discussionId, from = 'settings' }) => {
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
 	const toast = useToast()
 	const [isLoading, setIsLoading] = useState(true)
 	const [isLoadingMore, setIsLoadingMore] = useState(false)
 	const [pageDisabled, setPageDisabled] = useState(true)
 	const [members, setMembers] = useState([])
+
+	const navigate = useNavigate()
 
 	const [filters, setFilters] = useState({
 		OrderBy: 'Index',
@@ -157,8 +160,17 @@ const DiscussionSettings = ({ discussionId }) => {
 		)
 	}
 
+	const viewDiscussionPage = () => navigate(`/Discussions/${discussionId}`)
+
 	return (
 		<div className='flex flex-col gap-4'>
+			{from === 'create' && (
+				<div className='self-end'>
+					<p className='text-system-primary-accent font-medium cursor-pointer' onClick={() => viewDiscussionPage()}>
+						Skip for now
+					</p>
+				</div>
+			)}
 			<div>
 				<h1 className='text-system-primary-text font-medium text-lg'>Group Invitations</h1>
 				<p className='text-brand-gray mt-1 mb-2 text-base'>Which members of this group are allowed to invite others?</p>

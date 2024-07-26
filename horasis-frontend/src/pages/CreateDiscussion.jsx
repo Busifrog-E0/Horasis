@@ -200,7 +200,7 @@ const CreateDiscussion = () => {
 								/>
 							)}
 							{activeStep === 3 && <CreateDiscussionStep3 discussionId={discussionId} />}
-							{activeStep === 4 && <DiscussionSettings discussionId={discussionId} />}
+							{activeStep === 4 && <DiscussionSettings discussionId={discussionId} from='create' />}
 
 							{/* {activeStep !== 4 && */}
 							<div className='grid grid-cols-2 lg:grid-cols-3 gap-4 py-8'>
