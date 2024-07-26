@@ -61,7 +61,7 @@ const SingleDiscussion = () => {
 	const tabs = (discussion) => {
 		const isPrivate = discussion.Privacy === 'Private'
 		const isMember = discussion.IsMember
-		const isAccepted = discussion.Status === 'Accepted'
+		const isAccepted = discussion.MembershipStatus === 'Accepted'
 		const isAdmin = discussion?.Permissions?.IsAdmin
 		if (isAdmin) {
 			return [
@@ -194,6 +194,8 @@ const SingleDiscussion = () => {
 			(result) => {
 				if (result === true) {
 					getDiscussion()
+				} else if (typeof result === 'object') {
+					getDiscussion()
 				}
 			},
 			(err) => console.log(err),
@@ -207,7 +209,7 @@ const SingleDiscussion = () => {
 			`discussions/${discussion.DocId}/leave`,
 			(result) => {
 				if (result === true) {
-					fetch()
+					getDiscussion()
 				}
 			},
 			(err) => {},
@@ -221,7 +223,7 @@ const SingleDiscussion = () => {
 			`discussions/${discussion.DocId}/invite/reject`,
 			(result) => {
 				if (result === true) {
-					fetch()
+					getDiscussion()
 				}
 			},
 			(err) => {},
@@ -231,7 +233,20 @@ const SingleDiscussion = () => {
 		)
 	}
 
-	const cancelJoinRequest = () => {}
+	const cancelJoinRequest = () => {
+		deleteItem(
+			`discussions/${discussion.DocId}/join/cancel`,
+			(result) => {
+				if (result === true) {
+					getDiscussion()
+				}
+			},
+			(err) => {},
+			updateCurrentUser,
+			currentUserData,
+			toast
+		)
+	}
 
 	return (
 		<>
@@ -290,28 +305,35 @@ const SingleDiscussion = () => {
 									<h4 className='font-semibold text-2xl text-system-primary-text'>Brief</h4>
 								</div>
 								<h4 className='text-xl text-brand-gray mt-2 mb-12 leading-8'>{discussion.Brief}</h4>
-								{discussion.isMember ? (
-									<Button variant='black' onClick={() => unFollowDiscussion()}>
-										Unfollow
-									</Button>
-								) : discussion.MembershipStatus === undefined ? (
-									<Button variant='black' onClick={() => joinDiscussion()}>
-										Join
-									</Button>
-								) : discussion.MembershipStatus === 'Requested' ? (
-									<Button variant='outline' onClick={() => cancelJoinRequest()}>
-										Cancel Request
-									</Button>
-								) : discussion.MembershipStatus === 'Invited' ? (
-									<>
-										<Button variant='outline' onClick={() => rejectInvite()}>
-											Reject
+								<div className='flex gap-2'>
+									{discussion.IsMember ? (
+										<>
+											{currentUserData.CurrentUser.UserId !== discussion.OrganiserId && (
+												<Button variant='outline' onClick={() => unFollowDiscussion()}>
+													Leave
+												</Button>
+											)}
+											
+										</>
+									) : discussion.MembershipStatus === undefined ? (
+										<Button variant='black' onClick={() => joinDiscussion()}>
+											Join
 										</Button>
-										<Button variant='black' onClick={() => acceptInvite()}>
-											Accept
+									) : discussion.MembershipStatus === 'Requested' ? (
+										<Button variant='outline' onClick={() => cancelJoinRequest()}>
+											Cancel Request
 										</Button>
-									</>
-								) : null}
+									) : discussion.MembershipStatus === 'Invited' ? (
+										<>
+											<Button variant='outline' onClick={() => rejectInvite()}>
+												Reject
+											</Button>
+											<Button variant='black' onClick={() => acceptInvite()}>
+												Accept
+											</Button>
+										</>
+									) : null}
+								</div>
 								{/* {discussion.Privacy === 'Private' ? (
 									<>
 										{discussion.Status === 'Invited' ? (

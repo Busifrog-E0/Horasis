@@ -69,8 +69,20 @@ const DiscussionTab = ({ discussion, onClick, fetch }) => {
 			toast
 		)
 	}
-	const cancelJoinRequest = () => {}
-
+	const cancelJoinRequest = () => {
+		deleteItem(
+			`discussions/${discussion.DocId}/join/cancel`,
+			(result) => {
+				if (result === true) {
+					fetch()
+				}
+			},
+			(err) => {},
+			updateCurrentUser,
+			currentUserData,
+			toast
+		)
+	}
 
 	return (
 		<div className='rounded-lg mt-3 overflow-hidden h-full bg-system-secondary-bg '>
@@ -89,9 +101,13 @@ const DiscussionTab = ({ discussion, onClick, fetch }) => {
 
 			<div className='flex items-center justify-center my-2 gap-2'>
 				{discussion.IsMember ? (
-					<Button variant='outline' onClick={() => unFollowDiscussion()}>
-						Leave
-					</Button>
+					<>
+						{currentUserData.CurrentUser.UserId !== discussion.OrganiserId && (
+							<Button variant='outline' onClick={() => unFollowDiscussion()}>
+								Leave
+							</Button>
+						)}
+					</>
 				) : discussion.MembershipStatus === undefined ? (
 					<Button variant='black' onClick={() => joinDiscussion()}>
 						Join
