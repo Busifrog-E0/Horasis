@@ -3,8 +3,9 @@ import {
     UpdateAndIncrementConversations, UpdateConversations
 } from "../databaseControllers/conversations-databaseController.js";
 import { CreateMessages, ReadMessages } from "../databaseControllers/messages-databaseController.js";
-import e from 'express'
+import e, { json } from 'express'
 import { ReadOneFromUsers } from "../databaseControllers/users-databaseController.js";
+import { AlertBoxObject } from "./common.js";
 
 
 /**
@@ -15,17 +16,6 @@ import { ReadOneFromUsers } from "../databaseControllers/users-databaseControlle
  */
 
 
-/**
- * 
- * @param {e.Request} req 
- * @param {e.Response} res 
- * @returns {Promise<e.Response<ConversationData>>}
- */
-const GetOneFromConversations = async (req, res) => {
-    const { ConversationId } = req.params;
-    const data = await ReadOneFromConversations(ConversationId);
-    return res.json(data);
-}
 
 /**
  * 
@@ -35,51 +25,27 @@ const GetOneFromConversations = async (req, res) => {
  */
 const GetConversations = async (req, res) => {
     const { Filter, NextId,Keyword, Limit, OrderBy } = req.query;
-    const { UserId } = req.params;
+    //@ts-ignore
+    const { UserId } = req.user;
     if (Keyword) {
         //@ts-ignore
-        Filter.$or = [
-            { 'UserDetails.Username': { '$regex': Keyword, '$options': 'i' } },
-            { 'UserDetails.FullName': { '$regex': Keyword, '$options': 'i' } }
-        ];
+        Filter.UserDetails = {
+            $elemMatch: {
+                $or: [
+                    { 'Username': { $regex: Keyword, $options: 'i' } },
+                    { 'FullName': { $regex: Keyword, $options: 'i' } }
+                ],
+                'DocId': { $ne: UserId }
+            }
+        };
     }
     // @ts-ignore
-    Filter.ParticipantIds = { '$in': [UserId] }
+    Filter.ParticipantIds = { '$in': [UserId] };
+    // @ts-ignore
+    Filter.OneMessageSent = true;
     //@ts-ignore
     const data = await ReadConversations(Filter, NextId, Limit, OrderBy);
     return res.json(data);
-}
-/*
-const updateUserDetails = async (userId, updatedUserDetails) => {
-    await Conversation.updateMany({ "ParticipantIds": { "$in": [userId] } }, { $set: { "UserDetails.$[elem]": updatedUserDetails } }, { arrayFilters: [{ "elem.UserId": userId }] });
-    await Activity.updateMany({ "UserId": userId }, { $set: { "UserDetails": updatedUserDetails } });
-}
-    */
-/**
- * 
- * @param {object} data
- * @returns {Promise<boolean>}
- */
-const PostMessages = async (data) => {
-    const { SenderId, ReceiverId } = data;
-    const ParticipantIds = [SenderId, ReceiverId];
-    const ConversationData = await ReadConversations({ ParticipantIds: { '$all': ParticipantIds } }, undefined, 1, undefined);
-    let ConversationId;
-    if (ConversationData.length == 0) {
-        const UserDetails = await Promise.all(ParticipantIds.map(async UserId => {
-            return await ReadOneFromUsers(UserId);
-        }));
-        const Conversation = ConversationInit({ UserDetails, ParticipantIds });
-        ConversationId = await CreateConversations(Conversation)
-    }
-    else {
-        ConversationId = ConversationData[0].DocId;
-    }
-    data = MessageInit(data);
-    data = { ...data, ConversationId, SenderId, ReceiverId };
-    await CreateMessages(data);
-    await UpdateAndIncrementConversations({ LatestMessage: data }, { UnreadMessages: 1 }, ConversationId);
-    return true;
 }
 
 /**
@@ -92,6 +58,15 @@ const GetMessages = async (req, res) => {
     const { ConversationId } = req.params;
     const { Filter, NextId, Limit, OrderBy } = req.query;
     // @ts-ignore
+    const { UserId } = req.user;
+
+    const ConversationData = await ReadOneFromConversations(ConversationId);
+    if (!ConversationData.ParticipantIds.includes(UserId)) {
+        return res.status(444).json(AlertBoxObject("No Access", "You have no access to these messages."));
+    }
+
+
+    // @ts-ignore
     Filter.ConversationId = ConversationId;
     // @ts-ignore
     const data = await ReadMessages(Filter, NextId, Limit, OrderBy);
@@ -99,11 +74,63 @@ const GetMessages = async (req, res) => {
     return res.json(data);
 }
 
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ * @returns {Promise<e.Response<string>>}
+ */
+const ReterieveConversationId = async (req, res) => {
+
+    // @ts-ignore
+    const SenderId = req.user.UserId;
+
+    const { ReceiverId } = req.body;
+    const CheckConversation = await ReadConversations({ ParticipantIds: { $all: [SenderId, ReceiverId] } }, undefined, 1, undefined);
+    if (CheckConversation.length > 0) {
+        return res.json(CheckConversation[0].DocId);
+    }
+
+    const [SenderData, ReceiverData] = await Promise.all([
+        ReadOneFromUsers(SenderId),
+        ReadOneFromUsers(ReceiverId),
+    ]);
+    if (!SenderData || !ReceiverId) {
+        return res.status(444).json(AlertBoxObject("Invalid User", "User doesn't exists."));
+    }
+
+    let ConversationData = {
+        UserDetails: [SenderData, ReceiverData],
+        ParticipantIds: [SenderId, ReceiverId]
+    };
+    ConversationData = ConversationInit(ConversationData);
+    const ConversationId = await CreateConversations(ConversationData);
+    return res.json(ConversationId);
+}
+
+/**
+ * 
+ * @param {{ConversationId:string,SenderId:string,Content:string}} data
+ * @returns {Promise<{Success:boolean,Data:object}>}
+ */
+const PostMessages = async (data) => {
+    const { ConversationId, SenderId } = data;
+    const ConversationData = await ReadOneFromConversations(ConversationId);
+    if (!CheckUserInConversation(ConversationData, SenderId)) {
+        return { Success: false, Data: {} };
+    }
+    data = MessageInit(data);
+    await Promise.all([
+        CreateMessages(data),
+        UpdateConversations({ LatestMessage: data }, ConversationId),
+    ])
+    return { Success: true, Data: data };
+}
 
 const ConversationInit = (Conversation) => {
     return {
         ...Conversation,
-        UnreadMessages: 0,
+        OneMessageSent: false,
         LastMessage: {}
     }
 }
@@ -111,12 +138,28 @@ const ConversationInit = (Conversation) => {
 const MessageInit = (Message) => {
     return {
         ...Message,
+        SeenUsers: [],
     }
 }
+
+/**
+ * 
+ * @param {ConversationData} ConversationData 
+ * @param {string} UserId 
+ * @returns {boolean}
+ */
+const CheckUserInConversation = (ConversationData, UserId) => {
+    if (!ConversationData) {
+        return false;
+    }
+    return ConversationData.ParticipantIds.includes(UserId)
+}
+
+
 
 export {
     PostMessages,
     GetMessages,
     GetConversations,
-    GetOneFromConversations
+    ReterieveConversationId,
 }

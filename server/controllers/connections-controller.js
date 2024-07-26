@@ -21,10 +21,15 @@ const GetAUsersConnections = async (req, res) => {
     const UserId = req.user.UserId;
     if (Keyword) {
         //@ts-ignore
-        Filter['$or'] = [
-            { 'UserDetails.FullName': { $regex: Keyword, $options: 'i' } },
-            { 'UserDetails.Username': { $regex: Keyword, $options: 'i' } },
-        ]
+        Filter.UserDetails = {
+            $elemMatch: {
+                $or: [
+                    { 'Username': { $regex: Keyword, $options: 'i' } },
+                    { 'FullName': { $regex: Keyword, $options: 'i' } }
+                ],
+                'DocId': { $ne: UserId }
+            }
+        };
     }
     // @ts-ignore
     const data = await ReadConnections(Filter, NextId, Limit, OrderBy);

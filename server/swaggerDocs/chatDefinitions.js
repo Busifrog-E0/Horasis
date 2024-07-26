@@ -17,7 +17,6 @@ const ConversationData = {
     ],
     "ParticipantIds": ["60c72b2f5f1b2c0015a4e7d0", "60c72b305f1b2c0015a4e7d1"],
     "LatestMessage": MessageData,
-    "UnreadMessages": 1,
     "DocId": "60c72b345f1b2c0015a4e7d3"
 }
 

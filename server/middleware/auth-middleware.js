@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import ENV from "./../Env.js";
 import e from "express";
+import { SocketError } from "../controllers/common.js";
 
 /**
  * 
@@ -61,11 +62,7 @@ const decodeSocketIdToken = (socket, next) => {
     const authHeader = socket.handshake.auth.token || "";
     const token = authHeader.split(" ")[1];
     if (!token) {
-        const Message = 'Authentication token is missing';
-        const err = new Error(Message);
-        // @ts-ignore
-        err.data = { Message, StatusCode: 403 };
-        return next(err);
+        return next(SocketError('Authentication token is missing', 403));
     }
     try {
         const user = jwt.verify(token, ENV.TOKEN_KEY);
@@ -73,11 +70,7 @@ const decodeSocketIdToken = (socket, next) => {
         socket.user = user;
         // @ts-ignore
     } catch (error) {
-        const Message = 'Invalid Token';
-        const err = new Error(Message);
-        // @ts-ignore
-        err.data = { Message, StatusCode: 401 };
-        return next(err);
+        return next(SocketError('Invalid Token', 401));
     }
     return next();
 }

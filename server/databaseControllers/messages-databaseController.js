@@ -2,10 +2,9 @@ import dataHandling from './functions.js'
 
 /**
  * @typedef {object} MessageData
- * @property {boolean} HasSeen
+ * @property {Array<{UserId:string,SeenIndex:number}>} SeenUsers
  * @property {string} ConversationId
  * @property {string} SenderId
- * @property {string} RecieverId
  * @property {string} Content
  * @property {number} CreatedIndex
  * @property {string} DocId
