@@ -44,6 +44,15 @@ const UpdateMessages = async (data, DocId) => {
     return dataHandling.Update('Messages', data, DocId);
 }
 
+/**
+ * 
+ * @param {MessageData|object} data 
+ * @param {object} filter 
+ * @returns {Promise<boolean>}
+ */
+const UpdateManyMessage = async (filter, data, operation = ["$set"]) => {
+    return dataHandling.UpdateMany("Messages", data, filter, operation);
+}
 
 /**
  * 
@@ -69,6 +78,7 @@ export {
     ReadMessages,
     ReadOneFromMessages,
     UpdateMessages,
+    UpdateManyMessage,
     CreateMessages,
     RemoveMessages
 }

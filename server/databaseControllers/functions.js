@@ -65,10 +65,17 @@ async function Update(collectionName, data, docName, operation = ["$set"], LastU
  * @param {string} collectionName
  * @param {object} data
  * @param {object} filter
+ * @param {object} dataSets
+ * @param {Array<string>} operation
+ * 
  */
-async function UpdateMany(collectionName, data, filter) {
+async function UpdateMany(collectionName, data, filter, operation = ["$set"], ...dataSets) {
     return new Promise(async (resolve, reject) => {
         try {
+            const OperationObject = { [operation[0]]: data }
+            for (let index = 1; index < operation.length; index++) {
+                OperationObject[operation[index]] = dataSets[index - 1];
+            }
             await db.collection(collectionName).updateMany(filter, data);
             resolve(true);
         } catch (error) {

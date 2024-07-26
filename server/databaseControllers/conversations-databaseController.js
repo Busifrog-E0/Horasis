@@ -11,6 +11,7 @@ import dataHandling from './functions.js'
  * @property {[string,string]} ParticipantIds
  * @property {MessageData} LatestMessage
  * @property {boolean} OneMessageSent
+ * @property {number} CreatedIndex
  * @property {string} DocId
  */
 

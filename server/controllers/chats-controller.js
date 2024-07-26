@@ -2,11 +2,11 @@ import {
     CreateConversations, ReadConversations, ReadOneFromConversations,
     UpdateAndIncrementConversations, UpdateConversations
 } from "../databaseControllers/conversations-databaseController.js";
-import { CreateMessages, ReadMessages } from "../databaseControllers/messages-databaseController.js";
+import { CreateMessages, ReadMessages, UpdateManyMessage, UpdateMessages } from "../databaseControllers/messages-databaseController.js";
 import e, { json } from 'express'
 import { ReadOneFromUsers } from "../databaseControllers/users-databaseController.js";
 import { AlertBoxObject } from "./common.js";
-
+import moment from "moment-timezone";
 
 /**
  * @typedef {import('../databaseControllers/conversations-databaseController.js').ConversationData} ConversationData 
@@ -61,16 +61,17 @@ const GetMessages = async (req, res) => {
     const { UserId } = req.user;
 
     const ConversationData = await ReadOneFromConversations(ConversationId);
-    if (!ConversationData.ParticipantIds.includes(UserId)) {
+    if (!CheckUserInConversation(ConversationData, UserId)) {
         return res.status(444).json(AlertBoxObject("No Access", "You have no access to these messages."));
     }
-
 
     // @ts-ignore
     Filter.ConversationId = ConversationId;
     // @ts-ignore
     const data = await ReadMessages(Filter, NextId, Limit, OrderBy);
-    await UpdateConversations({ UnreadMessages: 0 }, ConversationId);
+    if (!NextId) {
+        await UpdateAllNotSeenMessages(UserId);
+    }
     return res.json(data);
 }
 
@@ -155,7 +156,9 @@ const CheckUserInConversation = (ConversationData, UserId) => {
     return ConversationData.ParticipantIds.includes(UserId)
 }
 
-
+const UpdateAllNotSeenMessages = async (UserId) => {
+    await UpdateManyMessage({ SeenUsers: { "$ne": UserId } }, { SeenUsers: { UserId, SeenIndex: moment().valueOf() } }, ["$push"]);
+}
 
 export {
     PostMessages,

@@ -20,7 +20,7 @@ router.get('/chats/:ConversationId/messages', decodeIDToken, ensureAuthorized("U
 
 
 router.post('/reterieveConversationId', decodeIDToken, ensureAuthorized("User"), PostReterieveConversationId,
-    SwaggerDocs.get_Chat_ConversationId_Messages,
+    SwaggerDocs.post_ReterieveConversationId,
     // @ts-ignore
     asyncHandler(ReterieveConversationId));
 
