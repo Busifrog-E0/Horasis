@@ -117,15 +117,17 @@ const DiscussionTab = ({ discussion, onClick, fetch }) => {
 						Cancel Request
 					</Button>
 				) : discussion.MembershipStatus === 'Invited' ? (
-					<>
-					
-						<Button variant='outline' onClick={() => rejectInvite()}>
-							Reject
-						</Button>
-						<Button variant='black' onClick={() => acceptInvite()}>
-							Accept
-						</Button>
-					</>
+					<div className='flex flex-col items-center gap-2 px-4 '>
+						<p className='text-system-secondary-text text-center text-xs'>You have been invited to this discussion</p>
+						<div className='flex gap-2'>
+							<Button variant='black' onClick={() => acceptInvite()} >
+								Accept
+							</Button>
+							<Button variant='outline' onClick={() => rejectInvite()} >
+								Reject
+							</Button>
+						</div>
+					</div>
 				) : null}
 
 				{/* {discussion.Privacy === 'Private' ? (

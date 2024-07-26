@@ -316,7 +316,7 @@ const SingleDiscussion = () => {
 							{/* back arrow */}
 							<h4 className='font-medium text-xl text-brand-secondary'>Back</h4>
 						</div>
-						<div
+						{/* <div
 							className={`inline-flex items-center justify-center w-12 h-12 p-3 overflow-hidden rounded-full border border-white bg-white cursor-pointer`}>
 							<svg aria-hidden='true' xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'>
 								<path
@@ -327,7 +327,7 @@ const SingleDiscussion = () => {
 									d='M4 12.25V1m0 11.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M4 19v-2.25m6-13.5V1m0 2.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M10 19V7.75m6 4.5V1m0 11.25a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5ZM16 19v-2'
 								/>
 							</svg>
-						</div>
+						</div> */}
 					</div>
 					<div>
 						<h4 className='font-medium shadow-lg text-4xl text-white mb-3'>{discussion.DiscussionName}</h4>
@@ -372,14 +372,17 @@ const SingleDiscussion = () => {
 											Cancel Request
 										</Button>
 									) : discussion.MembershipStatus === 'Invited' ? (
-										<>
-											<Button variant='outline' onClick={() => rejectInvite()}>
-												Reject
-											</Button>
-											<Button variant='black' onClick={() => acceptInvite()}>
-												Accept
-											</Button>
-										</>
+										<div className='flex flex-col items-start gap-2'>
+											<p className='text-system-secondary-text'>You have been invited to this discussion</p>
+											<div className='flex gap-2'>
+												<Button variant='outline' onClick={() => rejectInvite()}>
+													Reject
+												</Button>
+												<Button variant='black' onClick={() => acceptInvite()}>
+													Accept
+												</Button>
+											</div>
+										</div>
 									) : null}
 								</div>
 								{/* {discussion.Privacy === 'Private' ? (
