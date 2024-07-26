@@ -311,13 +311,13 @@ const SingleDiscussion = () => {
 										<>
 											{currentUserData.CurrentUser.UserId !== discussion.OrganiserId && (
 												<Button variant='outline' onClick={() => unFollowDiscussion()}>
-													Leave
+													Unfollow
 												</Button>
 											)}
 										</>
 									) : discussion.MembershipStatus === undefined ? (
 										<Button variant='black' onClick={() => joinDiscussion()}>
-											Join
+											Follow
 										</Button>
 									) : discussion.MembershipStatus === 'Requested' ? (
 										<Button variant='outline' onClick={() => cancelJoinRequest()}>

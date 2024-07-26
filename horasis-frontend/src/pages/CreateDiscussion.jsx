@@ -18,6 +18,7 @@ import Spinner from '../components/ui/Spinner'
 import Modal from '../components/ui/Modal'
 import { PostDiscussionSchema } from '../utils/schema/discussions/discussionValidation'
 import DiscussionSettings from '../components/Discussions/SingleDiscussionTabs/DiscussionSettings'
+import EmptyMembers from '../components/Common/EmptyMembers'
 
 const CreateDiscussion = () => {
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
@@ -245,7 +246,8 @@ const CreateDiscussion = () => {
 								{/* arrow cursor-pointer */}
 							</div>
 							<div className='flex flex-col gap-3'>
-								<PostTab />
+								<EmptyMembers emptyText={"No saved posts"} />
+								{/* <PostTab />
 								<div className='p-4 pb-5 bg-system-secondary-bg rounded-lg mt-3 border border-system-file-border'>
 									<div className='flex items-start gap-2'>
 										<img
@@ -314,7 +316,7 @@ const CreateDiscussion = () => {
 											<DropdownMenu />
 										</div>
 									</div>
-								</div>
+								</div> */}
 							</div>
 						</div>
 					</div>

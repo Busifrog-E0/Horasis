@@ -16,6 +16,8 @@ const DiscussionSection = () => {
 	const [isLoading, setIsLoading] = useState(true)
 	const [isLoadingMore, setIsLoadingMore] = useState(false)
 	const [discussions, setDiscussions] = useState([])
+	const [invitedDiscussions, setInvitedDiscussions] = useState([])
+	const [followingDiscussions, setFollowingDiscussions] = useState([])
 	const [pageDisabled, setPageDisabled] = useState(true)
 	const [filters, setFilters] = useState({
 		OrderBy: 'Index',
@@ -23,6 +25,8 @@ const DiscussionSection = () => {
 		Keyword: '',
 	})
 	const api = 'discussions'
+	const invitedApi = `user/${currentUserData.CurrentUser.UserId}/discussions/invited`
+	const followingApi = `user/${currentUserData.CurrentUser.UserId}/discussions`
 
 	const setLoadingCom = (tempArr, value) => {
 		if (tempArr.length > 0) {
@@ -35,6 +39,14 @@ const DiscussionSection = () => {
 	const getDiscussions = (tempDiscussions) => {
 		getData(`${api}?&${jsonToQuery(filters)}`, tempDiscussions, setDiscussions)
 	}
+
+	const getInvitedDiscussions = (tempInvitedDiscussions) => {
+		getData(`${invitedApi}?&${jsonToQuery(filters)}`, tempInvitedDiscussions, setInvitedDiscussions)
+	}
+	const getFollowingDiscussions = (tempFollowingDiscussions) => {
+		getData(`${followingApi}?&${jsonToQuery(filters)}`, tempFollowingDiscussions, setFollowingDiscussions)
+	}
+
 	const getData = (endpoint, tempData, setData) => {
 		setLoadingCom(tempData, true)
 		getItem(
@@ -72,19 +84,38 @@ const DiscussionSection = () => {
 	}
 
 	const fetchData = (initialRender = false) => {
-		getDiscussions(initialRender ? [] : discussions)
+		switch (activeTab) {
+			case 'all':
+				getDiscussions(initialRender ? [] : discussions)
+				break
+			case 'following':
+				getFollowingDiscussions(initialRender ? [] : followingDiscussions)
+				break
+			case 'invited':
+				getInvitedDiscussions(initialRender ? [] : invitedDiscussions)
+		}
 	}
 
 	const fetch = () => fetchData(true)
 	const fetchMore = () => fetchData(false)
 
 	useEffect(() => {
-		if (discussions.length > 0) hasAnyLeft(`${api}`, discussions)
-	}, [discussions])
+		switch (activeTab) {
+			case 'all':
+				if (discussions.length > 0) hasAnyLeft(`${api}`, discussions)
+				break
+			case 'following':
+				if (followingDiscussions.length > 0) hasAnyLeft(`${followingApi}`, followingDiscussions)
+				break
+			case 'invited':
+				if (invitedDiscussions.length > 0) hasAnyLeft(`${invitedApi}`, invitedDiscussions)
+				break
+		}
+	}, [discussions, invitedDiscussions, followingDiscussions])
 
 	useEffect(() => {
 		fetch()
-	}, [filters])
+	}, [filters, activeTab])
 
 	return (
 		<>
@@ -155,8 +186,76 @@ const DiscussionSection = () => {
 					)}
 				</div>
 			)}
-			{activeTab === 'following' && <>Following Tab</>}
-			{activeTab === 'invited' && <>Invited Tab</>}
+			{activeTab === 'following' && (
+				<>
+					<div className='mb-4'>
+						{isLoading ? (
+							<Spinner />
+						) : followingDiscussions.length > 0 ? (
+							<>
+								<DiscussionsList
+									data={followingDiscussions}
+									emptyText={'No discussions'}
+									gap={'gap-2 lg:gap-4'}
+									cols={'grid-cols-2 md:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3'}
+									fetch={fetch}
+								/>
+								<div className='my-4'>
+									{isLoadingMore && (
+										<div className='bg-system-primary-bg p-4 rounded-b-lg '>
+											<Spinner />
+										</div>
+									)}
+									{!pageDisabled && (
+										<div onClick={fetchMore} className='flex flex-row justify-end mt-4 mb-2'>
+											<div className='cursor-pointer flex items-center gap-2'>
+												<h4 className='font-semibold text-xl text-system-primary-accent'>Load More</h4>
+											</div>
+										</div>
+									)}
+								</div>
+							</>
+						) : (
+							<EmptyMembers emptyText={"You don't have any discussions available."} />
+						)}
+					</div>
+				</>
+			)}
+			{activeTab === 'invited' && (
+				<>
+					<div className='mb-4'>
+						{isLoading ? (
+							<Spinner />
+						) : invitedDiscussions.length > 0 ? (
+							<>
+								<DiscussionsList
+									data={invitedDiscussions}
+									emptyText={'No discussions'}
+									gap={'gap-2 lg:gap-4'}
+									cols={'grid-cols-2 md:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3'}
+									fetch={fetch}
+								/>
+								<div className='my-4'>
+									{isLoadingMore && (
+										<div className='bg-system-primary-bg p-4 rounded-b-lg '>
+											<Spinner />
+										</div>
+									)}
+									{!pageDisabled && (
+										<div onClick={fetchMore} className='flex flex-row justify-end mt-4 mb-2'>
+											<div className='cursor-pointer flex items-center gap-2'>
+												<h4 className='font-semibold text-xl text-system-primary-accent'>Load More</h4>
+											</div>
+										</div>
+									)}
+								</div>
+							</>
+						) : (
+							<EmptyMembers emptyText={"You don't have any discussions available."} />
+						)}
+					</div>
+				</>
+			)}
 		</>
 	)
 }
