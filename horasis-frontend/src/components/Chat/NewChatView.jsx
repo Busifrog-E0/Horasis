@@ -20,7 +20,6 @@ const NewChatView = ({ userId }) => {
 
 	// message
 	const [messages, setMessages] = useState([])
-	const [newMessages, setNewMessages] = useState([])
 	const [messageToSend, setMessageToSend] = useState('')
 	const [conversationId, setConversationId] = useState('')
 
@@ -207,8 +206,8 @@ const NewChatView = ({ userId }) => {
 				<DashboardHeader />
 				<UserDetailsTab user={user} isLoading={isUserLoading} />
 
-				<div className='flex-1 h-full overflow-auto px-3 pt-3 flex flex-col-reverse relative '>
-					<div className='flex flex-row gap-2  items-center  justify-center w-full absolute  top-0'>
+				{!pageDisabled && (
+					<div className='flex flex-row gap-2  items-center  justify-center w-full '>
 						<p
 							onClick={() => {
 								fetchMore()
@@ -217,8 +216,10 @@ const NewChatView = ({ userId }) => {
 							Load previous chat
 						</p>
 					</div>
-					{isLoading ? <Spinner /> : <></>}
+				)}
+				<div className='my-2'>{isLoading || isLoadingMore ? <Spinner /> : <></>}</div>
 
+				<div className='flex-1 overflow-auto px-3 pt-3 flex flex-col-reverse relative '>
 					{/* auto scroll to bottom if new message came */}
 					{messages.length > 0 ? (
 						messages.map((message, index) => {
