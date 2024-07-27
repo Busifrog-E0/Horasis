@@ -1,5 +1,5 @@
 import { Socket,Server } from "socket.io";
-import { PostMessages } from "./chats-controller.js";
+import { PostMessages, CheckUserInConversation } from "./chats-controller.js";
 import jwt from "jsonwebtoken";
 import ENV from "./../Env.js";
 import { decodeSocketIdToken } from "../middleware/auth-middleware.js";
@@ -63,8 +63,4 @@ const ConnectSocket = (expressServer) => {
 
 export {
     ConnectSocket
-}
-
-function CheckUserInConversation(ConversationData, UserId) {
-    throw new Error("Function not implemented.");
 }
