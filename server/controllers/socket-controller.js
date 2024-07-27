@@ -27,8 +27,12 @@ const ConnectSocket = (expressServer) => {
         // @ts-ignore
             data.SenderId = socket.user.UserId;
             const MessageData = await PostMessages(data);
+            console.log('Messsage ', data);
+
             if (MessageData.Success === true) {
                 io.to(data.ConversationId).emit('Messsage', MessageData.Data);
+                console.log('Messsage2 ', data);
+
                 MessageData.ParticipantIds.map(id => {
                     io.to(id).emit('CoversationList', true);
                 })
@@ -36,11 +40,15 @@ const ConnectSocket = (expressServer) => {
         })
 
         socket.on('JoinRoom', async ({ ConversationId }) => {
+            console.log('JoinRoom ', ConversationId);
             const ConversationData = await ReadOneFromConversations(ConversationId);
         // @ts-ignore
             if (CheckUserInConversation(ConversationData, socket.user.UserId)) {
                 // leave existing rooms?
                 socket.join(ConversationId);
+                // @ts-ignore
+                console.log('JoinRoom ', ConversationId, socket.user.UserId);
+
             }
 
         });
