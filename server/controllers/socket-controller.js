@@ -23,15 +23,15 @@ const ConnectSocket = (expressServer) => {
         socket.join(socket.user.UserId);
 
 
-        socket.on('Messsage', async data => {
+        socket.on('Message', async data => {
         // @ts-ignore
             data.SenderId = socket.user.UserId;
             const MessageData = await PostMessages(data);
-            console.log('Messsage ', data);
+            console.log('Message ', data);
 
             if (MessageData.Success === true) {
-                io.to(data.ConversationId).emit('Messsage', MessageData.Data);
-                console.log('Messsage2 ', data);
+                io.to(data.ConversationId).emit('Message', MessageData.Data);
+                console.log('Message2 ', data);
 
                 MessageData.ParticipantIds.map(id => {
                     io.to(id).emit('CoversationList', true);
