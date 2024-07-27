@@ -1,5 +1,5 @@
 
-import ChatView from "./ChatView"
+// import ChatView from "./ChatView"
 
 const ChatPopup = ({ userId }) => {
     return (
@@ -8,7 +8,7 @@ const ChatPopup = ({ userId }) => {
                 <p className='text-brand-secondary text-md'>Chat</p>
             </div>
             <div className=" w-96 h-96">
-                <ChatView userId={userId} />
+                {/* <ChatView userId={userId} /> */}
             </div>
         </div>
     )
