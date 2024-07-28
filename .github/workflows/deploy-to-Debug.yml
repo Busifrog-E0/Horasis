@@ -20,6 +20,7 @@ jobs:
         mkdir -p ~/.ssh
         echo "${{ secrets.DEBUG_SSH_TOKEN }}" > ~/.ssh/id_rsa
         chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan -H 139.59.46.32 >> ~/.ssh/known_hosts
 
     - name: Pull latest changes to DigitalOcean Droplet
       run: |
