@@ -197,10 +197,35 @@ async function Read(collectionName, docName, NextIndex = "", limit = 10, where =
  * 
  * @param {string} collectionName 
  * @param {Array<Object>} AggregateArray 
+ * @param {string} NextIndex
+ * @param {number} limit
+ * @param {object} orderBy
  * @returns 
  */
-async function Aggregate(collectionName, AggregateArray) {
+async function Aggregate(collectionName, AggregateArray, NextIndex = "", limit = 10, orderBy = { "Index": "desc" }) {
     const data = [];
+    if (!Check(NextIndex)) {
+        let sortMatchObject = {};
+        const OrderByKeys = Object.keys(orderBy);
+        let NextField = OrderByKeys[0] || "Index";
+        const [Index, nextId] = NextIndex.split('--');
+        if (orderBy[NextField] === "desc") {
+            sortMatchObject["$or"] = [
+                { [NextField]: { "$lt": Index } },
+                { [NextField]: Index, "_id": { "$lt": new ObjectId(nextId) } }]
+        }
+        else {
+            sortMatchObject["$or"] = [
+                { [NextField]: { "$gt": Index } },
+                { [NextField]: Index, "_id": { "$lt": new ObjectId(nextId) } }]
+        }
+        AggregateArray.push({ $match: sortMatchObject });
+    }
+    orderBy = ConvertSortForAggregate(orderBy);
+    AggregateArray.push({ $sort: orderBy });
+    if (limit !== -1) {
+        AggregateArray.push({ $limit: limit });
+    }
     const promise = await db.collection(collectionName).aggregate(AggregateArray).toArray();
     promise.forEach((doc) => {
         data.push({ ...doc, "DocId": doc._id.toString(), "NextId": `${doc.Index}--${doc._id}` });
@@ -265,7 +290,12 @@ function substract(b, c) {
     return fv
 }
 
-
+const ConvertSortForAggregate = (orderBy) => {
+    return Object.keys(orderBy).reduce((acc, field) => {
+        acc[field] = orderBy[field] === 'asc' ? 1 : -1;
+        return acc;
+    }, {});
+}
 // async function toBase64(ImgUrl) {
 //     const imageToBase64 = require('image-to-base64');
 

@@ -74,8 +74,8 @@ const UpdateAndIncrementActivities = async (UpdateData, IncrementData, DocId) =>
   return dataHandling.Update("Activities", UpdateData, DocId, ["$set","$inc"], true,IncrementData);
 }
 
-const AggregateActivities = async (AggregateArray) => {
-  return dataHandling.Aggregate("Activities", AggregateArray);
+const AggregateActivities = async (AggregateArray,NextIndex,Limit,OrderBy) => {
+  return dataHandling.Aggregate("Activities", AggregateArray, NextIndex, Limit, OrderBy);
 }
 
 export {

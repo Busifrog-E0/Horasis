@@ -173,7 +173,8 @@ const GetInvitedDiscussions = async (req, res) => {
                 "Member.MemberId": UserId,
                 "Member.MembershipStatus": "Invited"
             }
-        }
+        },
+        
     ]
     if (NextId) {
         const [Index, nextId] = NextId.split('--');

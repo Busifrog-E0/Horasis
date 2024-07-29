@@ -185,6 +185,11 @@ const patch_Discussions_DiscussionId_Join_Accept = async (req, res, next) => {
     next();
 }
 
+const get_Discussions_DiscussionId_Members_Invited = async (req, res, next) => {
+    // #swagger.tags = ['Discussions']
+    /* #swagger.security = [{ "BearerAuth": [] }] */
+    next();
+}
 
 export default {
     post_Discussion,get_User_UserId_Discussions,get_Discussions_DiscussionId_Members_Requested,
@@ -192,7 +197,7 @@ export default {
     get_Discussions, delete_Discussion_DiscussionId_Join_Cancel, get_Discussions_DiscussionId_Save,
     delete_Discussions_DiscussionId_Save,delete_Discussions_DiscussionId_Join_Reject,
     post_Discussions_EntityId_Join,get_Discussions_Invited,patch_Discussions_DiscussionId_Join_Accept,
-    post_Discussions_EntityId_Invite_InviteeId,
+    post_Discussions_EntityId_Invite_InviteeId,get_Discussions_DiscussionId_Members_Invited,
     patch_Discussions_EntityId_Invite_Accept,
     patch_Discussions_EntityId_Member_Permissions,
     get_Discussions_DiscussionId_Activities,

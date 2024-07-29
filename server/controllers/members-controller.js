@@ -4,6 +4,8 @@ import { ReadOneFromMembers, ReadMembers, UpdateMembers, CreateMembers, RemoveMe
 import { IncrementDiscussions, ReadOneFromDiscussions } from '../databaseControllers/discussions-databaseController.js';
 import { AlertBoxObject } from './common.js';
 import { ReadOneFromUsers } from '../databaseControllers/users-databaseController.js';
+import { ObjectId } from 'mongodb';
+import { AggregateConnections } from '../databaseControllers/connections-databaseController.js';
 /**
  * @typedef {import('./../databaseControllers/members-databaseController.js').MemberData} MemberData 
  */
@@ -47,34 +49,34 @@ const PostMembers = async (req, res) => {
     //@ts-ignore
     const { UserId } = req.user;
     const { EntityId } = req.params;
+
     const MemberCheck = await ReadMembers({ MemberId: UserId, EntityId, MembershipStatus: "Accepted" }, undefined, 1, undefined);
     if (MemberCheck.length > 0) {
         return res.status(444).json(AlertBoxObject("Cannot Join", "You have already joined this discussion"));
     }
+
     let Entity = {};
     const UserDetails = await ReadOneFromUsers(UserId);
     req.body = { ...MemberInit(req.body), MemberId: UserId, EntityId, UserDetails };
-    switch (req.body.Type) {
-        case "Discussion":
-            Entity = await ReadOneFromDiscussions(EntityId);
-            break;
-        case "Event":
-            Entity = {};
-            break;
-        default:
-            break;
+    if (req.body.Type === "Discussion") {
+        Entity = await ReadOneFromDiscussions(EntityId);
     }
+    else {
+        Entity = {};
+    }
+
     if (Entity.Privacy === "Private") {
         req.body.MembershipStatus = "Requested";
     }
+
     await CreateMembers(req.body);
+
     if (Entity.Privacy === "Public") {
         await IncrementDiscussions({ NoOfMembers: 1 }, EntityId);
         return res.json(true);
     }
-    else {
-        return res.status(244).json(AlertBoxObject("Request Sent", "Request has been sent"));
-    }
+
+    return res.status(244).json(AlertBoxObject("Request Sent", "Request has been sent"));
 
 }
 
@@ -96,6 +98,12 @@ const CancelJoinRequest = async (req, res) => {
     return res.json(true);
 }
 
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ * @returns 
+ */
 const AcceptJoinRequest = async (req, res) => {
     //@ts-ignore
     const { EntityId, UserId } = req.params;
@@ -110,6 +118,12 @@ const AcceptJoinRequest = async (req, res) => {
     return res.json(true);
 }
 
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ * @returns 
+ */
 const RejectJoinRequest = async (req, res) => {
     //@ts-ignore
     const { EntityId, UserId } = req.params;
@@ -139,6 +153,7 @@ const InviteMembers = async (req, res) => {
     }
 
     const Invitee = await ReadMembers({ MemberId: InviteeId, EntityId }, undefined, 1, undefined);
+
     if (Invitee[0]) {
         if (Invitee[0].MembershipStatus === "Requested") {
             await UpdateMembers({ MembershipStatus: "Accepted" }, Invitee[0].DocId);
@@ -150,6 +165,7 @@ const InviteMembers = async (req, res) => {
         }
         return res.status(444).json(AlertBoxObject("Cannot Invite", "User is already a member of this discussion"));
     }
+
     const UserDetails = await ReadOneFromUsers(InviteeId);
     req.body = { ...MemberInit(req.body), MemberId: InviteeId, EntityId, UserDetails };
     req.body.MembershipStatus = "Invited";
@@ -237,54 +253,61 @@ const GetMembersToInvite = async (req, res) => {
 
     const AggregateArray = [
         {
-            $lookup: {
-                from: "Connections",
-                pipeline: [
-                    {
-                        $match: {
-                            $expr: {
-                                $in: [UserId, '$UserIds']
-                            }
-                        }
-                    }
-                ],
-                as: "UserConnections"
+            $match: {
+                $or: [
+                    { "UserIds.0": UserId },
+                    { "UserIds.1": UserId }
+                ]
             }
         },
-        { $unwind: "$UserConnections" },
-        { $unwind: "$UserConnections.UserIds" },
-        { $match: { "UserConnections.UserIds": { $ne: UserId } } },
-        {
-            $lookup: {
-                from: 'Members',
-                pipeline: [
-                    {
-                        $match: {
-                            $expr: { $eq: ["$EntityId", EntityId] }
-                        }
-                    },
-                    {
-                        $project: { MemberId: 1, _id: 0 }
-                    }
-                ],
-                as: 'DiscussionMembers'
-            }
-        },
+        { $unwind: "$UserIds" },
+
+        // Match only the documents where the user is not the specified user
+        { $match: { UserIds: { $ne: UserId } } },
         {
             $addFields: {
-                IsMember: {
-                    $in: ["$UserrConnections.UserIds", "$DiscussionMembers.MemberId"]
-                }
+                userObjectId: { $toObjectId: "$UserIds" }
             }
         },
         {
-            $match: {
-                isMember: false,
-
-
+            $lookup: {
+                from: "Users",
+                localField: "userObjectId",
+                foreignField: "_id",
+                as: "connectedUserDetails"
             }
         },
+        { $unwind: "$connectedUserDetails" },
+        {
+            $lookup: {
+                from: "Members",
+                let: { userIds: "$UserIds" },
+                pipeline: [
+                    { $match: { $expr: { $and: [{ $eq: ["$MemberId", "$$userIds"] }, { $eq: ["$EntityId", EntityId] }] } } }
+                ],
+                as: "memberCheck"
+            }
+        },
+
+        // Filter out users who are already members of the discussion
+        { $match: { "memberCheck": { $eq: [] } } },
+
+        // Project the final result
+        {
+            $replaceRoot: { 
+                "newRoot": 
+                    "$connectedUserDetails"
+            }
+        },
+        {
+            $project: {
+                "Password": 0
+            }
+        }
     ]
+    const Users = await AggregateConnections(AggregateArray, NextId, Limit, OrderBy);
+
+    return res.json(Users);
 }
 
 /**
@@ -303,7 +326,10 @@ const UpdateMemberPermissions = async (req, res) => {
     }
     await Promise.all(Object.keys(req.body).map(async (PermissionArray) => {
         if (req.body[PermissionArray].length > 0) {
-            await UpdateManyMembers({"$set" : { [`Permissions.${PermissionArray}`]: true }}, { EntityId, MemberId: { $in: req.body[PermissionArray] } })
+            await Promise.all([
+                UpdateManyMembers({ "$set": { [`Permissions.${PermissionArray}`]: true } }, { EntityId, MemberId: { $in: req.body[PermissionArray] } }),
+                UpdateManyMembers({ "$set": { [`Permissions.${PermissionArray}`]: false } }, { EntityId, MemberId: { $nin: req.body[PermissionArray] } })
+            ])
         }
     }))
     return res.json(true);
@@ -369,5 +395,5 @@ export {
     GetOneFromMembers, GetMembers, PostMembers, PatchMembers, DeleteMembers,
     PermissionObjectInit, InviteMembers, AcceptMemberInvitation, UpdateMemberPermissions,
     DeclineInvitation, CancelInvitation, CancelJoinRequest, GetJoinRequests,
-    RejectJoinRequest, AcceptJoinRequest,
+    RejectJoinRequest, AcceptJoinRequest, GetMembersToInvite
 }
