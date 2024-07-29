@@ -62,8 +62,8 @@ const CreateDiscussions = async (data, DocId = undefined) => {
     return dataHandling.Create('Discussions', data, DocId);
 }
 
-const AggregateDiscussions =  (AggregateArray)=> {
-    return dataHandling.Aggregate('Discussions', AggregateArray);
+const AggregateDiscussions =  (AggregateArray,NextIndex,Limit,OrderBy)=> {
+    return dataHandling.Aggregate('Discussions', AggregateArray,NextIndex,Limit,OrderBy);
 }
 
 /**
