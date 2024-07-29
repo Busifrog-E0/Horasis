@@ -9,7 +9,7 @@ import { ValidatePostActivities, ValidatePatchActivities } from '../validations/
 import SwaggerDocs from '../swaggerDocs/activities-swaggerDocs.js'
 import e from 'express';
 import { CheckSameUser, QueryParameterFormatting, ValidateGetEntity } from '../middleware/common.js';
-import { GetFeedActivitiesMiddleware, GetMentionedActivitiesMiddleware, GetUserActivitiesMiddleware, PostActivitiesLikeMiddleware, PostFeedActivitiesMiddleware } from '../middleware/activities-middleware.js';
+import { GetFeedActivitiesMiddleware, GetMentionedActivitiesMiddleware, GetUserActivitiesMiddleware, InsertActivityTypeMiddleware, PostActivitiesLikeMiddleware, PostFeedActivitiesMiddleware } from '../middleware/activities-middleware.js';
 import { DeleteLikes, GetLikes, PostLikes } from '../controllers/likes-controller.js';
 import { DeleteSaves, GetSaves, PostSaves } from '../controllers/saves-controller.js';
 const router = e.Router();
@@ -41,7 +41,7 @@ router.patch('/activities/:ActivityId', decodeIDToken, ensureAuthorized("User"),
     asyncHandler(PatchActivities));
 
 router.post('/users/:UserId/activities/:EntityId/like', decodeIDToken, ensureAuthorized("User"), CheckSameUser,
-    PostActivitiesLikeMiddleware, SwaggerDocs.post_Activities_ActivityId_Like,
+    InsertActivityTypeMiddleware, SwaggerDocs.post_Activities_ActivityId_Like,
     // @ts-ignore
     asyncHandler(PostLikes));
 
@@ -62,7 +62,8 @@ router.get('/activities/:EntityId/likedUsers', decodeIDToken, ensureAuthorized("
     //@ts-ignore
     asyncHandler(GetLikes))
 
-router.get('/user/:UserId/activities/save', decodeIDToken, ensureAuthorized("User"), ValidateGetEntity, QueryParameterFormatting, SwaggerDocs.get_User_UserId_Activities_Save,
+router.get('/user/:UserId/activities/save', decodeIDToken, ensureAuthorized("User"), ValidateGetEntity, QueryParameterFormatting,
+    InsertActivityTypeMiddleware, SwaggerDocs.get_User_UserId_Activities_Save,
     //@ts-ignore
     asyncHandler(GetSaves))
 
