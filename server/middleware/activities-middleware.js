@@ -36,9 +36,13 @@ const PostActivitiesLikeMiddleware = (req, res, next) => {
     return next();
 }
 
+const InsertActivityTypeMiddleware = (req, res, next) => {
+    req.body = { ...req.body, Type: 'Activity' };
+    return next();
+}
 
 export {
     GetFeedActivitiesMiddleware, GetEventActivitiesMiddleware, PostEventActivitiesMiddleware, PostFeedActivitiesMiddleware,
-    GetUserActivitiesMiddleware, GetMentionedActivitiesMiddleware, PostActivitiesLikeMiddleware,
+    GetUserActivitiesMiddleware, GetMentionedActivitiesMiddleware, PostActivitiesLikeMiddleware,InsertActivityTypeMiddleware
     
 }
