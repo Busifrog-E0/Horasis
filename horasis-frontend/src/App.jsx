@@ -11,6 +11,7 @@ import { useEffect } from 'react'
 import { AuthProvider } from './utils/AuthProvider'
 import ToastProvider from './components/Toast/ToastProvider'
 import FollowProvider from './context/Follow/FollowProvider'
+import SocketProvider from './context/Socket/SocketProvider'
 
 function App() {
 	useEffect(() => {
@@ -30,7 +31,9 @@ function App() {
 		<ToastProvider>
 			<AuthProvider>
 				<FollowProvider>
-					<RouterProvider router={router} />
+					<SocketProvider>
+						<RouterProvider router={router} />
+					</SocketProvider>
 				</FollowProvider>
 			</AuthProvider>
 		</ToastProvider>

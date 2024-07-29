@@ -6,7 +6,7 @@ const ChatPage = () => {
 	const { userid } = useParams()
 
 	return (
-		<div className=' fixed top-0 overflow-hidden w-full' style={{ height: '100svh' }}>
+		<div className='fixed top-0 overflow-hidden w-full' style={{ height: '100svh' }}>
 			{/* <ChatView userId={userid} /> */}
 			<NewChatView userId={userid} />
 		</div>

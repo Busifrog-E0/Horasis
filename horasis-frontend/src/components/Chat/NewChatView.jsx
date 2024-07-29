@@ -12,11 +12,13 @@ import { useToast } from '../Toast/ToastService'
 import io from 'socket.io-client'
 import { jsonToQuery } from '../../utils/searchParams/extractSearchParams'
 import { getNextId } from '../../utils/URLParams'
+import { useSocket } from '../../context/Socket/SocketService'
 
 const NewChatView = ({ userId }) => {
 	// context
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
 	const toast = useToast()
+	const { socket } = useSocket()
 
 	// message
 	const [messages, setMessages] = useState([])
@@ -28,7 +30,7 @@ const NewChatView = ({ userId }) => {
 	const [pageDisabled, setPageDisabled] = useState(true)
 	const [filters, setFilters] = useState({
 		OrderBy: 'Index',
-		Limit: 2,
+		Limit: 10,
 		Keyword: '',
 	})
 	const setLoadingCom = (tempArr, value) => {
@@ -140,55 +142,34 @@ const NewChatView = ({ userId }) => {
 		)
 	})
 
-	// establish socket connection
-	const [socket, setSocket] = useState(null)
-
 	const connectSocket = (conversationId) => {
-		const newSocket = io('https://deploy.busifrog.com', {
-			auth: {
-				token: `Bearer ${currentUserData.Token}`,
-			},
-			reconnection: true, // Enable reconnection
-			reconnectionAttempts: 5, // Number of reconnection attempts
-			reconnectionDelay: 1000, // Delay between reconnection attempts
-		})
+		socket.emit('JoinRoom', { ConversationId: conversationId })
 
-		setSocket(newSocket)
-
-		newSocket.on('connect', () => {
-			console.log('Socket connected')
-		})
-
-		newSocket.emit('JoinRoom', { ConversationId: conversationId })
-		newSocket.on('connect_error', (err) => {
-			console.log(err)
-		})
-
-		newSocket.on('disconnect', () => {
-			console.log('Socket disconnected')
-		})
-
-		newSocket.on('Message', (value) => {
-			console.log('message received', value)
+		socket.on('Message', (value) => {
+			// console.log('message received', value)
 			setMessages((prevMessages) => [value, ...prevMessages])
 		})
 
 		return () => {
-			newSocket.disconnect()
+			socket.emit('LeaveRoom', { ConversationId: conversationId })
+			socket.off('Message')
 		}
 	}
 
 	useEffect(() => {
+		if (!socket || !conversationId) return
+
 		if (conversationId) {
 			const cleanup = connectSocket(conversationId)
 			return cleanup
 		}
-	}, [conversationId])
+	}, [conversationId, socket])
 
 	// Sending messages
-
 	const onMessageSend = (e) => {
-		e.preventDefault()
+		if (e) {
+			e.preventDefault()
+		}
 		if (socket && messageToSend) {
 			socket.emit('Message', {
 				ConversationId: conversationId,
@@ -204,64 +185,62 @@ const NewChatView = ({ userId }) => {
 		<>
 			<div className='h-full flex flex-col bg-system-secondary-bg'>
 				<DashboardHeader />
-				<UserDetailsTab user={user} isLoading={isUserLoading} />
 
-				{!pageDisabled && (
-					<div className='flex flex-row gap-2  items-center  justify-center w-full '>
-						<p
-							onClick={() => {
-								fetchMore()
-							}}
-							className='cursor-pointer bg-system-primary-bg text-system-secondary-text py-2 px-4 rounded-full text-xs'>
-							Load previous chat
-						</p>
+				<UserDetailsTab user={user} isLoading={isUserLoading} viewAsFlex />
+				<hr className='my-2' />
+
+				<div className='flex-1 flex flex-col overflow-auto relative'>
+					<div className='absolute w-full z-10 '>
+						{!pageDisabled && (
+							<div className='flex flex-row gap-2  items-center  justify-center w-full '>
+								<p
+									onClick={() => {
+										fetchMore()
+									}}
+									className='cursor-pointer bg-system-primary-bg text-system-secondary-text py-2 px-4 rounded-full text-xs'>
+									Load previous chat
+								</p>
+							</div>
+						)}
+						<div className='my-2'>{isLoading || isLoadingMore ? <Spinner /> : <></>}</div>
 					</div>
-				)}
-				<div className='my-2'>{isLoading || isLoadingMore ? <Spinner /> : <></>}</div>
+					<div className='flex-1 overflow-auto px-3 pt-3 flex flex-col-reverse relative '>
+						{/* auto scroll to bottom if new message came */}
+						{messages.length > 0 ? (
+							messages.map((message, index) => {
+								if (message.SenderId === currentUserData.CurrentUser.UserId) {
+									return <OutGoingMessage key={index} message={message} />
+								} else {
+									return <InComingMessage key={index} message={message} />
+								}
+							})
+						) : (
+							<p>No messages</p>
+						)}
+					</div>
 
-				<div className='flex-1 overflow-auto px-3 pt-3 flex flex-col-reverse relative '>
-					{/* auto scroll to bottom if new message came */}
-					{messages.length > 0 ? (
-						messages.map((message, index) => {
-							if (message.SenderId === currentUserData.CurrentUser.UserId) {
-								return <OutGoingMessage key={index} message={message} />
-							} else {
-								return <InComingMessage key={index} message={message} />
-							}
-						})
-					) : (
-						<p>No messages</p>
-					)}
-				</div>
-				{/* <div className='flex-1 overflow-auto px-3 pt-3 flex flex-col'>
-					{newMessages.length > 0 &&
-						newMessages.map((message, index) => {
-							if (message.SenderId === currentUserData.CurrentUser.UserId) {
-								return <OutGoingMessage key={index} message={message} />
-							} else {
-								return <InComingMessage key={index} message={message} />
-							}
-						})}
-				</div> */}
-				<div className='p-3'>
-					<div className='flex flex-row'>
-						<div className='border border-system-primary-border bg-system-secondary-bg overflow-hidden rounded-lg flex-1'>
+					<div className='flex flex-row gap-2 py-4 px-3'>
+						<div className='border-2 border-system-primary-accent bg-system-secondary-bg overflow-hidden rounded-lg flex-1'>
 							<div className='flex gap-0 flex-row'>
 								<div className='bg-system-secondary-bg p-3 px-4 flex-1'>
 									<input
 										value={messageToSend}
 										onChange={(e) => setMessageToSend(e.target.value)}
+										onKeyDown={(e) => {
+											if (e.key === 'Enter') {
+												onMessageSend()
+											}
+										}}
 										className='w-full bg-system-secondary-bg italic text-system-primary-text outline-none'
 										placeholder={'Write a message..'}></input>
 								</div>
 							</div>
 						</div>
 						<svg
-							className='w-6 h-6 text-system-primary-accent cursor-pointer'
+							className='w-6 h-6 text-system-primary-accent cursor-pointer fill-system-primary-accent'
 							onClick={onMessageSend}
 							xmlns='http://www.w3.org/2000/svg'
-							viewBox='0 -960 960 960'
-							fill='blue'>
+							viewBox='0 -960 960 960'>
 							<path d='M120-160v-640l760 320-760 320Zm80-120 474-200-474-200v140l240 60-240 60v140Zm0 0v-400 400Z' />
 						</svg>
 					</div>
