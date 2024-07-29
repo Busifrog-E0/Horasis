@@ -45,44 +45,7 @@ const UserDetailsinFollow = async () => {
     await VersionUpdate(ReadFollows, update, { UserDetails: { '$exists': false } });
 }
 
-/**
- * 
- * @param {Array} AggregateArray 
- * @param {object|undefined} Filter 
- * @param {string|undefined} NextId 
- * @param {number|undefined} Limit 
- * @param {object|undefined} OrderBy 
- */
-const AggregateArrayPagination = async (AggregateArray, Filter = {}, NextId = undefined, Limit = undefined, OrderBy = {}) => { 
-    if (Filter) {
-        AggregateArray.push({ $match: Filter });
-    }
-    if (NextId) {
-        const [Index, nextId] = NextId.split('--');
-        AggregateArray.push({
-            $match: {
-                $or: [
-                    { Index: { $lt: Index } },
-                    {
-                        $and: [
-                            { Index: Index },
-                            { _id: { $lt: new ObjectId(nextId) } }
-                        ]
-                    }
-                ]
-            }
-        });
-    }
-    if (Limit) { 
-        AggregateArray.push({ $limit: Limit });
-    }
-    if (OrderBy) {
-        const AggregateOrderBy = Object.fromEntries(
-            Object.entries(OrderBy).map(([key, value]) => [key, value === 'asc' ? 1 : -1])
-        );
-        AggregateArray.push({ $sort: AggregateOrderBy });
-    }
-}
+
 //UserDetailsinFollow()
 
 function Shuffle(array) {

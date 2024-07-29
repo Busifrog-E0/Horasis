@@ -76,6 +76,9 @@ const GetConnectionsCount = async (Where = {}) => {
     return dataHandling.ReadCount('Connections', Where);
 }
 
+const AggregateConnections = async (AggregateArray, NextIndex, Limit, OrderBy) => {
+    return dataHandling.Aggregate("Connections", AggregateArray, NextIndex, Limit, OrderBy);
+}
 
 export {
     ReadConnections,
@@ -84,4 +87,5 @@ export {
     CreateConnections,
     RemoveConnections,
     GetConnectionsCount,
+    AggregateConnections
 }
