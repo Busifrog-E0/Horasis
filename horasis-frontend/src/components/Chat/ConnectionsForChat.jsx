@@ -20,7 +20,7 @@ const ConnectionsForChat = () => {
         Limit: 10,
         Keyword: '',
     })
-    const api = `users/${currentUserData.CurrentUser.UserId}/connections`
+    const api = `chats`
 
 
     const setLoadingCom = (tempArr, value) => {
@@ -40,6 +40,7 @@ const ConnectionsForChat = () => {
             `${endpoint}&NextId=${getNextId(tempData)}`,
             (data) => {
                 setData([...tempData, ...data])
+                console.log(data)
                 setLoadingCom(tempData, false)
             },
             (err) => {
@@ -97,7 +98,7 @@ const ConnectionsForChat = () => {
                             {connectionsForChat.map((item, index) => {
                                 let lastElement = connectionsForChat.length === index + 1
                                 return (
-                                    <ChatDetailsItem user={item} key={item.DocId} />
+                                    <ChatDetailsItem user={item.UserDetails} key={item.DocId} />
 
                                 )
                             })}
