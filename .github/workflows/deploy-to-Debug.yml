@@ -23,8 +23,8 @@ jobs:
         ssh-keyscan -H 139.59.46.32 >> ~/.ssh/known_hosts
 
     - name: Pull latest changes to DigitalOcean Droplet
-       env:
-          GITHUB_TOKEN: ${{ secrets.Haris_Token }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.Haris_Token }}
       run: |
         ssh root@139.59.46.32 << 'EOF'
           cd Horissa
