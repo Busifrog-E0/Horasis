@@ -1,6 +1,9 @@
 import e from 'express'
 import { AlertBoxObject } from "../controllers/common.js";
 import { ReadMembers } from "../databaseControllers/members-databaseController.js";
+import { EntityTypes } from './common.js';
+
+
 /**
  * 
  * @param {e.Request} req 
@@ -8,7 +11,7 @@ import { ReadMembers } from "../databaseControllers/members-databaseController.j
  * @param {Function} next 
  * @returns 
  */
-const MemberPostActivityMiddleware = async (req, res, next) => { 
+const MemberPostActivityMiddleware = async (req, res, next) => {
     /**
      * @type {{ MediaFiles: { FileUrl : string ,Type: "image"|"video" }[]; }}
      */
@@ -41,6 +44,13 @@ const MemberPostActivityMiddleware = async (req, res, next) => {
     return next();
 }
 
+const InsertEntityTypeMiddleware = async (req, res, next) => {
+    const { EntityType } = req.params;
+    req.body.Type = EntityTypes[EntityType];
+    return next();
+}
+
 export {
-    MemberPostActivityMiddleware
+    MemberPostActivityMiddleware,
+    InsertEntityTypeMiddleware
 }
