@@ -28,5 +28,5 @@ jobs:
       run: |
         ssh root@139.59.46.32 << 'EOF'
           cd Horissa
-          git -c http.extraHeader="Authorization: Bearer $GITHUB_TOKEN" pull origin DebugServer
+          git pull debug DebugServer
         EOF
