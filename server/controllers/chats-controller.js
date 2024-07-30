@@ -123,7 +123,7 @@ const PostMessages = async (data) => {
     data = MessageInit(data);
     await Promise.all([
         CreateMessages(data),
-        UpdateConversations({ LatestMessage: data }, ConversationId),
+        UpdateConversations({ LatestMessage: data, OneMessageSent: true }, ConversationId),
     ])
     return { Success: true, Data: data, ParticipantIds: ConversationData.ParticipantIds };
 }

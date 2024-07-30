@@ -11,7 +11,7 @@ const ConnectSocket = (expressServer) => {
 
     const io = new Server(expressServer, {
         cors: {
-            origin: ["http://localhost:5173", "http://127.0.0.1:5173"],
+            origin: false,
         }
     });
     io.use(decodeSocketIdToken);
@@ -27,27 +27,23 @@ const ConnectSocket = (expressServer) => {
         // @ts-ignore
             data.SenderId = socket.user.UserId;
             const MessageData = await PostMessages(data);
-            console.log('Message ', data);
 
             if (MessageData.Success === true) {
                 io.to(data.ConversationId).emit('Message', MessageData.Data);
-                console.log('Message2 ', data);
 
                 MessageData.ParticipantIds.map(id => {
-                    io.to(id).emit('CoversationList', true);
+                    io.to(id).emit('ConversationList', true);
                 })
             }
         })
 
         socket.on('JoinRoom', async ({ ConversationId }) => {
-            console.log('JoinRoom ', ConversationId);
             const ConversationData = await ReadOneFromConversations(ConversationId);
         // @ts-ignore
             if (CheckUserInConversation(ConversationData, socket.user.UserId)) {
                 // leave existing rooms?
                 socket.join(ConversationId);
                 // @ts-ignore
-                console.log('JoinRoom ', ConversationId, socket.user.UserId);
 
             }
 
