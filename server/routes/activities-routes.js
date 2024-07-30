@@ -32,7 +32,7 @@ router.get('/activities/:ActivityId', decodeIDToken, ensureAuthorized("User"), S
     // @ts-ignore
     asyncHandler(GetOneFromActivities));
 
-router.post('/activities', decodeIDToken, ensureAuthorized("User"), PostFeedActivitiesMiddleware, ValidatePostActivities, SwaggerDocs.post_Activities,
+router.post('/activities', decodeIDToken, ensureAuthorized("User"), ValidatePostActivities, PostFeedActivitiesMiddleware, SwaggerDocs.post_Activities,
     // @ts-ignore
     asyncHandler(PostActivities));
 

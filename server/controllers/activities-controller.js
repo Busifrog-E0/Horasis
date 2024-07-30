@@ -43,43 +43,50 @@ const GetOneFromActivities = async (req, res) => {
 const GetActivities = async (req, res) => {
     //@ts-ignore
     const { UserId } = req.user;
-    const { NextId, Limit,Filter,OrderBy } = req.query;
+    const { NextId, Limit, Filter, OrderBy } = req.query;   
+    const FilterConditions = Object.entries(Filter).map(([key, value]) => ({ [key]: value }));
     const AggregateArray = [
         {
-            '$lookup': {
-                'from': 'Follows',
-                'pipeline': [
-                    { '$match': { '$expr': { '$eq': ['$FollowerId', UserId] } } }       //INSERTS FOLLOWEES ARRAY
+            $lookup: {
+                from: 'Follows',
+                pipeline: [
+                    { $match: { '$expr': { '$eq': ['$FollowerId', UserId] } } }
                 ],
-                'as': 'Followees'
+                as: 'Followees'
             }
         },
         {
-            '$lookup': {
-                'from': 'Connections',
-                'pipeline': [
+            $lookup: {
+                from: 'Connections',
+                pipeline: [
                     {
-                        '$match': {
-                            '$expr': {
-                                '$and': [
-                                    { '$in': [UserId, '$UserIds'] },
-                                    { '$eq': ['$Status', 'Connected'] }
+                        $match: {
+                            $expr: {
+                                $and: [
+                                    { $in: [UserId, '$UserIds'] },
+                                    { $eq: ['$Status', 'Connected'] }
                                 ]
                             }
                         }
-                    }      //INSERTS CONNECTIONS ARRAY
+                    }
                 ],
-                'as': 'Connections'
+                as: 'Connections'
             }
         },
         {
             $addFields: {
-                Followees: { $map: { input: '$Followees', as: 'f', in: '$$f.FolloweeId' } },    //CHANGES FOLLOWEES ARRAY TO CONTAIN IDS
-                Connections: {                                                                  //CHANGES CONNECTION ARRAY TO CONTAIN IDS
+                Followees: {
+                    $map: {
+                        input: '$Followees',
+                        as: 'f',
+                        in: '$$f.FolloweeId'
+                    }
+                },
+                Connections: {
                     $reduce: {
                         input: '$Connections',
                         initialValue: [],
-                        in: { $setUnion: ['$$value', '$$this.UserIds'] }                //UNIONS ARRAY WITH USERIDS ARRAY
+                        in: { $setUnion: ['$$value', '$$this.UserIds'] }
                     }
                 }
             }
@@ -91,19 +98,21 @@ const GetActivities = async (req, res) => {
         },
         {
             $match: {
-                $expr: { $in: ['$UserId', '$UserIds'] }
+                $and: [
+                    { $expr: { $in: ['$UserId', '$UserIds'] } },
+                    ...FilterConditions
+                ]
             }
         },
         {
             $project: {
                 Followees: 0,
-                Connections: 0,                                                             
+                Connections: 0,
                 UserIds: 0
             }
         }
-
     ]
-    const Activities = await AggregateActivities(AggregateArray, NextId, Limit, OrderBy); 
+    const Activities = await AggregateActivities(AggregateArray, NextId, Limit, OrderBy);
     const data = await Promise.all(Activities.map(async Activity => {
         const [UserDetails, checkLike, checkSave] = await Promise.all([
             ReadOneFromUsers(Activity.UserId),

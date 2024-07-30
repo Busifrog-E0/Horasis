@@ -1,4 +1,3 @@
-import { Permission } from "@aws-sdk/client-s3";
 import Joi from "joi";
 
 const PostDiscussionSchema = Joi.object({
