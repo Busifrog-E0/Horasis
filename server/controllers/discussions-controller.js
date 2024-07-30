@@ -65,6 +65,12 @@ const GetDiscussions = async (req, res) => {
     return res.json(data);
 }
 
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ * @returns 
+ */
 const GetUserDiscussions = async (req, res) => {
     const { UserId } = req.params;
     const { Filter, NextId, Keyword, Limit, OrderBy } = req.query;
@@ -99,31 +105,10 @@ const GetUserDiscussions = async (req, res) => {
                 "Member.MemberId": UserId,
                 "Member.MembershipStatus": "Accepted"
             }
-        }
-    ]
-    if (NextId) {
-        const [Index, nextId] = NextId.split('--');
-        AggregateArray.push({
-            $match: {
-                $or: [
-                    { Index: { $lt: Index } },
-                    {
-                        $and: [
-                            { Index: Index },
-                            { _id: { $lt: new ObjectId(nextId) } }
-                        ]
-                    }
-                ]
-            }
-        });
-    }
-
-    AggregateArray.push(
-        { $sort: { Index: -1, _id: -1 } },
-        { $limit: Limit },
+        },
         { $project: { Member: 0 } }
-    );
-    const Discussions = await AggregateDiscussions(AggregateArray);
+    ]
+    const Discussions = await AggregateDiscussions(AggregateArray, NextId, Limit, OrderBy);
     const data = await Promise.all(Discussions.map(async Discussion => {
         const DiscussionMemberObject = { IsMember: false, };
         const Member = await ReadMembers({ MemberId: UserId, EntityId: Discussion.DocId }, undefined, 1, undefined);
@@ -174,31 +159,9 @@ const GetInvitedDiscussions = async (req, res) => {
                 "Member.MembershipStatus": "Invited"
             }
         },
-        
-    ]
-    if (NextId) {
-        const [Index, nextId] = NextId.split('--');
-        AggregateArray.push({
-            $match: {
-                $or: [
-                    { Index: { $lt: Index } },
-                    {
-                        $and: [
-                            { Index: Index },
-                            { _id: { $lt: new ObjectId(nextId) } }
-                        ]
-                    }
-                ]
-            }
-        });
-    }
-
-    AggregateArray.push(
-        { $sort: { Index: -1, _id: -1 } },
-        { $limit: Limit },
         { $project: { Member: 0 } }
-    );
-    const Discussions = await AggregateDiscussions(AggregateArray);
+    ]
+    const Discussions = await AggregateDiscussions(AggregateArray, NextId, Limit, OrderBy);
     const data = await Promise.all(Discussions.map(async Discussion => {
         const DiscussionMemberObject = { IsMember: false, };
         const Member = await ReadMembers({ MemberId: UserId, EntityId: Discussion.DocId }, undefined, 1, undefined);

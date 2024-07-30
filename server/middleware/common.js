@@ -116,7 +116,13 @@ const CheckSameUser = (req, res, next) => {
     return next();
 }
 
+const EntityTypes = {
+    discussions: "Discussion",
+    events: "Event",
+    activities: "Activity"
+}
+
 export {
     AddUpdatedBy, ValidateGetEntity, QueryParameterFormatting,
-    SetUserIdInQuery, CheckSameUser, SetActiveInQueryIfUser
+    SetUserIdInQuery, CheckSameUser, SetActiveInQueryIfUser,EntityTypes
 }

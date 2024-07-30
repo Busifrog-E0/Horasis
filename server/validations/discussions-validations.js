@@ -1,3 +1,4 @@
+import { Permission } from "@aws-sdk/client-s3";
 import Joi from "joi";
 
 const PostDiscussionSchema = Joi.object({
@@ -11,6 +12,7 @@ const PostDiscussionSchema = Joi.object({
 });
 
 const UpdatePermissionSchema = Joi.object({
+    IsAdmin: Joi.array().items(Joi.string()).required(),
     CanInviteOthers: Joi.array().items(Joi.string()).required(),
     CanPostActivity: Joi.array().items(Joi.string()).required(),
     CanUploadPhoto: Joi.array().items(Joi.string()).required(),
@@ -58,10 +60,25 @@ const ValidatePatchMemberPermission = async (req, res, next) => {
     }
 }
 
+const ValidatePatchRemovePermission = async (req, res, next) => {
+    const Result = Joi.object({
+        PermissionField : Joi.string().valid("CanInviteOthers", "CanPostActivity", "CanUploadPhoto", "CanCreateAlbum", "CanUploadVideo","IsAdmin").required(),
+    }).validate(req.body, { stripUnknown: true });
+    if (Result.error) {
+        const message = Result.error.details.map((detail) => detail.message).join(', ');
+        return res.status(400).json(message);
+    }
+    else {
+        req.body = Result.value;
+        return next();
+    }
+}
+
 export {
     ValidatePostDiscussion,
     ValidatePatchDiscussionCoverPhoto,
-    ValidatePatchMemberPermission
+    ValidatePatchMemberPermission,
+    ValidatePatchRemovePermission
 }
 
 
