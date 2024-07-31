@@ -65,10 +65,17 @@ const LikedUsersData = [{
     UserId : "string"
 }]
 
+const GetMediaArray = [{
+    FileUrl: "string",
+    Type: "image",
+}]
+
 export default {
     UserRegisterData,OTPVerifyData,
     UserLoginData,
     UserData,
     PatchUserData,
-    UserDataArray,LikedUsersData
+    UserDataArray, LikedUsersData,
+    GetMediaArray
+    
 }

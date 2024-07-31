@@ -16,7 +16,7 @@ import {
     GetJoinRequests, GetMembers, GetMembersToInvite, InviteMembers, PostMembers, RemoveMemberPermissions, UpdateMemberPermissions
 } from '../controllers/members-controller.js';
 import { GetDiscussionsActivitiesMiddleware, InsertDiscussionTypeMiddleware, PostDiscussionActivitiesMiddleware } from '../middleware/discussions-middleware.js';
-import { GetFilteredActivities, PostActivities } from '../controllers/activities-controller.js';
+import { GetActivities, GetFilteredActivities, PostActivities } from '../controllers/activities-controller.js';
 import { ValidatePostActivities } from '../validations/activities-validations.js';
 import { MemberPostActivityMiddleware } from '../middleware/members-middleware.js';
 import { DeleteSaves, GetSaves, PostSaves } from '../controllers/saves-controller.js';
@@ -153,7 +153,7 @@ router.post('/discussions/:EntityId/activities', decodeIDToken, ensureAuthorized
 router.get('/discussions/:EntityId/activities', decodeIDToken, ensureAuthorized("User"), ValidateGetEntity, QueryParameterFormatting,
     GetDiscussionsActivitiesMiddleware, SwaggerDocs.get_Discussions_DiscussionId_Activities,
     //@ts-ignore
-    asyncHandler(GetFilteredActivities));
+    asyncHandler(GetActivities));
 
 router.delete('/discussions/:DiscussionId', decodeIDToken, ensureAuthorized("User"),
     // @ts-ignore
