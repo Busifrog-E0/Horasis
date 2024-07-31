@@ -568,6 +568,77 @@
         ]
       }
     },
+    "/api/users/{UserId}/media": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "UserId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "NextId",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "Limit",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "Keyword",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "OrderBy",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "Filter",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User Data",
+            "schema": {
+              "$ref": "#/definitions/GetMediaAray"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "402": {
+            "description": "Payment Required"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
     "/api/users/{UserId}/followers": {
       "get": {
         "tags": [
@@ -1441,11 +1512,6 @@
             "type": "string"
           },
           {
-            "name": "Filter",
-            "in": "query",
-            "type": "string"
-          },
-          {
             "name": "NextId",
             "in": "query",
             "type": "string"
@@ -1462,6 +1528,11 @@
           },
           {
             "name": "OrderBy",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "Filter",
             "in": "query",
             "type": "string"
           }
@@ -3128,9 +3199,6 @@
           },
           "403": {
             "description": "Forbidden"
-          },
-          "444": {
-            "description": "Connection Closed Without Response"
           }
         },
         "security": [
@@ -3315,9 +3383,6 @@
           },
           "403": {
             "description": "Forbidden"
-          },
-          "444": {
-            "description": "Connection Closed Without Response"
           }
         },
         "security": [
@@ -3327,7 +3392,7 @@
         ]
       }
     },
-    "/api/discussions/{EntityId}/members/invited": {
+    "/api/discussions/{EntityId}/members/invite": {
       "get": {
         "tags": [
           "Discussions"
@@ -3499,7 +3564,7 @@
         ]
       }
     },
-    "/api/discussions/{EntityId}/invite/reject": {
+    "/api/discussions/{EntityId}/invite/{UserId}/reject": {
       "delete": {
         "tags": [
           "Discussions"
@@ -3508,6 +3573,12 @@
         "parameters": [
           {
             "name": "EntityId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "UserId",
             "in": "path",
             "required": true,
             "type": "string"
@@ -3530,9 +3601,6 @@
           },
           "403": {
             "description": "Forbidden"
-          },
-          "444": {
-            "description": "Connection Closed Without Response"
           }
         },
         "security": [
@@ -3542,7 +3610,7 @@
         ]
       }
     },
-    "/api/discussions/{EntityId}/invite/{InviteeId}/cancel": {
+    "/api/discussions/{EntityId}/invite/{UserId}/cancel": {
       "delete": {
         "tags": [
           "Discussions"
@@ -3556,7 +3624,7 @@
             "type": "string"
           },
           {
-            "name": "InviteeId",
+            "name": "UserId",
             "in": "path",
             "required": true,
             "type": "string"
@@ -3579,9 +3647,6 @@
           },
           "403": {
             "description": "Forbidden"
-          },
-          "444": {
-            "description": "Connection Closed Without Response"
           }
         },
         "security": [
@@ -3761,6 +3826,62 @@
           },
           "444": {
             "description": "Connection Closed Without Response"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/discussions/{EntityId}/member/permissions/remove": {
+      "patch": {
+        "tags": [
+          "Discussions"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "EntityId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "PermissionField": {
+                  "type": "string",
+                  "example": "CanPostActivity"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "402": {
+            "description": "Payment Required"
+          },
+          "403": {
+            "description": "Forbidden"
           }
         },
         "security": [
@@ -4476,6 +4597,22 @@
           "UserId": {
             "type": "string",
             "example": "string"
+          }
+        }
+      }
+    },
+    "GetMediaArray": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "FileUrl": {
+            "type": "string",
+            "example": "string"
+          },
+          "Type": {
+            "type": "string",
+            "example": "image"
           }
         }
       }
