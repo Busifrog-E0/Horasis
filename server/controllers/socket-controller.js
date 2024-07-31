@@ -1,4 +1,4 @@
-import { Socket,Server } from "socket.io";
+import { Socket, Server } from "socket.io";
 import { PostMessages, CheckUserInConversation } from "./chats-controller.js";
 import jwt from "jsonwebtoken";
 import ENV from "./../Env.js";
@@ -11,7 +11,7 @@ const ConnectSocket = (expressServer) => {
 
     const io = new Server(expressServer, {
         cors: {
-            origin: ["http://localhost:5173", "http://127.0.0.1:5173"]
+            origin: ["http://localhost:5173", "http://127.0.0.1:5173", "https://hsocial.web.app/"]
         }
     });
     io.use(decodeSocketIdToken);
@@ -24,7 +24,7 @@ const ConnectSocket = (expressServer) => {
 
 
         socket.on('Message', async data => {
-        // @ts-ignore
+            // @ts-ignore
             data.SenderId = socket.user.UserId;
             const MessageData = await PostMessages(data);
 
@@ -39,7 +39,7 @@ const ConnectSocket = (expressServer) => {
 
         socket.on('JoinRoom', async ({ ConversationId }) => {
             const ConversationData = await ReadOneFromConversations(ConversationId);
-        // @ts-ignore
+            // @ts-ignore
             if (CheckUserInConversation(ConversationData, socket.user.UserId)) {
                 // leave existing rooms?
                 socket.join(ConversationId);
