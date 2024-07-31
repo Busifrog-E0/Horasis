@@ -28,6 +28,8 @@ jobs:
       run: |
         ssh root@139.59.46.32 << 'EOF'
           cd Horissa
-          git pull debug DebugServer
+          git pull origin DebugServer
+          ${{secrets.GITHUB_TOKEN}}
+          
           pm2 restart Horasis
         EOF
