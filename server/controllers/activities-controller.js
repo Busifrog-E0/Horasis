@@ -8,6 +8,7 @@ import { AlertBoxObject } from './common.js';
 import { ObjectId } from 'mongodb';
 import { ReadLikes } from '../databaseControllers/likes-databaseController.js';
 import { ReadSaves } from '../databaseControllers/saves-databaseController.js';
+import { PostMediasFromAttachments } from './medias-controller.js';
 
 /**
  * @typedef {import('../databaseControllers/activities-databaseController.js').ActivityData} ActivityData 
@@ -44,6 +45,7 @@ const GetActivities = async (req, res) => {
     //@ts-ignore
     const { UserId } = req.user;
     const { NextId, Limit, Filter, OrderBy } = req.query;   
+    //@ts-ignore
     const FilterConditions = Object.entries(Filter).map(([key, value]) => ({ [key]: value }));
     const AggregateArray = [
         {
@@ -175,6 +177,7 @@ const PostActivities = async (req, res) => {
     //@ts-ignore
     const data = { ...req.body, Documents: Attachments.DocumentsLinks, MediaFiles: Attachments.MediaFilesLinks, Mentions };
     await CreateActivities(data);
+    await PostMediasFromAttachments(Attachments, ActivityId,UserId);
     return res.json(true);
 }
 

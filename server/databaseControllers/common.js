@@ -1,6 +1,7 @@
 import { ObjectId } from "mongodb";
 import { ReadFollows, ReadOneFromFollows, UpdateFollows } from "./follow-databaseController.js";
 import { ReadOneFromUsers } from "./users-databaseController.js";
+import { ReadActivities, UpdateActivities } from "./activities-databaseController.js";
 
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
 
@@ -37,16 +38,16 @@ const VersionUpdate = async (ReadFn, UpdateFn, where = {}) => {
     return count;
 }
 
-const UserDetailsinFollow = async () => {
+const TypeFeedInActivities = async () => {
     const update = async (follow) => {
-        const UserDetails = await Promise.all([ReadOneFromUsers(follow.FolloweeId), ReadOneFromUsers(follow.FollowerId)])
-        await UpdateFollows({ UserDetails }, follow.DocId);
+        await UpdateActivities({ EntityId : "Feed" }, follow.DocId);
     }
-    await VersionUpdate(ReadFollows, update, { UserDetails: { '$exists': false } });
+    await VersionUpdate(ReadActivities, update, { Type: "Feed" });
 }
 
 
 //UserDetailsinFollow()
+await TypeFeedInActivities()
 
 function Shuffle(array) {
     let m = array.length, t, i;
