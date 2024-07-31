@@ -32,7 +32,9 @@ const ConnectSocket = (expressServer) => {
                 io.to(data.ConversationId).emit('Message', MessageData.Data);
 
                 MessageData.ParticipantIds.map(id => {
-                    io.to(id).emit('ConversationList', true);
+                    if (id !== socket.user.UserId) {
+                        io.to(id).emit('ConversationList', true)
+                    };
                 })
             }
         })
