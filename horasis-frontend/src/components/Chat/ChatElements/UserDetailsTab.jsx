@@ -1,9 +1,13 @@
+import { useNavigate } from 'react-router-dom'
 import avatar from '../../../assets/icons/avatar.svg'
 import Spinner from '../../ui/Spinner'
 
 const UserDetailsTab = ({ user, isLoading, viewAsFlex = false }) => {
+	const navigate = useNavigate()
 	return (
-		<div className={`px-3 pt-3 ${viewAsFlex && 'flex gap-2 items-end'}`}>
+		<div
+			className={`px-3 ${viewAsFlex && 'flex gap-2 items-end'}`}
+			onClick={() => navigate(`/ViewProfile/${user.DocId}`)}>
 			<div className='flex justify-start items-center'>
 				{user ? (
 					<>
