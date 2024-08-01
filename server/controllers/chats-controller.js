@@ -48,7 +48,7 @@ const GetConversations = async (req, res) => {
 
     await Promise.all(data.map(async ConversationData => {
         // @ts-ignore
-        ConversationData.NumberOfUnreadMessages = await GetMessagesCount({
+        ConversationData.NumberOfUnseenMessages = await GetMessagesCount({
             "ConversationId": ConversationData.DocId, SenderId: { "$ne": UserId },
             "SeenUsers.UserId": { "$ne": UserId }
         });
