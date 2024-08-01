@@ -140,6 +140,8 @@ const MessageInit = (Message) => {
     return {
         ...Message,
         SeenUsers: [],
+        CreatedIndex: moment().valueOf(),
+        Index: `${moment().valueOf()}`,
     }
 }
 
