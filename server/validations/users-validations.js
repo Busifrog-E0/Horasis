@@ -98,10 +98,9 @@ const ValidatePatchUsers = async (req, res, next) => {
 
 const ValidatePatchUserPictures = async (req, res, next) => {
     const Result = Joi.object({
-        ...QueryParametersSchema.keys({
-            Type: Joi.string().valid("image", "video", "document").required(),
-        })
-    }).validate(req.query, { stripUnknown: true });
+        CoverPicture: Joi.string().allow(""),
+        ProfilePicture: Joi.string().allow(""),
+    }).xor('CoverPicture', 'ProfilePicture').validate(req.body, { stripUnknown: true });
     if (Result.error) {
         const message = Result.error.details.map((detail) => detail.message).join(', ');
         return res.status(400).json(message);
@@ -113,16 +112,15 @@ const ValidatePatchUserPictures = async (req, res, next) => {
 }
 
 const ValidateGetUserMedia = async (req, res, next) => {
-    const Result = Joi.object({
-        CoverPicture: Joi.string().allow(""),
-        ProfilePicture: Joi.string().allow(""),
-    }).xor('CoverPicture', 'ProfilePicture').validate(req.body, { stripUnknown: true });
+    const Result = QueryParametersSchema.keys({
+        Type: Joi.string().valid("image", "video", "document").required(),
+    }).validate(req.query, { stripUnknown: true });
     if (Result.error) {
         const message = Result.error.details.map((detail) => detail.message).join(', ');
         return res.status(400).json(message);
     }
     else {
-        req.body = Result.value;
+        req.query = Result.value;
         return next();
     }
 }

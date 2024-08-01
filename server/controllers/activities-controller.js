@@ -176,7 +176,7 @@ const PostActivities = async (req, res) => {
     req.body = ActivityInit(req.body);
     //@ts-ignore
     const data = { ...req.body, Documents: Attachments.DocumentsLinks, MediaFiles: Attachments.MediaFilesLinks, Mentions };
-    await CreateActivities(data);
+    await CreateActivities(data,ActivityId);
     await PostMediasFromAttachments(Attachments, ActivityId,UserId);
     return res.json(true);
 }
