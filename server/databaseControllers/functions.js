@@ -67,22 +67,20 @@ async function Update(collectionName, data, docName, operation = ["$set"], LastU
  * @param {object} filter
  * @param {object} dataSets
  * @param {Array<string>} operation
- * 
+ * @returns {Promise<true>}
  */
 async function UpdateMany(collectionName, data, filter, operation = ["$set"], ...dataSets) {
-    return new Promise(async (resolve, reject) => {
         try {
             const OperationObject = { [operation[0]]: data }
             for (let index = 1; index < operation.length; index++) {
                 OperationObject[operation[index]] = dataSets[index - 1];
             }
-            await db.collection(collectionName).updateMany(filter, data);
-            resolve(true);
+            await db.collection(collectionName).updateMany(filter, OperationObject);
+            return true;
         } catch (error) {
             logger.log(error);
             throw new Error(error);
         }
-    });
 }
 
 /**
@@ -104,6 +102,7 @@ async function Delete(collectionName, docName) {
 /**
  * @param {string} collectionName
  * @param {string | number | ObjectId | import("bson").ObjectIdLike | Uint8Array | undefined} docName
+ * @return {Promise<object|Array<object>|null>}
  */
 async function Read(collectionName, docName, NextIndex = "", limit = 10, where = {}, orderBy = { "Index": "desc" }) {
         let query, NextField = "Index";
