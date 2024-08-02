@@ -31,10 +31,10 @@
 }
 
 .outgoing_withd_msg p {
-    border: 1px solid var(--system-primary-bg);
-    background: var(--system-primary-bg) none repeat scroll 0 0;
+    border: 1px solid var(--system-primary-accent);
+    background: var(--system-primary-accent) none repeat scroll 0 0;
     border-bottom-right-radius: 0px;
-    color: var(--system-primary-text);
+    color: var(--brand-secondary);
 }
 
 .time_date {
