@@ -1,0 +1,78 @@
+import dataHandling from './functions.js'
+
+
+/**
+ * @typedef {object} NotificationData
+ * @property {string} UserId
+ * @property {string} EntityId
+ * @property {string} EntityType
+ * @property {string|null} Link
+ * @property {string} DocId
+ * @property {boolean} HasSeen
+ * @property {string} Content
+ * @property {string} Type
+ * @property {{Text : string, Link : string}[]} ContentLinks
+ *
+*/
+
+
+
+/**
+ * 
+ * @param {undefined|object} Where 
+ * @param {undefined|string} NextIndex 
+ * @param {undefined|number} Limit 
+ * @param {undefined|object} orderBy 
+ * @returns {Promise<Array<NotificationData>>} Returns NotificationData
+ */
+const ReadNotifications = async (Where, NextIndex, Limit, orderBy) => {
+    return dataHandling.Read('Notifications', undefined, NextIndex, Limit, Where, orderBy);
+}
+
+/**
+ * 
+ * @param {string} DocId 
+ * @returns {Promise<NotificationData>}
+ */
+const ReadOneFromNotifications = async (DocId) => {
+    return dataHandling.Read('Notifications', DocId);
+}
+
+/**
+ * 
+ * @param {NotificationData|object} data
+ * @param {string} DocId 
+ * @returns {Promise<boolean>}
+ */
+const UpdateNotifications = async (data, DocId) => {
+    return dataHandling.Update('Notifications', data, DocId);
+}
+
+
+/**
+ * 
+ * @param {NotificationData|object} data
+ * @param {string|undefined} DocId 
+ * @returns {Promise<string>}
+ */
+const CreateNotifications = async (data, DocId = undefined) => {
+    return dataHandling.Create('Notifications', data, DocId);
+}
+
+/**
+ * 
+ * @param {string} DocId 
+ * @returns {Promise<boolean>}
+ */
+const RemoveNotifications = async (DocId) => {
+    return dataHandling.Delete('Notifications', DocId);
+}
+
+
+export {
+    ReadNotifications,
+    ReadOneFromNotifications,
+    UpdateNotifications,
+    CreateNotifications,
+    RemoveNotifications
+}

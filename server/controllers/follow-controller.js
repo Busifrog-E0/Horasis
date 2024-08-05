@@ -4,6 +4,7 @@ import { ReadOneFromFollows, ReadFollows, UpdateFollows, CreateFollows, RemoveFo
 import { ViewOtherUserData } from './users-controller.js';
 import { AlertBoxObject } from './common.js';
 import { ReadOneFromUsers } from '../databaseControllers/users-databaseController.js';
+import { SendNotificationsForFollow } from './notifications-controller.js';
 /**
  * @typedef {import('./../databaseControllers/follow-databaseController.js').FollowData} FollowData 
  */
@@ -99,6 +100,7 @@ const PostFollows = async (req, res) => {
     const UserDetails = await Promise.all([ReadOneFromUsers(FolloweeId), ReadOneFromUsers(FollowerId)]);
     req.body.UserDetails = UserDetails;
     await CreateFollows(req.body);
+    await SendNotificationsForFollow(FollowerId, FolloweeId);4
     return res.json(true);
 }
 

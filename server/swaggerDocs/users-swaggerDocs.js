@@ -119,7 +119,7 @@ const get_Users_UserId_Media = async (req, res, next) => {
     /* #swagger.security = [{ "BearerAuth": [] }] */
     /* #swagger.responses[200] = {
                  description: 'User Data',
-                 schema: { $ref: '#/definitions/GetMediaAray' }
+                 schema: { $ref: '#/definitions/GetMediaArray' }
          } 
      */
     next();

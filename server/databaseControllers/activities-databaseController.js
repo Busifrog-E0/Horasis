@@ -1,12 +1,19 @@
 import dataHandling from "./functions.js";
 
 /**
+ * @typedef {object} MentionsData
+ * @property {string} UserId
+ * @property {string} Username
+ * @property {string} FullName 
+ */
+
+/**
  * @typedef {object} ActivityData
  * @property {string} Content
  * @property {string} UserId
  * @property {string[]} MediaFiles
  * @property {string[]} Documents
- * @property {string[]} Mentions
+ * @property {MentionsData[]} Mentions
  * @property {string[]} LikedIds
  * @property {string[]} Attachments
  * @property {number} NoOfLikes

@@ -5,6 +5,7 @@ import moment from 'moment';
 import { AlertBoxObject } from './common.js';
 import { ViewOtherUserData } from './users-controller.js';
 import { ReadOneFromUsers, ReadUsers } from '../databaseControllers/users-databaseController.js';
+import { RemoveNotificationsForConnectionRequest, SendNotificationsForConnectionAccept, SendNotificationsForConnectionRequest } from './notifications-controller.js';
 /**
  * @typedef {import('./../databaseControllers/connections-databaseController.js').ConnectionData} ConnectionData 
  */
@@ -82,7 +83,8 @@ const PostConnectionSend = async (req, res) => {
     }
 
     ConnectionData.UserDetails = [PromiseData[3], PromiseData[4]];
-    await CreateConnections(ConnectionData);
+    const ConnectionId = await CreateConnections(ConnectionData);
+    await SendNotificationsForConnectionRequest(ConnectionId, PromiseData[3], PromiseData[4]);
     return res.json(true);
 }
 
@@ -110,6 +112,7 @@ const PostConnectionAccept = async (req, res) => {
     // check senderId and receiverid valid
 
     await UpdateConnections({ "Status": "Connected", AcceptedIndex: moment().valueOf() }, ConnectionData.DocId);
+    await SendNotificationsForConnectionAccept(ConnectionData.DocId, SenderId, ReceiverId);
     return res.json(true);
 }
 
@@ -158,6 +161,7 @@ const DeleteConnectionCancel = async (req, res) => {
         return res.status(444).json(AlertBoxObject('Invalid Request', 'No pending request '));
     }
     await RemoveConnections(ConnectionData.DocId);
+    await RemoveNotificationsForConnectionRequest(ConnectionData.DocId, ConnectionData.ReceiverId);
     return res.json(true)
 }
 
