@@ -5,6 +5,7 @@ import { IncrementActivities } from '../databaseControllers/activities-databaseC
 import { ReadOneFromUsers } from '../databaseControllers/users-databaseController.js';
 import { AlertBoxObject } from './common.js';
 import { IncrementComments } from '../databaseControllers/comments-databaseController.js';
+import { SendNotificationsforActivityLikes } from './notifications-controller.js';
 /**
  * @typedef {import('./../databaseControllers/likes-databaseController.js').LikeData} LikeData 
  */
@@ -54,6 +55,7 @@ const PostLikes = async (req, res) => {
     await CreateLikes(data);
     if (data.Type === 'Activity') {
         await IncrementActivities({ NoOfLikes: 1 }, data.EntityId);
+        await SendNotificationsforActivityLikes(UserId, EntityId);
     }
     else {
         await IncrementComments({ NoOfLikes: 1 }, data.EntityId);

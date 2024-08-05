@@ -9,6 +9,7 @@ import { ObjectId } from 'mongodb';
 import { ReadLikes } from '../databaseControllers/likes-databaseController.js';
 import { ReadSaves } from '../databaseControllers/saves-databaseController.js';
 import { PostMediasFromAttachments } from './medias-controller.js';
+import { RemoveNotificationsAfterActivityMentionPatch, SendNotificationstoActivityMentions } from './notifications-controller.js';
 
 /**
  * @typedef {import('../databaseControllers/activities-databaseController.js').ActivityData} ActivityData 
@@ -44,7 +45,7 @@ const GetOneFromActivities = async (req, res) => {
 const GetActivities = async (req, res) => {
     //@ts-ignore
     const { UserId } = req.user;
-    const { NextId, Limit, Filter, OrderBy } = req.query;   
+    const { NextId, Limit, Filter, OrderBy } = req.query;
     //@ts-ignore
     const FilterConditions = Object.entries(Filter).map(([key, value]) => ({ [key]: value }));
     const AggregateArray = [
@@ -176,8 +177,9 @@ const PostActivities = async (req, res) => {
     req.body = ActivityInit(req.body);
     //@ts-ignore
     const data = { ...req.body, Documents: Attachments.DocumentsLinks, MediaFiles: Attachments.MediaFilesLinks, Mentions };
-    await CreateActivities(data,ActivityId);
-    await PostMediasFromAttachments(Attachments, ActivityId,UserId);
+    await CreateActivities(data, ActivityId);
+    await PostMediasFromAttachments(Attachments, ActivityId, UserId);
+    await SendNotificationstoActivityMentions(Mentions, UserId, ActivityId);
     return res.json(true);
 }
 
@@ -196,6 +198,8 @@ const PatchActivities = async (req, res) => {
     }
     req.body.Mentions = await ExtractMentionedUsersFromContent(req.body.Content);
     await UpdateActivities(req.body, ActivityId);
+    //@ts-ignore
+    await RemoveNotificationsAfterActivityMentionPatch(req.body.Mentions,Activity.Mentions,req.user.UserId,ActivityId);
     return res.json(true);
 }
 
@@ -306,7 +310,7 @@ const ActivityInit = (Activity) => {
 /**
  * 
  * @param {string} Content 
- * @returns 
+ * @returns {Promise<{Username : string,UserId : string,FullName : string}[]>}
  */
 const ExtractMentionedUsersFromContent = async (Content) => {
     const mentionPattern = /(?<=\s|^)@([\w.]+)/g;

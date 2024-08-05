@@ -6,6 +6,7 @@ import { AlertBoxObject } from './common.js';
 import { ReadOneFromUsers } from '../databaseControllers/users-databaseController.js';
 import { ObjectId } from 'mongodb';
 import { AggregateConnections } from '../databaseControllers/connections-databaseController.js';
+import { SendNotificationForMemberInvitation, SendNotificationForMemberJoin, SendNotificationForMemberRequest, SendNotificationForMemberRequestStatus } from './notifications-controller.js';
 /**
  * @typedef {import('./../databaseControllers/members-databaseController.js').MemberData} MemberData 
  */
@@ -73,9 +74,10 @@ const PostMembers = async (req, res) => {
 
     if (Entity.Privacy === "Public") {
         await IncrementDiscussions({ NoOfMembers: 1 }, EntityId);
+        await SendNotificationForMemberJoin(req.body.Type,EntityId,UserId);
         return res.json(true);
     }
-
+    await SendNotificationForMemberRequest(req.body.Type,EntityId,UserId);
     return res.status(244).json(AlertBoxObject("Request Sent", "Request has been sent"));
 
 }
@@ -99,6 +101,7 @@ const AcceptJoinRequest = async (req, res) => {
     if (req.body.Type === "Discussion") {
         await IncrementDiscussions({ NoOfMembers: 1 }, EntityId);
     }
+    await SendNotificationForMemberRequestStatus(req.body.Type,EntityId,UserId,"Accepted");
     return res.json(true);
 }
 
@@ -139,6 +142,7 @@ const InviteMembers = async (req, res) => {
     req.body = { ...MemberInit(req.body), MemberId: InviteeId, EntityId, UserDetails };
     req.body.MembershipStatus = "Invited";
     await CreateMembers(req.body);
+    await SendNotificationForMemberInvitation(req.body.Type,EntityId,InviteeId);
     return res.json(true);
 }
 /**
