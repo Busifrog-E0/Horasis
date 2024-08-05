@@ -607,7 +607,7 @@
             "type": "string"
           },
           {
-            "name": "Filter",
+            "name": "Type",
             "in": "query",
             "type": "string"
           }
