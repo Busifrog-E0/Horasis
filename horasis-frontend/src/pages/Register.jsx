@@ -470,6 +470,16 @@ const Register = () => {
 							setValue={(e) => {
 								validateSingle({ ['About']: e }, 'About')
 							}}
+							onKeyDown={(e)=>{
+								if(e.key === "Enter"){
+									e.preventDefault()
+									if(!termsChecked || (usernameAvailable && !usernameAvailable.available)){
+										return 
+									}else{
+										validate(register)
+									}
+								}
+							}}
 							value={registerFormValue.About}
 							rows={6}
 							placeholder='Enter something about you....'
