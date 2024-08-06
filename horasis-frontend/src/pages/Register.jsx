@@ -29,6 +29,7 @@ const Register = () => {
 	const [loading, setLoading] = useState(false)
 	const [verifying, setVerifying] = useState(false)
 	const [showpass, setShowpass] = useState(false)
+	const [showConfirmPass, setShowConfirmPass] = useState(false)
 	const [showconfpass, setShowconfpass] = useState(false)
 	const [errorObj, setErrorObj] = useState({})
 	const [otpError, setOtpError] = useState({})
@@ -337,12 +338,12 @@ const Register = () => {
 							}}
 							value={registerFormValue.Password}
 							type={showpass ? 'text' : 'password'}
-							// withIcon="true"
-							// icon={showpass ? icons.eyeon.outline : icons.eyeoff.outline}
-							// iconpos="right"
-							// iconClick={() => {
-							//   setShowpass((prev) => !prev);
-							// }}
+							withIcon='true'
+							icon={showpass ? 'on' : 'off'}
+							iconpos='right'
+							iconClick={() => {
+								setShowpass((prev) => !prev)
+							}}
 						/>
 						{errorObj['Password'] != undefined && <p className='text-brand-red m-0'>{errorObj['Password']}</p>}
 					</div>
@@ -359,13 +360,13 @@ const Register = () => {
 								validateConfirmPassword({ ['ConfirmPassword']: e }, 'ConfirmPassword')
 							}}
 							value={registerFormValue.ConfirmPassword}
-							type={showconfpass ? 'text' : 'password'}
-							// withIcon="true"
-							// icon={showpass ? icons.eyeon.outline : icons.eyeoff.outline}
-							// iconpos="right"
-							// iconClick={() => {
-							//   setShowpass((prev) => !prev);
-							// }}
+							type={showConfirmPass ? 'text' : 'password'}
+							withIcon='true'
+							icon={showConfirmPass ? 'on' : 'off'}
+							iconpos='right'
+							iconClick={() => {
+								setShowConfirmPass((prev) => !prev)
+							}}
 						/>
 						{errorObj['ConfirmPassword'] != undefined && (
 							<p className='text-brand-red m-0'>{errorObj['ConfirmPassword']}</p>
@@ -470,12 +471,12 @@ const Register = () => {
 							setValue={(e) => {
 								validateSingle({ ['About']: e }, 'About')
 							}}
-							onKeyDown={(e)=>{
-								if(e.key === "Enter"){
+							onKeyDown={(e) => {
+								if (e.key === 'Enter') {
 									e.preventDefault()
-									if(!termsChecked || (usernameAvailable && !usernameAvailable.available)){
-										return 
-									}else{
+									if (!termsChecked || (usernameAvailable && !usernameAvailable.available)) {
+										return
+									} else {
 										validate(register)
 									}
 								}

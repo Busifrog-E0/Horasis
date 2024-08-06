@@ -139,12 +139,12 @@ const LogIn = () => {
 						}}
 						value={loginFormValue.Password}
 						type={showpass ? 'text' : 'password'}
-						// withIcon="true"
-						// icon={showpass ? icons.eyeon.outline : icons.eyeoff.outline}
-						// iconpos="right"
-						// iconClick={() => {
-						//   setShowpass((prev) => !prev);
-						// }}
+						withIcon="true"
+						icon={showpass ? 'on' : 'off'}
+						iconpos="right"
+						iconClick={() => {
+						  setShowpass((prev) => !prev);
+						}}
 					/>
 					{errorObj['Password'] != undefined && <p className='text-brand-red m-0'>{errorObj['Password']}</p>}
 				</div>

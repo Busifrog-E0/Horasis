@@ -18,6 +18,7 @@ const Input = ({
   iconpos,
   error,
   required,
+  iconClick,
   ...props
 }) => {
   return (
@@ -33,8 +34,11 @@ const Input = ({
 
       {icon ? (
         <div
-          className={`flex ${iconpos === "right" ? "flex-row-reverse pl-4 pr-4" : " pl-2 "} items-center bg-system-secondary-bg ${width === "full" ? "w-[100%]" : "w-max"} focus-within:border-2 focus-within:border-system-primary-accent focus-within:bg-system-secondary-bg rounded-lg gap-x-2 border-2 border-system-file-border`}
-        >
+          className={`flex ${iconpos === "right" ? "flex-row-reverse pl-4 pr-4" : " pl-2 "} items-center bg-system-secondary-bg ${width === "full" ? "w-[100%]" : "w-max"} focus-within:border-2 focus-within:border-system-primary-accent focus-within:bg-system-secondary-bg rounded-lg gap-x-2 border-2 border-system-file-border ${className} py-0`}
+        > 
+          <p className="cursor-pointer select-none" onClick={iconClick}>
+            {icon}
+          </p>
           <input
             onChange={(e) => setValue(e.target.value, e)}
             type={type}
@@ -45,6 +49,7 @@ const Input = ({
             required={required}
             {...props}
           />
+         
         </div>
       ) : (
         <input
