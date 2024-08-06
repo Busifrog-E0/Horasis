@@ -11,6 +11,8 @@ import { AuthContext } from '../utils/AuthProvider'
 import { registerValidation } from '../utils/schema/users/registerValidation'
 import { useToast } from '../components/Toast/ToastService'
 import TimerComponent from '../components/Timer/TimerComponent'
+import countries from '../../public/countries-with-coords.json'
+import Select from '../components/ui/Select'
 const logoText = {
 	fontSize: '1.7rem',
 	fontWeight: '700',
@@ -55,6 +57,7 @@ const Register = () => {
 	const [timerValue, setTimerValue] = useState(30)
 
 	const [termsChecked, setTermsChecked] = useState(false)
+	const [countryOptions, setCountryOptions] = useState(countries.countries.map((item) => item.name))
 
 	const validateSingle = (value, key, callback) => {
 		setRegisterFormValue({ ...registerFormValue, ...value })
@@ -248,10 +251,10 @@ const Register = () => {
 					</div>
 				</Modal.Body>
 			</Modal>
-			<div style={{ minHeight: '100svh' }} className='flex flex-col justify-center items-center bg-system-primary-bg '>
+			<div style={{ minHeight: '100svh' }} className='flex flex-col justify-center items-center bg-system-primary-bg'>
 				<div
 					style={{ borderRadius: 20 }}
-					className='bg-system-secondary-bg flex flex-col gap-4 login-form py-4 px-8 lg:px-16 lg:py-10'>
+					className='bg-system-secondary-bg flex flex-col gap-4 login-form py-4 px-8 lg:px-16 lg:py-10 bg-red-500'>
 					<center>
 						<Logo height={80} />
 					</center>
@@ -372,11 +375,10 @@ const Register = () => {
 							<p className='text-brand-red m-0'>{errorObj['ConfirmPassword']}</p>
 						)}
 					</div>
-					<div>
+					{/* <div>
 						<h1 className='text-system-primary-text font-medium text-lg'>
 							Country<span className='text-brand-red'>*</span>
 						</h1>
-						{/* {errorObj[field] != undefined ? { borderColor: 'red' } : {}} */}
 						<Input
 							className='py-4 rounded-xl border-2 border-system-file-border-accent'
 							width='full'
@@ -387,6 +389,20 @@ const Register = () => {
 							}}
 							value={registerFormValue.Country}
 							type='text'
+						/>
+						{errorObj['Country'] != undefined && <p className='text-brand-red m-0'>{errorObj['Country']}</p>}
+					</div> */}
+					<div>
+						<h1 className='text-system-primary-text font-medium text-lg'>Country</h1>
+						<Select
+							className='py-4 rounded-xl border-2 border-system-file-border-accent'
+							width='full'
+							placeholder='Select a country'
+							setValue={(item) => {
+								validateSingle({ ['Country']: item }, 'Country')
+							}}
+							value={registerFormValue.Country}
+							options={countryOptions}
 						/>
 						{errorObj['Country'] != undefined && <p className='text-brand-red m-0'>{errorObj['Country']}</p>}
 					</div>

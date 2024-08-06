@@ -9,6 +9,8 @@ import { AuthContext, defaultUserData } from '../utils/AuthProvider'
 import { postItem } from '../constants/operations'
 import { loginValidation } from '../utils/schema/loginValidation'
 import { useToast } from '../components/Toast/ToastService'
+import Select from '../components/ui/Select'
+import countries from '../../public/countries-with-coords.json'
 const logoText = {
 	fontSize: '1.7rem',
 	fontWeight: '700',
@@ -21,6 +23,7 @@ const branding = {
 	alignItems: 'center',
 	marginBottom: 20,
 }
+
 
 const LogIn = () => {
 	const navigate = useNavigate()
@@ -139,15 +142,16 @@ const LogIn = () => {
 						}}
 						value={loginFormValue.Password}
 						type={showpass ? 'text' : 'password'}
-						withIcon="true"
+						withIcon='true'
 						icon={showpass ? 'on' : 'off'}
-						iconpos="right"
+						iconpos='right'
 						iconClick={() => {
-						  setShowpass((prev) => !prev);
+							setShowpass((prev) => !prev)
 						}}
 					/>
 					{errorObj['Password'] != undefined && <p className='text-brand-red m-0'>{errorObj['Password']}</p>}
 				</div>
+
 
 				<div className='mt-4'>
 					<Button

@@ -276,7 +276,7 @@ input[type='range']::-ms-thumb {
 
 .login-form {
   width: 100%;
-  max-height: 700px;
+  max-height: 'max-content';
 }
 
 @media (min-width:680px) {
