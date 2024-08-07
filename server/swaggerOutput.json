@@ -607,7 +607,7 @@
             "type": "string"
           },
           {
-            "name": "Type",
+            "name": "Filter",
             "in": "query",
             "type": "string"
           }
@@ -616,7 +616,7 @@
           "200": {
             "description": "User Data",
             "schema": {
-              "$ref": "#/definitions/GetMediaAray"
+              "$ref": "#/definitions/GetMediaArray"
             }
           },
           "400": {
@@ -637,6 +637,91 @@
             "BearerAuth": []
           }
         ]
+      }
+    },
+    "/api/users/forgotPassword": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Email": {
+                  "type": "string",
+                  "example": "wXU8I@example.com"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/api/users/forgotPassword/verify": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/OTPVerifyData"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/api/users/forgotPassword/reset": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "OTPId": {
+                  "type": "string",
+                  "example": "string"
+                },
+                "Password": {
+                  "type": "string",
+                  "example": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          }
+        }
       }
     },
     "/api/users/{UserId}/followers": {
@@ -3491,6 +3576,9 @@
               "type": "object",
               "properties": {
                 "MembershipStatus": {
+                  "example": "any"
+                },
+                "Type": {
                   "example": "any"
                 }
               }
