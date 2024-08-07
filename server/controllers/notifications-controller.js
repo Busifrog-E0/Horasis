@@ -375,7 +375,7 @@ const SendNotificationForMemberInvitation = async (Type, EntityId, UserId) => {
     return await SendNotificationToUser(NotificationObject, UserId);
 }
 
-
+//const RemoveNotification
 
 /**
  * 
