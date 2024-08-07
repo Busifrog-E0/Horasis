@@ -100,7 +100,7 @@ const PostFollows = async (req, res) => {
     const UserDetails = await Promise.all([ReadOneFromUsers(FolloweeId), ReadOneFromUsers(FollowerId)]);
     req.body.UserDetails = UserDetails;
     await CreateFollows(req.body);
-    await SendNotificationsForFollow(FollowerId, FolloweeId); 4
+    await SendNotificationsForFollow(FollowerId, FolloweeId); 
     return res.json(true);
 }
 
