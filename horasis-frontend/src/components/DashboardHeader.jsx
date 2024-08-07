@@ -3,6 +3,7 @@ import { AuthContext } from '../utils/AuthProvider'
 import Logo from './Common/Logo'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import ChatList from './Chat/ChatList'
+import AlertList from './Alert/AlertList'
 
 const DashboardHeader = () => {
 	const { logout, currentUserData, scrollToTop } = useContext(AuthContext)
@@ -95,8 +96,8 @@ const DashboardHeader = () => {
             onClick={() => OnClickItem("/universal/search")}
           >
             Search
-          </button>
-          <AlertList /> */}
+          </button> */}
+          <AlertList />
 					<ChatList />
 					<button
 						type='button'
