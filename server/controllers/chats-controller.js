@@ -2,7 +2,7 @@ import {
     CreateConversations, ReadConversations, ReadOneFromConversations,
     UpdateAndIncrementConversations, UpdateConversations
 } from "../databaseControllers/conversations-databaseController.js";
-import { CreateMessages, ReadMessages, UpdateManyMessage, UpdateMessages } from "../databaseControllers/messages-databaseController.js";
+import { CreateMessages, GetMessagesCount, ReadMessages, UpdateManyMessage, UpdateMessages } from "../databaseControllers/messages-databaseController.js";
 import e, { json } from 'express'
 import { ReadOneFromUsers } from "../databaseControllers/users-databaseController.js";
 import { AlertBoxObject } from "./common.js";
@@ -46,6 +46,16 @@ const GetConversations = async (req, res) => {
     Filter.OneMessageSent = true;
     //@ts-ignore
     const data = await ReadConversations(Filter, NextId, Limit, OrderBy);
+
+    await Promise.all(data.map(async ConversationData => {
+        // @ts-ignore
+        ConversationData.NumberOfUnseenMessages = await GetMessagesCount({
+            "ConversationId": ConversationData.DocId, SenderId: { "$ne": UserId },
+            "SeenUsers.UserId": { "$ne": UserId }
+        });
+        return ConversationData;
+    }));
+
     return res.json(data);
 }
 
@@ -70,9 +80,9 @@ const GetMessages = async (req, res) => {
     Filter.ConversationId = ConversationId;
     // @ts-ignore
     const data = await ReadMessages(Filter, NextId, Limit, OrderBy);
-    // if (!NextId) {
-    //     await UpdateAllNotSeenMessages(UserId);
-    // }
+    if (!NextId) {
+        await UpdateAllNotSeenMessages(ConversationId, UserId);
+    }
     return res.json(data);
 }
 
@@ -112,6 +122,21 @@ const ReterieveConversationId = async (req, res) => {
 
 /**
  * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ * @returns {Promise<e.Response<true>>}
+ */
+const PatchSeeAllMessages = async (req, res) => {
+    // @ts-ignore
+    const UserId = req.user.UserId;
+    const { ConversationId } = req.params;
+
+    await UpdateAllNotSeenMessages(ConversationId, UserId);
+    return res.json(true);
+}
+
+/**
+ * 
  * @param {{ConversationId:string,SenderId:string,Content:string}} data
  * @returns {Promise<{Success:boolean,Data:object,ParticipantIds:Array}>}
  */
@@ -129,21 +154,6 @@ const PostMessages = async (data) => {
     return { Success: true, Data: data, ParticipantIds: ConversationData.ParticipantIds };
 }
 
-const ConversationInit = (Conversation) => {
-    return {
-        ...Conversation,
-        OneMessageSent: false,
-        LastMessage: {}
-    }
-}
-
-const MessageInit = (Message) => {
-    return {
-        ...Message,
-        SeenUsers: [],
-    }
-}
-
 /**
  * 
  * @param {ConversationData} ConversationData 
@@ -157,8 +167,32 @@ const CheckUserInConversation = (ConversationData, UserId) => {
     return ConversationData.ParticipantIds.includes(UserId)
 }
 
-const UpdateAllNotSeenMessages = async (UserId) => {
-    await UpdateManyMessage({ SeenUsers: { "$ne": UserId } }, { SeenUsers: { UserId, SeenIndex: moment().valueOf() } }, ["$push"]);
+/**
+ * 
+ * @param {string} UserId 
+ * @param {string} ConversationId 
+ */
+const UpdateAllNotSeenMessages = async (ConversationId, UserId) => {
+    return UpdateManyMessage({ "SeenUsers.UserId": { "$ne": UserId }, ConversationId }, { SeenUsers: { UserId, SeenIndex: moment().valueOf() } }, ["$push"]);
+}
+
+
+
+const ConversationInit = (Conversation) => {
+    return {
+        ...Conversation,
+        OneMessageSent: false,
+        LastMessage: {}
+    }
+}
+
+const MessageInit = (Message) => {
+    return {
+        ...Message,
+        SeenUsers: [],
+        CreatedIndex: moment().valueOf(),
+        Index: `${moment().valueOf()}`,
+    }
 }
 
 export {
@@ -166,5 +200,7 @@ export {
     GetMessages,
     GetConversations,
     ReterieveConversationId,
+    PatchSeeAllMessages,
     CheckUserInConversation,
+    UpdateAllNotSeenMessages,
 }

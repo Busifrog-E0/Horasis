@@ -16,7 +16,7 @@ async function Create(collectionName, data, docName = undefined, index = true) {
     return new Promise(async (resolve, reject) => {
         try {
             data.CreatedIndex = moment().valueOf();
-            if (data.Index === undefined && index) {
+            if (!data.Index && index) {
                 data.Index = `${Date.now()}`;
             }
             if (docName !== undefined) {
@@ -67,22 +67,20 @@ async function Update(collectionName, data, docName, operation = ["$set"], LastU
  * @param {object} filter
  * @param {object} dataSets
  * @param {Array<string>} operation
- * 
+ * @returns {Promise<true>}
  */
 async function UpdateMany(collectionName, data, filter, operation = ["$set"], ...dataSets) {
-    return new Promise(async (resolve, reject) => {
         try {
             const OperationObject = { [operation[0]]: data }
             for (let index = 1; index < operation.length; index++) {
                 OperationObject[operation[index]] = dataSets[index - 1];
             }
-            await db.collection(collectionName).updateMany(filter, data);
-            resolve(true);
+            await db.collection(collectionName).updateMany(filter, OperationObject);
+            return true;
         } catch (error) {
             logger.log(error);
             throw new Error(error);
         }
-    });
 }
 
 /**
@@ -104,33 +102,22 @@ async function Delete(collectionName, docName) {
 /**
  * @param {string} collectionName
  * @param {string | number | ObjectId | import("bson").ObjectIdLike | Uint8Array | undefined} docName
+ * @return {Promise<object|Array<object>|null>}
  */
 async function Read(collectionName, docName, NextIndex = "", limit = 10, where = {}, orderBy = { "Index": "desc" }) {
-    return new Promise(async (resolve, reject) => {
         let query, NextField = "Index";
         try {
             if (docName === undefined || docName === "") {
-                if (Array.isArray(orderBy)) {
-                    if (limit === -1) {
-                        // @ts-ignore
-                        query = db.collection(collectionName).find(where);
-                    }
-                    else {
-                        // @ts-ignore
-                        query = db.collection(collectionName).find(where).limit(limit);
-                    }
-                }
-                else {
+
                     const OrderByKeys = Object.keys(orderBy);
                     NextField = OrderByKeys[0] || "Index";
                     for (let index = 0; index < OrderByKeys.length; index++) {
-                        const element = OrderByKeys[index];
-                        if (!where[element]) {
-                            where[element] = { "$exists": true };
+                        if (!where[OrderByKeys[index]]) {
+                            where[OrderByKeys[index]] = { "$exists": true };
                         }
                     }
                     orderBy["_id"] = "desc";
-                    if (!Check(NextIndex)) {
+                if (NextIndex) {
                         const [Index, nextId] = NextIndex.split('--');
                         if (where["$or"]) {
                             const FirstOr = where["$or"];
@@ -168,21 +155,21 @@ async function Read(collectionName, docName, NextIndex = "", limit = 10, where =
                         // @ts-ignore
                         query = db.collection(collectionName).find(where).sort(orderBy).limit(limit);
                     }
-                }
+
                 const temp = [];
                 const data = await query.toArray();
                 data.forEach((doc, index) => {
                     temp.push({ ...doc, "DocId": doc._id.toString(), "NextId": `${doc[NextField]}--${doc._id}` });
                 });
-                resolve(temp);
+                return temp;
             }
             else {
                 const data = await db.collection(collectionName).find({ "_id": new ObjectId(docName) }).toArray();
                 if (data.length === 1) {
-                    resolve({ ...data[0], "DocId": data[0]._id.toString() });
+                    return { ...data[0], "DocId": data[0]._id.toString() };
                 }
                 else {
-                    resolve(null);
+                    return null;
                 }
             }
         }
@@ -190,7 +177,6 @@ async function Read(collectionName, docName, NextIndex = "", limit = 10, where =
             logger.log(error);
             throw new Error(error);
         }
-    });
 }
 
 /**
@@ -244,9 +230,6 @@ const Check = (/** @type {string | null | undefined} */ Field) => {
         return false;
     }
 }
-// const increment = admin.firestore.FieldValue.increment
-// const arrayUnion = admin.firestore.FieldValue.arrayUnion;
-
 
 /**
  * @param {number} b
@@ -296,93 +279,9 @@ const ConvertSortForAggregate = (orderBy) => {
         return acc;
     }, {});
 }
-// async function toBase64(ImgUrl) {
-//     const imageToBase64 = require('image-to-base64');
-
-//     return imageToBase64(ImgUrl) // Path to the image
-//         .then((response) => {
-//             return response; // "cGF0aC90by9maWxlLmpwZw=="
-//         })
-//         .catch((error) => {
-//             return error; // Logs an error if there was one
-//         })
-// }
-
-const ParamsToFirestoreFields = (QueryParams = {}, FieldTypes = { "index": "number" }) => {
-    console.log(QueryParams);
-
-    let Limit, OrderBy = {}, Index, Keyword, Where = {};
-
-    if (!Check(QueryParams["limit"])) {
-        if (QueryParams["limit"] === "FALSE") {
-            Limit = false;
-        }
-        else {
-            Limit = Number(QueryParams["limit"]);
-        }
-    }
-    else {
-        Limit = 10;
-    }
-    if (!Check(QueryParams["sort_by"])) {
-        OrderBy[QueryParams["sort_by"]] = 1;
-        if (!Check(QueryParams["order_by"]) && QueryParams["order_by"] === "desc") {
-            OrderBy[QueryParams["sort_by"]] = -1;
-        }
-    }
-    if (!Check(QueryParams["after_id"])) {
-        Index = QueryParams["after_id"];
-    }
-    if (!Check(QueryParams["keyword"])) {
-        Keyword = QueryParams["keyword"];
-    }
-
-    const FixedKeys = ["limit", "sort_by", "after_id", "order_by", "keyword"];
-    const keys = Object.keys(QueryParams);
-    const types = ["$eq", "$lte", "$gte", "$gt", "$lt", ">>"];
-
-    for (let index = 0; index < keys.length; index++) {
-        const element = keys[index];
-        const Flag = !(FixedKeys.includes(element));
-
-        if (!Flag) {
-            continue;
-        }
-        if (Check(QueryParams[element])) {
-            continue;
-        }
-        if (typeof QueryParams[element] !== 'object') {
-            Where[element] = TypeSetting(element, QueryParams[element], FieldTypes);
-            continue;
-        }
-        const type = Object.keys(QueryParams[element]);
-        for (let i = 0; i < type.length; i++) {
-            const elem = type[i];
-            QueryParams[element][elem] = TypeSetting(element, QueryParams[element][elem], FieldTypes);
-            if (types.includes(elem)) {
-                if (elem === ">>") {
-                    Where[element] = QueryParams[element][elem];
-                }
-                else {
-                    Where[element][elem] = QueryParams[element][elem];
-                }
-            }
-        }
-    }
-
-    const orderBy = OrderBy;
-
-    return {
-        Limit,
-        orderBy,
-        Index,
-        Where,
-        Keyword
-    }
-}
 
 const TypeSetting = (/** @type {string} */ FieldName, /** @type {string} */ FieldData, /** @type {{ [x: string]: any; index?: string; }} */ FieldTypeObj) => {
-    if (Check(FieldTypeObj[FieldName])) {
+    if (!FieldTypeObj[FieldName]) {
         return FieldData;
     }
     switch (FieldTypeObj[FieldName]) {
@@ -398,18 +297,6 @@ const TypeSetting = (/** @type {string} */ FieldName, /** @type {string} */ Fiel
 }
 
 
-const CheckEntityExists = (/** @type {{ status: (arg0: number) => { (): any; new (): any; json: { (arg0: { message: string; success: boolean; }): void; new (): any; }; }; }} */ res, /** @type {any} */ Entity, /** @type {any} */ EntityString) => {
-    if (Check(Entity)) {
-        res.status(403).json({
-            message: `${EntityString} doesn't exists`,
-            success: false,
-        });
-        return true;
-    }
-    else {
-        return false;
-    }
-}
 
 async function ReadCount(collectionName, where = {}) {
 
@@ -434,11 +321,8 @@ export default {
     ReadCount,
     Aggregate,
     Check,
-    CheckEntityExists,
     ObjectId,
     db,
 
     substract,
-    ParamsToFirestoreFields,
 };
-// 345577194

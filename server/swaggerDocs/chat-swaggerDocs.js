@@ -42,10 +42,23 @@ const post_ReterieveConversationId = (req, res, next) => {
     return next();
 }
 
+
+const patch_Chats_ConversationId_SeeAllMessages = (req, res, next) => {
+    /* #swagger.security = [{ "BearerAuth": [] }] */
+    // #swagger.tags = ['Chat']
+    /* #swagger.responses[200] = {
+                 description: 'Chat Data',
+                 schema: true
+         } 
+     */
+    return next();
+}
+
 export default {
     get_Chat,
     get_Chat_ConversationId,
     get_Chat_ConversationId_Messages,
     post_ReterieveConversationId,
+    patch_Chats_ConversationId_SeeAllMessages,
 }
 
