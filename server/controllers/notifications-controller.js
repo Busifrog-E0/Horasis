@@ -6,6 +6,7 @@ import { ReadOneFromActivities } from '../databaseControllers/activities-databas
 import { ReadLikes } from '../databaseControllers/likes-databaseController.js';
 import { Type } from '@aws-sdk/client-s3';
 import { ReadOneFromDiscussions } from '../databaseControllers/discussions-databaseController.js';
+import { ConnectionStatus } from './connections-controller.js';
 /**
  * @typedef {import('./../databaseControllers/notifications-databaseController.js').NotificationData} NotificationData 
  */
@@ -27,21 +28,33 @@ import { ReadOneFromDiscussions } from '../databaseControllers/discussions-datab
 const GetNotifications = async (req, res) => {
     const { Filter, NextId, Limit, OrderBy } = req.query;
     // @ts-ignore
-    Filter.UserId = req.user.UserId;
+    Filter.RecipientId = req.user.RecipientId;
     // @ts-ignore
     const data = await ReadNotifications(Filter, NextId, Limit, OrderBy);
+    return res.json(data);
+}
+
+/**
+* @param { e.Request } req
+* @param { e.Response } res
+* @returns { Promise<e.Response<NotificationData>>}
+*/
+const GetOneFromNotifications = async (req, res) => {
+    const { RecipientId, NotificationId } = req.params;
+    //@ts-ignore
+    const data = await ReadOneFromNotifications(NotificationId);
     return res.json(data);
 }
 
 
 /**
  * 
- * @typedef {Omit<NotificationData, 'HasSeen'|'UserId'|'DocId'>} NotificationObject
+ * @typedef {Omit<NotificationData, 'HasSeen'|'RecipientId'|'DocId'|'ActionLinks'>} NotificationObject
  * @param {NotificationObject} NotificationObject 
  * @param {string} UserId 
  */
 const SendNotificationToUser = async (NotificationObject, UserId, HasAction = false) => {
-    await CreateNotifications({ ...NotificationObject, UserId, HasSeen: false, HasAction });
+    await CreateNotifications({ ...NotificationObject, RecipientId: UserId, HasSeen: false, HasAction });
 }
 
 /**
@@ -110,10 +123,10 @@ const SendNotificationstoCommentMentions = async (Mentions, UserId, ActivityId) 
         const NotificationObject = {
             EntityId: ActivityId,
             EntityType: "Activity",
-            Content: `${User.FullName}@ mentioned you in an Comment!`,
+            Content: `@${User.FullName}@ mentioned you in an Comment!`,
             Link: `/activities/${ActivityId}`,
             Type: "Comment-Mention",
-            ContentLinks: [{ Text: User.FullName, Link: `/users/${UserId}` }]
+            ContentLinks: [{ Text: User.FullName, Link: `/users/${UserId}` }],
         };
         await SendNotificationToUser(NotificationObject, Mention.UserId);
     }))
@@ -171,10 +184,10 @@ const SendNotificationsForConnectionRequest = async (ConnectionId, SenderDetails
     const NotificationObject = {
         EntityId: ConnectionId,
         EntityType: "Connection",
-        Content: `You have a new Connection request from @${SenderDetails.FullName}@ !`,
         Link: `/users/${SenderDetails.DocId}`,
         Type: "Connection-Request",
-        ContentLinks: [{ Text: SenderDetails.FullName, Link: `/users/${SenderDetails.DocId}` }]
+        ContentLinks: [{ Text: SenderDetails.FullName, Link: `/users/${SenderDetails.DocId}` }],
+        Status : ""
     }
     return await SendNotificationToUser(NotificationObject, ReceiverDetails.DocId, true);
 }
@@ -395,5 +408,5 @@ export {
     SendNotificationstoActivityMentions, SendNotificationstoCommentMentions, SendNotificationsforActivityLikes,
     SendNotificationsForFollow, SendNotificationForMemberRequest, SendNotificationForMemberRequestStatus, SendNotificationForMemberInvitation,
     SendNotificationToUser, SendNotificationForMemberJoin, SendNotificationsForConnectionAccept, SendNotificationsForConnectionRequest,
-    RemoveNotificationsAfterActivityMentionPatch, RemoveNotificationsForConnectionRequest
+    RemoveNotificationsAfterActivityMentionPatch, RemoveNotificationsForConnectionRequest, GetOneFromNotifications
 }

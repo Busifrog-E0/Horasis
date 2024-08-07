@@ -366,5 +366,5 @@ export {
     GetOneFromMembers, GetMembers, PostMembers, PatchMembers, DeleteMembers,
     PermissionObjectInit, InviteMembers, AcceptMemberInvitation, UpdateMemberPermissions, GetJoinRequests,
     AcceptJoinRequest, GetMembersToInvite, DeleteTempMembers,
-    RemoveMemberPermissions
+    RemoveMemberPermissions,MemberInit
 }

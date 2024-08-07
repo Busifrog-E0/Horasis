@@ -155,6 +155,28 @@ const post_Users_ForgotPassword_Reset = async (req, res, next) => {
     next();
 }
 
+const get_Users_UserId_Notifications = async (req, res, next) => {
+    // #swagger.tags = ['Users']
+    /* #swagger.security = [{ "BearerAuth": [] }] */
+    /* #swagger.responses[200] = {
+                 description: 'User Data',
+                 schema: { $ref: '#/definitions/GetNotificationArray' }
+         } 
+     */
+    next();
+}
+
+const get_Users_UserId_Notifications_NotificationId = async (req, res, next) => {
+    // #swagger.tags = ['Users']
+    /* #swagger.security = [{ "BearerAuth": [] }] */
+    /* #swagger.responses[200] = {
+                 description: 'User Data',
+                 schema: { $ref: '#/definitions/GetNotificationArray' }
+         } 
+     */
+    next();
+}
+
 export default {
     post_Users_Register,post_Users_CheckUsername,
     post_Users_Login,patch_Users_UserId,
@@ -162,5 +184,7 @@ export default {
     post_Users_Verify, get_Users, get_Users_Suggested,
     get_Users_UserId_Media, post_Users_ForgotPassword,
     post_Users_ForgotPassword_Verify,
-    post_Users_ForgotPassword_Reset
+    post_Users_ForgotPassword_Reset,
+    get_Users_UserId_Notifications,
+    get'
 }

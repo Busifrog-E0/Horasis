@@ -3,9 +3,10 @@ import e from 'express';
 import { ReadOneFromDiscussions, ReadDiscussions, UpdateDiscussions, CreateDiscussions, RemoveDiscussions, AggregateDiscussions, } from './../databaseControllers/discussions-databaseController.js';
 import { ReadOneFromUsers } from '../databaseControllers/users-databaseController.js';
 import { CreateMembers, ReadMembers } from '../databaseControllers/members-databaseController.js';
-eeeeimport {  PermissionObjectInit } from './members-controller.js';
+import {  PermissionObjectInit } from './members-controller.js';
 
 import { ReadSaves } from '../databaseControllers/saves-databaseController.js';
+import { MemberInit } from './members-controller.js';
 /**
  * @typedef {import('./../databaseControllers/discussions-databaseController.js').DiscussionData} DiscussionData 
  */
@@ -197,7 +198,7 @@ const PostDiscussions = async (req, res) => {
     const UserDetails = await ReadOneFromUsers(OrganiserId);
     req.body = DiscussionInit(req.body);
     const DiscussionId = await CreateDiscussions({ ...req.body, UserDetails });
-    const Member = MemberInit({ MemberId: OrganiserId, EntityId: DiscussionId, UserDetails }, {}, true);
+    const Member = MemberInit({ MemberId: OrganiserId, EntityId: DiscussionId, UserDetails });
     await CreateMembers(Member);
     return res.json(DiscussionId);
 }

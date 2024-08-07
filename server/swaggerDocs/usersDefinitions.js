@@ -70,12 +70,29 @@ const GetMediaArray = [{
     Type: "image",
 }]
 
+const GetNotificationArray = [
+    {
+        UserId: '12345',
+        EntityId: '67890',
+        EntityType: 'Post',
+        Link: '/posts/67890',
+        DocId: 'abcdef',
+        HasSeen: false,
+        Content: '@User123@ liked your post!',
+        Type: 'Like',
+        ContentLinks: [
+            { Text: 'User123', Link: '/users/12345' }
+        ]
+    }
+]
+
 export default {
     UserRegisterData,OTPVerifyData,
     UserLoginData,
     UserData,
     PatchUserData,
     UserDataArray, LikedUsersData,
-    GetMediaArray
+    GetMediaArray,
+    GetNotificationArray
     
 }

@@ -724,6 +724,126 @@
         }
       }
     },
+    "/api/users/{RecipientId}/notifications": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "RecipientId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "NextId",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "Limit",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "Keyword",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "OrderBy",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "Filter",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User Data",
+            "schema": {
+              "$ref": "#/definitions/GetNotificationArray"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "402": {
+            "description": "Payment Required"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/users/{RecipientId}/notifications/{NotificationId}": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "RecipientId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "NotificationId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User Data",
+            "schema": {
+              "$ref": "#/definitions/GetNotificationArray"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "402": {
+            "description": "Payment Required"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
     "/api/users/{UserId}/followers": {
       "get": {
         "tags": [
@@ -4046,6 +4166,19 @@
             "name": "authorization",
             "in": "header",
             "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "MemberPermissions.CanPostActivity": {
+                  "type": "boolean",
+                  "example": true
+                }
+              }
+            }
           }
         ],
         "responses": {
@@ -4791,6 +4924,62 @@
           "Type": {
             "type": "string",
             "example": "image"
+          }
+        }
+      }
+    },
+    "GetNotificationArray": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "UserId": {
+            "type": "string",
+            "example": "12345"
+          },
+          "EntityId": {
+            "type": "string",
+            "example": "67890"
+          },
+          "EntityType": {
+            "type": "string",
+            "example": "Post"
+          },
+          "Link": {
+            "type": "string",
+            "example": "/posts/67890"
+          },
+          "DocId": {
+            "type": "string",
+            "example": "abcdef"
+          },
+          "HasSeen": {
+            "type": "boolean",
+            "example": false
+          },
+          "Content": {
+            "type": "string",
+            "example": "@User123@ liked your post!"
+          },
+          "Type": {
+            "type": "string",
+            "example": "Like"
+          },
+          "ContentLinks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "Text": {
+                  "type": "string",
+                  "example": "User123"
+                },
+                "Link": {
+                  "type": "string",
+                  "example": "/users/12345"
+                }
+              }
+            }
           }
         }
       }

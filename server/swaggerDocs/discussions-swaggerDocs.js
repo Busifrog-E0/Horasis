@@ -206,7 +206,7 @@ const patch_Discussions_EntityId_Member_Permissions_Everyone = async (req, res, 
     /* #swagger.security = [{ "BearerAuth": [] }] */
     /* #swagger.parameters['body'] = {
                in: 'body',
-               schema: {  MemberPermissions.CanPostActivity : true }
+               schema: {  'MemberPermissions.CanPostActivity' : true }
    } 
 */
     next();
