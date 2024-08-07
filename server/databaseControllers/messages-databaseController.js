@@ -73,6 +73,14 @@ const RemoveMessages = async (DocId) => {
     return dataHandling.Delete('Messages', DocId);
 }
 
+/**
+ * 
+ * @param {object} Where 
+ * @returns {Promise<number>}
+ */
+const GetMessagesCount = async (Where = {}) => {
+    return dataHandling.ReadCount('Messages', Where);
+}
 
 export {
     ReadMessages,
@@ -80,5 +88,6 @@ export {
     UpdateMessages,
     UpdateManyMessage,
     CreateMessages,
-    RemoveMessages
+    RemoveMessages,
+    GetMessagesCount,
 }

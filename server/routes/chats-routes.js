@@ -1,5 +1,5 @@
 import {
-    GetConversations, GetMessages, ReterieveConversationId,
+    GetConversations, GetMessages, ReterieveConversationId, PatchSeeAllMessages,
 } from '../controllers/chats-controller.js';
 import asyncHandler from 'express-async-handler';
 import SwaggerDocs from '../swaggerDocs/chat-swaggerDocs.js'
@@ -23,6 +23,11 @@ router.post('/reterieveConversationId', decodeIDToken, ensureAuthorized("User"),
     SwaggerDocs.post_ReterieveConversationId,
     // @ts-ignore
     asyncHandler(ReterieveConversationId));
+
+router.patch('/chats/:ConversationId/seeAllMessages', decodeIDToken, ensureAuthorized("User"), PostReterieveConversationId,
+    SwaggerDocs.patch_Chats_ConversationId_SeeAllMessages,
+    // @ts-ignore
+    asyncHandler(PatchSeeAllMessages));
 
 
 
