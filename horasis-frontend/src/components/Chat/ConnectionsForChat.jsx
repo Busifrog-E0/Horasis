@@ -36,7 +36,7 @@ const ConnectionsForChat = ({ connectionsForChat, isLoading, isLoadingMore, page
 						</>
 					) : (
 						<>
-							<EmptyMembers emptyText={'No connections'} />
+							<EmptyMembers emptyText={'No recent chats'} />
 						</>
 					)}
 				</>

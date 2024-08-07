@@ -142,7 +142,7 @@ const ChatList = () => {
 				</div>
 
 				{isOpen && (
-					<div className='overflow-hidden origin-top-right absolute z-20 right-0 mt-2 w-80 lg:w-96 rounded-md shadow-lg bg-system-secondary-bg ring-1 ring-black ring-opacity-5'>
+					<div className='overflow-hidden origin-top-right absolute z-[999] right-0 mt-2 w-80 lg:w-96 rounded-md shadow-lg bg-system-secondary-bg ring-1 ring-black ring-opacity-5'>
 						<div className='bg-system-primary-accent p-3 px-5'>
 							<p className='text-brand-secondary text-md'>Messages</p>
 						</div>
