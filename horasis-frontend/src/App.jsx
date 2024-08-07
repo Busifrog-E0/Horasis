@@ -12,6 +12,7 @@ import { AuthProvider } from './utils/AuthProvider'
 import ToastProvider from './components/Toast/ToastProvider'
 import FollowProvider from './context/Follow/FollowProvider'
 import SocketProvider from './context/Socket/SocketProvider'
+import ChatPopupProvider from './context/ChatPopup/ChatPopupProvider'
 
 function App() {
 	useEffect(() => {
@@ -28,15 +29,17 @@ function App() {
 		return BreakWheel()
 	}, [])
 	return (
-		<ToastProvider>
-			<AuthProvider>
-				<FollowProvider>
-					<SocketProvider>
-						<RouterProvider router={router} />
-					</SocketProvider>
-				</FollowProvider>
-			</AuthProvider>
-		</ToastProvider>
+		<ChatPopupProvider>
+			<ToastProvider>
+				<AuthProvider>
+					<FollowProvider>
+						<SocketProvider>
+							<RouterProvider router={router} />
+						</SocketProvider>
+					</FollowProvider>
+				</AuthProvider>
+			</ToastProvider>
+		</ChatPopupProvider>
 	)
 }
 

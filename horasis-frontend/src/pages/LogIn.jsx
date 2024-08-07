@@ -10,7 +10,7 @@ import { postItem } from '../constants/operations'
 import { loginValidation } from '../utils/schema/loginValidation'
 import { useToast } from '../components/Toast/ToastService'
 import Select from '../components/ui/Select'
-import countries from '../../public/countries-with-coords.json'
+
 const logoText = {
 	fontSize: '1.7rem',
 	fontWeight: '700',

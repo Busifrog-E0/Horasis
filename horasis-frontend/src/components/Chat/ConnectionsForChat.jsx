@@ -9,12 +9,16 @@ import Spinner from '../ui/Spinner'
 import ChatDetailsItem from './ChatDetailsItem'
 import { useSocket } from '../../context/Socket/SocketService'
 import { useNavigate } from 'react-router-dom'
+import { useChatPopup } from '../../context/ChatPopup/ChatPopupService'
 
 const ConnectionsForChat = ({ connectionsForChat, isLoading, isLoadingMore, pageDisabled, fetchMore, setIsOpen }) => {
 	const { currentUserData } = useContext(AuthContext)
+	const { addUser,setActiveChat } = useChatPopup()
 	const navigate = useNavigate()
 	const navigateToChat = (userId) => {
-		navigate(`/Chat/${userId}`)
+		// navigate(`/Chat/${userId}`)
+		addUser(userId)
+		setActiveChat(userId)
 		setIsOpen(false)
 	}
 	if (isLoading) {
@@ -57,7 +61,6 @@ const ConnectionsForChat = ({ connectionsForChat, isLoading, isLoadingMore, page
 					className='flex flex-row justify-center mt-2 mb-2'>
 					<div className='cursor-pointer flex items-center gap-2'>
 						<h4 className='text-sm font-medium text-system-primary-accent'>Load more messages</h4>
-					
 					</div>
 				</div>
 			)}

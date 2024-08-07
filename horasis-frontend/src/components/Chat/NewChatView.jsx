@@ -147,7 +147,9 @@ const NewChatView = ({ userId }) => {
 
 		socket.on('Message', (value) => {
 			// console.log('message received', value)
-			setMessages((prevMessages) => [value, ...prevMessages])
+			if (value.ConversationId === conversationId) {
+				setMessages((prevMessages) => [value, ...prevMessages])
+			}
 		})
 
 		return () => {
@@ -183,15 +185,15 @@ const NewChatView = ({ userId }) => {
 
 	return (
 		<>
-			<div className='h-full flex flex-col bg-system-secondary-bg'>
-				<DashboardHeader />
+			<div className='h-full w-full flex flex-col bg-system-secondary-bg'>
+				{/* <DashboardHeader /> */}
 
-				<div className='lg:mx-60 lg:border-x mt-2 lg:border-t rounded-t-md lg:min-w-[1000px] max-w-[1000px] lg:self-center'>
+				<div className='lg:mx-60 lg:border-x lg:border-t rounded-t-md lg:min-w-full max-w-[1000px] lg:self-center'>
 					<UserDetailsTab user={user} isLoading={isUserLoading} viewAsFlex />
 					<hr className='my-2' />
 				</div>
 
-				<div className='flex-1 flex flex-col overflow-auto relative lg:mx-60 mb-4 lg:border-x lg:border-b rounded-b-md lg:min-w-[1000px] max-w-[1000px] lg:self-center'>
+				<div className='flex-1 flex flex-col overflow-auto relative lg:mx-60 mb-4 lg:border-x lg:border-b rounded-b-md lg:min-w-full max-w-[1000px] lg:self-center'>
 					<div className='absolute w-full z-10 '>
 						{!pageDisabled && (
 							<div className='flex flex-row gap-2  items-center  justify-center w-full '>

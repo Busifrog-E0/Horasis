@@ -8,7 +8,7 @@ import Button from '../ui/Button'
 import TextArea from '../ui/TextArea'
 import { updateValidation } from '../../utils/schema/users/updateValidation'
 import { useToast } from '../Toast/ToastService'
-import countries from '../../../public/countries-with-coords.json'
+import countries from '../../assets/json/countries-with-coords.json'
 import Select from '../ui/Select'
 const AboutProfile = ({ user, getUserDetails, isCurrentUser }) => {
 	const [isOpen, setIsOpen] = useState(false)

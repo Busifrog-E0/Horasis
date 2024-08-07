@@ -11,7 +11,7 @@ import { AuthContext } from '../utils/AuthProvider'
 import { registerValidation } from '../utils/schema/users/registerValidation'
 import { useToast } from '../components/Toast/ToastService'
 import TimerComponent from '../components/Timer/TimerComponent'
-import countries from '../../public/countries-with-coords.json'
+import countries from '../assets/json/countries-with-coords.json'
 import Select from '../components/ui/Select'
 const logoText = {
 	fontSize: '1.7rem',

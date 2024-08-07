@@ -19,15 +19,16 @@ import avatar from '../assets/icons/avatar.svg'
 import cover from '../assets/icons/cover.svg'
 import { useToast } from '../components/Toast/ToastService'
 import { useFollow } from '../context/Follow/FollowService'
+import { useChatPopup } from '../context/ChatPopup/ChatPopupService'
 
 const UserProfileConnectComponent = ({ profile, connectCallback = () => { }, setIsLoading }) => {
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
 	const toast = useToast()
-
+	const {addUser} = useChatPopup()
 	const navigate = useNavigate()
 
 	const goToChat = () => {
-		navigate(`/Chat/${profile.DocId}`)
+		addUser(profile.DocId)
 	}
 
 	const sendConnectionRequest = () => {

@@ -6,7 +6,7 @@ const UserDetailsTab = ({ user, isLoading, viewAsFlex = false }) => {
 	const navigate = useNavigate()
 	return (
 		<div
-			className={`px-3 ${viewAsFlex && 'flex gap-2 items-end'}`}
+			className={`px-3 ${viewAsFlex && 'flex gap-2 items-end cursor-pointer'}`}
 			onClick={() => navigate(`/ViewProfile/${user.DocId}`)}>
 			<div className='flex justify-start items-center'>
 				{user ? (
