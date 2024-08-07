@@ -9,7 +9,7 @@ import asyncHandler from 'express-async-handler';
 import SwaggerDocs from '../swaggerDocs/discussions-swaggerDocs.js'
 import e from 'express';
 import { decodeIDToken, ensureAuthorized } from '../middleware/auth-middleware.js';
-import { ValidatePatchDiscussionCoverPhoto, ValidatePatchMemberPermission, ValidatePatchRemovePermission, ValidatePostDiscussion } from '../validations/discussions-validations.js';
+import { ValidateAddPermissionForEveryone, ValidatePatchDiscussionCoverPhoto, ValidatePatchMemberPermission, ValidatePatchRemovePermission, ValidatePostDiscussion } from '../validations/discussions-validations.js';
 import { QueryParameterFormatting, ValidateGetEntity } from '../middleware/common.js';
 import {
     AcceptJoinRequest, AcceptMemberInvitation, DeleteMembers, DeleteTempMembers,
@@ -101,6 +101,7 @@ router.delete('/discussions/:EntityId/leave', decodeIDToken, ensureAuthorized("U
     // @ts-ignore
     asyncHandler(DeleteMembers));
 
+/*****************************************************MEMBERS************************************************************************************* */
 router.get('/discussions/:EntityId/members', decodeIDToken, ensureAuthorized("User"),
     ValidateGetEntity, QueryParameterFormatting, SwaggerDocs.get_Discussions_DiscussionId_Members,
     //@ts-ignore
@@ -115,6 +116,13 @@ router.patch('/discussions/:EntityId/member/permissions/remove', decodeIDToken, 
     SwaggerDocs.patch_Discussions_EntityId_Member_Permissions_Remove,
     //@ts-ignore
     asyncHandler(RemoveMemberPermissions));
+
+router.patch('/discussions/:EntityId/member/permissions/everyone', decodeIDToken, ensureAuthorized("User"), ValidateAddPermissionForEveryone,
+SwaggerDocs.patch_Discussions_EntityId_Member_Permissions_Everyone,
+    //@ts-ignore
+    asyncHandler(PatchDiscussions));    
+
+/*********************************************************************FILTERED DISCUSSIONS********************************************************************* */    
 
 router.get('/user/:UserId/discussions', decodeIDToken, ensureAuthorized("User"), ValidateGetEntity, QueryParameterFormatting,
     SwaggerDocs.get_User_UserId_Discussions,

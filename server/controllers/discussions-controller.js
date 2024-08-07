@@ -3,7 +3,7 @@ import e from 'express';
 import { ReadOneFromDiscussions, ReadDiscussions, UpdateDiscussions, CreateDiscussions, RemoveDiscussions, AggregateDiscussions, } from './../databaseControllers/discussions-databaseController.js';
 import { ReadOneFromUsers } from '../databaseControllers/users-databaseController.js';
 import { CreateMembers, ReadMembers } from '../databaseControllers/members-databaseController.js';
-import { PermissionObjectInit } from './members-controller.js';
+import {  PermissionObjectInit } from './members-controller.js';
 
 import { ReadSaves } from '../databaseControllers/saves-databaseController.js';
 /**
@@ -23,7 +23,16 @@ const GetOneFromDiscussions = async (req, res) => {
     const Discussion = await ReadOneFromDiscussions(DiscussionId);
     const DiscussionMemberObject = { IsMember: false, Permissions: {} };
     const Member = await ReadMembers({ MemberId: UserId, EntityId: Discussion.DocId }, undefined, 1, undefined);
+
     if (Member.length > 0) {
+        for (const PermissionField in Discussion.MemberPermissions) {
+            if (Discussion.MemberPermissions[PermissionField] === true) {
+                DiscussionMemberObject.Permissions[PermissionField] = true
+            }
+            else {
+                DiscussionMemberObject.Permissions[PermissionField] = Member[0].Permissions[PermissionField]
+            }
+        }
         DiscussionMemberObject.IsMember = Member[0].MembershipStatus === "Accepted";
         DiscussionMemberObject.Permissions = Member[0].Permissions
         DiscussionMemberObject.MembershipStatus = Member[0].MembershipStatus
@@ -186,10 +195,10 @@ const GetInvitedDiscussions = async (req, res) => {
 const PostDiscussions = async (req, res) => {
     const { OrganiserId } = req.body;
     const UserDetails = await ReadOneFromUsers(OrganiserId);
-    const Permissions = PermissionObjectInit(true);
     req.body = DiscussionInit(req.body);
     const DiscussionId = await CreateDiscussions({ ...req.body, UserDetails });
-    await CreateMembers({ MemberId: OrganiserId, EntityId: DiscussionId, UserDetails, Permissions, MembershipStatus: "Accepted" })
+    const Member = MemberInit({ MemberId: OrganiserId, EntityId: DiscussionId, UserDetails }, {}, true);
+    await CreateMembers(Member);
     return res.json(DiscussionId);
 }
 
@@ -220,7 +229,14 @@ const DeleteDiscussions = async (req, res) => {
 const DiscussionInit = (Discussion) => {
     return {
         ...Discussion,
-        NoOfMembers: 1
+        NoOfMembers: 1,
+        MemberPermissions: {
+            CanPostActivity: false,
+            CanInviteOthers: false,
+            CanUploadPhoto: false,
+            CanCreateAlbum: false,
+            CanUploadVideo: false
+        }
     }
 }
 

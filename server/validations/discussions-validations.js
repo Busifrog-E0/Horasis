@@ -61,8 +61,28 @@ const ValidatePatchMemberPermission = async (req, res, next) => {
 
 const ValidatePatchRemovePermission = async (req, res, next) => {
     const Result = Joi.object({
-        PermissionField : Joi.string().valid("CanInviteOthers", "CanPostActivity", "CanUploadPhoto", "CanCreateAlbum", "CanUploadVideo","IsAdmin").required(),
+        PermissionField: Joi.string().valid("CanInviteOthers", "CanPostActivity", "CanUploadPhoto", "CanCreateAlbum", "CanUploadVideo", "IsAdmin").required(),
     }).validate(req.body, { stripUnknown: true });
+    if (Result.error) {
+        const message = Result.error.details.map((detail) => detail.message).join(', ');
+        return res.status(400).json(message);
+    }
+    else {
+        req.body = Result.value;
+        return next();
+    }
+}
+
+const ValidateAddPermissionForEveryone = async (req, res, next) => {
+    const Result = Joi.object({
+        'MemberPermissions.CanPostActivity': Joi.boolean().required(),
+        'MemberPermissions.CanInviteOthers': Joi.boolean().required(),
+        'MemberPermissions.CanUploadPhoto': Joi.boolean().required(),
+        'MemberPermissions.CanCreateAlbum': Joi.boolean().required(),
+        'MemberPermissions.CanUploadVideo': Joi.boolean().required(),
+    }).xor('MemberPermissions.CanPostActivity', 'MemberPermissions.CanInviteOthers',
+        'MemberPermissions.CanUploadPhoto', 'MemberPermissions.CanCreateAlbum', 'MemberPermissions.CanUploadVideo')
+        .validate(req.body, { stripUnknown: true });
     if (Result.error) {
         const message = Result.error.details.map((detail) => detail.message).join(', ');
         return res.status(400).json(message);
@@ -77,7 +97,8 @@ export {
     ValidatePostDiscussion,
     ValidatePatchDiscussionCoverPhoto,
     ValidatePatchMemberPermission,
-    ValidatePatchRemovePermission
+    ValidatePatchRemovePermission,
+    ValidateAddPermissionForEveryone
 }
 
 

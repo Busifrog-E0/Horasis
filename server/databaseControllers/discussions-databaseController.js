@@ -16,6 +16,12 @@ import dataHandling from './functions.js'
  * @property {number} CreatedIndex
  * @property {string} CoverPicture
  * @property {number} NoOfMembers
+ * @property {object} MemberPermissions
+ * @property {boolean} MemberPermissions.CanPostActivity
+ * @property {boolean} MemberPermissions.CanInviteOthers
+ * @property {boolean} MemberPermissions.CanUploadPhoto
+ * @property {boolean} MemberPermissions.CanCreateAlbum
+ * @property {boolean} MemberPermissions.CanUploadVideo
  */
 
 
