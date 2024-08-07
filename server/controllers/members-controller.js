@@ -277,6 +277,12 @@ const UpdateMemberPermissions = async (req, res) => {
     return res.json(true);
 }
 
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ * @returns 
+ */
 const RemoveMemberPermissions = async (req, res) => {
     const { EntityId,UserId } = req.params;
     const PermissionField = req.body;
@@ -284,6 +290,7 @@ const RemoveMemberPermissions = async (req, res) => {
     await UpdateMembers({ [`Permissions.${PermissionField}`]: false }, Member[0].DocId);
     return res.json(true);
 }
+
 
 /**
  * 
