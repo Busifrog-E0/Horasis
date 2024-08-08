@@ -35,7 +35,7 @@ const AlertList = () => {
 	const [pageDisabled, setPageDisabled] = useState(true)
 	const [filters, setFilters] = useState({
 		OrderBy: 'Index',
-		Limit: 10,
+		Limit: 2,
 		Keyword: '',
 	})
 	const api = `users/${currentUserData.CurrentUser.UserId}/notifications`
@@ -46,6 +46,25 @@ const AlertList = () => {
 		} else {
 			setIsLoading(value)
 		}
+	}
+
+	const getSingleNotification = (notification,actionType) => {
+		getItem(
+			`${api}/${notification.DocId}`,
+			(result) => {
+				if (actionType === 'REMOVE') {
+					setNotifications(notifications.filter((singleNotification) => singleNotification.DocId !== notification.DocId))
+				} else if (actionType === 'UPDATE') {
+					setNotifications(notifications.map((singleNotification) => (singleNotification.DocId === notification.DocId ? { ...singleNotification, ...result } : singleNotification)))
+				}
+			},
+			(err) => {
+				console.log(err)
+			},
+			updateCurrentUser,
+			currentUserData,
+			toast
+		)
 	}
 
 	const getNotifications = (tempArr) => {
@@ -121,28 +140,29 @@ const AlertList = () => {
 							role='menu'
 							aria-orientation='vertical'
 							aria-labelledby='options-menu'>
-							{notifications.length > 0 &&   notifications.map((notification) => {
-								return <AlertDetailsItem notification={notification} key={notification.DocId} setIsOpen={setIsOpen} />
-							})}
+							{notifications.length > 0 &&
+								notifications.map((notification) => {
+									return <AlertDetailsItem notification={notification} key={notification.DocId} setIsOpen={setIsOpen} getSingleNotification={getSingleNotification} />
+								})}
 							{/* <AlertDetailsItem /> */}
 						</div>
 
-			{isLoadingMore && (
-				<div className='bg-system-secondary-bg p-4 rounded-b-lg '>
-					<Spinner />
-				</div>
-			)}
-			{!pageDisabled && (
-				<div
-					onClick={() => {
-						fetchMore()
-					}}
-					className='flex flex-row justify-center mt-2 mb-2'>
-					<div className='cursor-pointer flex items-center gap-2'>
-						<h4 className='text-sm font-medium text-system-primary-accent'>Load more messages</h4>
-					</div>
-				</div>
-			)}
+						{isLoadingMore && (
+							<div className='bg-system-secondary-bg p-4 rounded-b-lg '>
+								<Spinner />
+							</div>
+						)}
+						{!pageDisabled && (
+							<div
+								onClick={() => {
+									fetchMore()
+								}}
+								className='flex flex-row justify-center mt-2 mb-2'>
+								<div className='cursor-pointer flex items-center gap-2'>
+									<h4 className='text-sm font-medium text-system-primary-accent'>Load more messages</h4>
+								</div>
+							</div>
+						)}
 					</div>
 				)}
 			</div>

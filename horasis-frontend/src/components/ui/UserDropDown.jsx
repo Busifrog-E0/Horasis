@@ -19,7 +19,7 @@ const DropdownConnectComponent = ({ profile, updateList, tabName }) => {
 				console.log(result)
 			},
 			(err) => {
-				toast.open('error', 'Connection request error', `Error happened while sending connection request`)
+				// toast.open('error', 'Connection request error', `Error happened while sending connection request`)
 				// console.log(err)
 			},
 			updateCurrentUser,
@@ -41,7 +41,7 @@ const DropdownConnectComponent = ({ profile, updateList, tabName }) => {
 				console.log(result)
 			},
 			(err) => {
-				toast.open('error', 'Connection accept error', `Some error happened while accepting connection request`)
+				// toast.open('error', 'Connection accept error', `Some error happened while accepting connection request`)
 				// console.log(err)
 			},
 			updateCurrentUser,
@@ -63,7 +63,7 @@ const DropdownConnectComponent = ({ profile, updateList, tabName }) => {
 				console.log(result)
 			},
 			(err) => {
-				toast.open('error', 'Connection reject error', `Some error happened while rejecting connection request`)
+				// toast.open('error', 'Connection reject error', `Some error happened while rejecting connection request`)
 				// console.log(err)
 			},
 			updateCurrentUser,
@@ -84,7 +84,7 @@ const DropdownConnectComponent = ({ profile, updateList, tabName }) => {
 				console.log(result)
 			},
 			(err) => {
-				toast.open('error', 'Connection cancel error', `Some error happened while cancelling connection request`)
+				// toast.open('error', 'Connection cancel error', `Some error happened while cancelling connection request`)
 				// console.log(err)
 			},
 			updateCurrentUser,
@@ -105,7 +105,7 @@ const DropdownConnectComponent = ({ profile, updateList, tabName }) => {
 				console.log(result)
 			},
 			(err) => {
-				toast.open('error', 'Connection remove error', `Some error happened while removing connection`)
+				// toast.open('error', 'Connection remove error', `Some error happened while removing connection`)
 				// console.log(err)
 			},
 			updateCurrentUser,

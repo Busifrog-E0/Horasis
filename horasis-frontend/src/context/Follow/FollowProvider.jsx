@@ -23,7 +23,7 @@ const FollowProvider = ({ children }) => {
 				setLoading(false)
 			},
 			(err) => {
-				toast.open('error','Follow',`Some error happened while following`)
+				// toast.open('error','Follow',`Some error happened while following`)
 				setLoading(false)
 			},
 			updateCurrentUser,
@@ -45,7 +45,7 @@ const FollowProvider = ({ children }) => {
 				setLoading(false)
 			},
 			(err) => {
-				toast.open('error','Unfollow',`Some error happened while unfollowing`)
+				// toast.open('error','Unfollow',`Some error happened while unfollowing`)
 				setLoading(false)
 			},
 			updateCurrentUser,
