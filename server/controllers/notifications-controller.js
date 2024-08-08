@@ -6,6 +6,7 @@ import { ReadOneFromActivities } from '../databaseControllers/activities-databas
 import { ReadLikes } from '../databaseControllers/likes-databaseController.js';
 import { Type } from '@aws-sdk/client-s3';
 import { ReadOneFromDiscussions } from '../databaseControllers/discussions-databaseController.js';
+import { ConnectionStatus } from './connections-controller.js';
 /**
  * @typedef {import('./../databaseControllers/notifications-databaseController.js').NotificationData} NotificationData 
  */
@@ -27,21 +28,33 @@ import { ReadOneFromDiscussions } from '../databaseControllers/discussions-datab
 const GetNotifications = async (req, res) => {
     const { Filter, NextId, Limit, OrderBy } = req.query;
     // @ts-ignore
-    Filter.UserId = req.user.UserId;
+    Filter.RecipientId = req.user.RecipientId;
     // @ts-ignore
     const data = await ReadNotifications(Filter, NextId, Limit, OrderBy);
+    return res.json(data);
+}
+
+/**
+* @param { e.Request } req
+* @param { e.Response } res
+* @returns { Promise<e.Response<NotificationData>>}
+*/
+const GetOneFromNotifications = async (req, res) => {
+    const { RecipientId, NotificationId } = req.params;
+    //@ts-ignore
+    const data = await ReadOneFromNotifications(NotificationId);
     return res.json(data);
 }
 
 
 /**
  * 
- * @typedef {Omit<NotificationData, 'HasSeen'|'UserId'|'DocId'>} NotificationObject
+ * @typedef {Omit<NotificationData, 'HasSeen'|'RecipientId'|'DocId'|'ActionLinks'>} NotificationObject
  * @param {NotificationObject} NotificationObject 
  * @param {string} UserId 
  */
-const SendNotificationToUser = async (NotificationObject, UserId) => {
-    await CreateNotifications({ ...NotificationObject, UserId, HasSeen: false });
+const SendNotificationToUser = async (NotificationObject, UserId, HasAction = false) => {
+    await CreateNotifications({ ...NotificationObject, RecipientId: UserId, HasSeen: false, HasAction });
 }
 
 /**
@@ -65,10 +78,10 @@ const SendNotificationstoActivityMentions = async (Mentions, UserId, ActivityId)
         const NotificationObject = {
             EntityId: ActivityId,
             EntityType: "Activity",
-            Content: `@${User.Username} mentioned you in an Activity!`,
+            Content: `@${User.FullName}@ mentioned you in an Activity!`,
             Link: `/activities/${ActivityId}`,
             Type: "Mention",
-            ContentLinks: [{ Text: User.Username, Link: `/users/${UserId}` }]
+            ContentLinks: [{ Text: User.FullName, Link: `/users/${UserId}` }]
         }
         await SendNotificationToUser(NotificationObject, Mention.UserId);
     }))
@@ -110,10 +123,10 @@ const SendNotificationstoCommentMentions = async (Mentions, UserId, ActivityId) 
         const NotificationObject = {
             EntityId: ActivityId,
             EntityType: "Activity",
-            Content: `${User.Username} mentioned you in an Comment!`,
+            Content: `@${User.FullName}@ mentioned you in an Comment!`,
             Link: `/activities/${ActivityId}`,
             Type: "Comment-Mention",
-            ContentLinks: [{ Text: User.Username, Link: `/users/${UserId}` }]
+            ContentLinks: [{ Text: User.FullName, Link: `/users/${UserId}` }],
         };
         await SendNotificationToUser(NotificationObject, Mention.UserId);
     }))
@@ -135,26 +148,26 @@ const SendNotificationsforActivityLikes = async (UserId, ActivityId) => {
         const NotificationObject = {
             EntityId: ActivityId,
             EntityType: "Activity",
-            UserId: Activity.UserId, Content: `${User.Username} liked your Activity!`,
+            UserId: Activity.UserId, Content: `@${User.FullName}@ liked your Activity!`,
             Link: `/activities/${ActivityId}`,
             Type: "Like",
-            ContentLinks: [{ Text: User.Username, Link: `/users/${UserId}` }]
+            ContentLinks: [{ Text: User.FullName, Link: `/users/${UserId}` }]
         }
         return SendNotificationToUser(NotificationObject, Activity.UserId);
     }
     const Likes = await ReadLikes({ EntityId: ActivityId }, undefined, 2, undefined);
     if (Activity.NoOfLikes === 2) {
-        Content = `${Likes[0].UserDetails.Username} and ${Likes[1].UserDetails.Username} liked your Activity!`;
+        Content = `@${Likes[0].UserDetails.FullName}@ and @${Likes[1].UserDetails.FullName}@ liked your Activity!`;
     }
     if (Activity.NoOfLikes > 2) {
-        Content = `${Likes[0].UserDetails.Username} and ${Likes[1].UserDetails.Username} and ${Activity.NoOfLikes - 2} others liked your Activity!`;
+        Content = `@${Likes[0].UserDetails.FullName}@ and @${Likes[1].UserDetails.FullName}@ and ${Activity.NoOfLikes - 2} others liked your Activity!`;
     }
     const Notification = await ReadNotifications({ UserId: Activity.UserId, EntityId: ActivityId, Type: "Like" }, undefined, 1, undefined);
     return await UpdateNotifications({
         Content, HasSeen: false,
         ContentLinks: [
-            { Text: Likes[0].UserDetails.Username, Link: `/users/${Likes[0].UserId}` },
-            { Text: Likes[1].UserDetails.Username, Link: `/users/${Likes[1].UserId}` }]
+            { Text: Likes[0].UserDetails.FullName, Link: `/users/${Likes[0].UserId}` },
+            { Text: Likes[1].UserDetails.FullName, Link: `/users/${Likes[1].UserId}` }]
     }, Notification[0].DocId);
 
 }
@@ -171,12 +184,12 @@ const SendNotificationsForConnectionRequest = async (ConnectionId, SenderDetails
     const NotificationObject = {
         EntityId: ConnectionId,
         EntityType: "Connection",
-        Content: `You have a new Connection request from @${SenderDetails.Username} !`,
         Link: `/users/${SenderDetails.DocId}`,
         Type: "Connection-Request",
-        ContentLinks: [{ Text: SenderDetails.Username, Link: `/users/${SenderDetails.DocId}` }]
+        ContentLinks: [{ Text: SenderDetails.FullName, Link: `/users/${SenderDetails.DocId}` }],
+        Status : ""
     }
-    return await SendNotificationToUser(NotificationObject, ReceiverDetails.DocId);
+    return await SendNotificationToUser(NotificationObject, ReceiverDetails.DocId, true);
 }
 
 
@@ -205,31 +218,31 @@ const SendNotificationsForConnectionAccept = async (ConnectionId, SenderId, Rece
     const NotificationObject = {
         EntityId: ConnectionId,
         EntityType: "Connection",
-        Content: `@${Receiver.Username} have accepted your connection request`,
+        Content: `@${Receiver.FullName}@ have accepted your connection request`,
         Link: `/users/${Receiver.DocId}`,
         Type: "Connection-Request",
-        ContentLinks: [{ Text: Receiver.Username, Link: `/users/${Receiver.DocId}` }]
+        ContentLinks: [{ Text: Receiver.FullName, Link: `/users/${Receiver.DocId}` }]
     }
     const RequestNotification = await ReadNotifications({ UserId: SenderId, EntityId: ConnectionId, Type: "Connection-Request" }, undefined, 1, undefined)[0];
     await PatchNotificationToUser({
-        Content: `You are now connected with @${Sender.Username}`,
+        Content: `You are now connected with @${Sender.FullName}@`,
         Link: `/users/${Sender.DocId}`,
-        ContentLinks: [{ Text: Sender.Username, Link: `/users/${Sender.DocId}` }]
+        ContentLinks: [{ Text: Sender.FullName, Link: `/users/${Sender.DocId}` }]
     }, RequestNotification.DocId);
     return await SendNotificationToUser(NotificationObject, SenderId);
 }
 
 /************************************************************************FOLLOW********************************************************************************************************* */
 
-const SendNotificationsForFollow = async (FollowerId,UserId) => {
+const SendNotificationsForFollow = async (FollowerId, UserId) => {
     const Follower = await ReadOneFromUsers(FollowerId);
     const NotificationObject = {
         EntityId: FollowerId,
         EntityType: "User",
-        Content: `@${Follower.Username} is now following you!`,
+        Content: `@${Follower.FullName}@ is now following you!`,
         Link: `/users/${UserId}`,
         Type: "Follow",
-        ContentLinks: [{ Text: Follower.Username, Link: `/users/${UserId}` }]
+        ContentLinks: [{ Text: Follower.FullName, Link: `/users/${UserId}` }]
     }
     return await SendNotificationToUser(NotificationObject, UserId);
 }
@@ -244,18 +257,18 @@ const SendNotificationsForFollow = async (FollowerId,UserId) => {
  * @param {string} UserId 
  * @returns 
  */
-const SendNotificationForMemberJoin = async (Type, EntityId, UserId) => { 
+const SendNotificationForMemberJoin = async (Type, EntityId, UserId) => {
     const User = await ReadOneFromUsers(UserId);
     let EntityName = '';
     let Link = '';
-    let SendToUserId='';
+    let SendToUserId = '';
     if (Type === "Discussion") {
         const Discussion = await ReadOneFromDiscussions(EntityId);
         EntityName = Discussion.DiscussionName;
         Link = `/discussions/${EntityId}`
         SendToUserId = Discussion.OrganiserId;
     }
-    if (Type === "Event") { 
+    if (Type === "Event") {
         EntityName = ''
         Link = `/events/${EntityId}`
         SendToUserId = ''
@@ -263,10 +276,10 @@ const SendNotificationForMemberJoin = async (Type, EntityId, UserId) => {
     const NotificationObject = {
         EntityId: EntityId,
         EntityType: Type,
-        Content: `@${User.Username} joined your ${Type}  ${EntityName}!`,
+        Content: `@${User.FullName}@ joined your ${Type}  ${EntityName}!`,
         Link: Link,
         Type: "Join",
-        ContentLinks: [{ Text: User.Username, Link: `/users/${UserId}` }]
+        ContentLinks: [{ Text: User.FullName, Link: `/users/${UserId}` }]
     }
     return await SendNotificationToUser(NotificationObject, SendToUserId);
 }
@@ -278,18 +291,18 @@ const SendNotificationForMemberJoin = async (Type, EntityId, UserId) => {
  * @param {string} UserId 
  * @returns 
  */
-const SendNotificationForMemberRequest = async (Type, EntityId, UserId) => { 
+const SendNotificationForMemberRequest = async (Type, EntityId, UserId) => {
     const User = await ReadOneFromUsers(UserId);
     let EntityName = '';
     let Link = '';
-    let SendToUserId='';
+    let SendToUserId = '';
     if (Type === "Discussion") {
         const Discussion = await ReadOneFromDiscussions(EntityId);
         EntityName = Discussion.DiscussionName;
         Link = `/discussions/${EntityId}`
         SendToUserId = Discussion.OrganiserId;
     }
-    if (Type === "Event") { 
+    if (Type === "Event") {
         EntityName = ''
         Link = `/events/${EntityId}`
         SendToUserId = ''
@@ -297,12 +310,12 @@ const SendNotificationForMemberRequest = async (Type, EntityId, UserId) => {
     const NotificationObject = {
         EntityId: EntityId,
         EntityType: Type,
-        Content: `@${User.Username} has requested to join your ${Type} @${EntityName}!`,
+        Content: `@${User.FullName}@ has requested to join your ${Type} @${EntityName}!`,
         Link: Link,
         Type: "Join-Request",
         ContentLinks: [
-            { Text: User.Username, Link: `/users/${UserId}` },
-            {Text : EntityName, Link : Link}
+            { Text: User.FullName, Link: `/users/${UserId}` },
+            { Text: EntityName, Link: Link }
         ]
     }
     return await SendNotificationToUser(NotificationObject, SendToUserId);
@@ -334,7 +347,7 @@ const SendNotificationForMemberRequestStatus = async (Type, EntityId, UserId, St
     const NotificationObject = {
         EntityId: EntityId,
         EntityType: Type,
-        Content: `Your request has been ${Status.toLowerCase()} for your ${Type} @${EntityName}!`,
+        Content: `Your request has been ${Status.toLowerCase()} for your ${Type} @${EntityName}@ !`,
         Link: Link,
         Type: "Join-Status",
         ContentLinks: [{ Text: EntityName, Link: Link }]
@@ -367,7 +380,7 @@ const SendNotificationForMemberInvitation = async (Type, EntityId, UserId) => {
     const NotificationObject = {
         EntityId: EntityId,
         EntityType: Type,
-        Content: `You have been invited to a ${Type} @${EntityName}!`,
+        Content: `You have been invited to a ${Type} @${EntityName}@ !`,
         Link: Link,
         Type: "Invitation",
         ContentLinks: [{ Text: EntityName, Link: Link }]
@@ -395,5 +408,5 @@ export {
     SendNotificationstoActivityMentions, SendNotificationstoCommentMentions, SendNotificationsforActivityLikes,
     SendNotificationsForFollow, SendNotificationForMemberRequest, SendNotificationForMemberRequestStatus, SendNotificationForMemberInvitation,
     SendNotificationToUser, SendNotificationForMemberJoin, SendNotificationsForConnectionAccept, SendNotificationsForConnectionRequest,
-    RemoveNotificationsAfterActivityMentionPatch,RemoveNotificationsForConnectionRequest
+    RemoveNotificationsAfterActivityMentionPatch, RemoveNotificationsForConnectionRequest, GetOneFromNotifications
 }

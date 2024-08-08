@@ -1,9 +1,13 @@
 import dataHandling from './functions.js'
 
+/**
+ * @typedef {import('./users-databaseController.js').UserData} UserData
+ */
 
 /**
  * @typedef {object} NotificationData
- * @property {string} UserId
+ * @property {string} RecipientId
+ * @property {UserData} UserDetails  //Notifier Details
  * @property {string} EntityId
  * @property {string} EntityType
  * @property {string|null} Link

@@ -16,6 +16,7 @@ import { CheckSameUser, QueryParameterFormatting, ValidateGetEntity } from '../m
 import { ValidateCheckUsername, ValidatePatchUsers, ValidateUserLogin, ValidatePatchUserPictures, ValidateUserRegister, ValidateVerifyOTP, ValidateGetUserMedia, ValidatePostForgotPassword, ValidatePasswordReset } from '../validations/users-validations.js';
 import { GetMedias } from '../controllers/medias-controller.js';
 import { CheckOTP } from '../controllers/auth-controller.js';
+import { GetNotifications, GetOneFromNotifications } from '../controllers/notifications-controller.js';
 const router = e.Router();
 router.route
 
@@ -82,5 +83,13 @@ router.post('/users/forgotPassword/reset', ValidatePasswordReset,SwaggerDocs.pos
     //@ts-ignore
     asyncHandler(PatchPassword));
 
+router.get('/users/:RecipientId/notifications', decodeIDToken, ensureAuthorized("User"), ValidateGetEntity, QueryParameterFormatting,
+    SwaggerDocs.get_Users_UserId_Notifications,
+    //@ts-ignore
+    asyncHandler(GetNotifications));
 
+router.get('/users/:RecipientId/notifications/:NotificationId', decodeIDToken, ensureAuthorized("User"), 
+    SwaggerDocs.get_Users_UserId_Notifications_NotificationId,
+    //@ts-ignore
+    asyncHandler(GetOneFromNotifications));    
 export default router;
