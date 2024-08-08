@@ -46,7 +46,6 @@ const SavedActivityTab = () => {
         getItem(
             `${endpoint}&NextId=${getNextId(tempData)}`,
             (data) => {
-                console.log(data)
                 setData([...tempData, ...data])
                 setLoadingCom(tempData, false)
             },
