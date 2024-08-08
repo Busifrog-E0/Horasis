@@ -76,7 +76,7 @@ router.get('/discussions/:EntityId/members/invite', decodeIDToken, ensureAuthori
     //@ts-ignore
     asyncHandler(GetMembersToInvite));
 
-router.post('/discussions/:EntityId/invite/:InviteeId', decodeIDToken, ensureAuthorized("User"),
+router.post('/discussions/:EntityId/invite/:InviteeId', decodeIDToken, ensureAuthorized("User"),InsertDiscussionTypeMiddleware,
     SwaggerDocs.post_Discussions_EntityId_Invite_InviteeId,
     //@ts-ignore
     asyncHandler(InviteMembers));
