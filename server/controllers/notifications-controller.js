@@ -93,11 +93,11 @@ const AddContentAndStatusToNotification = async (Notification) => {
         const Member = await ReadMembers({ MemberId: Notification.RecipientId, EntityId: Notification.EntityId }, undefined, 1, undefined);
         switch (Member[0].MembershipStatus) {
             case "Invited":
-                Notification.Content = `@${Notification.UserDetails.FullName}@ has send you an invitation to ${Notification.EntityType} : ${Notification.EntityName}`;
+                Notification.Content = `@${Notification.UserDetails.FullName}@ has send you an invitation to ${Notification.EntityType} : @${Notification.EntityName}@`;
                 Notification.Status = Member[0].MembershipStatus;
                 break;
             case "Accepted":
-                Notification.Content = `You have accepted the invitation to ${Notification.EntityType} : ${Notification.EntityName}`;
+                Notification.Content = `You have accepted the invitation to ${Notification.EntityType} : @${Notification.EntityName}@`;
                 Notification.Status = Member[0].MembershipStatus;
                 break;
             default:
