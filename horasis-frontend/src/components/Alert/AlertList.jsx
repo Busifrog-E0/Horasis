@@ -128,7 +128,7 @@ const AlertList = () => {
 					type='button'
 					className='inline-flex justify-center rounded-md border-none bg-system-secondary-bg text-md px-0 font-medium text-brand-gray-dim'
 					onClick={() => setIsOpen(!isOpen)}>
-					Alerts
+					Notifications
 				</button>
 				{isOpen && (
 					<div className='overflow-hidden origin-top-right absolute z-[999] right-0 mt-2 w-80 lg:w-96 rounded-md shadow-lg bg-system-secondary-bg ring-1 ring-black ring-opacity-5'>

@@ -83,7 +83,7 @@ const Alert = ({ notification, setIsOpen, getSingleNotification }) => {
 						{/* <h4 className='font-semibold text-base text-system-primary-accent'>
 							{notification?.UserDetails?.FullName}
 						</h4> */}
-						<h4 className='text-sm font-normal text-system-primary-text'>
+						<h4 className='text-sm font-medium text-system-primary-text'>
 							<AlertContent Content={notification.Content} ContentLinks={notification.ContentLinks} />
 						</h4>
 						{notification.Status === 'Connection Received' && (
