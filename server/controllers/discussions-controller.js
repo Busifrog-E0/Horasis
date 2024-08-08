@@ -198,7 +198,7 @@ const PostDiscussions = async (req, res) => {
     const UserDetails = await ReadOneFromUsers(OrganiserId);
     req.body = DiscussionInit(req.body);
     const DiscussionId = await CreateDiscussions({ ...req.body, UserDetails });
-    const Member = MemberInit({ MemberId: OrganiserId, EntityId: DiscussionId, UserDetails });
+    const Member = MemberInit({ MemberId: OrganiserId, EntityId: DiscussionId, UserDetails },true);
     await CreateMembers(Member);
     return res.json(DiscussionId);
 }

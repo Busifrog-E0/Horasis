@@ -7,6 +7,7 @@ import { ReadLikes } from '../databaseControllers/likes-databaseController.js';
 import { Type } from '@aws-sdk/client-s3';
 import { ReadOneFromDiscussions } from '../databaseControllers/discussions-databaseController.js';
 import { ConnectionStatus } from './connections-controller.js';
+import { ReadMembers } from '../databaseControllers/members-databaseController.js';
 /**
  * @typedef {import('./../databaseControllers/notifications-databaseController.js').NotificationData} NotificationData 
  */
@@ -48,7 +49,11 @@ const GetOneFromNotifications = async (req, res) => {
     return res.json(data);
 }
 
-
+/**
+ * 
+ * @param {NotificationData} Notification 
+ * @returns 
+ */
 const AddContentAndStatusToNotification = async (Notification) => {
     if (Notification.Type === "Connection-Request") {
         const ConnectionRequestStatus = await ConnectionStatus(Notification.RecipientId, Notification.UserDetails.DocId);
@@ -64,6 +69,36 @@ const AddContentAndStatusToNotification = async (Notification) => {
             case "No Connection":
                 Notification.Content = `You have rejected the connection request from @${Notification.UserDetails.FullName}@ `;
                 Notification.Status = ConnectionRequestStatus.Status;
+                break;
+            default:
+                break;
+        }
+    }
+    if (Notification.Type === "Join-Request") {
+        const Member = await ReadMembers({ MemberId: Notification.UserDetails.DocId, EntityId: Notification.EntityId }, undefined, 1, undefined);
+        switch (Member[0].MembershipStatus) {
+            case "Requested":
+                Notification.Content = `@${Notification.UserDetails.FullName}@ has send you a join request to ${Notification.EntityType} : ${Notification.EntityName}`;
+                Notification.Status = Member[0].MembershipStatus;
+                break;
+            case "Accepted":
+                Notification.Content = `@${Notification.UserDetails.FullName}@ have joined ${Notification.EntityType} : ${Notification.EntityName}`;
+                Notification.Status = Member[0].MembershipStatus;
+                break;
+            default:
+                break;
+        }
+    }
+    if (Notification.Type === "Invitation") {
+        const Member = await ReadMembers({ MemberId: Notification.UserDetails.DocId, EntityId: Notification.EntityId }, undefined, 1, undefined);
+        switch (Member[0].MembershipStatus) {
+            case "Invited":
+                Notification.Content = `@${Notification.UserDetails.FullName}@ has send you an invitation to ${Notification.EntityType} : ${Notification.EntityName}`;
+                Notification.Status = Member[0].MembershipStatus;
+                break;
+            case "Accepted":
+                Notification.Content = `@${Notification.UserDetails.FullName}@ have joined ${Notification.EntityType} : ${Notification.EntityName}`;
+                Notification.Status = Member[0].MembershipStatus;
                 break;
             default:
                 break;
@@ -126,15 +161,17 @@ const RemoveNotificationsAfterActivityMentionPatch = async (MentionsBeforePatch,
     const MentionsAdded = MentionsAfterPatch.filter(MentionAfterPatch =>
         !MentionsBeforePatch.some(MentionBeforePatch => MentionBeforePatch.UserId === MentionAfterPatch.UserId));
 
-    await Promise.all(MentionsRemoved.map(async MentionRemoved => {
+    let promises = [];
+    promises.push(MentionsRemoved.map(async MentionRemoved => {
         const Notifications = await ReadNotifications(
             { EntityId: ActivityId, EntityType: "Activity", UserId: MentionRemoved.UserId, Type: "Mention" },
             undefined, 1, undefined);
         await RemoveNotifications(Notifications[0].DocId);
     }))
     if (MentionsAdded) {
-        await SendNotificationstoActivityMentions(MentionsAdded, UserId, ActivityId);
+        promises.push(SendNotificationstoActivityMentions(MentionsAdded, UserId, ActivityId));
     }
+    await Promise.all(promises);
 }
 
 /**
@@ -230,8 +267,8 @@ const SendNotificationsForConnectionRequest = async (ConnectionId, SenderDetails
  * @returns 
  */
 const RemoveNotificationsForConnectionRequest = async (ConnectionId) => {
-    const Notifications =await ReadNotifications({ EntityId: ConnectionId, Type: "Connection-Request" }, undefined, -1, undefined);
-    return  Notifications.map(Notification => RemoveNotifications(Notification.DocId));
+    const Notifications = await ReadNotifications({ EntityId: ConnectionId, }, undefined, -1, undefined);
+    return Notifications.map(Notification => RemoveNotifications(Notification.DocId));
 }
 
 /**
@@ -248,7 +285,7 @@ const SendNotificationsForConnectionAccept = async (ConnectionId, SenderId, Rece
         EntityType: "Connection",
         Content: `@${Receiver.FullName}@ have accepted your connection request`,
         Link: `/ViewProfile/${Receiver.DocId}`,
-        Type: "Connection-Request",
+        Type: "Connection-Accept",
         ContentLinks: [{ Text: Receiver.FullName, Link: `/ViewProfile/${Receiver.DocId}` }],
         UserDetails: Receiver
     }
@@ -272,7 +309,17 @@ const SendNotificationsForFollow = async (FollowerId, UserId) => {
 }
 
 
-/***************************************************************************DISCUSSIONS************************************************************************************************* */
+/**
+ * 
+ * @param {string} FollowerId 
+ * @returns 
+ */
+const RemoveNotificationsForFollow = async (FollowerId) => {
+    const Notification = (await ReadNotifications({ EntityId: FollowerId }, undefined, 1, undefined))[0];
+    return RemoveNotifications(Notification.DocId);
+}
+
+/***************************************************************************MEMBER-NOTIFICATIONS************************************************************************************************* */
 
 /**
  * 
@@ -335,14 +382,15 @@ const SendNotificationForMemberRequest = async (Type, EntityId, UserId) => {
     const NotificationObject = {
         EntityId: EntityId,
         EntityType: Type,
-        Content: `@${UserDetails.FullName}@ has requested to join your ${Type} @${EntityName}!`,
+        Content: ``,
         Link: Link,
         Type: "Join-Request",
         ContentLinks: [
             { Text: UserDetails.FullName, Link: `/ViewProfile/${UserId}` },
             { Text: EntityName, Link: Link }
         ],
-        UserDetails
+        UserDetails,
+        EntityName
     }
     return await SendNotificationToUser(NotificationObject, SendToUserId);
 }
@@ -387,10 +435,12 @@ const SendNotificationForMemberRequestStatus = async (Type, EntityId, UserId, St
  * @param {"Discussion" | "Event"} Type 
  * @param {string} EntityId 
  * @param {string} UserId 
+ * @param {string} SenderId
  * @returns 
  */
-const SendNotificationForMemberInvitation = async (Type, EntityId, UserId) => {
+const SendNotificationForMemberInvitation = async (Type, EntityId, UserId, SenderId) => {
 
+    const UserDetails = await ReadOneFromUsers(SenderId);
     let EntityName = '';
     let Link = '';
 
@@ -406,15 +456,23 @@ const SendNotificationForMemberInvitation = async (Type, EntityId, UserId) => {
     const NotificationObject = {
         EntityId: EntityId,
         EntityType: Type,
-        Content: `You have been invited to a ${Type} @${EntityName}@ !`,
+        Content: ``,
         Link: Link,
         Type: "Invitation",
-        ContentLinks: [{ Text: EntityName, Link: Link }]
+        ContentLinks: [
+            { Text: EntityName, Link: Link },
+            { Text: UserDetails.FullName, Link: `/ViewProfile/${SenderId}` }],
+        UserDetails,
+        EntityName,
+
     }
     return await SendNotificationToUser(NotificationObject, UserId);
 }
 
-//const RemoveNotification
+const RemoveNotificationForMember = async (EntityId, UserId) => {
+    const Notifications = await ReadNotifications({ EntityId, RecipientId: UserId }, undefined, -1, undefined);
+    return Notifications.map(Notification => RemoveNotifications(Notification.DocId));
+}
 
 /**
  * 
@@ -434,5 +492,7 @@ export {
     SendNotificationstoActivityMentions, SendNotificationstoCommentMentions, SendNotificationsforActivityLikes,
     SendNotificationsForFollow, SendNotificationForMemberRequest, SendNotificationForMemberRequestStatus, SendNotificationForMemberInvitation,
     SendNotificationToUser, SendNotificationForMemberJoin, SendNotificationsForConnectionAccept, SendNotificationsForConnectionRequest,
-    RemoveNotificationsAfterActivityMentionPatch, RemoveNotificationsForConnectionRequest, GetOneFromNotifications
+    RemoveNotificationsAfterActivityMentionPatch, RemoveNotificationsForConnectionRequest, GetOneFromNotifications,
+    RemoveNotificationsForFollow, RemoveNotificationForMember
+
 }

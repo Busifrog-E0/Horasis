@@ -6,7 +6,7 @@ import { AlertBoxObject } from './common.js';
 import { ReadOneFromUsers } from '../databaseControllers/users-databaseController.js';
 import { ObjectId } from 'mongodb';
 import { AggregateConnections } from '../databaseControllers/connections-databaseController.js';
-import { SendNotificationForMemberInvitation, SendNotificationForMemberJoin, SendNotificationForMemberRequest, SendNotificationForMemberRequestStatus } from './notifications-controller.js';
+import { RemoveNotificationForMember, SendNotificationForMemberInvitation, SendNotificationForMemberJoin, SendNotificationForMemberRequest, SendNotificationForMemberRequestStatus } from './notifications-controller.js';
 /**
  * @typedef {import('./../databaseControllers/members-databaseController.js').MemberData} MemberData 
  */
@@ -74,10 +74,10 @@ const PostMembers = async (req, res) => {
 
     if (Entity.Privacy === "Public") {
         await IncrementDiscussions({ NoOfMembers: 1 }, EntityId);
-        await SendNotificationForMemberJoin(req.body.Type,EntityId,UserId);
+        await SendNotificationForMemberJoin(req.body.Type, EntityId, UserId);
         return res.json(true);
     }
-    await SendNotificationForMemberRequest(req.body.Type,EntityId,UserId);
+    await SendNotificationForMemberRequest(req.body.Type, EntityId, UserId);
     return res.status(244).json(AlertBoxObject("Request Sent", "Request has been sent"));
 
 }
@@ -101,7 +101,7 @@ const AcceptJoinRequest = async (req, res) => {
     if (req.body.Type === "Discussion") {
         await IncrementDiscussions({ NoOfMembers: 1 }, EntityId);
     }
-    await SendNotificationForMemberRequestStatus(req.body.Type,EntityId,UserId,"Accepted");
+    await SendNotificationForMemberRequestStatus(req.body.Type, EntityId, UserId, "Accepted");
     return res.json(true);
 }
 
@@ -142,7 +142,7 @@ const InviteMembers = async (req, res) => {
     req.body = { ...MemberInit(req.body), MemberId: InviteeId, EntityId, UserDetails };
     req.body.MembershipStatus = "Invited";
     await CreateMembers(req.body);
-    await SendNotificationForMemberInvitation(req.body.Type,EntityId,InviteeId);
+    await SendNotificationForMemberInvitation(req.body.Type, EntityId, InviteeId,UserId);
     return res.json(true);
 }
 /**
@@ -284,7 +284,7 @@ const UpdateMemberPermissions = async (req, res) => {
  * @returns 
  */
 const RemoveMemberPermissions = async (req, res) => {
-    const { EntityId,UserId } = req.params;
+    const { EntityId, UserId } = req.params;
     const PermissionField = req.body;
     const Member = await ReadMembers({ MemberId: UserId, EntityId }, undefined, 1, undefined);
     await UpdateMembers({ [`Permissions.${PermissionField}`]: false }, Member[0].DocId);
@@ -344,11 +344,11 @@ const DeleteMembers = async (req, res) => {
 }
 
 
-const MemberInit = (Member) => {
+const MemberInit = (Member, IsAdmin = false) => {
     return {
         ...Member,
         MembershipStatus: "Accepted",
-        Permissions: PermissionObjectInit(false)
+        Permissions: PermissionObjectInit(IsAdmin)
     }
 }
 const PermissionObjectInit = (IsAdmin) => {
@@ -366,5 +366,5 @@ export {
     GetOneFromMembers, GetMembers, PostMembers, PatchMembers, DeleteMembers,
     PermissionObjectInit, InviteMembers, AcceptMemberInvitation, UpdateMemberPermissions, GetJoinRequests,
     AcceptJoinRequest, GetMembersToInvite, DeleteTempMembers,
-    RemoveMemberPermissions,MemberInit
+    RemoveMemberPermissions, MemberInit
 }
