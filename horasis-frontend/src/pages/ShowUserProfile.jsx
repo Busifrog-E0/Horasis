@@ -383,7 +383,7 @@ const ShowUserProfile = () => {
 
 	useEffect(() => {
 		getUserDetails()
-	}, [])
+	}, [userid])
 
 	return (
 		<>

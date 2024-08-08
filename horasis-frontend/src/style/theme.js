@@ -31,6 +31,7 @@ const colors = {
   "system-secondary-text": "var(--system-secondary-text)",
   "system-primary-accent": "var(--system-primary-accent)",
   "system-primary-accent-transparent": "var(--system-primary-accent-transparent)",
+  "system-primary-accent-light": "var(--system-primary-accent-light)",
   "system-secondary-accent": "var(--system-secondary-accent)",
   "system-secondary-selected-accent": "var(--system-secondary-selected-accent)",
   "system-primary-selected-text-accent": "var(--system-primary-selected-text-accent)",

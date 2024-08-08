@@ -97,8 +97,8 @@ const DashboardHeader = () => {
           >
             Search
           </button> */}
-          <AlertList />
 					<ChatList />
+          <AlertList />
 					<button
 						type='button'
 						className='inline-flex justify-center rounded-md border-none bg-system-secondary-bg text-md px-0 font-medium text-brand-red'
