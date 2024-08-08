@@ -8,6 +8,7 @@ import { useToast } from '../Toast/ToastService'
 import { jsonToQuery } from '../../utils/searchParams/extractSearchParams'
 import { getNextId } from '../../utils/URLParams'
 import Spinner from '../ui/Spinner'
+import EmptyMembers from '../Common/EmptyMembers'
 
 const AlertList = () => {
 	const [isOpen, setIsOpen] = useState(false)
@@ -48,14 +49,22 @@ const AlertList = () => {
 		}
 	}
 
-	const getSingleNotification = (notification,actionType) => {
+	const getSingleNotification = (notification, actionType) => {
 		getItem(
 			`${api}/${notification.DocId}`,
 			(result) => {
 				if (actionType === 'REMOVE') {
-					setNotifications(notifications.filter((singleNotification) => singleNotification.DocId !== notification.DocId))
+					setNotifications(
+						notifications.filter((singleNotification) => singleNotification.DocId !== notification.DocId)
+					)
 				} else if (actionType === 'UPDATE') {
-					setNotifications(notifications.map((singleNotification) => (singleNotification.DocId === notification.DocId ? { ...singleNotification, ...result } : singleNotification)))
+					setNotifications(
+						notifications.map((singleNotification) =>
+							singleNotification.DocId === notification.DocId
+								? { ...singleNotification, ...result }
+								: singleNotification
+						)
+					)
 				}
 			},
 			(err) => {
@@ -140,10 +149,22 @@ const AlertList = () => {
 							role='menu'
 							aria-orientation='vertical'
 							aria-labelledby='options-menu'>
-							{notifications.length > 0 &&
+							{notifications.length > 0 ? (
 								notifications.map((notification) => {
-									return <AlertDetailsItem notification={notification} key={notification.DocId} setIsOpen={setIsOpen} getSingleNotification={getSingleNotification} />
-								})}
+									return (
+										<AlertDetailsItem
+											notification={notification}
+											key={notification.DocId}
+											setIsOpen={setIsOpen}
+											getSingleNotification={getSingleNotification}
+										/>
+									)
+								})
+							) : (
+								<>
+								<EmptyMembers emptyText={'No new notifications'} />
+								</>
+							)}
 							{/* <AlertDetailsItem /> */}
 						</div>
 
