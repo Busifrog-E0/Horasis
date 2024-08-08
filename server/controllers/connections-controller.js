@@ -17,7 +17,7 @@ import { RemoveNotificationsForConnectionRequest, SendNotificationsForConnection
  * @returns {Promise<e.Response<Array<ConnectionData>>>}
  */
 const GetAUsersConnections = async (req, res) => {
-    const { Filter, Keyword ,NextId, Limit, OrderBy } = req.query;
+    const { Filter, Keyword, NextId, Limit, OrderBy } = req.query;
     // @ts-ignore
     const UserId = req.user.UserId;
     if (Keyword) {
@@ -161,7 +161,6 @@ const DeleteConnectionCancel = async (req, res) => {
         return res.status(444).json(AlertBoxObject('Invalid Request', 'No pending request '));
     }
     await RemoveConnections(ConnectionData.DocId);
-    await RemoveNotificationsForConnectionRequest(ConnectionData.DocId, ConnectionData.ReceiverId);
     return res.json(true)
 }
 
@@ -197,7 +196,7 @@ const DeleteConnection = async (req, res) => {
 const GetConnectionsNumber = async (req, res) => {
     //@ts-ignore
     const { UserId } = req.params;
-    return res.json(await GetConnectionsCount({ UserIds: UserId, Status : "Connected"}))
+    return res.json(await GetConnectionsCount({ UserIds: UserId, Status: "Connected" }))
 }
 
 
