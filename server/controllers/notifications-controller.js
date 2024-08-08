@@ -30,7 +30,8 @@ const GetNotifications = async (req, res) => {
     // @ts-ignore
     Filter.RecipientId = req.user.RecipientId;
     // @ts-ignore
-    const data = await ReadNotifications(Filter, NextId, Limit, OrderBy);
+    const Notifications = await ReadNotifications(Filter, NextId, Limit, OrderBy);
+    const data = await Promise.all(Notifications.map(async Notification => await AddContentAndStatusToNotification(Notification)))
     return res.json(data);
 }
 
@@ -42,10 +43,34 @@ const GetNotifications = async (req, res) => {
 const GetOneFromNotifications = async (req, res) => {
     const { RecipientId, NotificationId } = req.params;
     //@ts-ignore
-    const data = await ReadOneFromNotifications(NotificationId);
+    const Notification = await ReadOneFromNotifications(NotificationId);
+    const data = await AddContentAndStatusToNotification(Notification)
     return res.json(data);
 }
 
+
+const AddContentAndStatusToNotification = async (Notification) => {
+    if (Notification.Type == "Connection-Request") {
+        const ConnectionRequestStatus = await ConnectionStatus(Notification.RecipientId, Notification.UserDetails.DocId);
+        switch (ConnectionRequestStatus.Status) {
+            case "Connection Recieved":
+                Notification.Content = `@${Notification.UserDetails.FullName}@ has send you a connection request`;
+                Notification.Status = ConnectionRequestStatus.Status;
+                break;
+            case "Connected":
+                Notification.Content = `@${Notification.UserDetails.FullName}@ and you are now connected`;
+                Notification.Status = ConnectionRequestStatus.Status;
+                break;
+            case "No Connection":
+                Notification.Content = `You have rejected the connection request from @${Notification.UserDetails.FullName}@ `;
+                Notification.Status = ConnectionRequestStatus.Status;
+                break;
+            default:
+                break;
+        }
+    }
+    return Notification;
+}
 
 /**
  * 
@@ -187,7 +212,7 @@ const SendNotificationsForConnectionRequest = async (ConnectionId, SenderDetails
         Link: `/users/${SenderDetails.DocId}`,
         Type: "Connection-Request",
         ContentLinks: [{ Text: SenderDetails.FullName, Link: `/users/${SenderDetails.DocId}` }],
-        Status : ""
+        Status: ""
     }
     return await SendNotificationToUser(NotificationObject, ReceiverDetails.DocId, true);
 }

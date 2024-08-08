@@ -186,5 +186,5 @@ export default {
     post_Users_ForgotPassword_Verify,
     post_Users_ForgotPassword_Reset,
     get_Users_UserId_Notifications,
-    get'
+    get_Users_UserId_Notifications_NotificationId
 }

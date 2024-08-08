@@ -201,14 +201,6 @@ const GetConnectionsNumber = async (req, res) => {
 }
 
 
-
-
-
-
-
-
-
-
 /**
  * 
  * @param {string} MyId 
