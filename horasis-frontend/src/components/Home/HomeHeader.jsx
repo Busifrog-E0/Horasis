@@ -17,15 +17,15 @@ const HomeHeader = () => {
 				</div>
 				<div className='hidden md:flex gap-10 items-center justify-between'>
 					<nav className='flex text-system-secondary-bg gap-10'>
-						<p className='text-lg'>Events</p>
-						<p className='text-lg'>Discussions</p>
-						<p className='text-lg'>Insight</p>
-						<p className='text-lg'>Contact</p>
+						<p className='text-md font-medium'>Events</p>
+						<p className='text-md font-medium'>Discussions</p>
+						{/* <p className='text-md font-medium'>Insight</p> */}
+						<p className='text-md font-medium'>Contact</p>
 					</nav>
 					{currentUserData ? (
 						<>
 							<div>
-								<button className='text-system-secondary-bg py-3 px-4 border rounded-full' onClick={handleNavigate}>
+								<button className='text-system-secondary-bg py-1 px-4 border-2 rounded-full font-medium' onClick={handleNavigate}>
 									View Activities
 								</button>
 							</div>
@@ -34,7 +34,7 @@ const HomeHeader = () => {
 						<>
 							<div>
 								<button
-									className='text-system-secondary-bg py-3 px-8 border rounded-full'
+									className='text-system-secondary-bg py-1 px-6 font-medium border-2 rounded-full'
 									onClick={handleLoginNavigate}>
 									Login
 								</button>
@@ -47,7 +47,7 @@ const HomeHeader = () => {
 						<>
 							{' '}
 							<div>
-								<button className='text-system-secondary-bg py-3 px-4 border rounded-full' onClick={handleNavigate}>
+								<button className='text-system-secondary-bg py-1 px-4 border-2 font-medium rounded-full' onClick={handleNavigate}>
 									View Activities
 								</button>
 							</div>
@@ -56,7 +56,7 @@ const HomeHeader = () => {
 						<>
 							<div>
 								<button
-									className='text-system-secondary-bg py-3 px-8 border rounded-full'
+									className='text-system-secondary-bg py-1 px-6 font-medium border-2 rounded-full'
 									onClick={handleLoginNavigate}>
 									Login
 								</button>
