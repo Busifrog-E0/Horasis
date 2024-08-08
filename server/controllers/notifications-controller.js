@@ -28,7 +28,7 @@ import { ConnectionStatus } from './connections-controller.js';
 const GetNotifications = async (req, res) => {
     const { Filter, NextId, Limit, OrderBy } = req.query;
     // @ts-ignore
-    Filter.RecipientId = req.user.RecipientId;
+    Filter.RecipientId = req.params.RecipientId;
     // @ts-ignore
     const Notifications = await ReadNotifications(Filter, NextId, Limit, OrderBy);
     const data = await Promise.all(Notifications.map(async Notification => await AddContentAndStatusToNotification(Notification)))
@@ -78,8 +78,8 @@ const AddContentAndStatusToNotification = async (Notification) => {
  * @param {NotificationObject} NotificationObject 
  * @param {string} UserId 
  */
-const SendNotificationToUser = async (NotificationObject, UserId, HasAction = false) => {
-    await CreateNotifications({ ...NotificationObject, RecipientId: UserId, HasSeen: false, HasAction });
+const SendNotificationToUser = async (NotificationObject, UserId) => {
+    await CreateNotifications({ ...NotificationObject, RecipientId: UserId, HasSeen: false });
 }
 
 /**
@@ -218,7 +218,7 @@ const SendNotificationsForConnectionRequest = async (ConnectionId, SenderDetails
         ContentLinks: [{ Text: SenderDetails.FullName, Link: `/ViewProfile/${SenderDetails.DocId}` }],
         UserDetails : SenderDetails
     }
-    return await SendNotificationToUser(NotificationObject, ReceiverDetails.DocId, true);
+    return await SendNotificationToUser(NotificationObject, ReceiverDetails.DocId);
 }
 
 
