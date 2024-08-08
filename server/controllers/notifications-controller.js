@@ -212,11 +212,11 @@ const SendNotificationsForConnectionRequest = async (ConnectionId, SenderDetails
     const NotificationObject = {
         EntityId: ConnectionId,
         EntityType: "Connection",
-        Content : "",
+        Content: "",
         Link: `/ViewProfile/${SenderDetails.DocId}`,
         Type: "Connection-Request",
         ContentLinks: [{ Text: SenderDetails.FullName, Link: `/ViewProfile/${SenderDetails.DocId}` }],
-        UserDetails : SenderDetails
+        UserDetails: SenderDetails
     }
     return await SendNotificationToUser(NotificationObject, ReceiverDetails.DocId);
 }
@@ -226,13 +226,12 @@ const SendNotificationsForConnectionRequest = async (ConnectionId, SenderDetails
 
 /**
  * 
- * @param {string} ConnectionId 
- * @param {string} ReceiverId 
+ * @param {string} ConnectionId  
  * @returns 
  */
-const RemoveNotificationsForConnectionRequest = async (ConnectionId, ReceiverId) => {
-    const Notification = (await ReadNotifications({ UserId: ReceiverId, EntityId: ConnectionId, Type: "Connection-Request" }, undefined, 1, undefined))[0];
-    return await RemoveNotifications(Notification.DocId);
+const RemoveNotificationsForConnectionRequest = async (ConnectionId) => {
+    const Notifications =await ReadNotifications({ EntityId: ConnectionId, Type: "Connection-Request" }, undefined, -1, undefined);
+    return  Notifications.map(Notification => RemoveNotifications(Notification.DocId));
 }
 
 /**
@@ -251,7 +250,7 @@ const SendNotificationsForConnectionAccept = async (ConnectionId, SenderId, Rece
         Link: `/ViewProfile/${Receiver.DocId}`,
         Type: "Connection-Request",
         ContentLinks: [{ Text: Receiver.FullName, Link: `/ViewProfile/${Receiver.DocId}` }],
-        UserDetails : Receiver
+        UserDetails: Receiver
     }
     return await SendNotificationToUser(NotificationObject, SenderId);
 }
@@ -267,7 +266,7 @@ const SendNotificationsForFollow = async (FollowerId, UserId) => {
         Link: `/ViewProfile/${FollowerId}`,
         Type: "Follow",
         ContentLinks: [{ Text: Follower.FullName, Link: `/ViewProfile/${FollowerId}` }],
-        UserDetails : Follower
+        UserDetails: Follower
     }
     return await SendNotificationToUser(NotificationObject, UserId);
 }

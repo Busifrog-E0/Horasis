@@ -1,3 +1,4 @@
+import { RemoveNotificationsForConnectionRequest } from '../controllers/notifications-controller.js';
 import dataHandling from './functions.js'
 
 /**@typedef {import('./users-databaseController.js').UserData} UserData*/
@@ -64,7 +65,9 @@ const CreateConnections = async (data, DocId = undefined) => {
  * @returns {Promise<boolean>}
  */
 const RemoveConnections = async (DocId) => {
+    await RemoveNotificationsForConnectionRequest(DocId);
     return dataHandling.Delete('Connections', DocId);
+
 }
 
 /**
