@@ -53,7 +53,7 @@ const AddContentAndStatusToNotification = async (Notification) => {
     if (Notification.Type === "Connection-Request") {
         const ConnectionRequestStatus = await ConnectionStatus(Notification.RecipientId, Notification.UserDetails.DocId);
         switch (ConnectionRequestStatus.Status) {
-            case "Connection Recieved":
+            case "Connection Received":
                 Notification.Content = `@${Notification.UserDetails.FullName}@ has send you a connection request`;
                 Notification.Status = ConnectionRequestStatus.Status;
                 break;
@@ -264,9 +264,9 @@ const SendNotificationsForFollow = async (FollowerId, UserId) => {
         EntityId: FollowerId,
         EntityType: "User",
         Content: `@${Follower.FullName}@ is now following you!`,
-        Link: `/ViewProfile/${UserId}`,
+        Link: `/ViewProfile/${FollowerId}`,
         Type: "Follow",
-        ContentLinks: [{ Text: Follower.FullName, Link: `/ViewProfile/${UserId}` }],
+        ContentLinks: [{ Text: Follower.FullName, Link: `/ViewProfile/${FollowerId}` }],
         UserDetails : Follower
     }
     return await SendNotificationToUser(NotificationObject, UserId);
