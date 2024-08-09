@@ -162,7 +162,7 @@ router.post('/discussions/:EntityId/activities', decodeIDToken, ensureAuthorized
 router.get('/discussions/:EntityId/activities', decodeIDToken, ensureAuthorized("User"), ValidateGetEntity, QueryParameterFormatting,
     GetDiscussionsActivitiesMiddleware, SwaggerDocs.get_Discussions_DiscussionId_Activities,
     //@ts-ignore
-    asyncHandler(GetActivities));
+    asyncHandler(GetFilteredActivities));
 
 router.delete('/discussions/:DiscussionId', decodeIDToken, ensureAuthorized("User"),
     // @ts-ignore
