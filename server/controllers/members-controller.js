@@ -7,7 +7,7 @@ import { ReadOneFromUsers } from '../databaseControllers/users-databaseControlle
 import { ObjectId } from 'mongodb';
 import { AggregateConnections } from '../databaseControllers/connections-databaseController.js';
 import { RemoveNotificationForMember, SendNotificationForMemberInvitation, SendNotificationForMemberJoin, SendNotificationForMemberRequest, SendNotificationForMemberRequestStatus } from './notifications-controller.js';
-import { IncrementEvents } from '../databaseControllers/events-databaseController.js';
+import { IncrementEvents, ReadOneFromEvents } from '../databaseControllers/events-databaseController.js';
 /**
  * @typedef {import('./../databaseControllers/members-databaseController.js').MemberData} MemberData 
  */
@@ -56,25 +56,19 @@ const PostMembers = async (req, res) => {
     if (MemberCheck.length > 0) {
         return res.status(444).json(AlertBoxObject("Cannot Join", "You have already joined this discussion"));
     }
-
-    let Entity = {};
     const UserDetails = await ReadOneFromUsers(UserId);
     req.body = { ...MemberInit(req.body), MemberId: UserId, EntityId, UserDetails };
-    if (req.body.Type === "Discussion") {
-        Entity = await ReadOneFromDiscussions(EntityId);
-    }
-    else {
-        Entity = {};
-    }
-
+    const Entity = req.body.Type === "Discussion" ? await ReadOneFromDiscussions(EntityId) : await ReadOneFromEvents(EntityId);
     if (Entity.Privacy === "Private") {
         req.body.MembershipStatus = "Requested";
     }
-
     await CreateMembers(req.body);
 
     if (Entity.Privacy === "Public") {
-        await IncrementDiscussions({ NoOfMembers: 1 }, EntityId);
+        req.body.Type === "Discussion" ?
+            await IncrementDiscussions({ NoOfMembers: 1 }, EntityId)
+            :
+            await IncrementEvents({ NoOfMembers: 1 }, EntityId);
         await SendNotificationForMemberJoin(req.body.Type, EntityId, UserId);
         return res.json(true);
     }
@@ -96,7 +90,7 @@ const AcceptJoinRequest = async (req, res) => {
     const { EntityId, UserId } = req.params;
     const Member = await ReadMembers({ MemberId: UserId, EntityId, MembershipStatus: "Requested" }, undefined, 1, undefined);
     if (Member.length === 0) {
-        return res.status(444).json(AlertBoxObject("Cannot Accept", "User have not requested to join this discussion"));
+        return res.status(444).json(AlertBoxObject("Cannot Accept", `User have not requested to join this ${req.body.Type}`));
     }
     await UpdateMembers({ MembershipStatus: "Accepted" }, Member[0].DocId);
     if (req.body.Type === "Discussion") {
@@ -106,7 +100,7 @@ const AcceptJoinRequest = async (req, res) => {
         await IncrementEvents({ NoOfMembers: 1 }, EntityId);
     }
     //@ts-ignore
-    await SendNotificationForMemberRequestStatus(req.body.Type, EntityId, UserId, "Accepted",req.user.User);
+    await SendNotificationForMemberRequestStatus(req.body.Type, EntityId, UserId, "Accepted", req.user.User);
     return res.json(true);
 }
 
@@ -134,7 +128,10 @@ const InviteMembers = async (req, res) => {
     if (Invitee[0]) {
         if (Invitee[0].MembershipStatus === "Requested") {
             await UpdateMembers({ MembershipStatus: "Accepted" }, Invitee[0].DocId);
-            await IncrementDiscussions({ NoOfMembers: 1 }, EntityId);
+            req.body.Type === "Discussion" ?
+                await IncrementDiscussions({ NoOfMembers: 1 }, EntityId)
+                :
+                await IncrementEvents({ NoOfMembers: 1 }, EntityId);
             return res.json(true);
         }
         else if (Invitee[0].MembershipStatus === "Invited") {
@@ -147,7 +144,7 @@ const InviteMembers = async (req, res) => {
     req.body = { ...MemberInit(req.body), MemberId: InviteeId, EntityId, UserDetails };
     req.body.MembershipStatus = "Invited";
     await CreateMembers(req.body);
-    await SendNotificationForMemberInvitation(req.body.Type, EntityId, InviteeId,UserId);
+    await SendNotificationForMemberInvitation(req.body.Type, EntityId, InviteeId, UserId);
     return res.json(true);
 }
 /**
@@ -165,7 +162,10 @@ const AcceptMemberInvitation = async (req, res) => {
         return res.status(444).json(AlertBoxObject("Cannot Accept", "You have already joined this discussion"));
     }
     await UpdateMembers({ MembershipStatus: "Accepted" }, Member[0].DocId);
-    await IncrementDiscussions({ NoOfMembers: 1 }, EntityId);
+    req.body.Type === "Discussion" ?
+        await IncrementDiscussions({ NoOfMembers: 1 }, EntityId)
+        :
+        await IncrementEvents({ NoOfMembers: 1 }, EntityId);
     return res.json(true);
 }
 
@@ -211,8 +211,6 @@ const GetMembersToInvite = async (req, res) => {
             }
         },
         { $unwind: "$UserIds" },
-
-        // Match only the documents where the user is not the specified user
         { $match: { UserIds: { $ne: UserId } } },
         {
             $addFields: {

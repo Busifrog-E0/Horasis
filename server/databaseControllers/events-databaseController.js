@@ -1,6 +1,10 @@
 import dataHandling from './functions.js'
 
 /**
+ * @typedef {import('./members-databaseController.js').PermissionData} PermissionData
+ */
+
+/**
  * @typedef {object} AgendaData
  * @property {string} Name
  * @property {string} Description
@@ -11,6 +15,7 @@ import dataHandling from './functions.js'
 
 /**
  * @typedef {object} EventData
+ * @property {string} OrganiserId
  * @property {string} EventName
  * @property {string} Description
  * @property {string} Date
@@ -25,6 +30,7 @@ import dataHandling from './functions.js'
  * @property {string} CoverPicture
  * @property {string} DocId
  * @property {number} CreatedIndex
+ * @property {Omit<PermissionData, 'IsAdmin'>} MemberPermissions
  */
 
 
@@ -80,6 +86,10 @@ const RemoveEvents = async (DocId) => {
     return dataHandling.Delete('Events', DocId);
 }
 
+const AggregateEvents = (AggregateArray, NextIndex, Limit, OrderBy) => {
+    return dataHandling.Aggregate('Events', AggregateArray, NextIndex, Limit, OrderBy);
+}
+
 const IncrementEvents = async (data, DocId) => {
     return dataHandling.Update("Events", data, DocId, ["$inc"], false);
 }
@@ -91,5 +101,6 @@ export {
     UpdateEvents,
     CreateEvents,
     RemoveEvents,
-    IncrementEvents
+    IncrementEvents,
+    AggregateEvents
 }

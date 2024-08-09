@@ -1,18 +1,23 @@
 import {
     GetOneFromEvents, GetEvents, PostEvents, PatchEvents, DeleteEvents,
+    GetUserEvents,
+    GetInvitedEvents,
 } from '../controllers/events-controller.js';
 import asyncHandler from 'express-async-handler';
 import {
     AcceptJoinRequest, AcceptMemberInvitation, DeleteMembers, DeleteTempMembers,
     GetJoinRequests, GetMembers, GetMembersToInvite, InviteMembers, PostMembers, RemoveMemberPermissions, UpdateMemberPermissions
 } from '../controllers/members-controller.js';
-
+import SwaggerDocs from '../swaggerDocs/events-swaggerDocs.js'
 import e from 'express';
 import { decodeIDToken, ensureAuthorized } from '../middleware/auth-middleware.js';
 import { ValidatePostEvents } from '../validations/events-validations.js';
 import { QueryParameterFormatting, ValidateGetEntity } from '../middleware/common.js';
-import { InsertEventTypeMiddleware } from '../middleware/events-middleware.js';
+import { GetEventsActivitiesMiddleware, InsertEventTypeMiddleware, PostEventActivitiesMiddleware } from '../middleware/events-middleware.js';
 import { ValidatePostActivities } from '../validations/activities-validations.js';
+import { MemberPostActivityMiddleware } from '../middleware/members-middleware.js';
+import { ValidateAddPermissionForEveryone, ValidatePatchMemberPermission, ValidatePatchRemovePermission } from '../validations/discussions-validations.js';
+import { GetFilteredActivities, PostActivities } from '../controllers/activities-controller.js';
 const router = e.Router();
 
 router.get('/events', decodeIDToken, ensureAuthorized("User"), ValidateGetEntity, QueryParameterFormatting,
@@ -77,7 +82,7 @@ router.post('/events/:EntityId/invite/:InviteeId', decodeIDToken, ensureAuthoriz
     //@ts-ignore
     asyncHandler(InviteMembers));
 
-router.patch('/events/:EntityId/invite/accept', decodeIDToken, ensureAuthorized("User"),
+router.patch('/events/:EntityId/invite/accept', decodeIDToken, ensureAuthorized("User"),InsertEventTypeMiddleware,
     SwaggerDocs.patch_Events_EntityId_Invite_Accept,
     //@ts-ignore
     asyncHandler(AcceptMemberInvitation));
@@ -129,23 +134,6 @@ router.get('/user/:UserId/events/invited', decodeIDToken, ensureAuthorized("User
     SwaggerDocs.get_Events_Invited,
     //@ts-ignore
     asyncHandler(GetInvitedEvents));
-
-/***************************************************************SAVE************************************************************************************* */
-
-router.post('/events/:EntityId/save', decodeIDToken, ensureAuthorized("User"),
-    SwaggerDocs.post_Events_EventId_Save,
-    //@ts-ignore
-    asyncHandler(PostSaves));
-
-router.get('/users/:UserId/events/save', decodeIDToken, ensureAuthorized("User"), InsertEventTypeMiddleware,
-    SwaggerDocs.get_Events_EventId_Save,
-    //@ts-ignore
-    asyncHandler(GetSaves));
-
-router.delete('/users/:UserId/events/save', decodeIDToken, ensureAuthorized("User"),
-    SwaggerDocs.delete_Events_EventId_Save,
-    //@ts-ignore
-    asyncHandler(DeleteSaves));
 
 /************************************************************************ACTIVITIES************************************************************************* */
 

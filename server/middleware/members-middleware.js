@@ -3,6 +3,7 @@ import { AlertBoxObject } from "../controllers/common.js";
 import { ReadMembers } from "../databaseControllers/members-databaseController.js";
 import { EntityTypes } from './common.js';
 import { ReadOneFromDiscussions } from '../databaseControllers/discussions-databaseController.js';
+import { ReadOneFromEvents } from '../databaseControllers/events-databaseController.js';
 
 
 /**
@@ -17,7 +18,7 @@ const MemberPostActivityMiddleware = async (req, res, next) => {
      * @type {{ MediaFiles: { FileUrl : string ,Type: "image"|"video" }[]; }}
      */
     const { MediaFiles } = req.body;
-    const Entity = req.body.Type === "Discussion" ? await ReadOneFromDiscussions(req.params.EntityId) : {};
+    const Entity = req.body.Type === "Discussion" ? await ReadOneFromDiscussions(req.params.EntityId) : await ReadOneFromEvents(req.params.EntityId);
     //@ts-ignore
     const Member = await ReadMembers({ MemberId: req.user.UserId, EntityId: req.params.EntityId }, undefined, 1, undefined);
     if (Member.length === 0) {
