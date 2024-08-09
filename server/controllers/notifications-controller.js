@@ -77,12 +77,12 @@ const AddContentAndStatusToNotification = async (Notification) => {
     if (Notification.Type === "Join-Request") {
         const Member = await ReadMembers({ MemberId: Notification.UserDetails.DocId, EntityId: Notification.EntityId }, undefined, 1, undefined);
         switch (Member[0].MembershipStatus) {
-            case "Requested":
-                Notification.Content = `@${Notification.UserDetails.FullName}@ has send you a join request to ${Notification.EntityType} : ${Notification.EntityName}`;
+            case "  ":
+                Notification.Content = `@${Notification.UserDetails.FullName}@ has send you a join request to ${Notification.EntityType} : @${Notification.EntityName}@`;
                 Notification.Status = Member[0].MembershipStatus;
                 break;
             case "Accepted":
-                Notification.Content = `@${Notification.UserDetails.FullName}@ have joined ${Notification.EntityType} : ${Notification.EntityName}`;
+                Notification.Content = `@${Notification.UserDetails.FullName}@ have joined ${Notification.EntityType} : @${Notification.EntityName}@`;
                 Notification.Status = Member[0].MembershipStatus;
                 break;
             default:
@@ -268,7 +268,7 @@ const SendNotificationsForConnectionRequest = async (ConnectionId, SenderDetails
  */
 const RemoveNotificationsForConnectionRequest = async (ConnectionId) => {
     const Notifications = await ReadNotifications({ EntityId: ConnectionId, }, undefined, -1, undefined);
-    return Notifications.map(Notification => RemoveNotifications(Notification.DocId));
+    return Promise.all(Notifications.map(Notification => RemoveNotifications(Notification.DocId)));
 }
 
 /**
@@ -471,7 +471,7 @@ const SendNotificationForMemberInvitation = async (Type, EntityId, UserId, Sende
 
 const RemoveNotificationForMember = async (EntityId, UserId) => {
     const Notifications = await ReadNotifications({ EntityId, RecipientId: UserId }, undefined, -1, undefined);
-    return Notifications.map(Notification => RemoveNotifications(Notification.DocId));
+    return Promise.all(Notifications.map(Notification => RemoveNotifications(Notification.DocId)));
 }
 
 /**
