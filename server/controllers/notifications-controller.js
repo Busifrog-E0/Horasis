@@ -77,7 +77,7 @@ const AddContentAndStatusToNotification = async (Notification) => {
     if (Notification.Type === "Join-Request") {
         const Member = await ReadMembers({ MemberId: Notification.UserDetails.DocId, EntityId: Notification.EntityId }, undefined, 1, undefined);
         switch (Member[0].MembershipStatus) {
-            case "  ":
+            case "Requested":
                 Notification.Content = `@${Notification.UserDetails.FullName}@ has send you a join request to ${Notification.EntityType} : @${Notification.EntityName}@`;
                 Notification.Status = Member[0].MembershipStatus;
                 break;
