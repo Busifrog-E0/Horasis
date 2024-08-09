@@ -6,6 +6,7 @@ import commentsDefinitions from './swaggerDocs/commentsDefinitions.js';
 import chatDefinitions from './swaggerDocs/chatDefinitions.js';
 import discussionsDefinitions from './swaggerDocs/discussionsDefinitions.js';
 import membersDefinitions from './swaggerDocs/membersDefinitions.js';
+import eventsDefinitions from './swaggerDocs/eventsDefinitions.js';
 
 const doc = {
     info: {
@@ -25,7 +26,7 @@ const doc = {
         },
         {
             "name": "Follow",
-            "description": "", 
+            "description": "",
         },
         {
             "name": "Connections",
@@ -50,6 +51,10 @@ const doc = {
         {
             "name": "Discussions",
             "description": "",
+        },
+        {
+            "name": "Events",
+            "description": "",
         }
     ],
     securityDefinitions: {
@@ -72,7 +77,8 @@ const doc = {
         ...commentsDefinitions,
         ...chatDefinitions,
         ...discussionsDefinitions,
-        ...membersDefinitions
+        ...membersDefinitions,
+        ...eventsDefinitions
     }
 }
 

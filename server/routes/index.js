@@ -13,7 +13,7 @@ import activitiesRoutes from './activities-routes.js'
 import commentsRoutes from './comments-routes.js'
 import chatsRoutes from './chats-routes.js'
 import discussionRoutes from './discussions-routes.js'
-
+import eventsRoutes from './events-routes.js'
 
 router.use("/api", authRoutes);
 // router.use("/api", adminRoutes);
@@ -26,6 +26,7 @@ router.use("/api", activitiesRoutes);
 router.use("/api", commentsRoutes);
 router.use("/api", chatsRoutes);
 router.use("/api", discussionRoutes);
+router.use("/api", eventsRoutes);
 
 
 
