@@ -18,7 +18,7 @@ const InviteMemberTab = ({ connection, discussionId }) => {
 				setInviteSent(result)
 			},
 			(err) => {
-				toast.open('error', 'Invite failed', `Couldn't sent  invite to ${connection.FullName}. Try again.`)
+				// toast.open('error', 'Invite failed', `Couldn't sent  invite to ${connection.FullName}. Try again.`)
 			},
 			updateCurrentUser,
 			currentUserData,

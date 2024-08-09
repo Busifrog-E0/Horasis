@@ -50,7 +50,7 @@ const CreateDiscussionStep3 = ({ discussionId, from = 'create' }) => {
 
 	const getConnections = (tempConnections) => {
 		getData(
-			`users/${currentUserData.CurrentUser.UserId}/connections?${jsonToQuery(filters)}`,
+			`discussions/${discussionId}/members/invite?${jsonToQuery(filters)}`,
 			tempConnections,
 			setConnections
 		)
