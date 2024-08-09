@@ -13,14 +13,14 @@ const items = [
     { id: 7, title: 'Item 7', image: 'https://th.bing.com/th/id/OIP.7A7KnIr-YTdP8QjE-V83_AHaLH?rs=1&pid=ImgDetMain' },
     { id: 8, title: 'Item 8', image: 'https://th.bing.com/th/id/OIP.kaD6UkjAMxL3HVvGBlroGgHaLH?rs=1&pid=ImgDetMain' },
 ];
-const StaggeredList = () => {
+const StaggeredList = ({images}) => {
     return (
         // md:columns-3 lg:columns-4 
         <div className="columns-2 gap-4 p-4">
-            {items.map(item => (
-                <div key={item.id} className="mb-4 break-inside-avoid">
+            {images.map(item => (
+                <div key={item.DocId} className="mb-4 break-inside-avoid">
                     <div className="bg-white rounded-lg overflow-hidden shadow-lg">
-                        <img src={item.image} alt={item.title} className="w-full" />
+                        <img src={item.FileUrl} alt={item.title} className="w-full" />
 
                     </div>
                 </div>

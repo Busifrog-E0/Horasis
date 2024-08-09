@@ -1,25 +1,24 @@
 import { useContext, useEffect, useState } from 'react'
-import VideoPlayer from '../../ui/VideoPlayer'
 import { AuthContext } from '../../../utils/AuthProvider'
 import { useToast } from '../../Toast/ToastService'
-import { jsonToQuery } from '../../../utils/searchParams/extractSearchParams'
-import { getNextId } from '../../../utils/URLParams'
+import StaggeredList from '../../ui/StaggeredList'
 import { getItem } from '../../../constants/operations'
-import EmptyMembers from '../../Common/EmptyMembers'
+import { getNextId } from '../../../utils/URLParams'
+import { jsonToQuery } from '../../../utils/searchParams/extractSearchParams'
 import Spinner from '../../ui/Spinner'
 
-const VideosTab = () => {
+const ImagesTab = () => {
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
 	const toast = useToast()
 	const [isLoading, setIsLoading] = useState(true)
 	const [isLoadingMore, setIsLoadingMore] = useState(false)
-	const [videos, setVideos] = useState([])
+	const [images, setImages] = useState([])
 	const [pageDisabled, setPageDisabled] = useState(true)
 	const [filters, setFilters] = useState({
 		OrderBy: 'Index',
 		Limit: 10,
 		Keyword: '',
-		Type: 'video',
+		Type: 'image',
 	})
 	const api = `users/${currentUserData.CurrentUser.UserId}/media`
 	const setLoadingCom = (tempArr, value) => {
@@ -30,15 +29,14 @@ const VideosTab = () => {
 		}
 	}
 
-	const getVideos = (tempArr) => {
-		getData(`${api}?&${jsonToQuery(filters)}`, tempArr, setVideos)
+	const getImages = (tempArr) => {
+		getData(`${api}?&${jsonToQuery(filters)}`, tempArr, setImages)
 	}
 	const getData = (endpoint, tempData, setData) => {
 		setLoadingCom(tempData, true)
 		getItem(
 			`${endpoint}&NextId=${getNextId(tempData)}`,
 			(data) => {
-				console.log(data)
 				setData([...tempData, ...data])
 				setLoadingCom(tempData, false)
 			},
@@ -71,43 +69,38 @@ const VideosTab = () => {
 	}
 
 	const fetchData = (initialRender = false) => {
-		getVideos(initialRender ? [] : videos)
+		getImages(initialRender ? [] : images)
 	}
 
 	const fetch = () => fetchData(true)
 	const fetchMore = () => fetchData(false)
 
 	useEffect(() => {
-		if (videos.length > 0) hasAnyLeft(`${api}`, videos)
-	}, [videos])
+		if (images.length > 0) hasAnyLeft(`${api}`, images)
+	}, [images])
 
 	useEffect(() => {
 		fetch()
 	}, [filters])
-
 	return (
 		<div className='bg-system-secondary-bg p-4 rounded-b-lg '>
 			{isLoading ? (
 				<Spinner />
 			) : (
 				<>
-					<div className='grid grid-cols-2 gap-4 p-4'>
-						{videos && (
-							<>
-								{videos.length > 0 ? (
-									<>
-										{videos.map((video) => {
-											return <VideoPlayer key={video.DocId} url={video.FileUrl} />
-										})}
-									</>
-								) : (
-									<>
-										<EmptyMembers emptyText={'No videos uploaded'} />
-									</>
-								)}
-							</>
-						)}
-					</div>
+					{images && (
+						<>
+							{images.length > 0 ? (
+								<>
+									<StaggeredList images={images} />
+								</>
+							) : (
+								<>
+									<EmptyMembers emptyText={'No images uploaded'} />
+								</>
+							)}
+						</>
+					)}
 
 					{isLoadingMore && (
 						<div className='bg-system-secondary-bg p-4 rounded-b-lg '>
@@ -121,7 +114,7 @@ const VideosTab = () => {
 							}}
 							className='flex flex-row justify-center mt-2 mb-2'>
 							<div className='cursor-pointer flex items-center gap-2'>
-								<h4 className='text-sm font-medium text-system-primary-accent'>Load more videos</h4>
+								<h4 className='text-sm font-medium text-system-primary-accent'>Load more images</h4>
 							</div>
 						</div>
 					)}
@@ -131,4 +124,4 @@ const VideosTab = () => {
 	)
 }
 
-export default VideosTab
+export default ImagesTab

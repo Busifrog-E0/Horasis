@@ -19,6 +19,7 @@ import VideoPlayer from '../components/ui/VideoPlayer'
 import StaggeredList from '../components/ui/StaggeredList'
 import DropdownMenu from '../components/ui/DropdownMenu'
 import VideosTab from '../components/Profile/Tabs/VideosTab'
+import ImagesTab from '../components/Profile/Tabs/ImagesTab'
 
 const tabs = (user, getUserDetails) => [
 	{
@@ -57,11 +58,7 @@ const tabs = (user, getUserDetails) => [
 	{
 		key: 4,
 		title: 'Photos',
-		render: () => (
-			<div className='bg-system-secondary-bg p-4 rounded-b-lg '>
-				<StaggeredList />
-			</div>
-		),
+		render: () => <ImagesTab />,
 	},
 	// {
 	//   key: 6,
