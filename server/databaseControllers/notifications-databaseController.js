@@ -7,6 +7,7 @@ import dataHandling from './functions.js'
 /**
  * @typedef {object} NotificationData
  * @property {string} RecipientId
+ * @property {string} NotifierId
  * @property {UserData} UserDetails  //Notifier Details
  * @property {string} EntityId
  * @property {string} EntityType

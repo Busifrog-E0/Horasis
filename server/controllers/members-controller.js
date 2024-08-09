@@ -101,7 +101,8 @@ const AcceptJoinRequest = async (req, res) => {
     if (req.body.Type === "Discussion") {
         await IncrementDiscussions({ NoOfMembers: 1 }, EntityId);
     }
-    await SendNotificationForMemberRequestStatus(req.body.Type, EntityId, UserId, "Accepted");
+    //@ts-ignore
+    await SendNotificationForMemberRequestStatus(req.body.Type, EntityId, UserId, "Accepted",req.user.User);
     return res.json(true);
 }
 
