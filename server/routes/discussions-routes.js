@@ -59,7 +59,8 @@ router.get('/discussions/:EntityId/members/requested', decodeIDToken, ensureAuth
     asyncHandler(GetJoinRequests));
     
 
-router.delete('/discussions/:EntityId/join/cancel', decodeIDToken, ensureAuthorized("User"), DiscussionJoinMiddleware,
+
+router.delete('/discussions/:EntityId/join/:UserId/cancel', decodeIDToken, ensureAuthorized("User"), InsertDiscussionTypeMiddleware,
     SwaggerDocs.delete_Discussion_DiscussionId_Join_Cancel,
     //@ts-ignore
     asyncHandler(CancelJoinRequest));    
