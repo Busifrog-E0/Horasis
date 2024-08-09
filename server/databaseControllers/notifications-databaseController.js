@@ -16,6 +16,8 @@ import dataHandling from './functions.js'
  * @property {boolean} HasSeen
  * @property {string} Content
  * @property {string} Type
+ * @property {string} [EntityName]
+ * @property {string} [Status]
  * @property {{Text : string, Link : string}[]} ContentLinks
  *
 */
