@@ -268,7 +268,7 @@ const SendNotificationsForConnectionRequest = async (ConnectionId, SenderDetails
  */
 const RemoveNotificationsForConnectionRequest = async (ConnectionId) => {
     const Notifications = await ReadNotifications({ EntityId: ConnectionId, }, undefined, -1, undefined);
-    return Notifications.map(Notification => RemoveNotifications(Notification.DocId));
+    return Promise.all(Notifications.map(Notification => RemoveNotifications(Notification.DocId)));
 }
 
 /**
@@ -471,7 +471,7 @@ const SendNotificationForMemberInvitation = async (Type, EntityId, UserId, Sende
 
 const RemoveNotificationForMember = async (EntityId, UserId) => {
     const Notifications = await ReadNotifications({ EntityId, RecipientId: UserId }, undefined, -1, undefined);
-    return Notifications.map(Notification => RemoveNotifications(Notification.DocId));
+    return Promise.all(Notifications.map(Notification => RemoveNotifications(Notification.DocId)));
 }
 
 /**
