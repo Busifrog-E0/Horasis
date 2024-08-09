@@ -26,7 +26,7 @@ router.get('/events', decodeIDToken, ensureAuthorized("User"), ValidateGetEntity
     asyncHandler(GetEvents));
 
 router.get('/events/:EventId', decodeIDToken, ensureAuthorized("User"),
-    SwaggerDocs.get_Events_EventId,
+    SwaggerDocs.get_Events_EventsId,
     // @ts-ignore
     asyncHandler(GetOneFromEvents));
 
