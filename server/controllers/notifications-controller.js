@@ -233,6 +233,29 @@ const SendNotificationsforActivityLikes = async (UserId, ActivityId) => {
 
 }
 
+/**
+ * 
+ * @param {string} ActivityId 
+ * @param {string} NotifierId
+ * @returns 
+ */
+const SendNotificationToUserOnCommentPost = async (ActivityId,NotifierId) => {
+    const Activity = await ReadOneFromActivities(ActivityId);
+    const UserDetails = await ReadOneFromUsers(Activity.UserId);
+    const NotificationObject = {
+        NotifierId: NotifierId,
+        EntityId: ActivityId,
+        EntityType: "Activity",
+        Content: `@${UserDetails.FullName}@ posted a comment on your Activity!`,
+        Link: `/activities/${ActivityId}`,
+        Type: "Comment",
+        ContentLinks: [{ Text: UserDetails.FullName, Link: `/ViewProfile/${UserDetails.DocId}` }],
+        UserDetails,
+    }
+    return SendNotificationToUser(NotificationObject, Activity.UserId);
+}
+
+
 /***********************************************************************CONNECTIONS****************************************************************************************** */
 /**
  * 
@@ -498,6 +521,6 @@ export {
     SendNotificationsForFollow, SendNotificationForMemberRequest, SendNotificationForMemberRequestStatus, SendNotificationForMemberInvitation,
     SendNotificationToUser, SendNotificationForMemberJoin, SendNotificationsForConnectionAccept, SendNotificationsForConnectionRequest,
     RemoveNotificationsAfterActivityMentionPatch, RemoveNotificationsForConnectionRequest, GetOneFromNotifications,
-    RemoveNotificationsForFollow, RemoveNotificationForMember
+    RemoveNotificationsForFollow, RemoveNotificationForMember,SendNotificationToUserOnCommentPost
 
 }
