@@ -568,6 +568,282 @@
         ]
       }
     },
+    "/api/users/{UserId}/media": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "UserId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "NextId",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "Limit",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "Keyword",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "OrderBy",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "Filter",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User Data",
+            "schema": {
+              "$ref": "#/definitions/GetMediaArray"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "402": {
+            "description": "Payment Required"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/users/forgotPassword": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Email": {
+                  "type": "string",
+                  "example": "wXU8I@example.com"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/api/users/forgotPassword/verify": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/OTPVerifyData"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/api/users/forgotPassword/reset": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "OTPId": {
+                  "type": "string",
+                  "example": "string"
+                },
+                "Password": {
+                  "type": "string",
+                  "example": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/api/users/{RecipientId}/notifications": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "RecipientId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "NextId",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "Limit",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "Keyword",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "OrderBy",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "Filter",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User Data",
+            "schema": {
+              "$ref": "#/definitions/GetNotificationArray"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "402": {
+            "description": "Payment Required"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/users/{RecipientId}/notifications/{NotificationId}": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "RecipientId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "NotificationId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User Data",
+            "schema": {
+              "$ref": "#/definitions/GetNotificationArray"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "402": {
+            "description": "Payment Required"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
     "/api/users/{UserId}/followers": {
       "get": {
         "tags": [
@@ -1441,11 +1717,6 @@
             "type": "string"
           },
           {
-            "name": "Filter",
-            "in": "query",
-            "type": "string"
-          },
-          {
             "name": "NextId",
             "in": "query",
             "type": "string"
@@ -1462,6 +1733,11 @@
           },
           {
             "name": "OrderBy",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "Filter",
             "in": "query",
             "type": "string"
           }
@@ -2630,7 +2906,7 @@
         ]
       }
     },
-    "/api/chat": {
+    "/api/chats": {
       "get": {
         "tags": [
           "Chat"
@@ -2695,50 +2971,7 @@
         ]
       }
     },
-    "/api/chat/{ConversationId}": {
-      "get": {
-        "tags": [
-          "Chat"
-        ],
-        "description": "",
-        "parameters": [
-          {
-            "name": "ConversationId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Chat Data",
-            "schema": {
-              "$ref": "#/definitions/ConversationData"
-            }
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "402": {
-            "description": "Payment Required"
-          },
-          "403": {
-            "description": "Forbidden"
-          }
-        },
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ]
-      }
-    },
-    "/api/chat/{ConversationId}/messages": {
+    "/api/chats/{ConversationId}/messages": {
       "get": {
         "tags": [
           "Chat"
@@ -2775,6 +3008,11 @@
             "name": "OrderBy",
             "in": "query",
             "type": "string"
+          },
+          {
+            "name": "Filter",
+            "in": "query",
+            "type": "string"
           }
         ],
         "responses": {
@@ -2782,6 +3020,118 @@
             "description": "Chat Data",
             "schema": {
               "$ref": "#/definitions/MessageDataArray"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "402": {
+            "description": "Payment Required"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "444": {
+            "description": "Connection Closed Without Response"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/reterieveConversationId": {
+      "post": {
+        "tags": [
+          "Chat"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "ReceiverId": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Chat Data",
+            "schema": {
+              "type": "string",
+              "example": "60c72b345f1b2c0015a4e7d3",
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "402": {
+            "description": "Payment Required"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "444": {
+            "description": "Connection Closed Without Response"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/chats/{ConversationId}/seeAllMessages": {
+      "patch": {
+        "tags": [
+          "Chat"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "ConversationId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Chat Data",
+            "schema": {
+              "type": "boolean",
+              "example": true,
+              "xml": {
+                "name": "main"
+              }
             }
           },
           "400": {
@@ -3104,9 +3454,6 @@
           },
           "403": {
             "description": "Forbidden"
-          },
-          "444": {
-            "description": "Connection Closed Without Response"
           }
         },
         "security": [
@@ -3291,9 +3638,74 @@
           },
           "403": {
             "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/discussions/{EntityId}/members/invite": {
+      "get": {
+        "tags": [
+          "Discussions"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "EntityId",
+            "in": "path",
+            "required": true,
+            "type": "string"
           },
-          "444": {
-            "description": "Connection Closed Without Response"
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "NextId",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "Limit",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "Keyword",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "OrderBy",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "Filter",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "402": {
+            "description": "Payment Required"
+          },
+          "403": {
+            "description": "Forbidden"
           }
         },
         "security": [
@@ -3334,6 +3746,9 @@
               "type": "object",
               "properties": {
                 "MembershipStatus": {
+                  "example": "any"
+                },
+                "Type": {
                   "example": "any"
                 }
               }
@@ -3407,7 +3822,7 @@
         ]
       }
     },
-    "/api/discussions/{EntityId}/invite/reject": {
+    "/api/discussions/{EntityId}/invite/{UserId}/reject": {
       "delete": {
         "tags": [
           "Discussions"
@@ -3416,6 +3831,12 @@
         "parameters": [
           {
             "name": "EntityId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "UserId",
             "in": "path",
             "required": true,
             "type": "string"
@@ -3438,9 +3859,6 @@
           },
           "403": {
             "description": "Forbidden"
-          },
-          "444": {
-            "description": "Connection Closed Without Response"
           }
         },
         "security": [
@@ -3450,7 +3868,7 @@
         ]
       }
     },
-    "/api/discussions/{EntityId}/invite/{InviteeId}/cancel": {
+    "/api/discussions/{EntityId}/invite/{UserId}/cancel": {
       "delete": {
         "tags": [
           "Discussions"
@@ -3464,7 +3882,7 @@
             "type": "string"
           },
           {
-            "name": "InviteeId",
+            "name": "UserId",
             "in": "path",
             "required": true,
             "type": "string"
@@ -3487,9 +3905,6 @@
           },
           "403": {
             "description": "Forbidden"
-          },
-          "444": {
-            "description": "Connection Closed Without Response"
           }
         },
         "security": [
@@ -3669,6 +4084,115 @@
           },
           "444": {
             "description": "Connection Closed Without Response"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/discussions/{EntityId}/member/permissions/remove": {
+      "patch": {
+        "tags": [
+          "Discussions"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "EntityId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "PermissionField": {
+                  "type": "string",
+                  "example": "CanPostActivity"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "402": {
+            "description": "Payment Required"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/discussions/{EntityId}/member/permissions/everyone": {
+      "patch": {
+        "tags": [
+          "Discussions"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "EntityId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "MemberPermissions.CanPostActivity": {
+                  "type": "boolean",
+                  "example": true
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "402": {
+            "description": "Payment Required"
+          },
+          "403": {
+            "description": "Forbidden"
           }
         },
         "security": [
@@ -4388,6 +4912,78 @@
         }
       }
     },
+    "GetMediaArray": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "FileUrl": {
+            "type": "string",
+            "example": "string"
+          },
+          "Type": {
+            "type": "string",
+            "example": "image"
+          }
+        }
+      }
+    },
+    "GetNotificationArray": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "UserId": {
+            "type": "string",
+            "example": "12345"
+          },
+          "EntityId": {
+            "type": "string",
+            "example": "67890"
+          },
+          "EntityType": {
+            "type": "string",
+            "example": "Post"
+          },
+          "Link": {
+            "type": "string",
+            "example": "/posts/67890"
+          },
+          "DocId": {
+            "type": "string",
+            "example": "abcdef"
+          },
+          "HasSeen": {
+            "type": "boolean",
+            "example": false
+          },
+          "Content": {
+            "type": "string",
+            "example": "@User123@ liked your post!"
+          },
+          "Type": {
+            "type": "string",
+            "example": "Like"
+          },
+          "ContentLinks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "Text": {
+                  "type": "string",
+                  "example": "User123"
+                },
+                "Link": {
+                  "type": "string",
+                  "example": "/users/12345"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "ActivityPostData": {
       "type": "object",
       "properties": {
@@ -4933,10 +5529,6 @@
               "type": "string",
               "example": "60c72b2f5f1b2c0015a4e7d0"
             },
-            "ReceiverId": {
-              "type": "string",
-              "example": "60c72b305f1b2c0015a4e7d1"
-            },
             "Content": {
               "type": "string",
               "example": "Hello, Bob!"
@@ -4945,9 +5537,21 @@
               "type": "number",
               "example": 1
             },
-            "HasSeen": {
-              "type": "boolean",
-              "example": false
+            "SeenUsers": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "UserId": {
+                    "type": "string",
+                    "example": "60c72b345f1b2c0015a4e7d3"
+                  },
+                  "SeenIndex": {
+                    "type": "number",
+                    "example": 5
+                  }
+                }
+              }
             },
             "DocId": {
               "type": "string",
@@ -4955,7 +5559,11 @@
             }
           }
         },
-        "UnreadMessages": {
+        "OneMessageSent": {
+          "type": "boolean",
+          "example": true
+        },
+        "CreatedIndex": {
           "type": "number",
           "example": 1
         },
@@ -4976,10 +5584,6 @@
           "type": "string",
           "example": "60c72b2f5f1b2c0015a4e7d0"
         },
-        "ReceiverId": {
-          "type": "string",
-          "example": "60c72b305f1b2c0015a4e7d1"
-        },
         "Content": {
           "type": "string",
           "example": "Hello, Bob!"
@@ -4988,9 +5592,21 @@
           "type": "number",
           "example": 1
         },
-        "HasSeen": {
-          "type": "boolean",
-          "example": false
+        "SeenUsers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "UserId": {
+                "type": "string",
+                "example": "60c72b345f1b2c0015a4e7d3"
+              },
+              "SeenIndex": {
+                "type": "number",
+                "example": 5
+              }
+            }
+          }
         },
         "DocId": {
           "type": "string",
@@ -5080,10 +5696,6 @@
                 "type": "string",
                 "example": "60c72b2f5f1b2c0015a4e7d0"
               },
-              "ReceiverId": {
-                "type": "string",
-                "example": "60c72b305f1b2c0015a4e7d1"
-              },
               "Content": {
                 "type": "string",
                 "example": "Hello, Bob!"
@@ -5092,9 +5704,21 @@
                 "type": "number",
                 "example": 1
               },
-              "HasSeen": {
-                "type": "boolean",
-                "example": false
+              "SeenUsers": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "UserId": {
+                      "type": "string",
+                      "example": "60c72b345f1b2c0015a4e7d3"
+                    },
+                    "SeenIndex": {
+                      "type": "number",
+                      "example": 5
+                    }
+                  }
+                }
               },
               "DocId": {
                 "type": "string",
@@ -5102,7 +5726,11 @@
               }
             }
           },
-          "UnreadMessages": {
+          "OneMessageSent": {
+            "type": "boolean",
+            "example": true
+          },
+          "CreatedIndex": {
             "type": "number",
             "example": 1
           },
@@ -5126,10 +5754,6 @@
             "type": "string",
             "example": "60c72b2f5f1b2c0015a4e7d0"
           },
-          "ReceiverId": {
-            "type": "string",
-            "example": "60c72b305f1b2c0015a4e7d1"
-          },
           "Content": {
             "type": "string",
             "example": "Hello, Bob!"
@@ -5138,9 +5762,21 @@
             "type": "number",
             "example": 1
           },
-          "HasSeen": {
-            "type": "boolean",
-            "example": false
+          "SeenUsers": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "UserId": {
+                  "type": "string",
+                  "example": "60c72b345f1b2c0015a4e7d3"
+                },
+                "SeenIndex": {
+                  "type": "number",
+                  "example": 5
+                }
+              }
+            }
           },
           "DocId": {
             "type": "string",

@@ -1,12 +1,19 @@
 import dataHandling from "./functions.js";
 
 /**
+ * @typedef {object} MentionsData
+ * @property {string} UserId
+ * @property {string} Username
+ * @property {string} FullName 
+ */
+
+/**
  * @typedef {object} ActivityData
  * @property {string} Content
  * @property {string} UserId
  * @property {string[]} MediaFiles
  * @property {string[]} Documents
- * @property {string[]} Mentions
+ * @property {MentionsData[]} Mentions
  * @property {string[]} LikedIds
  * @property {string[]} Attachments
  * @property {number} NoOfLikes
@@ -74,8 +81,8 @@ const UpdateAndIncrementActivities = async (UpdateData, IncrementData, DocId) =>
   return dataHandling.Update("Activities", UpdateData, DocId, ["$set","$inc"], true,IncrementData);
 }
 
-const AggregateActivities = async (AggregateArray) => {
-  return dataHandling.Aggregate("Activities", AggregateArray);
+const AggregateActivities = async (AggregateArray,NextIndex,Limit,OrderBy) => {
+  return dataHandling.Aggregate("Activities", AggregateArray, NextIndex, Limit, OrderBy);
 }
 
 export {

@@ -1,73 +1,73 @@
-import { Socket,Server } from "socket.io";
-import { PostMessages } from "./chat-controller";
+import { Socket, Server } from "socket.io";
+import { PostMessages, CheckUserInConversation } from "./chats-controller.js";
 import jwt from "jsonwebtoken";
 import ENV from "./../Env.js";
+import { decodeSocketIdToken } from "../middleware/auth-middleware.js";
+import { ReadOneFromConversations } from "../databaseControllers/conversations-databaseController.js";
 
-/**
- * 
- * @param {Socket} socket 
- * @param {Function} next 
- * @returns 
- */
-const decodeSocketIdToken = (socket,next) => {
-    const authHeader = socket.handshake.auth.token || "";
-    const token = authHeader.split(" ")[1];
-    if (!token) {
-        return next(new Error('Authentication token is missing'));
-    }
-    try {
-        const user = jwt.verify(token, ENV.TOKEN_KEY);
-        // @ts-ignore
-        socket.user = user;
-        // @ts-ignore
-    } catch (err) {
-        return next(new Error('Invalid Token'));
-    }
-    return next();
-}
-/**
- * 
- * @param  {...string} Roles 
- * @returns 
- */
-const ensureSocketAuthorized = (...Roles) => (/** @type {Socket} */socket,/** @type {Function} */ next) => {
-    // @ts-ignore
-    if (!Roles.includes(socket.user.Role)) {
-        return next(new Error('invalid roles' ));
-    }
-    else {
-        return next();
-    }
-}
 
-/**
- * 
- * @param {Socket} socket 
- * @param {Server} io 
- */
-const JoinRoom =  (socket,io) => {
-    socket.on('join_room', ({ ConversationId }) => {
-        socket.join(ConversationId);
-        console.log(`User joined room: ${ConversationId}`);
+const ConnectSocket = (expressServer) => {
+
+
+    const io = new Server(expressServer, {
+        cors: {
+            origin: ["http://localhost:5173", "http://127.0.0.1:5173", "https://hsocial.web.app"]
+        }
     });
+    io.use(decodeSocketIdToken);
+
+
+    io.on('connection', socket => {
+        console.log(`User ${socket.id} connected`);
+        // @ts-ignore
+        socket.join(socket.user.UserId);
+
+
+        socket.on('Message', async data => {
+            // @ts-ignore
+            data.SenderId = socket.user.UserId;
+            const MessageData = await PostMessages(data);
+
+            if (MessageData.Success === true) {
+                io.to(data.ConversationId).emit('Message', MessageData.Data);
+
+                MessageData.ParticipantIds.map(id => {
+                    // @ts-ignore
+                    if (id !== socket.user.UserId) {
+                        io.to(id).emit('ConversationList', true)
+                    };
+                })
+            }
+        })
+
+        socket.on('JoinRoom', async ({ ConversationId }) => {
+            const ConversationData = await ReadOneFromConversations(ConversationId);
+            // @ts-ignore
+            if (CheckUserInConversation(ConversationData, socket.user.UserId)) {
+                // leave existing rooms?
+                socket.join(ConversationId);
+                // @ts-ignore
+
+            }
+
+        });
+
+        socket.on('LeaveRoom', ({ ConversationId }) => {
+            socket.leave(ConversationId);
+        });
+
+        // When user disconnects - to all others 
+        socket.on('disconnect', () => {
+            // @ts-ignore
+            socket.leave(socket.user.UserId);
+        })
+
+    })
+
+
 }
 
-/**
- * 
- * @param {Socket} socket 
- * @param {Server} io 
- */
-const HandleMessageEvent = async (socket, io) => { 
-    socket.on('Message', async ({ ConversationId, Message }) => {
-        console.log('message:', Message);
-        await PostMessages(Message); 
-        io.to(ConversationId).emit('Message', Message);
-    });
-}
 
 export {
-    JoinRoom,
-    HandleMessageEvent,
-    decodeSocketIdToken,
-    ensureSocketAuthorized,
+    ConnectSocket
 }

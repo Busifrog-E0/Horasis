@@ -1,3 +1,4 @@
+import { RemoveNotificationsForConnectionRequest } from '../controllers/notifications-controller.js';
 import dataHandling from './functions.js'
 
 /**@typedef {import('./users-databaseController.js').UserData} UserData*/
@@ -64,7 +65,9 @@ const CreateConnections = async (data, DocId = undefined) => {
  * @returns {Promise<boolean>}
  */
 const RemoveConnections = async (DocId) => {
+    await RemoveNotificationsForConnectionRequest(DocId);
     return dataHandling.Delete('Connections', DocId);
+
 }
 
 /**
@@ -76,6 +79,9 @@ const GetConnectionsCount = async (Where = {}) => {
     return dataHandling.ReadCount('Connections', Where);
 }
 
+const AggregateConnections = async (AggregateArray, NextIndex, Limit, OrderBy) => {
+    return dataHandling.Aggregate("Connections", AggregateArray, NextIndex, Limit, OrderBy);
+}
 
 export {
     ReadConnections,
@@ -84,4 +90,5 @@ export {
     CreateConnections,
     RemoveConnections,
     GetConnectionsCount,
+    AggregateConnections
 }

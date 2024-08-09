@@ -11,7 +11,7 @@ const GetDiscussionsActivitiesMiddleware = async (req, res, next) => {
             return res.status(444).json(AlertBoxObject("Cannot See Discussion", "You cannot see this discussion"));
         }
     }
-    req.query.Filter = {...req.query.Filter , EntityId : req.params.EntityId};
+    req.query.Filter = { ...req.query.Filter, EntityId: req.params.EntityId };
     return next();
 }
 
@@ -20,23 +20,13 @@ const PostDiscussionActivitiesMiddleware = (req, res, next) => {
     return next();
 };
 
-const DiscussionJoinMiddleware = (req, res, next) => {
-    req.body.Type = "Discussion";
-    return next();
-}
 
-const DiscussionLeaveMiddleware = (req, res, next) => {
+const InsertDiscussionTypeMiddleware = (req, res, next) => {
     req.body.Type = "Discussion";
     return next();
 }
-
-const DiscussionAcceptJoinMiddleware = (req, res, next) => {
-    req.body.Type = "Discussion";
-    return next();
-}
-export { 
+export {
     GetDiscussionsActivitiesMiddleware,
     PostDiscussionActivitiesMiddleware,
-    DiscussionJoinMiddleware, DiscussionLeaveMiddleware,
-    DiscussionAcceptJoinMiddleware
+    InsertDiscussionTypeMiddleware
 }

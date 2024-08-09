@@ -5,6 +5,7 @@ import moment from 'moment';
 import { AlertBoxObject } from './common.js';
 import { ViewOtherUserData } from './users-controller.js';
 import { ReadOneFromUsers, ReadUsers } from '../databaseControllers/users-databaseController.js';
+import { RemoveNotificationsForConnectionRequest, SendNotificationsForConnectionAccept, SendNotificationsForConnectionRequest } from './notifications-controller.js';
 /**
  * @typedef {import('./../databaseControllers/connections-databaseController.js').ConnectionData} ConnectionData 
  */
@@ -16,15 +17,20 @@ import { ReadOneFromUsers, ReadUsers } from '../databaseControllers/users-databa
  * @returns {Promise<e.Response<Array<ConnectionData>>>}
  */
 const GetAUsersConnections = async (req, res) => {
-    const { Filter, Keyword ,NextId, Limit, OrderBy } = req.query;
+    const { Filter, Keyword, NextId, Limit, OrderBy } = req.query;
     // @ts-ignore
     const UserId = req.user.UserId;
     if (Keyword) {
         //@ts-ignore
-        Filter['$or'] = [
-            { 'UserDetails.FullName': { $regex: Keyword, $options: 'i' } },
-            { 'UserDetails.Username': { $regex: Keyword, $options: 'i' } },
-        ]
+        Filter.UserDetails = {
+            $elemMatch: {
+                $or: [
+                    { 'Username': { $regex: Keyword, $options: 'i' } },
+                    { 'FullName': { $regex: Keyword, $options: 'i' } }
+                ],
+                'DocId': { $ne: UserId }
+            }
+        };
     }
     // @ts-ignore
     const data = await ReadConnections(Filter, NextId, Limit, OrderBy);
@@ -77,7 +83,8 @@ const PostConnectionSend = async (req, res) => {
     }
 
     ConnectionData.UserDetails = [PromiseData[3], PromiseData[4]];
-    await CreateConnections(ConnectionData);
+    const ConnectionId = await CreateConnections(ConnectionData);
+    await SendNotificationsForConnectionRequest(ConnectionId, PromiseData[3], PromiseData[4]);
     return res.json(true);
 }
 
@@ -105,6 +112,7 @@ const PostConnectionAccept = async (req, res) => {
     // check senderId and receiverid valid
 
     await UpdateConnections({ "Status": "Connected", AcceptedIndex: moment().valueOf() }, ConnectionData.DocId);
+    await SendNotificationsForConnectionAccept(ConnectionData.DocId, SenderId, ReceiverId);
     return res.json(true);
 }
 
@@ -188,16 +196,8 @@ const DeleteConnection = async (req, res) => {
 const GetConnectionsNumber = async (req, res) => {
     //@ts-ignore
     const { UserId } = req.params;
-    return res.json(await GetConnectionsCount({ UserIds: UserId, Status : "Connected"}))
+    return res.json(await GetConnectionsCount({ UserIds: UserId, Status: "Connected" }))
 }
-
-
-
-
-
-
-
-
 
 
 /**

@@ -8,6 +8,8 @@ import { AlertBoxObject } from './common.js';
 import { ObjectId } from 'mongodb';
 import { ReadLikes } from '../databaseControllers/likes-databaseController.js';
 import { ReadSaves } from '../databaseControllers/saves-databaseController.js';
+import { PostMediasFromAttachments } from './medias-controller.js';
+import { RemoveNotificationsAfterActivityMentionPatch, SendNotificationstoActivityMentions } from './notifications-controller.js';
 
 /**
  * @typedef {import('../databaseControllers/activities-databaseController.js').ActivityData} ActivityData 
@@ -27,7 +29,7 @@ const GetOneFromActivities = async (req, res) => {
     const [UserDetails, checkLike, checkSave] = await Promise.all([
         ReadOneFromUsers(Activity.UserId),
         ReadLikes({ EntityId: Activity.DocId, UserId }, undefined, 1, undefined),
-        ReadSaves({ ActivityId: Activity.DocId, UserId }, undefined, 1, undefined)
+        ReadSaves({ EntityId: Activity.DocId, UserId }, undefined, 1, undefined)
     ])
     const HasLiked = checkLike.length > 0;
     const HasSaved = checkSave.length > 0;
@@ -43,43 +45,51 @@ const GetOneFromActivities = async (req, res) => {
 const GetActivities = async (req, res) => {
     //@ts-ignore
     const { UserId } = req.user;
-    const { NextId, Limit } = req.query;
+    const { NextId, Limit, Filter, OrderBy } = req.query;
+    //@ts-ignore
+    const FilterConditions = Object.entries(Filter).map(([key, value]) => ({ [key]: value }));
     const AggregateArray = [
         {
-            '$lookup': {
-                'from': 'Follows',
-                'pipeline': [
-                    { '$match': { '$expr': { '$eq': ['$FollowerId', UserId] } } }       //INSERTS FOLLOWEES ARRAY
+            $lookup: {
+                from: 'Follows',
+                pipeline: [
+                    { $match: { '$expr': { '$eq': ['$FollowerId', UserId] } } }
                 ],
-                'as': 'Followees'
+                as: 'Followees'
             }
         },
         {
-            '$lookup': {
-                'from': 'Connections',
-                'pipeline': [
+            $lookup: {
+                from: 'Connections',
+                pipeline: [
                     {
-                        '$match': {
-                            '$expr': {
-                                '$and': [
-                                    { '$in': [UserId, '$UserIds'] },
-                                    { '$eq': ['$Status', 'Connected'] }
+                        $match: {
+                            $expr: {
+                                $and: [
+                                    { $in: [UserId, '$UserIds'] },
+                                    { $eq: ['$Status', 'Connected'] }
                                 ]
                             }
                         }
-                    }      //INSERTS CONNECTIONS ARRAY
+                    }
                 ],
-                'as': 'Connections'
+                as: 'Connections'
             }
         },
         {
             $addFields: {
-                Followees: { $map: { input: '$Followees', as: 'f', in: '$$f.FolloweeId' } },    //CHANGES FOLLOWEES ARRAY TO CONTAIN IDS
-                Connections: {                                                                  //CHANGES CONNECTION ARRAY TO CONTAIN IDS
+                Followees: {
+                    $map: {
+                        input: '$Followees',
+                        as: 'f',
+                        in: '$$f.FolloweeId'
+                    }
+                },
+                Connections: {
                     $reduce: {
                         input: '$Connections',
                         initialValue: [],
-                        in: { $setUnion: ['$$value', '$$this.UserIds'] }                //UNIONS ARRAY WITH USERIDS ARRAY
+                        in: { $setUnion: ['$$value', '$$this.UserIds'] }
                     }
                 }
             }
@@ -91,104 +101,31 @@ const GetActivities = async (req, res) => {
         },
         {
             $match: {
-                $expr: { $in: ['$UserId', '$UserIds'] }
-            }
-        },
-        { $sort: { Index: -1, _id: -1 } },
-        { $limit: Limit },
-        {
-            $lookup: {
-                from: 'Users',
-                let: { userObjectId: { $toObjectId: '$UserId' } },
-                pipeline: [
-                    { $match: { $expr: { $eq: ['$_id', '$$userObjectId'] } } }
-                ],
-                as: 'UserDetails'                                                                 //INSERTS USERDETAILS ARRAY
-            }
-        },
-        {
-            $addFields: {
-                UserDetails: { $arrayElemAt: ['$UserDetails', 0] }                                 //ARRAY TO OBJECT
-            }
-        },
-        {
-            $lookup: {
-                from: 'Likes',
-                let: { activityId: { $toString: '$_id' }, userId: UserId },
-                pipeline: [
-                    {
-                        $match: {
-                            $expr: {
-                                $and: [                                                                     //INSERTS HASLIKED ARRAY
-                                    { $eq: ['$EntityId', '$$activityId'] },
-                                    { $eq: ['$UserId', '$$userId'] }
-                                ]
-                            }
-                        }
-                    }
-                ],
-                as: 'HasLiked'
-            }
-        },
-        {
-            $addFields: {
-                HasLiked: { $gt: [{ $size: '$HasLiked' }, 0] }                              //CONVERTS TO BOOLEAN
-            }
-        },
-        {
-            $lookup: {
-                from: 'Saves',
-                let: { activityId: { $toString: '$_id' }, userId: UserId },
-                pipeline: [
-                    {
-                        $match: {
-                            $expr: {
-                                $and: [                                                                     //INSERTS HASLIKED ARRAY
-                                    { $eq: ['$ActivityId', '$$activityId'] },
-                                    { $eq: ['$UserId', '$$userId'] }
-                                ]
-                            }
-                        }
-                    }
-                ],
-                as: 'HasSaved'
-            }
-        },
-        {
-            $addFields: {
-                HasSaved: { $gt: [{ $size: '$HasSaved' }, 0] }                              //CONVERTS TO BOOLEAN
+                $and: [
+                    { $expr: { $in: ['$UserId', '$UserIds'] } },
+                    ...FilterConditions
+                ]
             }
         },
         {
             $project: {
                 Followees: 0,
-                Connections: 0,                                                             //REMOVE UNNECESSARY FIELDS
+                Connections: 0,
                 UserIds: 0
             }
         }
-
     ]
-    if (NextId) {
-        //@ts-ignore
-        const [Index, nextId] = NextId.split('--');
-        AggregateArray.splice(5, 0, {
-            $match:
-            {//@ts-ignore
-                $expr: {
-                    $or: [
-                        { $lt: ['$Index', Index] },
-                        {
-                            $and: [
-                                { $eq: ['$Index', Index] },
-                                { $lt: ['$_id', new ObjectId(nextId)] }
-                            ]
-                        }
-                    ],
-                }
-            }
-        });
-    }
-    const data = await AggregateActivities(AggregateArray);
+    const Activities = await AggregateActivities(AggregateArray, NextId, Limit, OrderBy);
+    const data = await Promise.all(Activities.map(async Activity => {
+        const [UserDetails, checkLike, checkSave] = await Promise.all([
+            ReadOneFromUsers(Activity.UserId),
+            ReadLikes({ EntityId: Activity.DocId, UserId }, undefined, 1, undefined),
+            ReadSaves({ EntityId: Activity.DocId, UserId }, undefined, 1, undefined)
+        ])
+        const HasSaved = checkSave.length > 0;
+        const HasLiked = checkLike.length > 0;
+        return { ...Activity, UserDetails, HasLiked, HasSaved }
+    }))
     return res.json(data);
 };
 
@@ -240,7 +177,9 @@ const PostActivities = async (req, res) => {
     req.body = ActivityInit(req.body);
     //@ts-ignore
     const data = { ...req.body, Documents: Attachments.DocumentsLinks, MediaFiles: Attachments.MediaFilesLinks, Mentions };
-    await CreateActivities(data);
+    await CreateActivities(data, ActivityId);
+    await PostMediasFromAttachments(Attachments, ActivityId, UserId);
+    await SendNotificationstoActivityMentions(Mentions, UserId, ActivityId);
     return res.json(true);
 }
 
@@ -259,6 +198,8 @@ const PatchActivities = async (req, res) => {
     }
     req.body.Mentions = await ExtractMentionedUsersFromContent(req.body.Content);
     await UpdateActivities(req.body, ActivityId);
+    //@ts-ignore
+    await RemoveNotificationsAfterActivityMentionPatch(req.body.Mentions,Activity.Mentions,req.user.UserId,ActivityId);
     return res.json(true);
 }
 
@@ -369,7 +310,7 @@ const ActivityInit = (Activity) => {
 /**
  * 
  * @param {string} Content 
- * @returns 
+ * @returns {Promise<{Username : string,UserId : string,FullName : string}[]>}
  */
 const ExtractMentionedUsersFromContent = async (Content) => {
     const mentionPattern = /(?<=\s|^)@([\w.]+)/g;

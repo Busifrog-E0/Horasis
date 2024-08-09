@@ -5,6 +5,7 @@ import dataHandling from '../databaseControllers/functions.js';
 import { getOTP } from "./common.js";
 import { SendOTPEmail } from "./emails-controller.js";
 import moment from "moment";
+import { ReadUsers } from "../databaseControllers/users-databaseController.js";
 const { Read, Create, Delete,Update } = dataHandling;
 
 const TestUsers = [
@@ -77,6 +78,19 @@ const RefreshToken = async (req, res) => {
         }
     }
 }
+
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ * @returns 
+ */
+const CheckOTP = async (req, res) => { 
+    const { OTPId,OTP } = req.body;
+    const OTPData = await VerifyOTP(OTPId, OTP, res);
+    return res.json(true);
+}
+
 /**
  * 
  * @param {object} SignObject 
@@ -120,6 +134,33 @@ const SendRegisterOTP = async (Email, Data, Description, res) => {
 
 
 /**
+ * @param {string} Email 
+ * @param {e.Response} res 
+ * @returns {Promise<string|Error>}
+ */
+const SendPasswordOTP = async (Email, res) => {
+    let TestUser = false;
+    if (TestUsers.includes(Email)) {
+        TestUser = true;
+    }
+    const OTP = getOTP(TestUser);
+    const User = (await ReadUsers({ Email }, undefined, 1, undefined))[0];
+    const ReturnMessage = true;           //await SendOTPEmail(Email, OTP, User.FullName, "Verify the OTP to change your password")
+
+    if (ReturnMessage === true) {
+        const Now = moment();
+        const Date = Now.format("YYYY-MM-DD");
+        const Index = `${Now.valueOf()}`;
+        const data = { "OTP": OTP, "Email": Email, EmailVerified: false, Index, Date, "NoOfRetries": 0, "NoOfOTPs": 0 };
+        const OTPId = await Create("OTP", data);
+        return OTPId;
+    }
+    else {
+        res.status(400);
+        throw Error(ReturnMessage);
+    }
+}
+/**
  * 
  * @param {string} OTPId 
  * @param {string} OTP 
@@ -155,6 +196,15 @@ const VerifyOTP = async (OTPId, OTP, res) => {
         return data;
     }
 }
+
+/**
+ * 
+ * @param {string} OTPId 
+ * @returns {Promise<OTPData>}
+ */
+const ReadOneFromOTP = async (OTPId) => { 
+    return await Read("OTP", OTPId);
+}
 /** 
  * 
  * @param {object} CurrentUser 
@@ -172,6 +222,7 @@ const TokenData = async (CurrentUser) => {
 
 export {
     ModelLogin, RefreshToken, GenerateToken,
-    VerifyOTP,SendRegisterOTP,TokenData
+    VerifyOTP, SendRegisterOTP, TokenData,
+    SendPasswordOTP,ReadOneFromOTP,CheckOTP
 };
 
