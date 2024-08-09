@@ -7,6 +7,7 @@ import { ReadOneFromUsers } from '../databaseControllers/users-databaseControlle
 import { ObjectId } from 'mongodb';
 import { AggregateConnections } from '../databaseControllers/connections-databaseController.js';
 import { RemoveNotificationForMember, SendNotificationForMemberInvitation, SendNotificationForMemberJoin, SendNotificationForMemberRequest, SendNotificationForMemberRequestStatus } from './notifications-controller.js';
+import { IncrementEvents } from '../databaseControllers/events-databaseController.js';
 /**
  * @typedef {import('./../databaseControllers/members-databaseController.js').MemberData} MemberData 
  */
@@ -100,6 +101,9 @@ const AcceptJoinRequest = async (req, res) => {
     await UpdateMembers({ MembershipStatus: "Accepted" }, Member[0].DocId);
     if (req.body.Type === "Discussion") {
         await IncrementDiscussions({ NoOfMembers: 1 }, EntityId);
+    }
+    if (req.body.Type === "Event") {
+        await IncrementEvents({ NoOfMembers: 1 }, EntityId);
     }
     //@ts-ignore
     await SendNotificationForMemberRequestStatus(req.body.Type, EntityId, UserId, "Accepted",req.user.User);
