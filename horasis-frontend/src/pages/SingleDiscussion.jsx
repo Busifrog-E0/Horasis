@@ -284,7 +284,7 @@ const SingleDiscussion = () => {
 
 	const cancelJoinRequest = () => {
 		deleteItem(
-			`discussions/${discussion.DocId}/join/cancel`,
+			`discussions/${discussion.DocId}/join/${currentUserData.CurrentUser.UserId}/cancel`,
 			(result) => {
 				if (result === true) {
 					getDiscussion()

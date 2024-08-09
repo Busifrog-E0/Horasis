@@ -71,7 +71,7 @@ const DiscussionTab = ({ discussion, onClick, fetch }) => {
 	}
 	const cancelJoinRequest = () => {
 		deleteItem(
-			`discussions/${discussion.DocId}/join/cancel`,
+			`discussions/${discussion.DocId}/join/${currentUserData.CurrentUser.UserId}/cancel`,
 			(result) => {
 				if (result === true) {
 					fetch()
@@ -120,10 +120,10 @@ const DiscussionTab = ({ discussion, onClick, fetch }) => {
 					<div className='flex flex-col items-center gap-2 px-4 '>
 						<p className='text-system-secondary-text text-center text-xs'>You have been invited to this discussion</p>
 						<div className='flex gap-2'>
-							<Button variant='black' onClick={() => acceptInvite()} >
+							<Button variant='black' onClick={() => acceptInvite()}>
 								Accept
 							</Button>
-							<Button variant='outline' onClick={() => rejectInvite()} >
+							<Button variant='outline' onClick={() => rejectInvite()}>
 								Reject
 							</Button>
 						</div>
