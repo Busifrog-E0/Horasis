@@ -20,6 +20,7 @@ import StaggeredList from '../components/ui/StaggeredList'
 import DropdownMenu from '../components/ui/DropdownMenu'
 import VideosTab from '../components/Profile/Tabs/VideosTab'
 import ImagesTab from '../components/Profile/Tabs/ImagesTab'
+import DocumentTab from '../components/Profile/Tabs/DocumentTab'
 
 const tabs = (user, getUserDetails) => [
 	{
@@ -145,35 +146,7 @@ const tabs = (user, getUserDetails) => [
 	{
 		key: 5,
 		title: 'Documents',
-		render: () => (
-			<div className='bg-system-secondary-bg p-4 lg:py-10 lg:px-12 rounded-b-lg '>
-				<div className='flex flex-col gap-6'>
-					<div className='border-b border-system-file-border pb-6'>
-						<div className='flex items-center gap-4'>
-							<div className='w-12 h-12 overflow-hidden rounded-lg'>
-								<img
-									className='w-full h-full object-contain'
-									src='https://th.bing.com/th/id/OIP.O-6F-svmDZRlmeu9Pyy2jQHaFV?w=273&h=197&c=7&r=0&o=5&pid=1.7'
-									alt='Rounded avatar'
-								/>
-							</div>
-
-							<div className='flex-1'>
-								<div className='flex items-start justify-between gap-10'>
-									<div>
-										<h4 className='font-semibold text-system-primary-text text-md'>image</h4>
-									</div>
-								</div>
-							</div>
-							<div className='flex flex-col items-end justify-between gap-6'>
-								<h4 className='font-medium text-sm text-brand-gray-dim'>{relativeTime(new Date().getTime())}</h4>
-								<DropdownMenu />
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		),
+		render: () => <DocumentTab />,
 	},
 ]
 
