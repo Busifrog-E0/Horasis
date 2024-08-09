@@ -1,9 +1,10 @@
 import e from 'express';
 
-import { ReadOneFromComments, ReadComments, UpdateComments, CreateComments, RemoveComments,  IncrementComments, } from './../databaseControllers/comments-databaseController.js';
+import { ReadOneFromComments, ReadComments, UpdateComments, CreateComments, RemoveComments, IncrementComments, } from './../databaseControllers/comments-databaseController.js';
 import { IncrementActivities } from '../databaseControllers/activities-databaseController.js';
 import { ReadOneFromUsers } from '../databaseControllers/users-databaseController.js';
 import { ExtractMentionedUsersFromContent } from './activities-controller.js';
+import { SendNotificationToUserOnCommentPost } from './notifications-controller.js';
 /**
  * @typedef {import('./../databaseControllers/comments-databaseController.js').CommentData} CommentData 
  */
@@ -49,14 +50,15 @@ const GetComments = async (req, res) => {
 const PostComments = async (req, res) => {
     const { ActivityId } = req.params;
     req.body.Type = "Comment";
-    await IncrementActivities({ NoOfComments: 1 }, ActivityId, );
+    await IncrementActivities({ NoOfComments: 1 }, ActivityId,);
     if (req.params.CommentId) {
         await IncrementComments({ NoOfReplies: 1 }, req.params.CommentId);
         req.body.Type = "Reply";
     }
     const Mentions = await ExtractMentionedUsersFromContent(req.body.Content);
     req.body = CommentInit(req.body);
-    await CreateComments({...req.body,Mentions});
+    await CreateComments({ ...req.body, Mentions });
+    await SendNotificationToUserOnCommentPost(ActivityId, req.body.UserId);
     return res.json(true);
 }
 
@@ -92,7 +94,7 @@ const DeleteComments = async (req, res) => {
 const CommentInit = (CommentData) => {
     return {
         NoOfReplies: 0,
-        NoOfLikes : 0,
+        NoOfLikes: 0,
         ...CommentData
     }
 }

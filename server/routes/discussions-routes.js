@@ -64,7 +64,8 @@ router.get('/discussions/:EntityId/members/requested', decodeIDToken, ensureAuth
     asyncHandler(GetJoinRequests));
 
 
-router.delete('/discussions/:EntityId/join/:/:UserId/cancel', decodeIDToken, ensureAuthorized("User"), InsertDiscussionTypeMiddleware,
+
+router.delete('/discussions/:EntityId/join/:UserId/cancel', decodeIDToken, ensureAuthorized("User"), InsertDiscussionTypeMiddleware,
     SwaggerDocs.delete_Discussion_DiscussionId_Join_Cancel,
     //@ts-ignore
     asyncHandler(DeleteTempMembers));
@@ -161,7 +162,7 @@ router.post('/discussions/:EntityId/activities', decodeIDToken, ensureAuthorized
 router.get('/discussions/:EntityId/activities', decodeIDToken, ensureAuthorized("User"), ValidateGetEntity, QueryParameterFormatting,
     GetDiscussionsActivitiesMiddleware, SwaggerDocs.get_Discussions_DiscussionId_Activities,
     //@ts-ignore
-    asyncHandler(GetActivities));
+    asyncHandler(GetFilteredActivities));
 
 router.delete('/discussions/:DiscussionId', decodeIDToken, ensureAuthorized("User"),
     // @ts-ignore
