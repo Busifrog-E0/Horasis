@@ -60,49 +60,42 @@ const AddContentAndStatusToNotification = async (Notification) => {
         switch (ConnectionRequestStatus.Status) {
             case "Connection Received":
                 Notification.Content = `@${Notification.UserDetails.FullName}@ has send you a connection request`;
-                Notification.Status = ConnectionRequestStatus.Status;
                 break;
             case "Connected":
                 Notification.Content = `@${Notification.UserDetails.FullName}@ and you are now connected`;
-                Notification.Status = ConnectionRequestStatus.Status;
-                break;
-            case "No Connection":
-                Notification.Content = `You have rejected the connection request from @${Notification.UserDetails.FullName}@ `;
-                Notification.Status = ConnectionRequestStatus.Status;
                 break;
             default:
                 break;
         }
+        Notification.Status = ConnectionRequestStatus.Status;
     }
     if (Notification.Type === "Join-Request") {
         const Member = await ReadMembers({ MemberId: Notification.UserDetails.DocId, EntityId: Notification.EntityId }, undefined, 1, undefined);
         switch (Member[0].MembershipStatus) {
             case "Requested":
                 Notification.Content = `@${Notification.UserDetails.FullName}@ has send you a join request to ${Notification.EntityType} : @${Notification.EntityName}@`;
-                Notification.Status = Member[0].MembershipStatus;
                 break;
             case "Accepted":
                 Notification.Content = `@${Notification.UserDetails.FullName}@ have joined ${Notification.EntityType} : @${Notification.EntityName}@`;
-                Notification.Status = Member[0].MembershipStatus;
                 break;
             default:
                 break;
         }
+        Notification.Status = Member[0].MembershipStatus;
     }
     if (Notification.Type === "Invitation") {
         const Member = await ReadMembers({ MemberId: Notification.RecipientId, EntityId: Notification.EntityId }, undefined, 1, undefined);
         switch (Member[0].MembershipStatus) {
             case "Invited":
                 Notification.Content = `@${Notification.UserDetails.FullName}@ has send you an invitation to ${Notification.EntityType} : @${Notification.EntityName}@`;
-                Notification.Status = Member[0].MembershipStatus;
                 break;
             case "Accepted":
                 Notification.Content = `You have accepted the invitation to ${Notification.EntityType} : @${Notification.EntityName}@`;
-                Notification.Status = Member[0].MembershipStatus;
                 break;
             default:
                 break;
         }
+        Notification.Status = Member[0].MembershipStatus;
     }
     return Notification;
 }
