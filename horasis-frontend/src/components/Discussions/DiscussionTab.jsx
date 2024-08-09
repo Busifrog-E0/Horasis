@@ -42,7 +42,7 @@ const DiscussionTab = ({ discussion, onClick, fetch }) => {
 	}
 	const rejectInvite = () => {
 		deleteItem(
-			`discussions/${discussion.DocId}/invite/reject`,
+			`discussions/${discussion.DocId}/invite/${currentUserData.CurrentUser.UserId}/reject`,
 			(result) => {
 				if (result === true) {
 					fetch()

@@ -16,7 +16,7 @@ const AlertContent = ({Content,ContentLinks}) => {
             <a key={index} onClick={(e)=>{
               e.stopPropagation()
               navigate(linkObject.Link)}}
-              className="text-system-primary-accent cursor-pointer bg-system-primary-accent-light px-1 rounded-md text-sm"
+              className="text-system-primary-accent cursor-pointer bg-system-primary-accent-light px-1 rounded-md text-sm hover:text-system-primary-accent-transparent hover:underline"
             >
               {linkObject.Text}
             </a>

@@ -36,7 +36,7 @@ const AlertList = () => {
 	const [pageDisabled, setPageDisabled] = useState(true)
 	const [filters, setFilters] = useState({
 		OrderBy: 'Index',
-		Limit: 2,
+		Limit: 4,
 		Keyword: '',
 	})
 	const api = `users/${currentUserData.CurrentUser.UserId}/notifications`
