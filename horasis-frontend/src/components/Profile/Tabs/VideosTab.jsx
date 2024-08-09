@@ -101,14 +101,14 @@ const VideosTab = () => {
 										})}
 									</>
 								) : (
-									<>
+									<div className='col-span-2'>
 										<EmptyMembers emptyText={'No videos uploaded'} />
-									</>
+									</div>
 								)}
 							</>
 						)}
 					</div>
-
+            
 					{isLoadingMore && (
 						<div className='bg-system-secondary-bg p-4 rounded-b-lg '>
 							<Spinner />
