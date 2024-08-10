@@ -3,11 +3,13 @@ import SocketContext from './SocketService'
 import { AuthContext } from '../../utils/AuthProvider'
 import { useToast } from '../../components/Toast/ToastService'
 import { io } from 'socket.io-client'
+import { useChatPopup } from '../ChatPopup/ChatPopupService'
 
 const URL = 'https://deploy.busifrog.com'
 const SocketProvider = ({ children }) => {
 	// context
 	const { currentUserData } = useContext(AuthContext)
+	const { convList } = useChatPopup()
 
 	// socket
 	const [socket, setSocket] = useState(null)
@@ -33,6 +35,9 @@ const SocketProvider = ({ children }) => {
 
 		newSocket.on('connect', () => {
 			// console.log('Socket connected')
+			convList.map((conv) => {
+				newSocket.emit('JoinRoom', { ConversationId: conv })
+			})
 		})
 
 		newSocket.on('connect_error', (err) => {
@@ -41,7 +46,7 @@ const SocketProvider = ({ children }) => {
 
 		newSocket.on('disconnect', (reason) => {
 			// console.log('Socket disconnected')
-			console.warn('Socket disconnected', reason)
+			// console.warn('Socket disconnected', reason)
 			if (reason === 'io server disconnect') {
 				newSocket.connect()
 			}
@@ -59,7 +64,7 @@ const SocketProvider = ({ children }) => {
 	useEffect(() => {
 		const cleanup = connectSocket()
 		return cleanup
-	}, [currentUserData?.Token])
+	}, [currentUserData?.Token,convList])
 
 	return <SocketContext.Provider value={{ socket, setSocket, connectSocket }}>{children}</SocketContext.Provider>
 }

@@ -6,7 +6,7 @@ import { useLocation } from 'react-router-dom'
 
 const ChatPopup = () => {
 	const { userIds, removeUser } = useChatPopup()
-	const location =useLocation()
+	const location = useLocation()
 	const [minimizedChats, setMinimizedChats] = useState({})
 	const toggleMinimize = (userId) => {
 		setMinimizedChats((prev) => ({
@@ -14,7 +14,7 @@ const ChatPopup = () => {
 			[userId]: !prev[userId],
 		}))
 	}
-	if(location.pathname.includes('/Chat/')){
+	if (location.pathname.includes('/Chat/')) {
 		return <></>
 	}
 	return (
@@ -23,27 +23,36 @@ const ChatPopup = () => {
 				{userIds.map((item) => {
 					const isMinimized = minimizedChats[item]
 					return (
-						<div className='rounded-t-md overflow-hidden' key={item}>
-							<div className='bg-system-primary-accent py-3 px-3 cursor-pointer flex justify-between gap-10'>
-								<p className='text-system-secondary-bg text-md'>Chat</p>
-								<div className='flex gap-2'>
-									<p className='text-system-secondary-bg' onClick={() => toggleMinimize(item)}>
-										{isMinimized ? 'expand' : 'minimize'}
-									</p>
-									<p className='text-system-secondary-bg' onClick={() => removeUser(item)}>
-										close
-									</p>
-								</div>
-							</div>
-							<div className={`transition-all duration-300 ${isMinimized ? 'h-0' : 'h-[30rem]'} overflow-hidden`}>
-								{!isMinimized && (
-									<div className='w-[24rem] h-full'>
-										<NewChatView userId={item} />
-									</div>
-								)}
-							</div>
-						</div>
+						<SingleChat
+							key={item}
+							chat={item}
+							removeUser={removeUser}
+							toggleMinimize={toggleMinimize}
+							isMinimized={isMinimized}
+						/>
 					)
+					// return (
+					// 	<div className='rounded-t-md overflow-hidden' key={item}>
+					// 		<div className='bg-system-primary-accent py-3 px-3 cursor-pointer flex justify-between gap-10'>
+					// 			<p className='text-system-secondary-bg text-md'>Chat</p>
+					// 			<div className='flex gap-2'>
+					// 				<p className='text-system-secondary-bg' onClick={() => toggleMinimize(item)}>
+					// 					{isMinimized ? 'expand' : 'minimize'}
+					// 				</p>
+					// 				<p className='text-system-secondary-bg' onClick={() => removeUser(item)}>
+					// 					close
+					// 				</p>
+					// 			</div>
+					// 		</div>
+					// 		<div className={`transition-all duration-300 ${isMinimized ? 'h-0' : 'h-[30rem]'} overflow-hidden`}>
+					// 			{!isMinimized && (
+					// 				<div className='w-[24rem] h-full'>
+					// 					<NewChatView userId={item} />
+					// 				</div>
+					// 			)}
+					// 		</div>
+					// 	</div>
+					// )
 				})}
 			</div>
 			{/* {activeChat && (
@@ -59,6 +68,32 @@ const ChatPopup = () => {
 					</div>
 				</div>
 			)} */}
+		</div>
+	)
+}
+
+const SingleChat = ({ chat, removeUser,toggleMinimize,isMinimized }) => {
+	const [chatToRemove,setChatToRemove] = useState('')
+	return (
+		<div className='rounded-t-md overflow-hidden'>
+			<div className='bg-system-primary-accent py-3 px-3 cursor-pointer flex justify-between gap-10'>
+				<p className='text-system-secondary-bg text-md'>Chat</p>
+				<div className='flex gap-2'>
+					<p className='text-system-secondary-bg' onClick={() => toggleMinimize(chat)}>
+						{isMinimized ? 'expand' : 'minimize'}
+					</p>
+					<p className='text-system-secondary-bg' onClick={() => removeUser(chat,chatToRemove)}>
+						close
+					</p>
+				</div>
+			</div>
+			<div className={`transition-all duration-300 ${isMinimized ? 'h-0' : 'h-[30rem]'} overflow-hidden`}>
+				{!isMinimized && (
+					<div className='w-[24rem] h-full'>
+						<NewChatView userId={chat} setChatToRemove={setChatToRemove} />
+					</div>
+				)}
+			</div>
 		</div>
 	)
 }

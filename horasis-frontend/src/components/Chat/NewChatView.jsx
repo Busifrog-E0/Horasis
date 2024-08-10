@@ -14,11 +14,13 @@ import { jsonToQuery } from '../../utils/searchParams/extractSearchParams'
 import { getNextId } from '../../utils/URLParams'
 import { useSocket } from '../../context/Socket/SocketService'
 import { useLocation } from 'react-router-dom'
+import { useChatPopup } from '../../context/ChatPopup/ChatPopupService'
 
-const NewChatView = ({ userId }) => {
+const NewChatView = ({ userId,setChatToRemove }) => {
 	// context
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
 	const toast = useToast()
+	const {addConversation} = useChatPopup()
 	const { socket } = useSocket()
 	const location = useLocation()
 
@@ -145,6 +147,8 @@ const NewChatView = ({ userId }) => {
 			(result) => {
 				setIsConvIdLoading(false)
 				setConversationId(result)
+				addConversation(result)
+				setChatToRemove(result)
 			},
 			(err) => {
 				setIsConvIdLoading(false)
