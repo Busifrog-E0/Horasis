@@ -19,14 +19,10 @@ const ConnectSocket = (expressServer) => {
 
     io.on('connection', socket => {
         // @ts-ignore
-        console.log(`User ${socket.user.UserId} connected , socketId : ${socket.id}`);
-        // @ts-ignore
         socket.join(socket.user.UserId);
 
 
         socket.on('Message', async data => {
-            // @ts-ignore
-            console.log(`1 Message User ${socket.user.UserId} connected , Conv : ${ConversationId} socketId : ${socket.id}`);
 
             // @ts-ignore
             data.SenderId = socket.user.UserId;
@@ -35,8 +31,6 @@ const ConnectSocket = (expressServer) => {
             if (MessageData.Success === true) {
                 io.to(data.ConversationId).emit('Message', MessageData.Data);
 
-                // @ts-ignore
-                console.log(`Message User ${socket.user.UserId} connected , Conv : ${ConversationId} socketId : ${socket.id}`);
 
                 MessageData.ParticipantIds.map(id => {
                     // @ts-ignore
@@ -50,13 +44,9 @@ const ConnectSocket = (expressServer) => {
         socket.on('JoinRoom', async ({ ConversationId }) => {
             const ConversationData = await ReadOneFromConversations(ConversationId);
             // @ts-ignore
-            console.log(`1 User ${socket.user.UserId} connected , Conv : ${ConversationId} socketId : ${socket.id}`);
-            // @ts-ignore
             if (CheckUserInConversation(ConversationData, socket.user.UserId)) {
                 // leave existing rooms?
                 socket.join(ConversationId);
-                // @ts-ignore
-                console.log(`User ${socket.user.UserId} connected , Conv : ${ConversationId} socketId : ${socket.id}`);
             }
 
         });
@@ -67,8 +57,6 @@ const ConnectSocket = (expressServer) => {
 
         // When user disconnects - to all others 
         socket.on('disconnect', () => {
-            // @ts-ignore            
-            console.log(`User Leave ${socket.user.UserId} connected , socketId : ${socket.id}`);
             // @ts-ignore
             socket.leave(socket.user.UserId);
         })
