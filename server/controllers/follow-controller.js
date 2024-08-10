@@ -4,6 +4,7 @@ import { ReadOneFromFollows, ReadFollows, UpdateFollows, CreateFollows, RemoveFo
 import { ViewOtherUserData } from './users-controller.js';
 import { AlertBoxObject } from './common.js';
 import { ReadOneFromUsers } from '../databaseControllers/users-databaseController.js';
+import { RemoveNotificationsForFollow, SendNotificationsForFollow } from './notifications-controller.js';
 /**
  * @typedef {import('./../databaseControllers/follow-databaseController.js').FollowData} FollowData 
  */
@@ -99,6 +100,7 @@ const PostFollows = async (req, res) => {
     const UserDetails = await Promise.all([ReadOneFromUsers(FolloweeId), ReadOneFromUsers(FollowerId)]);
     req.body.UserDetails = UserDetails;
     await CreateFollows(req.body);
+    await SendNotificationsForFollow(FollowerId, FolloweeId); 
     return res.json(true);
 }
 
@@ -127,6 +129,7 @@ const DeleteFollows = async (req, res) => {
     if (Follow.length == 0) {
         return res.status(444).json(AlertBoxObject("Not following this profile", "You are already not following this profile"));
     }
+    await RemoveNotificationsForFollow(UserId);
     await RemoveFollows(Follow[0].DocId);
     return res.json(true);
 }

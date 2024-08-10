@@ -4,7 +4,7 @@ import moment from 'moment-timezone';
 import { ReadOneFromUsers, ReadUsers, UpdateUsers, CreateUsers, RemoveUsers, } from './../databaseControllers/users-databaseController.js';
 import { AccountVerificationEmail, SendOTPEmail } from './emails-controller.js';
 import { CreateEmailVerifications, ReadOneFromEmailVerifications, UpdateEmailVerifications } from '../databaseControllers/emailVerification-databaseController.js';
-import { GenerateToken, SendRegisterOTP, TokenData, VerifyOTP } from './auth-controller.js';
+import { GenerateToken, ReadOneFromOTP, SendPasswordOTP, SendRegisterOTP, TokenData, VerifyOTP } from './auth-controller.js';
 import { AlertBoxObject, getOTP, GetUserNonEmptyFieldsPercentage } from './common.js';
 import { ReadConnections } from '../databaseControllers/connections-databaseController.js';
 import { ReadFollows } from '../databaseControllers/follow-databaseController.js';
@@ -231,6 +231,34 @@ const ViewOtherUserData = async (UserId, OtherUserId, NextIdObject = {}) => {
 
 /**
  * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ * @returns 
+ */
+const SendForgotPasswordOTP = async (req, res) => {
+    const { Email } = req.body;
+    const OTPId = await SendPasswordOTP(Email, res);
+    return res.json(OTPId);
+}
+
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ * @returns 
+ */
+const PatchPassword = async (req, res) => { 
+    const { OTPId, Password } = req.body;
+    const OTPData = await ReadOneFromOTP(OTPId);
+    if (OTPData.EmailVerified === false) {
+        return res.status(444).json(AlertBoxObject("OTP not Verified", "OTP is not verified. Please verify your email"));
+    }
+    const User = (await ReadUsers({ Email: OTPData.Email }, undefined, 1, undefined))[0];
+    await UpdateUsers({ Password: Password }, User.DocId);
+    return res.json(true);
+}
+/**
+ * 
  * @param {UserData} User 
  * @returns {UserData}
  */
@@ -274,5 +302,6 @@ const VerifyUserEmail = async (req, res) => {
 export {
     GetOneFromUsers, GetUsers, PostUsersRegister, PatchUsers,
     UserLogin, VerifyRegistrationOTP, CheckUsernameAvailability,
-    ViewOtherUserRelations, ViewOtherUserData
+    ViewOtherUserRelations, ViewOtherUserData, SendForgotPasswordOTP,
+    PatchPassword
 }

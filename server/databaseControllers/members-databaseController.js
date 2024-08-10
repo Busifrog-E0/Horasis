@@ -1,3 +1,4 @@
+import { RemoveNotificationForMember } from '../controllers/notifications-controller.js';
 import dataHandling from './functions.js'
 
 /**
@@ -78,6 +79,8 @@ const CreateMembers = async (data, DocId = undefined) => {
  * @returns {Promise<boolean>}
  */
 const RemoveMembers = async (DocId) => {
+    const Member = await ReadOneFromMembers(DocId);
+    await RemoveNotificationForMember(Member.EntityId, Member.MemberId);
     return dataHandling.Delete('Members', DocId);
 }
 

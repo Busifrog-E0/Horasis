@@ -2,6 +2,7 @@ import {
     GetOneFromDiscussions, GetDiscussions, PostDiscussions, PatchDiscussions, DeleteDiscussions,
     GetUserDiscussions,
     GetInvitedDiscussions,
+    GetPublicDiscussions,
 } from '../controllers/discussions-controller.js';
 import asyncHandler from 'express-async-handler';
 
@@ -9,7 +10,7 @@ import asyncHandler from 'express-async-handler';
 import SwaggerDocs from '../swaggerDocs/discussions-swaggerDocs.js'
 import e from 'express';
 import { decodeIDToken, ensureAuthorized } from '../middleware/auth-middleware.js';
-import { ValidatePatchDiscussionCoverPhoto, ValidatePatchMemberPermission, ValidatePatchRemovePermission, ValidatePostDiscussion } from '../validations/discussions-validations.js';
+import { ValidateAddPermissionForEveryone, ValidatePatchDiscussionCoverPhoto, ValidatePatchMemberPermission, ValidatePatchRemovePermission, ValidatePostDiscussion } from '../validations/discussions-validations.js';
 import { QueryParameterFormatting, ValidateGetEntity } from '../middleware/common.js';
 import {
     AcceptJoinRequest, AcceptMemberInvitation, DeleteMembers, DeleteTempMembers,
@@ -40,6 +41,10 @@ router.patch('/discussions/:DiscussionId/coverPicture', decodeIDToken, ensureAut
     // @ts-ignore
     asyncHandler(PatchDiscussions));
 
+router.get('/guest/discussions/',ValidateGetEntity,QueryParameterFormatting,SwaggerDocs.get_Discussions,
+    //@ts-ignore
+    asyncHandler(GetPublicDiscussions));    
+
 /**************************************************************************JOIN******************************************************************* */
 
 router.post('/discussions/:EntityId/join', decodeIDToken, ensureAuthorized("User"), InsertDiscussionTypeMiddleware,
@@ -64,7 +69,8 @@ router.get('/discussions/:EntityId/members/requested', decodeIDToken, ensureAuth
     asyncHandler(GetJoinRequests));
 
 
-router.delete('/discussions/:EntityId/join/cancel', decodeIDToken, ensureAuthorized("User"), InsertDiscussionTypeMiddleware,
+
+router.delete('/discussions/:EntityId/join/:UserId/cancel', decodeIDToken, ensureAuthorized("User"), InsertDiscussionTypeMiddleware,
     SwaggerDocs.delete_Discussion_DiscussionId_Join_Cancel,
     //@ts-ignore
     asyncHandler(DeleteTempMembers));
@@ -76,7 +82,7 @@ router.get('/discussions/:EntityId/members/invite', decodeIDToken, ensureAuthori
     //@ts-ignore
     asyncHandler(GetMembersToInvite));
 
-router.post('/discussions/:EntityId/invite/:InviteeId', decodeIDToken, ensureAuthorized("User"),
+router.post('/discussions/:EntityId/invite/:InviteeId', decodeIDToken, ensureAuthorized("User"),InsertDiscussionTypeMiddleware,
     SwaggerDocs.post_Discussions_EntityId_Invite_InviteeId,
     //@ts-ignore
     asyncHandler(InviteMembers));
@@ -101,6 +107,7 @@ router.delete('/discussions/:EntityId/leave', decodeIDToken, ensureAuthorized("U
     // @ts-ignore
     asyncHandler(DeleteMembers));
 
+/*****************************************************MEMBERS************************************************************************************* */
 router.get('/discussions/:EntityId/members', decodeIDToken, ensureAuthorized("User"),
     ValidateGetEntity, QueryParameterFormatting, SwaggerDocs.get_Discussions_DiscussionId_Members,
     //@ts-ignore
@@ -115,6 +122,13 @@ router.patch('/discussions/:EntityId/member/permissions/remove', decodeIDToken, 
     SwaggerDocs.patch_Discussions_EntityId_Member_Permissions_Remove,
     //@ts-ignore
     asyncHandler(RemoveMemberPermissions));
+
+router.patch('/discussions/:EntityId/member/permissions/everyone', decodeIDToken, ensureAuthorized("User"), ValidateAddPermissionForEveryone,
+SwaggerDocs.patch_Discussions_EntityId_Member_Permissions_Everyone,
+    //@ts-ignore
+    asyncHandler(PatchDiscussions));    
+
+/*********************************************************************FILTERED DISCUSSIONS********************************************************************* */    
 
 router.get('/user/:UserId/discussions', decodeIDToken, ensureAuthorized("User"), ValidateGetEntity, QueryParameterFormatting,
     SwaggerDocs.get_User_UserId_Discussions,
@@ -153,7 +167,7 @@ router.post('/discussions/:EntityId/activities', decodeIDToken, ensureAuthorized
 router.get('/discussions/:EntityId/activities', decodeIDToken, ensureAuthorized("User"), ValidateGetEntity, QueryParameterFormatting,
     GetDiscussionsActivitiesMiddleware, SwaggerDocs.get_Discussions_DiscussionId_Activities,
     //@ts-ignore
-    asyncHandler(GetActivities));
+    asyncHandler(GetFilteredActivities));
 
 router.delete('/discussions/:DiscussionId', decodeIDToken, ensureAuthorized("User"),
     // @ts-ignore

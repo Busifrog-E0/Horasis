@@ -3,6 +3,8 @@ import {
     VerifyRegistrationOTP,
     CheckUsernameAvailability,
     GetUsers,
+    SendForgotPasswordOTP,
+    PatchPassword,
 } from '../controllers/users-controller.js';
 import asyncHandler from 'express-async-handler';
 
@@ -11,8 +13,10 @@ import { decodeIDToken, ensureAuthorized } from '../middleware/auth-middleware.j
 import SwaggerDocs from '../swaggerDocs/users-swaggerDocs.js'
 import e from 'express';
 import { CheckSameUser, QueryParameterFormatting, ValidateGetEntity } from '../middleware/common.js';
-import { ValidateCheckUsername, ValidatePatchUsers, ValidateUserLogin, ValidatePatchUserPictures, ValidateUserRegister, ValidateVerifyOTP, ValidateGetUserMedia } from '../validations/users-validations.js';
+import { ValidateCheckUsername, ValidatePatchUsers, ValidateUserLogin, ValidatePatchUserPictures, ValidateUserRegister, ValidateVerifyOTP, ValidateGetUserMedia, ValidatePostForgotPassword, ValidatePasswordReset } from '../validations/users-validations.js';
 import { GetMedias } from '../controllers/medias-controller.js';
+import { CheckOTP } from '../controllers/auth-controller.js';
+import { GetNotifications, GetOneFromNotifications } from '../controllers/notifications-controller.js';
 const router = e.Router();
 router.route
 
@@ -67,5 +71,25 @@ router.get('/users/:UserId/media', decodeIDToken, ensureAuthorized("User"), Chec
     //@ts-ignore
     asyncHandler(GetMedias))
 
+router.post('/users/forgotPassword', ValidatePostForgotPassword, SwaggerDocs.post_Users_ForgotPassword,
+    //@ts-ignore
+    asyncHandler(SendForgotPasswordOTP));
 
+router.post('/users/forgotPassword/verify', ValidateVerifyOTP, SwaggerDocs.post_Users_ForgotPassword_Verify,
+    //@ts-ignore
+    asyncHandler(CheckOTP));
+
+router.post('/users/forgotPassword/reset', ValidatePasswordReset,SwaggerDocs.post_Users_ForgotPassword_Reset,
+    //@ts-ignore
+    asyncHandler(PatchPassword));
+
+router.get('/users/:RecipientId/notifications', decodeIDToken, ensureAuthorized("User"), ValidateGetEntity, QueryParameterFormatting,
+    SwaggerDocs.get_Users_UserId_Notifications,
+    //@ts-ignore
+    asyncHandler(GetNotifications));
+
+router.get('/users/:RecipientId/notifications/:NotificationId', decodeIDToken, ensureAuthorized("User"), 
+    SwaggerDocs.get_Users_UserId_Notifications_NotificationId,
+    //@ts-ignore
+    asyncHandler(GetOneFromNotifications));    
 export default router;

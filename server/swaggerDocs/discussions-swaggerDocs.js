@@ -31,6 +31,17 @@ const get_Discussions = async (req, res, next) => {
     next();
 }
 
+const get_Guest_Discussions = async (req, res, next) => {
+    // #swagger.tags = ['Guests']
+    /* #swagger.security = [{ "BearerAuth": [] }] */
+    /* #swagger.responses[200] = {
+                 description: 'Discussion Data',
+                 schema: { $ref: '#/definitions/DiscussionDataArray' }
+         } 
+     */
+    next();
+}
+
 const post_Discussions_EntityId_Join = async (req, res, next) => {
     // #swagger.tags = ['Discussions']
     /* #swagger.security = [{ "BearerAuth": [] }] */
@@ -201,6 +212,17 @@ const patch_Discussions_EntityId_Member_Permissions_Remove = async (req, res, ne
 */
     next();
 }
+const patch_Discussions_EntityId_Member_Permissions_Everyone = async (req, res, next) => {
+    // #swagger.tags = ['Discussions']
+    /* #swagger.security = [{ "BearerAuth": [] }] */
+    /* #swagger.parameters['body'] = {
+               in: 'body',
+               schema: {  'MemberPermissions.CanPostActivity' : true }
+   } 
+*/
+    next();
+}
+
 
 export default {
     post_Discussion,get_User_UserId_Discussions,get_Discussions_DiscussionId_Members_Requested,
@@ -216,5 +238,7 @@ export default {
     get_Discussions_DiscussionId_Members,
     delete_Discussions_DiscussionId_Invite_Cancel,
     delete_Discussions_DiscussionId_Invite_Reject,
-    delete_Discussions_DiscussionId_Leave
+    delete_Discussions_DiscussionId_Leave,
+    patch_Discussions_EntityId_Member_Permissions_Everyone,
+    get_Guest_Discussions,
 }

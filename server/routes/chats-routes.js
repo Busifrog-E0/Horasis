@@ -24,7 +24,7 @@ router.post('/reterieveConversationId', decodeIDToken, ensureAuthorized("User"),
     // @ts-ignore
     asyncHandler(ReterieveConversationId));
 
-router.patch('/chats/:ConversationId/seeAllMessages', decodeIDToken, ensureAuthorized("User"), PostReterieveConversationId,
+router.patch('/chats/:ConversationId/seeAllMessages', decodeIDToken, ensureAuthorized("User"), 
     SwaggerDocs.patch_Chats_ConversationId_SeeAllMessages,
     // @ts-ignore
     asyncHandler(PatchSeeAllMessages));
