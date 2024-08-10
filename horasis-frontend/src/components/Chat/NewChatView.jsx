@@ -162,6 +162,7 @@ const NewChatView = ({ userId }) => {
 		socket.on('Message', (value) => {
 			// console.log('message received', value)
 			if (value.ConversationId === conversationId) {
+				console.log('messages recieved')
 				seeAllMessages()
 				setMessages((prevMessages) => [value, ...prevMessages])
 			}
@@ -188,6 +189,7 @@ const NewChatView = ({ userId }) => {
 			e.preventDefault()
 		}
 		if (socket && messageToSend) {
+			console.log('emitted message')
 			socket.emit('Message', {
 				ConversationId: conversationId,
 				Content: messageToSend,

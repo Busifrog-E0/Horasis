@@ -23,8 +23,10 @@ const SocketProvider = ({ children }) => {
 				token: `Bearer ${currentUserData.Token}`,
 			},
 			reconnection: true, // Enable reconnection
-			reconnectionAttempts: 3, // Number of reconnection attempts
+			reconnectionAttempts: Infinity, // Number of reconnection attempts
 			reconnectionDelay: 1000, // Delay between reconnection attempts
+			reconnectionDelayMax: 5000,
+			randomizationFactor: 0.5,
 		})
 
 		setSocket(newSocket)
@@ -37,18 +39,16 @@ const SocketProvider = ({ children }) => {
 			// console.log(err)
 		})
 
-		newSocket.on('disconnect', () => {
+		newSocket.on('disconnect', (reason) => {
 			// console.log('Socket disconnected')
-			const newSocket = io(URL, {
-				auth: {
-					token: `Bearer ${currentUserData.Token}`,
-				},
-				reconnection: true, // Enable reconnection
-				reconnectionAttempts: 3, // Number of reconnection attempts
-				reconnectionDelay: 1000, // Delay between reconnection attempts
-			})
-	
-			setSocket(newSocket)
+			console.warn('Socket disconnected', reason)
+			if (reason === 'io server disconnect') {
+				newSocket.connect()
+			}
+		})
+
+		newSocket.on('reconnect_attempt', (attemptNumber) => {
+			console.log(`Reconnection attempt #${attemptNumber}`)
 		})
 
 		return () => {
