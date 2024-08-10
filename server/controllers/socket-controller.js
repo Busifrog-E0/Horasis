@@ -18,7 +18,8 @@ const ConnectSocket = (expressServer) => {
 
 
     io.on('connection', socket => {
-        console.log(`User ${socket.id} connected`);
+        // @ts-ignore
+        console.log(`User ${socket.user.UserId} connected , socketId : ${socket.id}`);
         // @ts-ignore
         socket.join(socket.user.UserId);
 
@@ -46,8 +47,7 @@ const ConnectSocket = (expressServer) => {
             if (CheckUserInConversation(ConversationData, socket.user.UserId)) {
                 // leave existing rooms?
                 socket.join(ConversationId);
-                // @ts-ignore
-
+                console.log(`User ${socket.id} connected`);
             }
 
         });
