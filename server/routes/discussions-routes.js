@@ -41,7 +41,7 @@ router.patch('/discussions/:DiscussionId/coverPicture', decodeIDToken, ensureAut
     // @ts-ignore
     asyncHandler(PatchDiscussions));
 
-router.get('/guest/discussions/',ValidateGetEntity,QueryParameterFormatting,SwaggerDocs.get_Discussions,
+router.get('/guest/discussions/',ValidateGetEntity,QueryParameterFormatting,SwaggerDocs.get_Guest_Discussions,
     //@ts-ignore
     asyncHandler(GetPublicDiscussions));    
 
