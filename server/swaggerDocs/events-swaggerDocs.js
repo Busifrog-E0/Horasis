@@ -239,5 +239,6 @@ export default {
     delete_Events_EventId_Invite_Cancel,
     delete_Events_EventId_Invite_Reject,
     delete_Events_EventId_Leave,
-    patch_Events_EntityId_Member_Permissions_Everyone
+    patch_Events_EntityId_Member_Permissions_Everyone,
+    get_Events_EventsId
 }

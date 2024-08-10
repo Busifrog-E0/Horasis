@@ -1,6 +1,6 @@
-import { AlertBoxObject } from "../controllers/common";
-import { ReadOneFromEvents } from "../databaseControllers/events-databaseController";
-import { ReadMembers } from "../databaseControllers/members-databaseController";
+import { AlertBoxObject } from "../controllers/common.js";
+import { ReadOneFromEvents } from "../databaseControllers/events-databaseController.js";
+import { ReadMembers } from "../databaseControllers/members-databaseController.js";
 
 const InsertEventTypeMiddleware = async (req, res, next) => {
     req.body.Type = "Event";
