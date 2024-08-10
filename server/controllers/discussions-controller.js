@@ -187,6 +187,15 @@ const GetInvitedDiscussions = async (req, res) => {
     return res.json(data);
 }
 
+const GetPublicDiscussions = async (req, res) => {
+    const { Filter, NextId, Limit, OrderBy } = req.query;
+    // @ts-ignore
+    Filter.Privacy = "Public";
+    // @ts-ignore
+    const data = await ReadDiscussions(Filter, NextId, Limit, OrderBy);  
+    return res.json(data)
+}
+
 /**
  * 
  * @param {e.Request} req 
@@ -244,5 +253,5 @@ const DiscussionInit = (Discussion) => {
 
 export {
     GetOneFromDiscussions, GetDiscussions, PostDiscussions, PatchDiscussions, DeleteDiscussions,
-    GetUserDiscussions, GetInvitedDiscussions
+    GetUserDiscussions, GetInvitedDiscussions,GetPublicDiscussions
 }

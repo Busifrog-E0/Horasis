@@ -55,6 +55,10 @@ const doc = {
         {
             "name": "Events",
             "description": "",
+        },
+        {
+            "name": "Guests",
+            "description": "",
         }
     ],
     securityDefinitions: {
