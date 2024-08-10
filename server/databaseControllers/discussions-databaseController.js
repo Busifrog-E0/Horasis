@@ -3,6 +3,9 @@ import dataHandling from './functions.js'
 /**
  * @typedef {import('./users-databaseController.js').UserData} UserData
  */
+/**
+ * @typedef {import('./members-databaseController.js').PermissionData} PermissionData
+ */
 
 /**
  * @typedef {object} DiscussionData
@@ -16,12 +19,7 @@ import dataHandling from './functions.js'
  * @property {number} CreatedIndex
  * @property {string} CoverPicture
  * @property {number} NoOfMembers
- * @property {object} MemberPermissions
- * @property {boolean} MemberPermissions.CanPostActivity
- * @property {boolean} MemberPermissions.CanInviteOthers
- * @property {boolean} MemberPermissions.CanUploadPhoto
- * @property {boolean} MemberPermissions.CanCreateAlbum
- * @property {boolean} MemberPermissions.CanUploadVideo
+ * @property {Omit<PermissionData, 'IsAdmin'>} MemberPermissions
  */
 
 

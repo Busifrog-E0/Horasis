@@ -1,0 +1,205 @@
+import e from 'express';
+
+import { ReadOneFromEvents, ReadEvents, UpdateEvents, CreateEvents, RemoveEvents, AggregateEvents, } from './../databaseControllers/events-databaseController.js';
+import { ReadOneFromUsers } from '../databaseControllers/users-databaseController.js';
+import { MemberInit } from './members-controller.js';
+import { CreateMembers, ReadMembers } from '../databaseControllers/members-databaseController.js';
+/**
+ * @typedef {import('./../databaseControllers/events-databaseController.js').EventData} EventData 
+ */
+
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ * @returns {Promise<e.Response<EventData>>}
+ */
+const GetOneFromEvents = async (req, res) => {
+    const { EventId } = req.params;
+    const data = await ReadOneFromEvents(EventId);
+    return res.json(data);
+}
+
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ * @returns {Promise<e.Response<Array<EventData>>>}
+ */
+const GetEvents = async (req, res) => {
+    const { Filter, NextId, Limit, OrderBy, Keyword } = req.query;
+    if (Keyword) {
+        //@ts-ignore
+        Filter["EventName"] = { $regex: Keyword, $options: 'i' };
+    }
+    // @ts-ignore
+    const data = await ReadEvents(Filter, NextId, Limit, OrderBy);
+    return res.json(data);
+}
+
+/** 
+ * @param { e.Request } req
+ * @param { e.Response } res
+ * @returns
+ */
+const GetUserEvents = async (req, res) => {
+    const { UserId } = req.params;
+    const { Filter, NextId, Keyword, Limit, OrderBy } = req.query;
+    if (Keyword) {
+        // @ts-ignore
+        Filter["EventName"] = { $regex: Keyword, $options: 'i' };
+    }
+    // @ts-ignore
+    const AggregateArray = [
+        {
+            $lookup: {
+                from: "Members",
+                let: { eventIdString: { $toString: '$_id' } },
+                pipeline: [
+                    {
+                        $match: {
+                            $expr: {
+                                $and: [
+                                    { $eq: ["$EntityId", "$$eventIdString"] }
+                                ]
+                            }
+                        }
+                    }
+                ],
+                as: "Member"
+            }
+        },
+        { $unwind: "$Member" },
+        {
+            $match: {
+                ...Filter,
+                "Member.MemberId": UserId,
+                "Member.MembershipStatus": "Accepted"
+            }
+        },
+        { $project: { Member: 0 } }
+    ]
+    const Events = await AggregateEvents(AggregateArray, NextId, Limit, OrderBy);
+    const data = await Promise.all(Events.map(async Event => {
+        const EventMemberObject = { IsMember: false, };
+        const Member = await ReadMembers({ MemberId: UserId, EntityId: Event.DocId }, undefined, 1, undefined);
+        if (Member.length > 0) {
+            EventMemberObject.IsMember = Member[0].MembershipStatus === "Accepted";
+            EventMemberObject.Permissions = Member[0].Permissions
+            EventMemberObject.MembershipStatus = Member[0].MembershipStatus
+        }
+        return { ...Event, ...EventMemberObject }
+    }))
+    return res.json(data);
+}
+
+const GetInvitedEvents = async (req, res) => {
+    const { UserId } = req.params;
+    const { Filter, NextId, Keyword, Limit, OrderBy } = req.query;
+    if (Keyword) {
+        // @ts-ignore
+        Filter["EventName"] = { $regex: Keyword, $options: 'i' };
+    }
+    // @ts-ignore
+    const AggregateArray = [
+        {
+            $lookup: {
+                from: "Members",
+                let: { eventIdString: { $toString: '$_id' } },
+                pipeline: [
+                    {
+                        $match: {
+                            $expr: {
+                                $and: [
+                                    { $eq: ["$EntityId", "$$eventIdString"] }
+                                ]
+                            }
+                        }
+                    }
+                ],
+                as: "Member"
+            }
+        },
+        { $unwind: "$Member" },
+        {
+            $match: {
+                ...Filter,
+                "Member.MemberId": UserId,
+                "Member.MembershipStatus": "Invited"
+            }
+        },
+        { $project: { Member: 0 } }
+    ]
+    const Events = await AggregateEvents(AggregateArray, NextId, Limit, OrderBy);
+    const data = await Promise.all(Events.map(async Event => {
+        const EventMemberObject = { IsMember: false, };
+        const Member = await ReadMembers({ MemberId: UserId, EntityId: Event.DocId }, undefined, 1, undefined);
+        if (Member.length > 0) {
+            EventMemberObject.IsMember = Member[0].MembershipStatus === "Accepted";
+            EventMemberObject.Permissions = Member[0].Permissions
+            EventMemberObject.MembershipStatus = Member[0].MembershipStatus
+        }
+        return { ...Event, ...EventMemberObject }
+    }))
+    return res.json(data);
+}
+
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ * @returns {Promise<e.Response<true>>}
+ */
+const PostEvents = async (req, res) => {
+    const { OrganiserId } = req.body;
+    const UserDetails = await ReadOneFromUsers(OrganiserId);
+    req.body = EventInit(req.body);
+    const EventId = await CreateEvents({ ...req.body, UserDetails });
+    const Member = MemberInit({ MemberId: OrganiserId, EntityId: EventId, UserDetails }, true);
+    await CreateMembers(Member);
+    return res.json(EventId);
+}
+
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ * @returns {Promise<e.Response<true>>}
+ */
+const PatchEvents = async (req, res) => {
+    const { EventId } = req.params;
+    await UpdateEvents(req.body, EventId);
+    return res.json(true);
+}
+
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ * @returns {Promise<e.Response<true>>}
+ */
+const DeleteEvents = async (req, res) => {
+    const { EventId } = req.params;
+    await RemoveEvents(EventId);
+    return res.json(true);
+}
+
+const EventInit = (Event) => {
+    return {
+        ...Event,
+        NoOfMembers: 1,
+        MemberPermissions: {
+            CanPostActivity: false,
+            CanInviteOthers: false,
+            CanUploadPhoto: false,
+            CanCreateAlbum: false,
+            CanUploadVideo: false
+        }
+    }
+}
+
+
+export {
+    GetOneFromEvents, GetEvents, PostEvents, PatchEvents, DeleteEvents,
+    GetUserEvents,GetInvitedEvents
+}

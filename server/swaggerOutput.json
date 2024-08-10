@@ -3595,7 +3595,7 @@
         ]
       }
     },
-    "/api/discussions/{EntityId}/join/cancel": {
+    "/api/discussions/{EntityId}/join/{UserId}/cancel": {
       "delete": {
         "tags": [
           "Discussions"
@@ -3604,6 +3604,12 @@
         "parameters": [
           {
             "name": "EntityId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "UserId",
             "in": "path",
             "required": true,
             "type": "string"
@@ -3745,10 +3751,10 @@
             "schema": {
               "type": "object",
               "properties": {
-                "MembershipStatus": {
+                "Type": {
                   "example": "any"
                 },
-                "Type": {
+                "MembershipStatus": {
                   "example": "any"
                 }
               }
@@ -3796,6 +3802,18 @@
             "name": "authorization",
             "in": "header",
             "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Type": {
+                  "example": "any"
+                }
+              }
+            }
           }
         ],
         "responses": {
