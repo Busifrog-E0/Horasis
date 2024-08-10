@@ -2,6 +2,7 @@ import {
     GetOneFromDiscussions, GetDiscussions, PostDiscussions, PatchDiscussions, DeleteDiscussions,
     GetUserDiscussions,
     GetInvitedDiscussions,
+    GetPublicDiscussions,
 } from '../controllers/discussions-controller.js';
 import asyncHandler from 'express-async-handler';
 
@@ -39,6 +40,10 @@ router.patch('/discussions/:DiscussionId/coverPicture', decodeIDToken, ensureAut
     SwaggerDocs.patch_Discussion_DiscussionId_CoverPicture,
     // @ts-ignore
     asyncHandler(PatchDiscussions));
+
+router.get('/guest/discussions/',ValidateGetEntity,QueryParameterFormatting,SwaggerDocs.get_Discussions,
+    //@ts-ignore
+    asyncHandler(GetPublicDiscussions));    
 
 /**************************************************************************JOIN******************************************************************* */
 

@@ -43,6 +43,10 @@
     {
       "name": "Events",
       "description": ""
+    },
+    {
+      "name": "Guests",
+      "description": ""
     }
   ],
   "schemes": [
@@ -3138,9 +3142,6 @@
               }
             }
           },
-          "400": {
-            "description": "Bad Request"
-          },
           "401": {
             "description": "Unauthorized"
           },
@@ -3351,6 +3352,52 @@
           },
           "403": {
             "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/guest/discussions/": {
+      "get": {
+        "tags": [
+          "Discussions"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "NextId",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "Limit",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "Keyword",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "OrderBy",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Discussion Data",
+            "schema": {
+              "$ref": "#/definitions/DiscussionDataArray"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
           }
         },
         "security": [
@@ -4729,6 +4776,9 @@
     },
     "/api/events/{EventId}": {
       "get": {
+        "tags": [
+          "Events"
+        ],
         "description": "",
         "parameters": [
           {
@@ -4744,6 +4794,12 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "Event Data",
+            "schema": {
+              "$ref": "#/definitions/EventsData"
+            }
+          },
           "401": {
             "description": "Unauthorized"
           },
@@ -4753,7 +4809,12 @@
           "403": {
             "description": "Forbidden"
           }
-        }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
       },
       "patch": {
         "description": "",
