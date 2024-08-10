@@ -6,7 +6,7 @@ import { getOTP } from "./common.js";
 import { SendOTPEmail } from "./emails-controller.js";
 import moment from "moment";
 import { ReadUsers } from "../databaseControllers/users-databaseController.js";
-const { Read, Create, Delete,Update } = dataHandling;
+const { Read, Create, Delete, Update } = dataHandling;
 
 const TestUsers = [
     "qwertyui@tgmail.com",
@@ -85,8 +85,8 @@ const RefreshToken = async (req, res) => {
  * @param {e.Response} res 
  * @returns 
  */
-const CheckOTP = async (req, res) => { 
-    const { OTPId,OTP } = req.body;
+const CheckOTP = async (req, res) => {
+    const { OTPId, OTP } = req.body;
     const OTPData = await VerifyOTP(OTPId, OTP, res);
     return res.json(true);
 }
@@ -202,7 +202,7 @@ const VerifyOTP = async (OTPId, OTP, res) => {
  * @param {string} OTPId 
  * @returns {Promise<OTPData>}
  */
-const ReadOneFromOTP = async (OTPId) => { 
+const ReadOneFromOTP = async (OTPId) => {
     return await Read("OTP", OTPId);
 }
 /** 
@@ -223,6 +223,6 @@ const TokenData = async (CurrentUser) => {
 export {
     ModelLogin, RefreshToken, GenerateToken,
     VerifyOTP, SendRegisterOTP, TokenData,
-    SendPasswordOTP,ReadOneFromOTP,CheckOTP
+    SendPasswordOTP, ReadOneFromOTP, CheckOTP
 };
 
