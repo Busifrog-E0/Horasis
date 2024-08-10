@@ -20,15 +20,22 @@ import cover from '../assets/icons/cover.svg'
 import { useToast } from '../components/Toast/ToastService'
 import { useFollow } from '../context/Follow/FollowService'
 import { useChatPopup } from '../context/ChatPopup/ChatPopupService'
+import useWindowSize from '../hooks/useWindowSize'
 
-const UserProfileConnectComponent = ({ profile, connectCallback = () => { }, setIsLoading }) => {
+const UserProfileConnectComponent = ({ profile, connectCallback = () => {}, setIsLoading }) => {
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
 	const toast = useToast()
-	const {addUser} = useChatPopup()
+	const { addUser } = useChatPopup()
 	const navigate = useNavigate()
+	const { width } = useWindowSize()
 
 	const goToChat = () => {
-		addUser(profile.DocId)
+		console.log(width)
+		if (width > 767) {
+			addUser(profile.DocId)
+		} else {
+			navigate(`/Chat/${profile.DocId}`)
+		}
 	}
 
 	const sendConnectionRequest = () => {
@@ -200,7 +207,7 @@ const UserProfileConnectComponent = ({ profile, connectCallback = () => { }, set
 	}
 }
 
-const UserProfileFollowComponent = ({ profile, followCallback = () => { }, setIsLoading }) => {
+const UserProfileFollowComponent = ({ profile, followCallback = () => {}, setIsLoading }) => {
 	const { followUser, unFollowUser } = useFollow()
 
 	if (profile.IsFollowing) {
@@ -432,7 +439,7 @@ const ShowUserProfile = () => {
 												className='w-24 lg:w-60 h-24 lg:h-60 rounded-full object-cover'
 												src={user.ProfilePicture}
 												alt='Rounded avatar'
-												onClick={() => { }}
+												onClick={() => {}}
 											/>
 										</div>
 									</>
@@ -440,7 +447,7 @@ const ShowUserProfile = () => {
 									<>
 										<div
 											className='w-24 lg:w-60 h-24 lg:h-60 rounded-full flex items-center justify-center border-2 border-dashed bg-brand-light-gray'
-											onClick={() => { }}>
+											onClick={() => {}}>
 											<img src={avatar} className='object-cover h-full w-full rounded-lg' />
 										</div>
 									</>
@@ -468,7 +475,9 @@ const ShowUserProfile = () => {
 							<Spinner />
 						) : (
 							<>
-								<h4 className='font-medium text-2xl lg:text-center text-system-primary-text'>{user && user.FullName}</h4>
+								<h4 className='font-medium text-2xl lg:text-center text-system-primary-text'>
+									{user && user.FullName}
+								</h4>
 								<h4 className='font-medium text-xl text-brand-gray-dim lg:text-center'>@{user && user.Username}</h4>
 								<div className='flex justify-center items-center mt-2 lg:mt-6 flex-wrap sm:flex-nowrap  lg:flex-wrap gap-2'>
 									{user && user.ConnectionStatus && (

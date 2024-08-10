@@ -13,12 +13,14 @@ import io from 'socket.io-client'
 import { jsonToQuery } from '../../utils/searchParams/extractSearchParams'
 import { getNextId } from '../../utils/URLParams'
 import { useSocket } from '../../context/Socket/SocketService'
+import { useLocation } from 'react-router-dom'
 
 const NewChatView = ({ userId }) => {
 	// context
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
 	const toast = useToast()
 	const { socket } = useSocket()
+	const location = useLocation()
 
 	// message
 	const [messages, setMessages] = useState([])
@@ -186,7 +188,9 @@ const NewChatView = ({ userId }) => {
 	return (
 		<>
 			<div className='h-full w-full flex flex-col bg-system-secondary-bg'>
-				{/* <DashboardHeader /> */}
+				<div  className={`${location.pathname.includes('/Chat/')?'':'md:hidden'}`}>
+					<DashboardHeader />
+				</div>
 
 				<div className='lg:mx-60 lg:border-x lg:border-t rounded-t-md lg:min-w-full max-w-[1000px] lg:self-center'>
 					<UserDetailsTab user={user} isLoading={isUserLoading} viewAsFlex />

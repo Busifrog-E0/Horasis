@@ -10,15 +10,19 @@ import ChatDetailsItem from './ChatDetailsItem'
 import { useSocket } from '../../context/Socket/SocketService'
 import { useNavigate } from 'react-router-dom'
 import { useChatPopup } from '../../context/ChatPopup/ChatPopupService'
+import useWindowSize from '../../hooks/useWindowSize'
 
 const ConnectionsForChat = ({ connectionsForChat, isLoading, isLoadingMore, pageDisabled, fetchMore, setIsOpen }) => {
 	const { currentUserData } = useContext(AuthContext)
-	const { addUser,setActiveChat } = useChatPopup()
+	const { addUser } = useChatPopup()
 	const navigate = useNavigate()
+	const { width } = useWindowSize()
 	const navigateToChat = (userId) => {
-		// navigate(`/Chat/${userId}`)
-		addUser(userId)
-		setActiveChat(userId)
+		if (width > 767) {
+			addUser(userId)
+		} else {
+			navigate(`/Chat/${userId}`)
+		}
 		setIsOpen(false)
 	}
 	if (isLoading) {

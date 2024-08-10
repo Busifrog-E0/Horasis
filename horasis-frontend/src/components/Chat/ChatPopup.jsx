@@ -2,15 +2,20 @@ import { useState } from 'react'
 import { useChatPopup } from '../../context/ChatPopup/ChatPopupService'
 import ChatView from './ChatView'
 import NewChatView from './NewChatView'
+import { useLocation } from 'react-router-dom'
 
 const ChatPopup = () => {
-	const { userIds, removeUser, activeChat, setActiveChat } = useChatPopup()
+	const { userIds, removeUser } = useChatPopup()
+	const location =useLocation()
 	const [minimizedChats, setMinimizedChats] = useState({})
 	const toggleMinimize = (userId) => {
 		setMinimizedChats((prev) => ({
 			...prev,
 			[userId]: !prev[userId],
 		}))
+	}
+	if(location.pathname.includes('/Chat/')){
+		return <></>
 	}
 	return (
 		<div className='absolute z-[999]  bottom-0 right-1 lg:right-12 overflow-hidden'>
@@ -41,7 +46,7 @@ const ChatPopup = () => {
 					)
 				})}
 			</div>
-			{activeChat && (
+			{/* {activeChat && (
 				<div className='md:hidden fixed inset-0 bg-system-secondary-bg z-[999] pb-10'>
 					<div className='bg-system-primary-accent py-3 px-3 cursor-pointer flex justify-between'>
 						<p className='text-system-secondary-bg text-md'>Chat</p>
@@ -53,7 +58,7 @@ const ChatPopup = () => {
 						<NewChatView userId={activeChat} />
 					</div>
 				</div>
-			)}
+			)} */}
 		</div>
 	)
 }
