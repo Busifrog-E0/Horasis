@@ -342,6 +342,13 @@ const DeleteMembers = async (req, res) => {
         }
         await IncrementDiscussions({ NoOfMembers: -1 }, EntityId);
     }
+    else {
+        const Event = await ReadOneFromEvents(EntityId);
+        if (Event.OrganiserId === UserId) {
+            return res.status(444).json(AlertBoxObject("Cannot leave", "Organiser cannot leave the event"));
+        }
+        await IncrementEvents({ NoOfMembers: -1 }, EntityId);
+    }
     await RemoveMembers(Member[0].DocId);
     return res.json(true);
 }
