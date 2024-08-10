@@ -96,7 +96,7 @@ const CheckOTP = async (req, res) => {
  * @param {object} SignObject 
  */
 const GenerateToken = async (SignObject) => {
-    const Token = jwt.sign(SignObject, ENV.TOKEN_KEY, { expiresIn: "2h", });
+    const Token = jwt.sign(SignObject, ENV.TOKEN_KEY, { expiresIn: "30s", });
     const RefreshToken = await Create("RefreshTokens", { SignObject, "Token": Token, "Valid": true });
     console.log(Token);
     return { "Token": Token, "RefreshToken": RefreshToken };
