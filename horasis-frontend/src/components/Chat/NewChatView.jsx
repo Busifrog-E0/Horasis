@@ -6,7 +6,7 @@ import InComingMessage from './ChatElements/InComingMessage'
 import OutGoingMessage from './ChatElements/OutGoingMessage'
 import UserDetailsTab from './ChatElements/UserDetailsTab'
 import { runOnce } from '../../utils/runOnce'
-import { getItem, postItem } from '../../constants/operations'
+import { getItem, patchItem, postItem } from '../../constants/operations'
 import { AuthContext } from '../../utils/AuthProvider'
 import { useToast } from '../Toast/ToastService'
 import io from 'socket.io-client'
@@ -124,6 +124,18 @@ const NewChatView = ({ userId }) => {
 		getUserDetails()
 	}, [userId])
 
+	const seeAllMessages = () => {
+		console.log('see messages')
+		patchItem(
+			`chats/${conversationId}/seeAllMessages`,{},
+			(result) => {},
+			(err) => {},
+			updateCurrentUser,
+			currentUserData,
+			toast
+		)
+	}
+
 	// get conversation id
 	const [isConvIdLoading, setIsConvIdLoading] = useState(true)
 	const getConversationId = runOnce(() => {
@@ -150,6 +162,7 @@ const NewChatView = ({ userId }) => {
 		socket.on('Message', (value) => {
 			// console.log('message received', value)
 			if (value.ConversationId === conversationId) {
+				seeAllMessages()
 				setMessages((prevMessages) => [value, ...prevMessages])
 			}
 		})
@@ -188,7 +201,7 @@ const NewChatView = ({ userId }) => {
 	return (
 		<>
 			<div className='h-full w-full flex flex-col bg-system-secondary-bg'>
-				<div  className={`${location.pathname.includes('/Chat/')?'':'md:hidden'}`}>
+				<div className={`${location.pathname.includes('/Chat/') ? '' : 'md:hidden'}`}>
 					<DashboardHeader />
 				</div>
 

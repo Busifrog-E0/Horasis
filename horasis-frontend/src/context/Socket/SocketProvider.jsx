@@ -39,6 +39,16 @@ const SocketProvider = ({ children }) => {
 
 		newSocket.on('disconnect', () => {
 			// console.log('Socket disconnected')
+			const newSocket = io(URL, {
+				auth: {
+					token: `Bearer ${currentUserData.Token}`,
+				},
+				reconnection: true, // Enable reconnection
+				reconnectionAttempts: 3, // Number of reconnection attempts
+				reconnectionDelay: 1000, // Delay between reconnection attempts
+			})
+	
+			setSocket(newSocket)
 		})
 
 		return () => {
