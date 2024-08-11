@@ -125,7 +125,7 @@ const DiscussionSection = () => {
 			</div> */}
 			<SearchComponent
 				searchKey={filters.Keyword}
-				setSearchKey={(value)=>setFilters({...filters,Keyword:value})}
+				setSearchKey={(value) => setFilters({ ...filters, Keyword: value })}
 				placeholder='Search Discussions'
 			/>
 			<h4 className='font-bold text-2xl text-system-primary-accent mt-4 mb-2'>Community Discussions</h4>
@@ -167,6 +167,7 @@ const DiscussionSection = () => {
 						<>
 							<DiscussionsList
 								data={discussions}
+								updateList={setDiscussions}
 								emptyText={'No discussions'}
 								gap={'gap-2 lg:gap-4'}
 								cols={'grid-cols-2 md:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3'}
@@ -201,6 +202,7 @@ const DiscussionSection = () => {
 							<>
 								<DiscussionsList
 									data={followingDiscussions}
+									updateList={setFollowingDiscussions}
 									emptyText={'No discussions'}
 									gap={'gap-2 lg:gap-4'}
 									cols={'grid-cols-2 md:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3'}
@@ -236,6 +238,7 @@ const DiscussionSection = () => {
 							<>
 								<DiscussionsList
 									data={invitedDiscussions}
+									updateList={setInvitedDiscussions}
 									emptyText={'No discussions'}
 									gap={'gap-2 lg:gap-4'}
 									cols={'grid-cols-2 md:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3'}

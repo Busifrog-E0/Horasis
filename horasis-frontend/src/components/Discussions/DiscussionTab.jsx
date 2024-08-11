@@ -1,54 +1,69 @@
-import { useContext } from 'react'
-import { deleteItem, patchItem, postItem } from '../../constants/operations'
+import { useContext, useEffect, useState } from 'react'
+import { deleteItem, getItem, patchItem, postItem } from '../../constants/operations'
 import Button from '../ui/Button'
 import { AuthContext } from '../../utils/AuthProvider'
 import { useToast } from '../Toast/ToastService'
+import Spinner from '../ui/Spinner'
 
-const DiscussionTab = ({ discussion, onClick, fetch }) => {
+const DiscussionTab = ({ discussion, onClick, fetch, updateList, data }) => {
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
 	const toast = useToast()
+	const [isLoading, setIsLoading] = useState(false)
 
 	const acceptInvite = () => {
+		setIsLoading(true)
 		patchItem(
 			`discussions/${discussion.DocId}/invite/accept`,
 			{},
 			(result) => {
 				if (result === true) {
-					fetch()
+					// fetch()
+					getSingleDiscussion(discussion.DocId, 'UPDATE')
 				}
 			},
-			(err) => {},
+			(err) => {
+				setIsLoading(false)
+			},
 			updateCurrentUser,
 			currentUserData,
 			toast
 		)
 	}
 	const joinDiscussion = () => {
+		setIsLoading(true)
 		postItem(
 			`discussions/${discussion.DocId}/join`,
 			{},
 			(result) => {
 				if (result === true) {
-					fetch()
+					// fetch()
+					getSingleDiscussion(discussion.DocId, 'UPDATE')
 				} else if (typeof result === 'object') {
-					fetch()
+					// fetch()
+					getSingleDiscussion(discussion.DocId, 'UPDATE')
 				}
 			},
-			(err) => {},
+			(err) => {
+				setIsLoading(false)
+			},
 			updateCurrentUser,
 			currentUserData,
 			toast
 		)
 	}
 	const rejectInvite = () => {
+		setIsLoading(true)
 		deleteItem(
 			`discussions/${discussion.DocId}/invite/${currentUserData.CurrentUser.UserId}/reject`,
 			(result) => {
 				if (result === true) {
-					fetch()
+					// fetch()
+					getSingleDiscussion(discussion.DocId, 'REMOVE')
 				}
 			},
-			(err) => {},
+			(err) => {
+				setIsLoading(false)
+			},
 			updateCurrentUser,
 			currentUserData,
 			toast
@@ -56,28 +71,59 @@ const DiscussionTab = ({ discussion, onClick, fetch }) => {
 	}
 
 	const unFollowDiscussion = () => {
+		setIsLoading(true)
 		deleteItem(
 			`discussions/${discussion.DocId}/leave`,
 			(result) => {
 				if (result === true) {
-					fetch()
+					// fetch()
+					getSingleDiscussion(discussion.DocId, 'REMOVE')
 				}
 			},
-			(err) => {},
+			(err) => {
+				setIsLoading(false)
+			},
 			updateCurrentUser,
 			currentUserData,
 			toast
 		)
 	}
 	const cancelJoinRequest = () => {
+		setIsLoading(true)
 		deleteItem(
 			`discussions/${discussion.DocId}/join/${currentUserData.CurrentUser.UserId}/cancel`,
 			(result) => {
 				if (result === true) {
-					fetch()
+					// fetch()
+					getSingleDiscussion(discussion.DocId, 'REMOVE')
 				}
 			},
-			(err) => {},
+			(err) => {
+				setIsLoading(false)
+			},
+			updateCurrentUser,
+			currentUserData,
+			toast
+		)
+	}
+
+	const getSingleDiscussion = (discussionId, actionType = 'UPDATE') => {
+		setIsLoading(true)
+		getItem(
+			`discussions/${discussionId}`,
+			(result) => {
+				if (actionType === 'UPDATE') {
+					updateList(
+						data.map((discussion) => (discussion.DocId === discussionId ? { ...discussion, ...result } : discussion))
+					)
+				} else if (actionType === 'REMOVE') {
+					updateList(data.filter((discussion) => discussion.DocId !== discussionId))
+				}
+				setIsLoading(false)
+			},
+			(err) => {
+				setIsLoading(false)
+			},
 			updateCurrentUser,
 			currentUserData,
 			toast
@@ -100,35 +146,49 @@ const DiscussionTab = ({ discussion, onClick, fetch }) => {
 			</div>
 
 			<div className='flex items-center justify-center my-2 gap-2'>
-				{discussion.IsMember ? (
+				{isLoading ? (
+					<Spinner />
+				) : (
 					<>
-						{currentUserData.CurrentUser.UserId !== discussion.OrganiserId && (
-							<Button variant='outline' onClick={() => unFollowDiscussion()}>
-								Unfollow
-							</Button>
+						{discussion.IsMember ? (
+							<>
+								{currentUserData.CurrentUser.UserId !== discussion.OrganiserId && (
+									<Button variant='outline' onClick={() => unFollowDiscussion()}>
+										Unfollow
+									</Button>
+								)}
+							</>
+						) : (
+							<>
+								{discussion.MembershipStatus === undefined && (
+									<Button variant='black' onClick={() => joinDiscussion()}>
+										Follow
+									</Button>
+								)}
+								{discussion.MembershipStatus === 'Requested' && (
+									<Button variant='outline' onClick={() => cancelJoinRequest()}>
+										Cancel Request
+									</Button>
+								)}
+								{discussion.MembershipStatus === 'Invited' && (
+									<div className='flex flex-col items-center gap-2 px-4 '>
+										<p className='text-system-secondary-text text-center text-xs'>
+											You have been invited to this discussion
+										</p>
+										<div className='flex gap-2'>
+											<Button variant='black' onClick={() => acceptInvite()}>
+												Accept
+											</Button>
+											<Button variant='outline' onClick={() => rejectInvite()}>
+												Reject
+											</Button>
+										</div>
+									</div>
+								)}
+							</>
 						)}
 					</>
-				) : discussion.MembershipStatus === undefined ? (
-					<Button variant='black' onClick={() => joinDiscussion()}>
-						Follow
-					</Button>
-				) : discussion.MembershipStatus === 'Requested' ? (
-					<Button variant='outline' onClick={() => cancelJoinRequest()}>
-						Cancel Request
-					</Button>
-				) : discussion.MembershipStatus === 'Invited' ? (
-					<div className='flex flex-col items-center gap-2 px-4 '>
-						<p className='text-system-secondary-text text-center text-xs'>You have been invited to this discussion</p>
-						<div className='flex gap-2'>
-							<Button variant='black' onClick={() => acceptInvite()}>
-								Accept
-							</Button>
-							<Button variant='outline' onClick={() => rejectInvite()}>
-								Reject
-							</Button>
-						</div>
-					</div>
-				) : null}
+				)}
 
 				{/* {discussion.Privacy === 'Private' ? (
 					<>
