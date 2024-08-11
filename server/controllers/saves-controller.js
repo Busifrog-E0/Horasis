@@ -35,7 +35,8 @@ const GetSaves = async (req, res) => {
             ])
             const HasSaved = true;
             const HasLiked = checkLike.length > 0;
-            return { ...Activity, UserDetails, HasLiked, HasSaved }
+             //@ts-ignore
+             return { ...Activity, UserDetails, HasLiked, HasSaved, NextId: Save.NextId }
         }));
 
     }
