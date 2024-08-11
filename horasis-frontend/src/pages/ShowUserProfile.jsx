@@ -254,7 +254,7 @@ const ShowUserProfile = () => {
 		navigate(-1)
 	}
 
-	const { currentUserData, updateCurrentUser } = useContext(AuthContext)
+	const { currentUserData, updateCurrentUser,scrollToTop } = useContext(AuthContext)
 	const toast = useToast()
 	const [user, setUser] = useState()
 
@@ -389,6 +389,7 @@ const ShowUserProfile = () => {
 	}
 
 	useEffect(() => {
+		scrollToTop()
 		getUserDetails()
 	}, [userid])
 
