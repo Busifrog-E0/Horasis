@@ -7,8 +7,10 @@ import MemberSuggestionTab from './MemberSuggestionTab'
 import { useToast } from '../Toast/ToastService'
 import Spinner from '../ui/Spinner'
 import arrowfor from '../../assets/icons/arrowfor.svg'
+import { useNavigate } from 'react-router-dom'
 
-const SuggestionsSection = () => {
+const SuggestionsSection = ({ limit = 4, loadMoreEnabled = false, iconPresent = true }) => {
+	const navigate = useNavigate()
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
 	const toast = useToast()
 	const [updatingId, setUpdatingId] = useState(null)
@@ -18,7 +20,7 @@ const SuggestionsSection = () => {
 	const [suggested, setSuggested] = useState([])
 	const [filters, setFilters] = useState({
 		OrderBy: 'Index',
-		Limit: 4,
+		Limit: limit,
 		Keyword: '',
 	})
 
@@ -114,7 +116,9 @@ const SuggestionsSection = () => {
 					<h4 className='font-medium text-2xl text-system-primary-text'>Suggestions</h4>
 					{/* arrow cursor-pointer */}
 
-					<img src={arrowfor} alt='' className='h-6 w-6 cursor-pointer' />
+					{iconPresent && (
+						<img src={arrowfor} alt='' className='h-6 w-6 cursor-pointer' onClick={() => navigate('/Suggestions')} />
+					)}
 				</div>
 				<div className='flex flex-col gap-4'>
 					<>
@@ -133,24 +137,26 @@ const SuggestionsSection = () => {
 								/>
 							)
 						})}
-
-						{/* {isLoadingMore && (
-				<div className='bg-system-secondary-bg p-4 rounded-b-lg '>
-					<Spinner />
-				</div>
-			)}
-			{!pageDisabled && (
-				<div
-					onClick={() => {
-						getSuggested(suggested)
-					}}
-					className='flex flex-row justify-end mt-4 mb-2'>
-					<div className='cursor-pointer flex items-center gap-2'>
-						<h4 className='font-semibold text-xl text-system-primary-accent'>Load More</h4>
-				
-					</div>
-				</div>
-			)} */}
+						{loadMoreEnabled && (
+							<>
+								{isLoadingMore && (
+									<div className='bg-system-secondary-bg p-4 rounded-b-lg '>
+										<Spinner />
+									</div>
+								)}
+								{!pageDisabled && (
+									<div
+										onClick={() => {
+											getSuggested(suggested)
+										}}
+										className='flex flex-row justify-end mt-4 mb-2'>
+										<div className='cursor-pointer flex items-center gap-2'>
+											<h4 className='font-semibold text-xl text-system-primary-accent'>Load More</h4>
+										</div>
+									</div>
+								)}
+							</>
+						)}
 					</>
 				</div>
 			</div>

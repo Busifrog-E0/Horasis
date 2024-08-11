@@ -30,6 +30,7 @@ import SingleActivity from '../pages/SingleActivity'
 import Mentions from '../pages/Mentions'
 import ChatPage from '../pages/ChatPage'
 import Saved from '../pages/Saved'
+import SuggestionsPage from '../pages/SuggestionsPage'
 
 export const router = createBrowserRouter(
 	createRoutesFromElements(
@@ -40,6 +41,7 @@ export const router = createBrowserRouter(
 					<Route path='/Activities' element={<Activities />} />
 					<Route path='/Mentions' element={<Mentions />} />
 					<Route path='/Saved' element={<Saved />} />
+					<Route path='/Suggestions' element={<SuggestionsPage />} />
 					<Route path='/Activities/:activityid' element={<SingleActivity />} />
 
 					<Route path='/Connections' element={<Connections />} />
