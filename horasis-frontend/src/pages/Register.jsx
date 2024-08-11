@@ -13,6 +13,9 @@ import { useToast } from '../components/Toast/ToastService'
 import TimerComponent from '../components/Timer/TimerComponent'
 import countries from '../assets/json/countries-with-coords.json'
 import Select from '../components/ui/Select'
+import close from '../assets/icons/close.svg'
+import eyeon from '../assets/icons/eyeon.svg'
+import eyeoff from '../assets/icons/eyeoff.svg'
 const logoText = {
 	fontSize: '1.7rem',
 	fontWeight: '700',
@@ -197,7 +200,8 @@ const Register = () => {
 						onClick={() => {
 							setOtpOpen(false)
 						}}>
-						close
+					<img src={close} className='h-6  cursor-pointer' alt="" />
+						
 					</button>
 				</Modal.Header>
 				<Modal.Body>
@@ -342,7 +346,7 @@ const Register = () => {
 							value={registerFormValue.Password}
 							type={showpass ? 'text' : 'password'}
 							withIcon='true'
-							icon={showpass ? 'on' : 'off'}
+							icon={showpass ? <img src={eyeon} className='h-6 cursor-pointer'/> : <img src={eyeoff} className='h-6 cursor-pointer'/>}
 							iconpos='right'
 							iconClick={() => {
 								setShowpass((prev) => !prev)
@@ -365,7 +369,7 @@ const Register = () => {
 							value={registerFormValue.ConfirmPassword}
 							type={showConfirmPass ? 'text' : 'password'}
 							withIcon='true'
-							icon={showConfirmPass ? 'on' : 'off'}
+							icon={showConfirmPass ? <img src={eyeon} className='h-6 cursor-pointer'/> : <img src={eyeoff} className='h-6 cursor-pointer'/>}
 							iconpos='right'
 							iconClick={() => {
 								setShowConfirmPass((prev) => !prev)

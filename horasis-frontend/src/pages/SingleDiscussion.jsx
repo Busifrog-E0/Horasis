@@ -19,6 +19,7 @@ import DiscussionSettings from '../components/Discussions/SingleDiscussionTabs/D
 import CreateDiscussionStep3 from '../components/Discussions/CreateDiscussion/CreateDiscussionSteps/CreateDiscussionStep3'
 import DiscussionAbout from '../components/Discussions/SingleDiscussionTabs/DiscussionAbout'
 import DiscussionJoinRequest from '../components/Discussions/SingleDiscussionTabs/DiscussionJoinRequest'
+import arrowback from '../assets/icons/arrowback.svg'
 
 const SingleDiscussion = () => {
 	const [activeTab, setActiveTab] = useState(0)
@@ -312,10 +313,14 @@ const SingleDiscussion = () => {
 
 				<div className='absolute top-0 right-0 left-0 bottom-0 flex flex-col justify-between items-start p-4 lg:px-10 lg:py-6 bg-brand-blue-transparent h-100 overflow-hidden overflow-y-auto'>
 					<div className='flex w-full items-start justify-between'>
-						<div className='flex items-center cursor-pointer' onClick={handleGoBack}>
-							{/* back arrow */}
-							<h4 className='font-medium text-xl text-brand-secondary'>Back</h4>
-						</div>
+					<div
+								className={`inline-flex items-center justify-center w-12 h-12 p-3 overflow-hidden rounded-full border border-white bg-white cursor-pointer`}
+								onClick={handleGoBack}>
+								<img src={arrowback} alt='' className='h-6 cursor-pointer' />
+
+								{/* <h4 className='font-medium text-xl text-brand-secondary'>Back</h4> */}
+							</div>
+			
 						{/* <div
 							className={`inline-flex items-center justify-center w-12 h-12 p-3 overflow-hidden rounded-full border border-white bg-white cursor-pointer`}>
 							<svg aria-hidden='true' xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'>

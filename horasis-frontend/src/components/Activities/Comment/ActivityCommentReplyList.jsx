@@ -7,6 +7,7 @@ import Spinner from '../../ui/Spinner'
 import { getItem, postItem } from '../../../constants/operations'
 import { commentValidation } from '../../../utils/schema/users/commentValidation'
 import MentionTextarea from '../Mentions/MentionTextarea'
+import send from  '../../../assets/icons/send.svg'
 
 const ActivityCommentReplyList = ({
 	activity,
@@ -130,7 +131,10 @@ const ActivityCommentReplyList = ({
 					{isLoading ? (
 						<Spinner />
 					) : (
-						<svg
+						<>
+									<img src={send} alt='' className='h-6 cursor-pointer' onClick={()=>validate(postReply)} />
+
+						{/* <svg
 							className='w-6 h-6 text-system-primary-accent cursor-pointer'
 							onClick={() => {
 								validate(postReply)
@@ -138,7 +142,8 @@ const ActivityCommentReplyList = ({
 							xmlns='http://www.w3.org/2000/svg'
 							viewBox='0 -960 960 960'>
 							<path d='M120-160v-640l760 320-760 320Zm80-120 474-200-474-200v140l240 60-240 60v140Zm0 0v-400 400Z' />
-						</svg>
+						</svg> */}
+								</>
 					)}
 				</div>
 			

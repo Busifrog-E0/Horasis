@@ -22,6 +22,14 @@ import VideosTab from '../components/Profile/Tabs/VideosTab'
 import ImagesTab from '../components/Profile/Tabs/ImagesTab'
 import DocumentTab from '../components/Profile/Tabs/DocumentTab'
 import DiscussionsTab from '../components/Profile/Tabs/DiscussionsTab'
+import altmail from '../assets/icons/altmail.svg'
+import globe from '../assets/icons/globe.svg'
+import job from '../assets/icons/job.svg'
+import company from '../assets/icons/company.svg'
+import camera from '../assets/icons/camera.svg'
+import arrowback from '../assets/icons/arrowback.svg'
+import close from '../assets/icons/close.svg'
+
 
 const tabs = (user, getUserDetails) => [
 	{
@@ -270,9 +278,12 @@ const MyProfile = () => {
           /> */}
 					<div className='absolute z-20 top-0 right-0 left-0 bottom-0 flex flex-col justify-between items-start p-4 lg:px-10 lg:py-6  h-100 overflow-hidden rounded-lg'>
 						<div className='flex w-full items-start justify-between'>
-							<div className='flex items-center cursor-pointer' onClick={handleGoBack}>
-								{/* back arrow */}
-								<h4 className='font-medium text-xl text-brand-secondary'>Back</h4>
+							<div
+								className={`inline-flex items-center justify-center w-12 h-12 p-3 overflow-hidden rounded-full border border-white bg-white cursor-pointer`}
+								onClick={handleGoBack}>
+								<img src={arrowback} alt='' className='h-6 cursor-pointer' />
+
+								{/* <h4 className='font-medium text-xl text-brand-secondary'>Back</h4> */}
 							</div>
 							<div
 								onClick={() => {
@@ -284,6 +295,8 @@ const MyProfile = () => {
 									}
 								}}
 								className={`inline-flex items-center justify-center w-12 h-12 p-3 overflow-hidden rounded-full border border-white bg-white cursor-pointer`}>
+								<img src={camera} alt='' className='h-6 cursor-pointer' />
+								{/* 
 								<svg aria-hidden='true' xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'>
 									<path
 										stroke='currentColor'
@@ -292,7 +305,7 @@ const MyProfile = () => {
 										strokeWidth='2'
 										d='M4 12.25V1m0 11.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M4 19v-2.25m6-13.5V1m0 2.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M10 19V7.75m6 4.5V1m0 11.25a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5ZM16 19v-2'
 									/>
-								</svg>
+								</svg> */}
 							</div>
 						</div>
 					</div>
@@ -361,7 +374,8 @@ const MyProfile = () => {
 								setIsProfilePictureOpen(false)
 							}}
 							disabled={isImageUploading}>
-							close
+					<img src={close} className='h-6  cursor-pointer' alt="" />
+							
 						</button>
 					</div>
 				</Modal.Header>
@@ -394,7 +408,8 @@ const MyProfile = () => {
 								setIsCoverPictureOpen(false)
 							}}
 							disabled={isImageUploading}>
-							close
+					<img src={close} className='h-6  cursor-pointer' alt="" />
+							
 						</button>
 					</div>
 				</Modal.Header>
@@ -441,7 +456,9 @@ const MyProfile = () => {
 								<div className='mt-4 flex  flex-col gap-4'>
 									<div className='flex items-center gap-2'>
 										<div className='justify-end text-system-primary-accent'>
-											<svg
+											<img src={altmail} alt='' className='h-6 cursor-pointer' />
+
+											{/* <svg
 												className='w-4 h-4 cursor-pointer'
 												aria-hidden='true'
 												xmlns='http://www.w3.org/2000/svg'
@@ -454,13 +471,15 @@ const MyProfile = () => {
 													strokeWidth='2'
 													d='M4 12.25V1m0 11.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M4 19v-2.25m6-13.5V1m0 2.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M10 19V7.75m6 4.5V1m0 11.25a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5ZM16 19v-2'
 												/>
-											</svg>
+											</svg> */}
 										</div>
 										<h4 className='font-medium text-xl text-brand-gray-dim truncate'>{user && user.Email}</h4>
 									</div>
 									<div className='flex items-center gap-2'>
 										<div className='justify-end text-system-primary-accent'>
-											<svg
+											<img src={globe} alt='' className='h-6 cursor-pointer' />
+
+											{/* <svg
 												className='w-4 h-4 cursor-pointer'
 												aria-hidden='true'
 												xmlns='http://www.w3.org/2000/svg'
@@ -473,13 +492,15 @@ const MyProfile = () => {
 													strokeWidth='2'
 													d='M4 12.25V1m0 11.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M4 19v-2.25m6-13.5V1m0 2.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M10 19V7.75m6 4.5V1m0 11.25a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5ZM16 19v-2'
 												/>
-											</svg>
+											</svg> */}
 										</div>
 										<h4 className='font-medium text-xl text-brand-gray-dim truncate'>{user && user.Country}</h4>
 									</div>
 									<div className='flex items-center gap-2'>
 										<div className='justify-end text-system-primary-accent'>
-											<svg
+											<img src={job} alt='' className='h-6 cursor-pointer' />
+
+											{/* <svg
 												className='w-4 h-4 cursor-pointer'
 												aria-hidden='true'
 												xmlns='http://www.w3.org/2000/svg'
@@ -492,13 +513,15 @@ const MyProfile = () => {
 													strokeWidth='2'
 													d='M4 12.25V1m0 11.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M4 19v-2.25m6-13.5V1m0 2.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M10 19V7.75m6 4.5V1m0 11.25a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5ZM16 19v-2'
 												/>
-											</svg>
+											</svg> */}
 										</div>
 										<h4 className='font-medium text-xl text-brand-gray-dim truncate'>{user && user.JobTitle}</h4>
 									</div>
 									<div className='flex items-center gap-2'>
 										<div className='justify-end text-system-primary-accent'>
-											<svg
+											<img src={company} alt='' className='h-6 cursor-pointer' />
+
+											{/* <svg
 												className='w-4 h-4 cursor-pointer'
 												aria-hidden='true'
 												xmlns='http://www.w3.org/2000/svg'
@@ -511,7 +534,7 @@ const MyProfile = () => {
 													strokeWidth='2'
 													d='M4 12.25V1m0 11.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M4 19v-2.25m6-13.5V1m0 2.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M10 19V7.75m6 4.5V1m0 11.25a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5ZM16 19v-2'
 												/>
-											</svg>
+											</svg> */}
 										</div>
 										<h4 className='font-medium text-xl text-brand-gray-dim truncate'>{user && user.CompanyName}</h4>
 									</div>

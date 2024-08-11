@@ -4,6 +4,7 @@ import Modal from '../ui/Modal'
 import Button from '../ui/Button'
 import { useToast } from '../Toast/ToastService'
 import Spinner from '../ui/Spinner'
+import close from '../../assets/icons/close.svg'
 
 const ActivityDropdown = ({ activity, onSaveClicked, onRemoveClicked, isSaving }) => {
 	const [isOpen, setIsOpen] = useState(false)
@@ -86,7 +87,8 @@ const ActivityDropdown = ({ activity, onSaveClicked, onRemoveClicked, isSaving }
 						onClick={() => {
 							setIsModalOpen(false)
 						}}>
-						close
+							<img src={close} className='h-6  cursor-pointer' alt="" />
+						
 					</button>
 				</Modal.Header>
 				<Modal.Body>

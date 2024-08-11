@@ -10,6 +10,8 @@ import { postItem } from '../constants/operations'
 import { loginValidation } from '../utils/schema/loginValidation'
 import { useToast } from '../components/Toast/ToastService'
 import Select from '../components/ui/Select'
+import eyeon from '../assets/icons/eyeon.svg'
+import eyeoff from '../assets/icons/eyeoff.svg'
 
 const logoText = {
 	fontSize: '1.7rem',
@@ -23,7 +25,6 @@ const branding = {
 	alignItems: 'center',
 	marginBottom: 20,
 }
-
 
 const LogIn = () => {
 	const navigate = useNavigate()
@@ -143,7 +144,13 @@ const LogIn = () => {
 						value={loginFormValue.Password}
 						type={showpass ? 'text' : 'password'}
 						withIcon='true'
-						icon={showpass ? 'on' : 'off'}
+						icon={
+							showpass ? (
+								<img src={eyeon} className='h-6 cursor-pointer' />
+							) : (
+								<img src={eyeoff} className='h-6 cursor-pointer' />
+							)
+						}
 						iconpos='right'
 						iconClick={() => {
 							setShowpass((prev) => !prev)
@@ -151,7 +158,6 @@ const LogIn = () => {
 					/>
 					{errorObj['Password'] != undefined && <p className='text-brand-red m-0'>{errorObj['Password']}</p>}
 				</div>
-
 
 				<div className='mt-4'>
 					<Button

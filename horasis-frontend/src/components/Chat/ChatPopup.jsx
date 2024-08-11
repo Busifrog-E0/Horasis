@@ -3,7 +3,7 @@ import { useChatPopup } from '../../context/ChatPopup/ChatPopupService'
 import ChatView from './ChatView'
 import NewChatView from './NewChatView'
 import { useLocation } from 'react-router-dom'
-
+import close from '../../assets/icons/closewhite.svg'
 const ChatPopup = () => {
 	const { userIds, removeUser } = useChatPopup()
 	const location = useLocation()
@@ -83,7 +83,8 @@ const SingleChat = ({ chat, removeUser,toggleMinimize,isMinimized }) => {
 						{isMinimized ? 'expand' : 'minimize'}
 					</p>
 					<p className='text-system-secondary-bg' onClick={() => removeUser(chat,chatToRemove)}>
-						close
+					<img src={close} className='h-6  cursor-pointer' alt="" />
+						
 					</p>
 				</div>
 			</div>

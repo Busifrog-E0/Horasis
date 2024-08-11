@@ -10,6 +10,8 @@ import { updateValidation } from '../../utils/schema/users/updateValidation'
 import { useToast } from '../Toast/ToastService'
 import countries from '../../assets/json/countries-with-coords.json'
 import Select from '../ui/Select'
+import edit from '../../assets/icons/edit.svg'
+import close  from '../../assets/icons/close.svg'
 const AboutProfile = ({ user, getUserDetails, isCurrentUser }) => {
 	const [isOpen, setIsOpen] = useState(false)
 	const [errorObj, setErrorObj] = useState({})
@@ -117,7 +119,8 @@ const AboutProfile = ({ user, getUserDetails, isCurrentUser }) => {
 						onClick={() => {
 							setIsOpen(false)
 						}}>
-						close
+					<img src={close} className='h-6  cursor-pointer' alt="" />
+						
 					</button>
 				</Modal.Header>
 				<Modal.Body padding={20}>
@@ -281,7 +284,8 @@ const AboutProfile = ({ user, getUserDetails, isCurrentUser }) => {
 			<div className='bg-system-secondary-bg p-4 lg:px-10 lg:py-8 rounded-b-lg '>
 				{isCurrentUser ? (
 					<div className='flex w-full items-start justify-end text-system-primary-text'>
-						<svg
+						<img src={edit} alt="" className='h-6 cursor-pointer' onClick={()=>setIsOpen(true)} />
+						{/* <svg
 							className='w-6 h-6 cursor-pointer'
 							aria-hidden='true'
 							xmlns='http://www.w3.org/2000/svg'
@@ -297,7 +301,7 @@ const AboutProfile = ({ user, getUserDetails, isCurrentUser }) => {
 								strokeWidth='2'
 								d='M4 12.25V1m0 11.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M4 19v-2.25m6-13.5V1m0 2.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M10 19V7.75m6 4.5V1m0 11.25a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5ZM16 19v-2'
 							/>
-						</svg>
+						</svg> */}
 					</div>
 				) : (
 					<></>

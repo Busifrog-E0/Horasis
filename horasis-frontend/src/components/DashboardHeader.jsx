@@ -4,6 +4,7 @@ import Logo from './Common/Logo'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import ChatList from './Chat/ChatList'
 import AlertList from './Alert/AlertList'
+import logoutIcon from '../assets/icons/logout.svg'
 
 const DashboardHeader = () => {
 	const { logout, currentUserData, scrollToTop } = useContext(AuthContext)
@@ -98,12 +99,12 @@ const DashboardHeader = () => {
             Search
           </button> */}
 					<ChatList />
-          <AlertList />
+					<AlertList />
 					<button
 						type='button'
 						className='inline-flex justify-center rounded-md border-none bg-system-secondary-bg text-md px-0 font-medium text-brand-red'
 						onClick={logout}>
-						Logout
+						<img src={logoutIcon} alt='' className='h-7' />
 					</button>
 				</div>
 			</div>

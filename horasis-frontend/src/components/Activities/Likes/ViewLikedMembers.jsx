@@ -8,6 +8,7 @@ import Modal from "../../ui/Modal"
 import MembersSection from "../../Connections/MembersSection"
 import Spinner from "../../ui/Spinner"
 import EmptyMembers from "../../Common/EmptyMembers"
+import close from '../../../assets/icons/close.svg'
 
 const ViewLikedMembers = ({ activity,timeSize='text-md' }) => {
     const { updateCurrentUser, currentUserData } = useContext(AuthContext)
@@ -101,7 +102,8 @@ const ViewLikedMembers = ({ activity,timeSize='text-md' }) => {
                             setIsModalOpen(false)
                         }}
                     >
-                        close
+							<img src={close} className='h-6  cursor-pointer' alt="" />
+                        
                     </button>
                 </Modal.Header>
                 <Modal.Body >

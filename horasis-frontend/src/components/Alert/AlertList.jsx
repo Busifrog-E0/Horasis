@@ -9,6 +9,7 @@ import { jsonToQuery } from '../../utils/searchParams/extractSearchParams'
 import { getNextId } from '../../utils/URLParams'
 import Spinner from '../ui/Spinner'
 import EmptyMembers from '../Common/EmptyMembers'
+import notification from '../../assets/icons/notification.svg'
 
 const AlertList = () => {
 	const [isOpen, setIsOpen] = useState(false)
@@ -137,7 +138,8 @@ const AlertList = () => {
 					type='button'
 					className='inline-flex justify-center rounded-md border-none bg-system-secondary-bg text-md px-0 font-medium text-brand-gray-dim'
 					onClick={() => setIsOpen(!isOpen)}>
-					Notifications
+					<img src={notification} alt="" className='h-7' />
+
 				</button>
 				{isOpen && (
 					<div className='overflow-hidden origin-top-right absolute z-[999] right-0 mt-2 w-80 lg:w-96 rounded-md shadow-lg bg-system-secondary-bg ring-1 ring-black ring-opacity-5'>

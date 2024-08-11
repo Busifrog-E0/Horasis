@@ -1,5 +1,7 @@
 import MentionedActivities from '../components/Activities/Mentions/MentionedActivities'
+import MentionedTab from '../components/Activities/Mentions/MentionedTab'
 import SavedActivities from '../components/Activities/Saved/SavedActivities'
+import SavedActivityTab from '../components/Activities/Saved/SavedActivityTab'
 import EmptyMembers from '../components/Common/EmptyMembers'
 import SuggestionsSection from '../components/Connections/SuggestionsSection'
 import TodaysEventTab from '../components/Events/TodaysEventTab'
@@ -25,13 +27,14 @@ const SuggestionsPage = () => {
 						{/* <SavedActivities gapBnTabs="gap-3" classNameForPost='p-5 pr-10 ' header="All Updates" /> */}
 					</div>
 					<div>
-						<div className='p-5 bg-system-secondary-bg rounded-lg'>
+						{/* <div className='p-5 bg-system-secondary-bg rounded-lg'>
 							<div className='flex items-center justify-between gap-2 mb-5'>
 								<h4 className='font-medium text-2xl text-system-primary-text'>Events</h4>
-								{/* arrow cursor-pointer */}
 							</div>
 							<EmptyMembers emptyText={'No events'} />
-						</div>
+						</div> */}
+						<SavedActivityTab />
+						<MentionedTab />
 					</div>
 				</div>
 			</div>

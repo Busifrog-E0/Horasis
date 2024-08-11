@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import ToastContext from './ToastService'
+import closeIcon from '../../assets/icons/close.svg'
 
 const ToastProvider = ({ children }) => {
 	const [toasts, setToasts] = useState([])
@@ -28,7 +29,7 @@ const ToastProvider = ({ children }) => {
 									<button
 										onClick={() => close(id)}
 										className='absolute top-2 right-2 p-1 rounded-lg bg-red-200/20 text-red-800/60'>
-										close
+										<img src={closeIcon} className='h-6  cursor-pointer' alt='' />
 									</button>
 									<div
 										className={`flex w-full max-w-[400px] gap-2 bg-red-100 text-red-500 border border-red-500 p-4 rounded-lg shadow-lg`}>
@@ -44,7 +45,7 @@ const ToastProvider = ({ children }) => {
 									<button
 										onClick={() => close(id)}
 										className='absolute top-2 right-2 p-1 rounded-lg bg-blue-200/20 text-blue-800/60'>
-										close
+										<img src={closeIcon} className='h-6  cursor-pointer' alt='' />
 									</button>
 									<div
 										className={`flex min-w-[400px] gap-2 bg-blue-100 text-blue-500 border border-blue-500 p-4 rounded-lg shadow-lg`}>
@@ -60,7 +61,7 @@ const ToastProvider = ({ children }) => {
 									<button
 										onClick={() => close(id)}
 										className='absolute top-2 right-2 p-1 rounded-lg bg-green-200/20 text-green-800/60'>
-										close
+										<img src={closeIcon} className='h-6  cursor-pointer' alt='' />
 									</button>
 									<div
 										className={`flex min-w-[400px] gap-2 bg-green-100 text-green-700 border border-green-500 p-4 rounded-lg shadow-lg`}>
@@ -76,7 +77,7 @@ const ToastProvider = ({ children }) => {
 									<button
 										onClick={() => close(id)}
 										className='absolute top-2 right-2 p-1 rounded-lg bg-yellow-200/20 text-yellow-800/60'>
-										close
+										<img src={closeIcon} className='h-6  cursor-pointer' alt='' />
 									</button>
 									<div
 										className={`flex min-w-[400px] gap-2 bg-yellow-100 text-yellow-700 border border-yellow-500 p-4 rounded-lg shadow-lg`}>

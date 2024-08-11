@@ -8,6 +8,7 @@ import { getNextId } from '../../utils/URLParams'
 import { useToast } from '../Toast/ToastService'
 import { getItem } from '../../constants/operations'
 import Input from '../../components/ui/Input'
+import mail from '../../assets/icons/mail.svg'
 
 const ChatList = () => {
 	const [isOpen, setIsOpen] = useState(false)
@@ -133,7 +134,8 @@ const ChatList = () => {
 							setBadge(false)
 							setIsOpen((prev) => !prev)
 						}}>
-						Chat
+						
+					<img src={mail} alt="" className='h-7' />
 					</button>
 					<span
 						className={`${
