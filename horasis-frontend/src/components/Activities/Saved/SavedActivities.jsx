@@ -8,7 +8,7 @@ import Spinner from "../../ui/Spinner"
 import ActivityListComponent from "../ActivityListComponent"
 import EmptyMembers from "../../Common/EmptyMembers"
 
-const MentionedActivities = ({ gapBnTabs = "", bordered = false, header, classNameForPost = "" }) => {
+const SavedActivities = ({ gapBnTabs = "", bordered = false, header, classNameForPost = "" }) => {
 
     const { updateCurrentUser, currentUserData } = useContext(AuthContext)
     const toast = useToast()
@@ -41,7 +41,7 @@ const MentionedActivities = ({ gapBnTabs = "", bordered = false, header, classNa
     }
 
     const getAllActivities = (tempActivites) => {
-        getData(`user/${currentUserData.CurrentUser.UserId}/mentions/activities?&${jsonToQuery(filters)}`, tempActivites, setActivitiesData)
+        getData(`user/${currentUserData.CurrentUser.UserId}/activities/save?&${jsonToQuery(filters)}`, tempActivites, setActivitiesData)
     }
     const getData = (endpoint, tempData, setData) => {
         setLoadingCom(tempData, true)
@@ -64,6 +64,7 @@ const MentionedActivities = ({ gapBnTabs = "", bordered = false, header, classNa
         getItem(
             `${endpoint}?NextId=${getNextId(tempData)}&${jsonToQuery({ ...filters, Limit: 1 })}`,
             (data) => {
+              console.log(data)
                 if (data?.length > 0) {
                     setPageDisabled(false)
                 } else {
@@ -88,7 +89,7 @@ const MentionedActivities = ({ gapBnTabs = "", bordered = false, header, classNa
     const fetchMore = () => fetchData(false)
 
     useEffect(() => {
-        if (activitiesData.length > 0) hasAnyLeft(`user/${currentUserData.CurrentUser.UserId}/mentions/activities`, activitiesData)
+        if (activitiesData.length > 0) hasAnyLeft(`user/${currentUserData.CurrentUser.UserId}/activities/save`, activitiesData)
     }, [activitiesData])
 
     useEffect(() => {
@@ -97,7 +98,7 @@ const MentionedActivities = ({ gapBnTabs = "", bordered = false, header, classNa
 
     return (
         <div>
-            {header && <h4 className='font-medium text-2xl text-system-primary-text mb-4'>All mentioned activities</h4>}
+            {header && <h4 className='font-medium text-2xl text-system-primary-text mb-4'>All saved activties</h4>}
 
             {
                 isLoading ?
@@ -126,10 +127,10 @@ const MentionedActivities = ({ gapBnTabs = "", bordered = false, header, classNa
                                 )}
                         </>
                         :
-                        <EmptyMembers emptyText={"No mentioned activities."} />
+                        <EmptyMembers emptyText={"No saved posts."} />
             }
         </div>
     )
 }
 
-export default MentionedActivities
+export default SavedActivities

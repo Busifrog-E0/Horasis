@@ -7,8 +7,11 @@ import { getItem } from '../../../constants/operations'
 import Spinner from '../../ui/Spinner'
 import ActivityListComponent from '../ActivityListComponent'
 import EmptyMembers from '../../Common/EmptyMembers'
+import arrowfor from  '../../../assets/icons/arrowfor.svg'
+import { useNavigate } from 'react-router-dom'
 
 const MentionedTab = ({ bordered = false }) => {
+	const  navigate =useNavigate()
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
 	const toast = useToast()
 	const [isLoading, setIsLoading] = useState(true)
@@ -97,7 +100,8 @@ const MentionedTab = ({ bordered = false }) => {
 		<div className='p-5 bg-system-secondary-bg rounded-lg mt-3 lg:mt-5'>
 			<div className='flex items-center justify-between gap-2 mb-5'>
 				<h4 className='font-medium text-2xl text-system-primary-text'>Mentions</h4>
-				{/* arrow cursor-pointer */}
+					<img src={arrowfor} alt='' className='h-6 w-6 cursor-pointer' onClick={()=>navigate('/Mentions')} />
+					{/* arrow cursor-pointer */}
 			</div>
 			<div>
 				{/* {header && <h4 className='font-medium text-2xl text-system-primary-text mb-4'>All Mentions</h4>} */}
