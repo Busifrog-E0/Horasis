@@ -20,6 +20,10 @@ const ActivityCommentReplyList = ({
 	pageDisabled,
 	fetchMore,
 	setIsLoading,
+	timeSize,
+	titleSize,
+	iconSize,
+	descriptionSize,
 }) => {
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
 	const toast = useToast()
@@ -121,6 +125,7 @@ const ActivityCommentReplyList = ({
 								handleContentChange={(e) => validateSingle({ Content: e }, 'Content')}
 								newPost={newReply}
 								from='reply'
+								descriptionSize={descriptionSize}
 							/>
 					{isLoading ? (
 						<Spinner />
@@ -143,7 +148,12 @@ const ActivityCommentReplyList = ({
 				)}
 			<div className='flex items-center  justify-between mt-4 flex-col gap-1 w-full'>
 				{replies.map((item) => (
-					<ActivityCommentReply key={item.DocId} reply={item} />
+					<ActivityCommentReply key={item.DocId} reply={item} 
+					timeSize={timeSize}
+					titleSize={titleSize}
+					iconSize={iconSize}
+					descriptionSize={descriptionSize}
+					/>
 				))}
 			</div>
 			{isLoadingMore && (

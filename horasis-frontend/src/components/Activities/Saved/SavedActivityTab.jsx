@@ -107,14 +107,16 @@ const SavedActivityTab = () => {
                         <ActivityListComponent
                             onSaveRemoveCallback={fetch}
                             ShowImage={false}
-                            className={`p-5 bg-system-secondary-bg rounded-lg border border-system-file-border relative`}
+                            className={`p-4 bg-system-secondary-bg rounded-lg border border-system-file-border relative`}
                             avatarSize='w-10 h-10'
-                            titleSize="text-md"
-                            descriptionSize="text-sm"
+                            titleSize="text-sm"
+                            descriptionSize="text-xs"
                             onDelete={onDelete}
                             gapBnTabs={'gap-3'}
                             bordered={true}
                             activitiesData={activitiesData}
+                            timeSize='text-xs'
+                            iconSize={'4'}
                         />
                         {/* <EmptyMembers emptyText={`${activitiesData.length} saved posts. But some error occured!`} /> */}
                     </>

@@ -109,13 +109,16 @@ const MentionedTab = ({ bordered = false }) => {
 						<ActivityListComponent
 							ShowImage={false}
 							className={`relative`}
-							avatarSize='w-10 h-10'
+							avatarSize='w-8 h-8'
 							onDelete={onDelete}
-							gapBnTabs={'gap-8'}
-							descriptionSize="text-base"
+							gapBnTabs={'gap-3'}
+							titleSize='text-base'
+							descriptionSize="text-sm"
 							bordered={bordered}
 							activitiesData={activitiesData}
 							border={true}
+							iconSize={'4'}
+							timeSize={'text-xs'}
 						/>
 					</>
 				) : (

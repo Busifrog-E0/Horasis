@@ -9,7 +9,7 @@ import MembersSection from "../../Connections/MembersSection"
 import Spinner from "../../ui/Spinner"
 import EmptyMembers from "../../Common/EmptyMembers"
 
-const ViewLikedMembers = ({ activity }) => {
+const ViewLikedMembers = ({ activity,timeSize='text-md' }) => {
     const { updateCurrentUser, currentUserData } = useContext(AuthContext)
     const toast = useToast()
     const [isLoading, setIsLoading] = useState(false)
@@ -128,7 +128,7 @@ const ViewLikedMembers = ({ activity }) => {
                     </div>
                 </Modal.Body>
             </Modal>
-            <p className='text-brand-gray-dim mt-1 cursor-pointer hover:underline' onClick={openMembersList}>{activity.NoOfLikes} likes</p>
+            <p className={`${timeSize} text-brand-gray-dim mt-1 cursor-pointer hover:underline `}onClick={openMembersList}>{activity.NoOfLikes} likes</p>
         </>
     )
 }

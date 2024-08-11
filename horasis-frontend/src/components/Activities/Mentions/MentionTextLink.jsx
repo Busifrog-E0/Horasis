@@ -17,7 +17,7 @@ const MentionTextLink = ({ descriptionSize='text-md', singleActivity }) => {
 						<a
 							key={index}
 							onClick={() => navigate(`/ViewProfile/${mention.UserId}`)}
-							className={`text-system-primary-accent cursor-pointer ${descriptionSize}`}>
+							className={`text-system-primary-accent-transparent cursor-pointer bg-system-primary-accent-light px-1 rounded-md hover:text-system-primary-accent ${descriptionSize}`}>
 							{mention.FullName}
 						</a>
 					)

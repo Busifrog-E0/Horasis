@@ -12,6 +12,7 @@ const ActivityListComponent = ({
 	avatarSize,
 	border = false,
 	ShowImage = true,
+	iconSize,timeSize,
 	onSaveRemoveCallback = () => { }
 }) => {
 	return (
@@ -28,6 +29,8 @@ const ActivityListComponent = ({
 					bordered={bordered}
 					key={activity.DocId}
 					activity={activity}
+					iconSize={iconSize}
+					timeSize={timeSize}
 				/>
 			))}
 		</div>

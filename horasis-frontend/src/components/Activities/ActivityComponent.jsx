@@ -25,7 +25,9 @@ const ActivityComponent = ({
 	className,
 	avatarSize,
 	descriptionSize,
+	timeSize='text-base',
 	ShowImage = true,
+	iconSize='6',
 	onSaveRemoveCallback = () => { }
 }) => {
 	const [showComment, setShowComment] = useState(false)
@@ -278,7 +280,7 @@ const ActivityComponent = ({
 								</h1>
 								{/* <h4 className='text-system-primary-text text-md'>Updated their photo</h4> */}
 							</div>
-							<h4 className={`font-medium text-base text-brand-gray-dim`}>
+							<h4 className={`font-medium ${timeSize} text-brand-gray-dim`}>
 								{relativeTime(singleActivity.CreatedIndex)}
 							</h4>
 						</div>
@@ -312,16 +314,16 @@ const ActivityComponent = ({
 						) : (
 							<div className='flex items-center gap-2'>
 								{singleActivity.HasLiked ? (
-									<img src={liked} className='h-6 w-6 cursor-pointer text-system-error' onClick={onUnLikeBtnClicked} />
+									<img src={liked} className={`h-${iconSize} w-${iconSize} cursor-pointer text-system-error`} onClick={onUnLikeBtnClicked} />
 								) : (
-									<img src={like} className='h-6 w-6 cursor-pointer' onClick={onLikeBtnClicked} />
+									<img src={like} className={`h-${iconSize} w-${iconSize} cursor-pointer`} onClick={onLikeBtnClicked} />
 								)}
-								<ViewLikedMembers activity={singleActivity} />
+								<ViewLikedMembers activity={singleActivity} timeSize={timeSize} />
 							</div>
 						)}
 						<div className='flex items-center gap-2 cursor-pointer' onClick={() => setShowComment((prev) => !prev)}>
-							<img src={reply} className='h-6 w-6' />
-							<p className='text-brand-gray-dim mt-1'>{singleActivity.NoOfComments} replies</p>
+							<img src={reply} className={`h-${iconSize} w-${iconSize} `}/>
+							<p className={`text-brand-gray-dim mt-1 ${timeSize}`}>{singleActivity.NoOfComments} replies</p>
 						</div>
 						{/* {isDeleting ? (
 							<Spinner />
@@ -349,6 +351,10 @@ const ActivityComponent = ({
 						pageDisabled={pageDisabled}
 						fetchMore={fetchMore}
 						setIsLoading={setIsLoading}
+						timeSize={timeSize}
+						titleSize={titleSize}
+						iconSize={iconSize}
+						descriptionSize={descriptionSize}
 					/>
 				)}
 			</div>

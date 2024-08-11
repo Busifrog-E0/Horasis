@@ -12,7 +12,16 @@ import Spinner from '../../ui/Spinner'
 import ActivityCommentReplyList from './ActivityCommentReplyList'
 import MentionTextLink from '../Mentions/MentionTextLink'
 
-const ActivityComment = ({ comment, activity, commentId, getSingleActivity }) => {
+const ActivityComment = ({
+	comment,
+	activity,
+	commentId,
+	getSingleActivity,
+	timeSize,
+	titleSize,
+	iconSize,
+	descriptionSize,
+}) => {
 	const { currentUserData, updateCurrentUser } = useContext(AuthContext)
 	const toast = useToast()
 	const [showReplies, setShowReplies] = useState(false)
@@ -123,7 +132,11 @@ const ActivityComment = ({ comment, activity, commentId, getSingleActivity }) =>
 			<div className='flex items-start gap-2 bg-system-secondary-bg w-full p-4 rounded-lg'>
 				{comment?.UserDetails?.ProfilePicture ? (
 					<>
-						<img className='w-8 h-8 rounded-full object-cover' src={comment?.UserDetails?.ProfilePicture} alt='Rounded avatar' />
+						<img
+							className='w-8 h-8 rounded-full object-cover'
+							src={comment?.UserDetails?.ProfilePicture}
+							alt='Rounded avatar'
+						/>
 					</>
 				) : (
 					<>
@@ -134,18 +147,18 @@ const ActivityComment = ({ comment, activity, commentId, getSingleActivity }) =>
 				<div className='flex-1'>
 					<div className='flex items-start justify-between gap-10'>
 						<div className='flex  flex-col gap-2'>
-							<h4 className='font-semibold text-md text-system-primary-accent mt-1'>
+							<h4 className={`font-semibold ${titleSize?titleSize:'text-md'} text-system-primary-accent mt-1`}>
 								{comment?.UserDetails?.FullName}
 							</h4>
 							{/* <h4 className='text-system-primary-text text-md'>{comment?.Content}</h4> */}
-							<MentionTextLink singleActivity={comment} />
+							<MentionTextLink singleActivity={comment} descriptionSize={descriptionSize} />
 
 							<div className='flex items-center gap-2 cursor-pointer' onClick={() => setShowReplies((prev) => !prev)}>
 								{/* <img src={reply} className='h-6 w-6' /> */}
-								<p className='text-brand-gray-dim mt-1'>{singleComment.NoOfReplies} replies</p>
+								<p className={`${timeSize} text-brand-gray-dim mt-1`}>{singleComment.NoOfReplies} replies</p>
 							</div>
 						</div>
-						<h4 className='font-medium text-base text-brand-gray-dim'>{relativeTime(comment.CreatedIndex)}</h4>
+						<h4 className={`font-medium ${timeSize?timeSize:'text-md'} text-brand-gray-dim`}>{relativeTime(comment.CreatedIndex)}</h4>
 					</div>
 				</div>
 			</div>
@@ -162,6 +175,10 @@ const ActivityComment = ({ comment, activity, commentId, getSingleActivity }) =>
 					pageDisabled={pageDisabled}
 					fetchMore={fetchMore}
 					setIsLoading={setIsLoading}
+					timeSize={timeSize}
+					titleSize={titleSize}
+					iconSize={iconSize}
+					descriptionSize={descriptionSize}
 				/>
 			)}
 		</div>

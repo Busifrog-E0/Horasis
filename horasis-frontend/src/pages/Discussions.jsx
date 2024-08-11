@@ -8,6 +8,7 @@ import { AuthContext } from "../utils/AuthProvider"
 import DiscussionsList from "../components/Discussions/DiscussionsList"
 import DiscussionSection from "../components/Discussions/DiscussionSection"
 import SavedDiscussionTab from "../components/Discussions/Saved/SavedDiscussionTab"
+import SavedActivityTab from "../components/Activities/Saved/SavedActivityTab"
 
 const Discussions = () => {
     const { currentUserData, scrollToTop } = useContext(AuthContext)
@@ -37,7 +38,8 @@ const Discussions = () => {
                     >
                         Create Discussion
                     </Button>
-                    <SavedDiscussionTab bordered={true} />
+                    {/* <SavedDiscussionTab bordered={true} /> */}
+                    <SavedActivityTab/>
                 </div>
             </div>
         </div>

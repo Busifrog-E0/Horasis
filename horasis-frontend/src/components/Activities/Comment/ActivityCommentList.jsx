@@ -18,6 +18,10 @@ const ActivityCommentList = ({
 	pageDisabled,
 	fetchMore,
 	setIsLoading,
+	timeSize,
+	titleSize,
+	descriptionSize,
+	iconSize,
 }) => {
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
 	const toast = useToast()
@@ -111,13 +115,13 @@ const ActivityCommentList = ({
 						value={newComment.Content}
 						onChange={(e) => validateSingle({ Content: e.target.value }, 'Content')}
 					/> */}
-						<MentionTextarea
-								errorOj={errorOj}
-								user={user}
-								handleContentChange={(e) => validateSingle({ Content: e }, 'Content')}
-								newPost={newComment}
-								from='comment'
-							/>
+					<MentionTextarea
+						errorOj={errorOj}
+						user={user}
+						handleContentChange={(e) => validateSingle({ Content: e }, 'Content')}
+						newPost={newComment}
+						from='comment'
+					/>
 					{isLoading ? (
 						<Spinner />
 					) : (
@@ -138,7 +142,16 @@ const ActivityCommentList = ({
 			)}
 			<div className='flex items-center  justify-between mt-4 flex-col gap-1 w-full max-h-80 overflow-y-auto'>
 				{comments.map((item) => (
-					<ActivityComment key={item.DocId} comment={item} activity={activity} getSingleActivity={getSingleActivity} />
+					<ActivityComment
+						key={item.DocId}
+						comment={item}
+						activity={activity}
+						getSingleActivity={getSingleActivity}
+						timeSize={timeSize}
+						titleSize={titleSize}
+						iconSize={iconSize}
+						descriptionSize={descriptionSize}
+					/>
 				))}
 			</div>
 			{isLoadingMore && (
