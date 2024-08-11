@@ -8,6 +8,7 @@ const HomeHeader = () => {
 	const navigate = useNavigate()
 	const handleNavigate = () => navigate('/')
 	const handleLoginNavigate = () => navigate('/login')
+	const handleNavigateDiscussions = () => (currentUserData ? navigate('/Discussions') : navigate('/login'))
 
 	return (
 		<div className='flex items-center justify-center bg-system-primary-accent-transparent  px-4 sm:px-8 md:px-16 lg:px-20 py-4'>
@@ -17,15 +18,19 @@ const HomeHeader = () => {
 				</div>
 				<div className='hidden md:flex gap-10 items-center justify-between'>
 					<nav className='flex text-system-secondary-bg gap-10'>
-						<p className='text-md font-medium'>Events</p>
-						<p className='text-md font-medium'>Discussions</p>
-						{/* <p className='text-md font-medium'>Insight</p> */}
-						<p className='text-md font-medium'>Contact</p>
+						<p className='text-md font-medium cursor-pointer'>Events</p>
+						<p className='text-md font-medium cursor-pointer' onClick={handleNavigateDiscussions}>
+							Discussions
+						</p>
+						{/* <p className='text-md font-medium cursor-pointer'>Insight</p> */}
+						<p className='text-md font-medium cursor-pointer'>Contact</p>
 					</nav>
 					{currentUserData ? (
 						<>
 							<div>
-								<button className='text-system-secondary-bg py-1 px-4 border-2 rounded-full font-medium' onClick={handleNavigate}>
+								<button
+									className='text-system-secondary-bg py-1 px-4 border-2 rounded-full font-medium'
+									onClick={handleNavigate}>
 									View Activities
 								</button>
 							</div>
@@ -47,7 +52,9 @@ const HomeHeader = () => {
 						<>
 							{' '}
 							<div>
-								<button className='text-system-secondary-bg py-1 px-4 border-2 font-medium rounded-full' onClick={handleNavigate}>
+								<button
+									className='text-system-secondary-bg py-1 px-4 border-2 font-medium rounded-full'
+									onClick={handleNavigate}>
 									View Activities
 								</button>
 							</div>
