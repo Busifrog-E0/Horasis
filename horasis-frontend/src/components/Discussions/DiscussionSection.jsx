@@ -8,6 +8,7 @@ import Spinner from '../ui/Spinner'
 import EmptyMembers from '../Common/EmptyMembers'
 import TabItem from '../ui/TabItem'
 import DiscussionsList from './DiscussionsList'
+import SearchComponent from '../Search/SearchBox/SearchComponent'
 
 const DiscussionSection = () => {
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
@@ -119,9 +120,14 @@ const DiscussionSection = () => {
 
 	return (
 		<>
-			<div className='flex-1 rounded-md p-2 px-4 border border-system-file-border flex items-center justify-between bg-system-secondary-bg'>
+			{/* <div className='flex-1 rounded-md p-2 px-4 border border-system-file-border flex items-center justify-between bg-system-secondary-bg'>
 				<h4 className='font-medium text-lg text-brand-gray-dim italic '>Search Discussions</h4>
-			</div>
+			</div> */}
+			<SearchComponent
+				searchKey={filters.Keyword}
+				setSearchKey={(value)=>setFilters({...filters,Keyword:value})}
+				placeholder='Search Discussions'
+			/>
 			<h4 className='font-bold text-2xl text-system-primary-accent mt-4 mb-2'>Community Discussions</h4>
 			<h4 className=' text-base text-system-primary-text mb-2'>
 				Find answers, ask questions, and connect with our community around the world.
