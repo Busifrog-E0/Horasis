@@ -22,15 +22,7 @@ const Connections = () => {
 						<ConnectionSection />
 					</div>
 					<div>
-						<div className='p-5 bg-system-secondary-bg rounded-lg'>
-							<div className='flex items-center justify-between gap-2 mb-5'>
-								<h4 className='font-medium text-2xl text-system-primary-text'>Suggestions</h4>
-								{/* arrow cursor-pointer */}
-							</div>
-							<div className='flex flex-col gap-4'>
-								<SuggestionsSection />
-							</div>
-						</div>
+						<SuggestionsSection />
 					</div>
 				</div>
 			</div>

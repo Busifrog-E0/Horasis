@@ -25,12 +25,12 @@ const MemberSuggestionTab = ({ lastElement, profile, updateList }) => {
 			<div className={`${lastElement === true ? '' : 'border-b border-system-file-border pb-3'}`}>
 				<div className='flex items-start gap-4'>
 					{profile.ProfilePicture ? (
-						<div className='w-16 h-16 rounded-full bg-black'>
-							<img className='w-16 h-16 rounded-full object-cover' src={profile.ProfilePicture} alt='Rounded avatar' />
+						<div className='w-10 h-10 rounded-full bg-black'>
+							<img className='w-10 h-10 rounded-full object-cover' src={profile.ProfilePicture} alt='Rounded avatar' />
 						</div>
 					) : (
 						<>
-							<div className='w-16 h-16 rounded-full bg-brand-light-gray'>
+							<div className='w-10 h-10 rounded-full bg-brand-light-gray'>
 								<img src={avatar} className='object-cover h-full w-full rounded-lg' />
 							</div>
 						</>
@@ -43,19 +43,19 @@ const MemberSuggestionTab = ({ lastElement, profile, updateList }) => {
 
 					<div className='flex-1'>
 						<h4
-							className='font-semibold text-system-primary-text cursor-pointer'
+							className='font-semibold text-system-primary-text cursor-pointer text-base'
 							onClick={() => {
 								goToProfile()
 							}}>
 							{profile && profile.FullName}
 						</h4>
-						<h4 className='font-medium text-sm text-brand-gray-dim mb-2'>
-							@{profile && profile.Username}, {profile && profile.JobTitle} {profile && profile.Country}
+						<h4 className='font-medium text-xs leading-relaxed text-brand-gray-dim mb-2'>
+							@{profile && profile.Username}, {profile && profile.JobTitle}, {profile && profile.Country}
 						</h4>
 					</div>
 					{loading ? (
-						<Button variant='outline'>
-							<Spinner />
+						<Button variant='outline' className='text-sm py-2 px-4'>
+							<Spinner size={'4'} />
 						</Button>
 					) : (
 						<>
@@ -63,6 +63,7 @@ const MemberSuggestionTab = ({ lastElement, profile, updateList }) => {
 								<>
 									<Button
 										variant='outline'
+										className='text-sm py-2 px-4'
 										onClick={() => {
 											unFollowUser(
 												profile,
@@ -79,6 +80,7 @@ const MemberSuggestionTab = ({ lastElement, profile, updateList }) => {
 								<>
 									<Button
 										variant='outline'
+										className='text-sm py-2 px-4'
 										onClick={() => {
 											followUser(
 												profile,
