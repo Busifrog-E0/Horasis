@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 
-const MentionTextLink = ({ descriptionSize, singleActivity }) => {
+const MentionTextLink = ({ descriptionSize='text-md', singleActivity }) => {
 
 	const mentionPattern = /(?<=\s|^)@([\w.]+)/g
 	function parseContent(singleActivity) {

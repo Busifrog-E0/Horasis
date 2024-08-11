@@ -8,8 +8,9 @@ import { useToast } from '../../Toast/ToastService'
 import { AuthContext } from '../../../utils/AuthProvider'
 import { getNextId } from '../../../utils/URLParams'
 import avatar from '../../../assets/icons/avatar.svg'
+import TextArea from '../../ui/TextArea'
 
-const MentionTextarea = ({ user, newPost, handleContentChange }) => {
+const MentionTextarea = ({ user, newPost, handleContentChange, from = 'activity' }) => {
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
 	const toast = useToast()
 	const [suggestions, setSuggestions] = useState([])
@@ -127,13 +128,33 @@ const MentionTextarea = ({ user, newPost, handleContentChange }) => {
 	}, [mentionName])
 	return (
 		<>
-			<Input
-				setValue={handleInputChange}
-				width={'full'}
-				value={newPost.Content}
-				className='p-0 border-none rounded-none hover:shadow-none'
-				placeholder={`Share what's on your mind, ${user && user?.FullName ? user.FullName : ''}`}
-			/>
+			{from === 'reply' && (
+				<TextArea
+					setValue={handleInputChange}
+					width={'full'}
+					value={newPost.Content}
+					className='p-0 border-none rounded-none hover:shadow-none'
+					placeholder={`Leave a reply`}
+				/>
+			)}
+			{from === 'comment' && (
+				<TextArea
+					setValue={handleInputChange}
+					width={'full'}
+					value={newPost.Content}
+					className='p-0 border-none rounded-none hover:shadow-none'
+					placeholder={`Leave a comment`}
+				/>
+			)}
+			{from === 'activity' && (
+				<Input
+					setValue={handleInputChange}
+					width={'full'}
+					value={newPost.Content}
+					className='p-0 border-none rounded-none hover:shadow-none'
+					placeholder={`Share what's on your mind, ${user && user?.FullName ? user.FullName : ''}`}
+				/>
+			)}
 			<div className='absolute z-40'>
 				{/* {isLoading ? (
 					<Spinner />
@@ -147,7 +168,11 @@ const MentionTextarea = ({ user, newPost, handleContentChange }) => {
 								className='p-1 cursor-pointer hover:bg-brand-backg flex flex-row items-start gap-2'>
 								{user.ProfilePicture ? (
 									<>
-										<img className='w-6 h-6 rounded-full object-cover' src={user?.ProfilePicture} alt='Rounded avatar' />
+										<img
+											className='w-6 h-6 rounded-full object-cover'
+											src={user?.ProfilePicture}
+											alt='Rounded avatar'
+										/>
 									</>
 								) : (
 									<>
@@ -155,11 +180,9 @@ const MentionTextarea = ({ user, newPost, handleContentChange }) => {
 									</>
 								)}
 								<div>
-									<p className='text-sm m-0 font-medium'>	{user.FullName}</p>
-									<p className='text-xs m-0 text-brand-gray'>	{user.Username}</p>
-
+									<p className='text-sm m-0 font-medium'> {user.FullName}</p>
+									<p className='text-xs m-0 text-brand-gray'> {user.Username}</p>
 								</div>
-
 							</div>
 						))}
 					</ul>

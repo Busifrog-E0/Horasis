@@ -10,6 +10,7 @@ import { useToast } from '../../Toast/ToastService'
 import TextArea from '../../ui/TextArea'
 import Spinner from '../../ui/Spinner'
 import ActivityCommentReplyList from './ActivityCommentReplyList'
+import MentionTextLink from '../Mentions/MentionTextLink'
 
 const ActivityComment = ({ comment, activity, commentId, getSingleActivity }) => {
 	const { currentUserData, updateCurrentUser } = useContext(AuthContext)
@@ -136,7 +137,8 @@ const ActivityComment = ({ comment, activity, commentId, getSingleActivity }) =>
 							<h4 className='font-semibold text-md text-system-primary-accent mt-1'>
 								{comment?.UserDetails?.FullName}
 							</h4>
-							<h4 className='text-system-primary-text text-md'>{comment?.Content}</h4>
+							{/* <h4 className='text-system-primary-text text-md'>{comment?.Content}</h4> */}
+							<MentionTextLink singleActivity={comment} />
 
 							<div className='flex items-center gap-2 cursor-pointer' onClick={() => setShowReplies((prev) => !prev)}>
 								{/* <img src={reply} className='h-6 w-6' /> */}

@@ -1,5 +1,6 @@
 import { relativeTime } from '../../../utils/date'
 import avatar from '../../../assets/icons/avatar.svg'
+import MentionTextLink from '../Mentions/MentionTextLink'
 
 const ActivityCommentReply = ({ reply }) => {
 	return (
@@ -18,7 +19,8 @@ const ActivityCommentReply = ({ reply }) => {
 				<div className='flex items-start justify-between gap-10'>
 					<div className='flex  flex-col gap-2'>
 						<h4 className='font-semibold text-md text-system-primary-accent mt-1'>{reply?.UserDetails?.FullName}</h4>
-						<h4 className='text-system-primary-text text-md'>{reply?.Content}</h4>
+						{/* <h4 className='text-system-primary-text text-md'>{reply?.Content}</h4> */}
+						<MentionTextLink singleActivity={reply} />
 					</div>
 					<h4 className='font-medium text-base text-brand-gray-dim'>{relativeTime(reply?.CreatedIndex)}</h4>
 				</div>

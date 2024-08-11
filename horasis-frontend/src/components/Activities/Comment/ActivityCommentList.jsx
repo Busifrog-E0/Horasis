@@ -1,11 +1,12 @@
 import { AuthContext, defaultComment, defaultCommentData } from '../../../utils/AuthProvider'
 import ActivityComment from './ActivityComment'
 import TextArea from '../../ui/TextArea'
-import { postItem } from '../../../constants/operations'
-import { useContext, useState } from 'react'
+import { getItem, postItem } from '../../../constants/operations'
+import { useContext, useEffect, useState } from 'react'
 import { useToast } from '../../Toast/ToastService'
 import Spinner from '../../ui/Spinner'
 import { commentValidation } from '../../../utils/schema/users/commentValidation'
+import MentionTextarea from '../Mentions/MentionTextarea'
 
 const ActivityCommentList = ({
 	activity,
@@ -21,6 +22,7 @@ const ActivityCommentList = ({
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
 	const toast = useToast()
 	const [newComment, setNewComment] = useState(defaultCommentData(currentUserData.CurrentUser.UserId, activity.DocId))
+	const [user, setUser] = useState()
 	const [errorOj, setErrorObj] = useState({})
 	const validate = (callback) => {
 		const { error, warning } = commentValidation.validate(newComment, {
@@ -77,6 +79,24 @@ const ActivityCommentList = ({
 		)
 	}
 
+	const getUserDetails = () => {
+		getItem(
+			`users/${currentUserData.CurrentUser.UserId}`,
+			(result) => {
+				setUser(result)
+			},
+			(err) => {
+				// console.log(err)
+			},
+			updateCurrentUser,
+			currentUserData,
+			toast
+		)
+	}
+	useEffect(() => {
+		getUserDetails()
+	}, [])
+
 	return (
 		<div className='flex items-center justify-between flex-col w-full mt-4'>
 			<div
@@ -84,13 +104,20 @@ const ActivityCommentList = ({
 					Object.values(errorOj).some((error) => error) ? 'border-system-error' : 'border-system-secondary-accent'
 				} bg-system-secondary-bg flex flex-col gap-4 w-full`}>
 				<div className='flex items-start justify-between gap-2'>
-					<TextArea
+					{/* <TextArea
 						width='full'
 						className='p-0 border-none rounded-none hover:shadow-none'
 						placeholder='Leave a comment'
 						value={newComment.Content}
 						onChange={(e) => validateSingle({ Content: e.target.value }, 'Content')}
-					/>
+					/> */}
+						<MentionTextarea
+								errorOj={errorOj}
+								user={user}
+								handleContentChange={(e) => validateSingle({ Content: e }, 'Content')}
+								newPost={newComment}
+								from='comment'
+							/>
 					{isLoading ? (
 						<Spinner />
 					) : (
