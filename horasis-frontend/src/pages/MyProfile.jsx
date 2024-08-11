@@ -21,6 +21,7 @@ import DropdownMenu from '../components/ui/DropdownMenu'
 import VideosTab from '../components/Profile/Tabs/VideosTab'
 import ImagesTab from '../components/Profile/Tabs/ImagesTab'
 import DocumentTab from '../components/Profile/Tabs/DocumentTab'
+import DiscussionsTab from '../components/Profile/Tabs/DiscussionsTab'
 
 const tabs = (user, getUserDetails) => [
 	{
@@ -61,90 +62,13 @@ const tabs = (user, getUserDetails) => [
 		title: 'Photos',
 		render: () => <ImagesTab />,
 	},
-	// {
-	//   key: 6,
-	//   title: 'Discussions',
-	//   render: () => (
-	//     <div className='bg-system-secondary-bg p-4 lg:py-10 lg:px-12 rounded-b-lg '>
-	//       <div className='flex flex-col gap-6'>
-	//         <div className='border-b border-system-file-border pb-6'>
-	//           <div className='flex items-start gap-2'>
-	//             <div className='w-28 h-20 overflow-hidden rounded-lg'>
-	//               <img
-	//                 className='w-full h-full object-cover'
-	//                 src='https://th.bing.com/th/id/OIP.fRpB3M9oOQSmhd5hwcmHtAHaFj?w=216&h=180&c=7&r=0&o=5&pid=1.7'
-	//                 alt='Rounded avatar'
-	//               />
-	//             </div>
-
-	//             <div className='flex-1'>
-	//               <div className='flex items-start justify-between gap-10'>
-	//                 <div>
-	//                   <h4 className='font-semibold text-system-primary-text text-md'>Education</h4>
-	//                   <h4 className='text-brand-gray-dim text-sm mt-1'>
-	//                     joined the Eventorasis Global Meetingjoined the Event Horasis Global
-	//                     Meetingjoined the Event Horasis Global Meetingjoined the Event Horasis
-	//                     Global Meetingjoined the Event Horasis Global Meetingjoined the Event
-	//                     Horasis Global Meetingjoined the Event Horasis Global Meetingjoined the
-	//                     Event Horasis Global Meetingjoined the Event Horasis Global Meetingjoined
-	//                     the Event Horasis Global Meetingjoined the Event Horasis Global
-	//                     Meetingjoined the Event Horasis Global Meetingjoined the Event Horasis
-	//                     Global Meeting
-	//                   </h4>
-	//                 </div>
-	//               </div>
-	//             </div>
-	//             <div className='flex flex-col items-end justify-between gap-6'>
-	//               <h4 className='font-medium text-sm text-brand-gray-dim'>
-	//                 {relativeTime(new Date().getTime())}
-	//               </h4>
-	//               <DropdownMenu />
-	//             </div>
-	//           </div>
-	//         </div>
-	//         <div className='border-b border-system-file-border pb-6'>
-	//           <div className='flex items-start gap-2'>
-	//             <div className='w-28 h-20 overflow-hidden rounded-lg'>
-	//               <img
-	//                 className='w-full h-full object-cover'
-	//                 src='https://th.bing.com/th/id/OIP.CL6wvO0RBhLq7raz1iCn_gHaEK?rs=1&pid=ImgDetMain'
-	//                 alt='Rounded avatar'
-	//               />
-	//             </div>
-
-	//             <div className='flex-1'>
-	//               <div className='flex items-start justify-between gap-10'>
-	//                 <div>
-	//                   <h4 className='font-semibold text-system-primary-text text-md'>
-	//                     health Care
-	//                   </h4>
-	//                   <h4 className='text-brand-gray-dim text-sm mt-1'>
-	//                     joined the Eventorasis Global Meetingjoined the Event Horasis Global
-	//                     Meetingjoined the Event Horasis Global Meetingjoined the Event Horasis
-	//                     Global Meetingjoined the Event Horasis Global Meetingjoined the Event
-	//                     Horasis Global Meetingjoined the Event Horasis Global Meetingjoined the
-	//                     Event Horasis Global Meetingjoined the Event Horasis Global Meetingjoined
-	//                     the Event Horasis Global Meetingjoined the Event Horasis Global
-	//                     Meetingjoined the Event Horasis Global Meetingjoined the Event Horasis
-	//                     Global Meeting
-	//                   </h4>
-	//                 </div>
-	//               </div>
-	//             </div>
-	//             <div className='flex flex-col items-end justify-between gap-6'>
-	//               <h4 className='font-medium text-sm text-brand-gray-dim'>
-	//                 {relativeTime(new Date().getTime())}
-	//               </h4>
-	//               <DropdownMenu />
-	//             </div>
-	//           </div>
-	//         </div>
-	//       </div>
-	//     </div>
-	//   ),
-	// },
 	{
 		key: 5,
+		title: 'Discussions',
+		render: () => <DiscussionsTab />,
+	},
+	{
+		key: 6,
 		title: 'Documents',
 		render: () => <DocumentTab />,
 	},
