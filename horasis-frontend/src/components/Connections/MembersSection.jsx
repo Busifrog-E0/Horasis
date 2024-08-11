@@ -16,7 +16,6 @@ const MembersSection = ({
 	fetchMore,
 	tabName,
 }) => {
-	console.log(pageDisabled)
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
 	const toast = useToast()
 	const [updatingId, setUpdatingId] = useState(null)
@@ -34,7 +33,7 @@ const MembersSection = ({
 			},
 			(err) => {
 				setUpdatingId(null)
-				console.log(err)
+				// console.log(err)
 			},
 			updateCurrentUser,
 			currentUserData,
