@@ -18,18 +18,19 @@ const ConnectSocket = (expressServer) => {
 
 
     io.on('connection', socket => {
-        console.log(`User ${socket.id} connected`);
         // @ts-ignore
         socket.join(socket.user.UserId);
 
 
         socket.on('Message', async data => {
+
             // @ts-ignore
             data.SenderId = socket.user.UserId;
             const MessageData = await PostMessages(data);
 
             if (MessageData.Success === true) {
                 io.to(data.ConversationId).emit('Message', MessageData.Data);
+
 
                 MessageData.ParticipantIds.map(id => {
                     // @ts-ignore
@@ -46,8 +47,6 @@ const ConnectSocket = (expressServer) => {
             if (CheckUserInConversation(ConversationData, socket.user.UserId)) {
                 // leave existing rooms?
                 socket.join(ConversationId);
-                // @ts-ignore
-
             }
 
         });

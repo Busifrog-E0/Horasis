@@ -159,7 +159,10 @@ async function Read(collectionName, docName, NextIndex = "", limit = 10, where =
                 const temp = [];
                 const data = await query.toArray();
                 data.forEach((doc, index) => {
-                    temp.push({ ...doc, "DocId": doc._id.toString(), "NextId": `${doc[NextField]}--${doc._id}` });
+                    const NextFieldData = NextField.split(".").reduce((prev, cur) => {
+                        return prev[cur];
+                    }, doc);
+                    temp.push({ ...doc, "DocId": doc._id.toString(), "NextId": `${NextFieldData}--${doc._id}` });
                 });
                 return temp;
             }
