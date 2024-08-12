@@ -22,25 +22,7 @@ const GetOneFromDiscussions = async (req, res) => {
     const { UserId } = req.user;
     const { DiscussionId } = req.params;
     const Discussion = await ReadOneFromDiscussions(DiscussionId);
-    const DiscussionMemberObject = { IsMember: false, Permissions: {} };
-    const Member = await ReadMembers({ MemberId: UserId, EntityId: Discussion.DocId }, undefined, 1, undefined);
-
-    if (Member.length > 0) {
-        for (const PermissionField in Discussion.MemberPermissions) {
-            if (Discussion.MemberPermissions[PermissionField] === true) {
-                DiscussionMemberObject.Permissions[PermissionField] = true
-            }
-            else {
-                DiscussionMemberObject.Permissions[PermissionField] = Member[0].Permissions[PermissionField]
-            }
-        }
-        DiscussionMemberObject.IsMember = Member[0].MembershipStatus === "Accepted";
-        DiscussionMemberObject.Permissions = Member[0].Permissions
-        DiscussionMemberObject.MembershipStatus = Member[0].MembershipStatus
-    }
-    const Save = await ReadSaves({ EntityId: Discussion.DocId, UserId }, undefined, 1, undefined);
-    const IsSaved = Save.length > 0;
-    const data = { ...Discussion, ...DiscussionMemberObject, IsSaved };
+    const data = await SetDiscussionDataForGet(Discussion, UserId);
     return res.json(data);
 }
 
@@ -60,18 +42,7 @@ const GetDiscussions = async (req, res) => {
     }
     // @ts-ignore
     const Discussions = await ReadDiscussions(Filter, NextId, Limit, OrderBy);
-    const data = await Promise.all(Discussions.map(async Discussion => {
-        const DiscussionMemberObject = { IsMember: false, };
-        const Member = await ReadMembers({ MemberId: UserId, EntityId: Discussion.DocId }, undefined, 1, undefined);
-        if (Member.length > 0) {
-            DiscussionMemberObject.IsMember = Member[0].MembershipStatus === "Accepted";
-            DiscussionMemberObject.Permissions = Member[0].Permissions
-            DiscussionMemberObject.MembershipStatus = Member[0].MembershipStatus
-        }
-        const Save = await ReadSaves({ EntityId: Discussion.DocId, UserId }, undefined, 1, undefined);
-        const IsSaved = Save.length > 0;
-        return { ...Discussion, ...DiscussionMemberObject, IsSaved }
-    }))
+    const data = await Promise.all(Discussions.map(async Discussion => await SetDiscussionDataForGet(Discussion, UserId)))
     return res.json(data);
 }
 
@@ -119,18 +90,7 @@ const GetUserDiscussions = async (req, res) => {
         { $project: { Member: 0 } }
     ]
     const Discussions = await AggregateDiscussions(AggregateArray, NextId, Limit, OrderBy);
-    const data = await Promise.all(Discussions.map(async Discussion => {
-        const DiscussionMemberObject = { IsMember: false, };
-        const Member = await ReadMembers({ MemberId: UserId, EntityId: Discussion.DocId }, undefined, 1, undefined);
-        if (Member.length > 0) {
-            DiscussionMemberObject.IsMember = Member[0].MembershipStatus === "Accepted";
-            DiscussionMemberObject.Permissions = Member[0].Permissions
-            DiscussionMemberObject.MembershipStatus = Member[0].MembershipStatus
-        }
-        const Save = await ReadSaves({ EntityId: Discussion.DocId, UserId }, undefined, 1, undefined);
-        const IsSaved = Save.length > 0;
-        return { ...Discussion, ...DiscussionMemberObject, IsSaved }
-    }))
+    const data = await Promise.all(Discussions.map(async Discussion => await SetDiscussionDataForGet(Discussion, UserId)))
     return res.json(data);
 }
 
@@ -172,18 +132,7 @@ const GetInvitedDiscussions = async (req, res) => {
         { $project: { Member: 0 } }
     ]
     const Discussions = await AggregateDiscussions(AggregateArray, NextId, Limit, OrderBy);
-    const data = await Promise.all(Discussions.map(async Discussion => {
-        const DiscussionMemberObject = { IsMember: false, };
-        const Member = await ReadMembers({ MemberId: UserId, EntityId: Discussion.DocId }, undefined, 1, undefined);
-        if (Member.length > 0) {
-            DiscussionMemberObject.IsMember = Member[0].MembershipStatus === "Accepted";
-            DiscussionMemberObject.Permissions = Member[0].Permissions
-            DiscussionMemberObject.MembershipStatus = Member[0].MembershipStatus
-        }
-        const Save = await ReadSaves({ EntityId: Discussion.DocId, UserId }, undefined, 1, undefined);
-        const IsSaved = Save.length > 0;
-        return { ...Discussion, ...DiscussionMemberObject, IsSaved }
-    }))
+    const data = await Promise.all(Discussions.map(async Discussion => await SetDiscussionDataForGet(Discussion, UserId)));
     return res.json(data);
 }
 
@@ -250,6 +199,32 @@ const DiscussionInit = (Discussion) => {
     }
 }
 
+/**
+ * 
+ * @param {DiscussionData} Discussion 
+ * @param {string} UserId 
+ * @returns 
+ */
+const SetDiscussionDataForGet = async (Discussion, UserId) => {
+    const DiscussionMemberObject = { IsMember: false, };
+    const Member = await ReadMembers({ MemberId: UserId, EntityId: Discussion.DocId }, undefined, 1, undefined);
+    if (Member.length > 0) {
+        for (const PermissionField in Discussion.MemberPermissions) {
+            if (Discussion.MemberPermissions[PermissionField] === true) {
+                DiscussionMemberObject.Permissions[PermissionField] = true
+            }
+            else {
+                DiscussionMemberObject.Permissions[PermissionField] = Member[0].Permissions[PermissionField]
+            }
+        }
+        DiscussionMemberObject.Permissions["IsAdmin"] = Member[0].Permissions["IsAdmin"];
+        DiscussionMemberObject.IsMember = Member[0].MembershipStatus === "Accepted";
+        DiscussionMemberObject.MembershipStatus = Member[0].MembershipStatus
+    }
+    const Save = await ReadSaves({ EntityId: Discussion.DocId, UserId }, undefined, 1, undefined);
+    const IsSaved = Save.length > 0;
+    return { ...Discussion, ...DiscussionMemberObject, IsSaved }
+}
 
 export {
     GetOneFromDiscussions, GetDiscussions, PostDiscussions, PatchDiscussions, DeleteDiscussions,
