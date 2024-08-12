@@ -46,8 +46,9 @@ const GetSaves = async (req, res) => {
             const [UserDetails] = await Promise.all([
                 ReadOneFromUsers(Discussion.OrganiserId),
             ])
-            const HasSaved = true;
-            return { ...Discussion, UserDetails, HasSaved }
+             const HasSaved = true;
+             //@ts-ignore
+            return { ...Discussion, UserDetails, HasSaved , NextId: Save.NextId }
         }));
 
     }

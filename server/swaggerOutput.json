@@ -3364,7 +3364,7 @@
     "/api/guest/discussions/": {
       "get": {
         "tags": [
-          "Discussions"
+          "Guests"
         ],
         "description": "",
         "parameters": [
