@@ -48,7 +48,7 @@ const Header = ({ children }) => {
   )
 }
 
-const Body = ({ children,padding }) => {
+const Body = ({ children,padding=20 }) => {
   return <div className={`${padding?`px-${padding} pb-${padding}`:'px-4'} py-4 bg-system-secondary-bg`}>{children}</div>
 }
 

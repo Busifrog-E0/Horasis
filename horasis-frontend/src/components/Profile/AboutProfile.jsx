@@ -123,7 +123,7 @@ const AboutProfile = ({ user, getUserDetails, isCurrentUser }) => {
 						
 					</button>
 				</Modal.Header>
-				<Modal.Body padding={20}>
+				<Modal.Body padding={10}>
 					<div className='flex flex-col gap-4'>
 						<div>
 							<h1 className='text-system-primary-text font-medium text-lg'>Full Name</h1>
