@@ -287,9 +287,9 @@ const UpdateMemberPermissions = async (req, res) => {
  * @returns 
  */
 const RemoveMemberPermissions = async (req, res) => {
-    const { EntityId, UserId } = req.params;
+    const { EntityId, MemberId } = req.params;
     const PermissionField = req.body;
-    const Member = await ReadMembers({ MemberId: UserId, EntityId }, undefined, 1, undefined);
+    const Member = await ReadMembers({ MemberId: MemberId, EntityId }, undefined, 1, undefined);
     await UpdateMembers({ [`Permissions.${PermissionField}`]: false }, Member[0].DocId);
     return res.json(true);
 }
@@ -376,5 +376,6 @@ export {
     GetOneFromMembers, GetMembers, PostMembers, PatchMembers, DeleteMembers,
     PermissionObjectInit, InviteMembers, AcceptMemberInvitation, UpdateMemberPermissions, GetJoinRequests,
     AcceptJoinRequest, GetMembersToInvite, DeleteTempMembers,
-    RemoveMemberPermissions, MemberInit
+    RemoveMemberPermissions, MemberInit,
+    
 }
