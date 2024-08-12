@@ -1,6 +1,7 @@
 import { useContext, useState } from 'react'
 import { AuthContext } from '../../utils/AuthProvider'
 import { useNavigate } from 'react-router-dom'
+import menu from '../../assets/icons/menu.svg'
 
 const HomeHeader = () => {
 	const [menuOpen, setMenuOpen] = useState(false)
@@ -70,9 +71,10 @@ const HomeHeader = () => {
 							</div>
 						</>
 					)}
-					<p className='text-system-secondary-bg cursor-pointer' onClick={() => setMenuOpen((prev) => !prev)}>
+					<img src={menu} alt='' className='h-8' onClick={() => setMenuOpen((prev) => !prev)} />
+					{/* <p className='text-system-secondary-bg cursor-pointer' onClick={() => setMenuOpen((prev) => !prev)}>
 						menu
-					</p>
+					</p> */}
 					{menuOpen && (
 						<div
 							className={`flex absolute h-max w-max bg-white top-16  right-0  px-10  py-6  flex-col items-end gap-10 rounded-lg`}>
