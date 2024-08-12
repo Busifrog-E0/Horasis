@@ -240,17 +240,19 @@ const SendNotificationsforActivityLikes = async (UserId, ActivityId) => {
  * @returns 
  */
 const SendNotificationToUserOnCommentPost = async (ActivityId,NotifierId) => {
-    const Activity = await ReadOneFromActivities(ActivityId);
-    const UserDetails = await ReadOneFromUsers(Activity.UserId);
+    const [Activity, Notifier] = await Promise.all([
+        ReadOneFromActivities(ActivityId),
+        ReadOneFromUsers(NotifierId)
+    ]);
     const NotificationObject = {
         NotifierId: NotifierId,
         EntityId: ActivityId,
         EntityType: "Activity",
-        Content: `@${UserDetails.FullName}@ posted a comment on your Activity!`,
+        Content: `@${Notifier.FullName}@ posted a comment on your Activity!`,
         Link: `/activities/${ActivityId}`,
         Type: "Comment",
-        ContentLinks: [{ Text: UserDetails.FullName, Link: `/ViewProfile/${UserDetails.DocId}` }],
-        UserDetails,
+        ContentLinks: [{ Text: Notifier.FullName, Link: `/ViewProfile/${Notifier.DocId}` }],
+        UserDetails : Notifier,
     }
     return SendNotificationToUser(NotificationObject, Activity.UserId);
 }
