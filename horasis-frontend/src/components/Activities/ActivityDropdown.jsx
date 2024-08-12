@@ -5,6 +5,12 @@ import Button from '../ui/Button'
 import { useToast } from '../Toast/ToastService'
 import Spinner from '../ui/Spinner'
 import close from '../../assets/icons/close.svg'
+import graysave from '../../assets/icons/graysave.svg'
+import graysavefill from '../../assets/icons/graysavefill.svg'
+import person from '../../assets/icons/person.svg'
+import viewpost from '../../assets/icons/viewpost.svg'
+import copy from '../../assets/icons/copy.svg'
+import report from '../../assets/icons/report.svg'
 
 const ActivityDropdown = ({ activity, onSaveClicked, onRemoveClicked, isSaving }) => {
 	const [isOpen, setIsOpen] = useState(false)
@@ -87,8 +93,7 @@ const ActivityDropdown = ({ activity, onSaveClicked, onRemoveClicked, isSaving }
 						onClick={() => {
 							setIsModalOpen(false)
 						}}>
-							<img src={close} className='h-6  cursor-pointer' alt="" />
-						
+						<img src={close} className='h-6  cursor-pointer' alt='' />
 					</button>
 				</Modal.Header>
 				<Modal.Body>
@@ -189,47 +194,57 @@ const ActivityDropdown = ({ activity, onSaveClicked, onRemoveClicked, isSaving }
 						className='origin-top-right absolute z-10 right-0 mt-2 w-56 rounded-md shadow-lg bg-system-secondary-bg ring-1 ring-black ring-opacity-5'
 						ref={dropdownRef}>
 						<div className='py-1' role='menu' aria-orientation='vertical' aria-labelledby='options-menu'>
-							{
-								isSaving ? <Spinner />
-									:
-									activity.HasSaved ?
-										<span onClick={onRemoveClicked}
-											className='cursor-pointer block px-4 py-2 text-sm text-brand-gray-dim hover:bg-system-primary-bg'
-											role='menuitem'>
-											Remove from collection
-										</span>
-										:
-										<span onClick={onSaveClicked}
-											className='cursor-pointer block px-4 py-2 text-sm text-brand-gray-dim hover:bg-system-primary-bg'
-											role='menuitem'>
-											Save to collection
-										</span>
-							}
+							{isSaving ? (
+								<Spinner />
+							) : activity.HasSaved ? (
+								<span
+									onClick={onRemoveClicked}
+									className='cursor-pointer flex items-center gap-2 px-4 py-2 text-sm text-brand-gray-dim hover:bg-system-primary-bg'
+									role='menuitem'>
+									<img src={graysavefill} alt='' className='h-6' />
+									Remove from collection
+								</span>
+							) : (
+								<span
+									onClick={onSaveClicked}
+									className='cursor-pointer flex items-center gap-2 px-4 py-2 text-sm text-brand-gray-dim hover:bg-system-primary-bg'
+									role='menuitem'>
+									<img src={graysave} alt='' className='h-6' />
+									Save to collection
+								</span>
+							)}
 
 							<span
-								className='cursor-pointer block px-4 py-2 text-sm text-brand-gray-dim hover:bg-system-primary-bg'
+								className='cursor-pointer flex items-center gap-2 px-4 py-2 text-sm text-brand-gray-dim hover:bg-system-primary-bg'
 								role='menuitem'
 								onClick={() => {
 									navigate(`/ViewProfile/${activity.UserId}`)
 								}}>
+									<img src={person} alt='' className='h-6' />
 								View this profile
 							</span>
 							<span
-								className='cursor-pointer block px-4 py-2 text-sm text-brand-gray-dim hover:bg-system-primary-bg'
+								className='cursor-pointer flex items-center gap-2 px-4 py-2 text-sm text-brand-gray-dim hover:bg-system-primary-bg'
 								role='menuitem'
 								onClick={handleCopyPost}>
+									<img src={copy} alt='' className='h-6' />
+
 								Copy the post
 							</span>
 							<span
-								className='cursor-pointer block px-4 py-2 text-sm text-brand-gray-dim hover:bg-system-primary-bg'
+								className='cursor-pointer flex items-center gap-2 px-4 py-2 text-sm text-brand-gray-dim hover:bg-system-primary-bg'
 								role='menuitem'
 								onClick={() => navigate(`/Activities/${activity.DocId}`)}>
+									<img src={viewpost} alt='' className='h-6' />
+
 								View the post
 							</span>
 							<span
 								onClick={openReasonsModal}
-								className='cursor-pointer block px-4 py-2 text-sm text-brand-gray-dim hover:bg-system-primary-bg'
+								className='cursor-pointer flex items-center gap-2 px-4 py-2 text-sm text-brand-gray-dim hover:bg-system-primary-bg'
 								role='menuitem'>
+									<img src={report} alt='' className='h-6' />
+
 								Report Post
 							</span>
 						</div>

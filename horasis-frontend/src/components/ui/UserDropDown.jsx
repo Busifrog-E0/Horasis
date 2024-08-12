@@ -4,6 +4,10 @@ import { deleteItem, patchItem, postItem } from '../../constants/operations'
 import { AuthContext } from '../../utils/AuthProvider'
 import { useToast } from '../Toast/ToastService'
 import { useFollow } from '../../context/Follow/FollowService'
+import personplus from '../../assets/icons/personplus.svg'
+import personremove from '../../assets/icons/personremove.svg'
+import connectadd from '../../assets/icons/connectadd.svg'
+import connectremove from '../../assets/icons/connectremove.svg'
 
 const DropdownConnectComponent = ({ profile, updateList, tabName }) => {
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
@@ -117,22 +121,24 @@ const DropdownConnectComponent = ({ profile, updateList, tabName }) => {
 	if (profile.ConnectionStatus === 'No Connection') {
 		return (
 			<span
-				className='cursor-pointer block px-4 py-2 text-sm text-brand-gray-dim hover:bg-system-primary-bg'
+				className='cursor-pointer flex items-center gap-2 px-4 py-2 text-sm text-brand-gray-dim hover:bg-system-primary-bg'
 				role='menuitem'
 				onClick={() => {
 					sendConnectionRequest()
 				}}>
+				<img src={connectadd} alt='' className='h-6' />
 				Connect
 			</span>
 		)
 	} else if (profile.ConnectionStatus === 'Connected') {
 		return (
 			<span
-				className='cursor-pointer block px-4 py-2 text-sm text-brand-gray-dim hover:bg-system-primary-bg'
+				className='cursor-pointer flex items-center gap-2 px-4 py-2 text-sm text-brand-gray-dim hover:bg-system-primary-bg'
 				role='menuitem'
 				onClick={() => {
 					deleteConnection()
 				}}>
+				<img src={connectremove} alt='' className='h-6' />
 				Remove Connection
 			</span>
 		)
@@ -140,19 +146,21 @@ const DropdownConnectComponent = ({ profile, updateList, tabName }) => {
 		return (
 			<>
 				<span
-					className='cursor-pointer block px-4 py-2 text-sm text-brand-gray-dim hover:bg-system-primary-bg'
+					className='cursor-pointer flex items-center gap-2 px-4 py-2 text-sm text-brand-gray-dim hover:bg-system-primary-bg'
 					role='menuitem'
 					onClick={() => {
 						acceptConnectionRequest()
 					}}>
+					<img src={connectadd} alt='' className='h-6' />
 					Accept Request
 				</span>
 				<span
-					className='cursor-pointer block px-4 py-2 text-sm text-brand-gray-dim hover:bg-system-primary-bg'
+					className='cursor-pointer flex items-center gap-2 px-4 py-2 text-sm text-brand-gray-dim hover:bg-system-primary-bg'
 					role='menuitem'
 					onClick={() => {
 						rejectConnectionRequest()
 					}}>
+					<img src={connectremove} alt='' className='h-6' />
 					Reject Request
 				</span>
 			</>
@@ -160,11 +168,12 @@ const DropdownConnectComponent = ({ profile, updateList, tabName }) => {
 	} else if (profile.ConnectionStatus === 'Connection Requested') {
 		return (
 			<span
-				className='cursor-pointer block px-4 py-2 text-sm text-brand-gray-dim hover:bg-system-primary-bg'
+				className='cursor-pointer flex items-center gap-2 px-4 py-2 text-sm text-brand-gray-dim hover:bg-system-primary-bg'
 				role='menuitem'
 				onClick={() => {
 					cancelConnectionRequest()
 				}}>
+				<img src={connectremove} alt='' className='h-6' />
 				Cancel Request
 			</span>
 		)
@@ -180,7 +189,7 @@ const DropdownFollowComponent = ({ profile, updateList, tabName }) => {
 		return (
 			<>
 				<span
-					className='cursor-pointer flex px-4 py-2 text-sm text-brand-gray-dim hover:bg-system-primary-bg'
+					className='cursor-pointer flex items-center gap-2 px-4 py-2 text-sm text-brand-gray-dim hover:bg-system-primary-bg'
 					role='menuitem'
 					onClick={() => {
 						unFollowUser(profile, () => {
@@ -191,6 +200,7 @@ const DropdownFollowComponent = ({ profile, updateList, tabName }) => {
 							}
 						})
 					}}>
+					<img src={personremove} alt='' className='h-6' />
 					Unfollow
 				</span>
 			</>
@@ -199,13 +209,14 @@ const DropdownFollowComponent = ({ profile, updateList, tabName }) => {
 		return (
 			<>
 				<span
-					className='cursor-pointer flex px-4 py-2 text-sm text-brand-gray-dim hover:bg-system-primary-bg'
+					className='cursor-pointer flex items-center gap-2 px-4 py-2 text-sm text-brand-gray-dim hover:bg-system-primary-bg'
 					role='menuitem'
 					onClick={() => {
 						followUser(profile, () => {
 							updateList('UPDATE')
 						})
 					}}>
+					<img src={personplus} alt='' className='h-6' />
 					Follow
 				</span>
 			</>
