@@ -24,10 +24,12 @@ const GetSaves = async (req, res) => {
     const { Filter, NextId, Limit, OrderBy } = req.query;
     // @ts-ignore
     Filter.UserId = UserId;
+    // @ts-ignore
+    Filter.Type = req.body.Type;
     //@ts-ignore
     const Saves = await ReadSaves(Filter, NextId, Limit, OrderBy);
     if (req.body.Type === "Activity") {
-         data = await Promise.all(Saves.map(async Save => {
+        data = await Promise.all(Saves.map(async Save => {
             const Activity = await ReadOneFromActivities(Save.EntityId);
             const [UserDetails, checkLike] = await Promise.all([
                 ReadOneFromUsers(Activity.UserId),
@@ -35,19 +37,20 @@ const GetSaves = async (req, res) => {
             ])
             const HasSaved = true;
             const HasLiked = checkLike.length > 0;
-             //@ts-ignore
-             return { ...Activity, UserDetails, HasLiked, HasSaved, NextId: Save.NextId }
+            //@ts-ignore
+            return { ...Activity, UserDetails, HasLiked, HasSaved, NextId: Save.NextId }
         }));
 
     }
-     if (req.body.Type === "Discussion") {
-         data = await Promise.all(Saves.map(async Save => {
+    if (req.body.Type === "Discussion") {
+        data = await Promise.all(Saves.map(async Save => {
             const Discussion = await ReadOneFromDiscussions(Save.EntityId);
             const [UserDetails] = await Promise.all([
                 ReadOneFromUsers(Discussion.OrganiserId),
             ])
             const HasSaved = true;
-            return { ...Discussion, UserDetails, HasSaved }
+            //@ts-ignore
+            return { ...Discussion, UserDetails, HasSaved, NextId: Save.NextId }
         }));
 
     }
@@ -66,7 +69,7 @@ const PostSaves = async (req, res) => {
     if (CheckSave.length > 0) {
         return res.status(444).json(AlertBoxObject("Cannot Save", "You cannot Save twice"));
     }
-    const data = { EntityId, UserId };
+    const data = { EntityId, UserId, Type: req.body.Type };
     await CreateSaves(data);
     return res.json(true);
 }
