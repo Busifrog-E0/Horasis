@@ -90,7 +90,7 @@ const DashboardHeader = () => {
 								}`}></div>
 					</div> */}
 				</div>
-				<div className='flex flex-row flex-wrap gap-2'>
+				<div className='flex flex-row flex-wrap gap-4 md:gap-2'>
 					{/* <button
             type="button"
             className="inline-flex justify-center rounded-md border-none bg-system-secondary-bg text-md px-0 font-medium text-brand-gray-dim"
