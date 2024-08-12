@@ -10,6 +10,9 @@ import { activityValidation } from '../../utils/schema/users/activityValidation'
 import attach from '../../assets/icons/attach.svg'
 import camera from '../../assets/icons/camera.svg'
 import send from '../../assets/icons/send.svg'
+import deleteIcon from '../../assets/icons/delete.svg'
+import document from '../../assets/icons/document.svg'
+
 
 const PostComponent = ({
 	onSuccess,
@@ -468,7 +471,9 @@ const PostComponent = ({
 													onClick={() => {
 														handleImageDeleteClick(index)
 													}}>
-													<svg
+													<img src={deleteIcon} alt='' className='h-5 cursor-pointer' />
+
+													{/* <svg
 														aria-hidden='true'
 														className='w-4 h-4 text-system-error cursor-pointer'
 														xmlns='http://www.w3.org/2000/svg'
@@ -481,7 +486,7 @@ const PostComponent = ({
 															strokeWidth='2'
 															d='M4 12.25V1m0 11.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M4 19v-2.25m6-13.5V1m0 2.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M10 19V7.75m6 4.5V1m0 11.25a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5ZM16 19v-2'
 														/>
-													</svg>
+													</svg> */}
 												</div>
 												<div className='w-20 h-20 bg-system-secondary-bg rounded-md border border-system-secondary-accent overflow-hidden'>
 													<img className='w-full h-full object-cover' src={file.FileUrl} alt='Rounded avatar' />
@@ -497,7 +502,9 @@ const PostComponent = ({
 													onClick={() => {
 														handleImageDeleteClick(index)
 													}}>
-													<svg
+													<img src={deleteIcon} alt='' className='h-5 cursor-pointer' />
+
+													{/* <svg
 														aria-hidden='true'
 														className='w-4 h-4 text-system-error cursor-pointer'
 														xmlns='http://www.w3.org/2000/svg'
@@ -510,7 +517,7 @@ const PostComponent = ({
 															strokeWidth='2'
 															d='M4 12.25V1m0 11.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M4 19v-2.25m6-13.5V1m0 2.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M10 19V7.75m6 4.5V1m0 11.25a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5ZM16 19v-2'
 														/>
-													</svg>
+													</svg> */}
 												</div>
 												<div className='w-20 h-20 bg-system-secondary-bg rounded-md border border-system-secondary-accent overflow-hidden flex flex-col justify-center items-center'>
 													{/* <svg aria-hidden='true' className="w-6 h-6" xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'>
@@ -545,7 +552,9 @@ const PostComponent = ({
 												onClick={() => {
 													handleDocumentDeleteClick(index)
 												}}>
-												<svg
+													<img src={deleteIcon} alt='' className='h-5 cursor-pointer' />
+
+												{/* <svg
 													aria-hidden='true'
 													className='w-4 h-4 text-system-error cursor-pointer'
 													xmlns='http://www.w3.org/2000/svg'
@@ -558,10 +567,12 @@ const PostComponent = ({
 														strokeWidth='2'
 														d='M4 12.25V1m0 11.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M4 19v-2.25m6-13.5V1m0 2.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M10 19V7.75m6 4.5V1m0 11.25a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5ZM16 19v-2'
 													/>
-												</svg>
+												</svg> */}
 											</div>
 											<div className='w-20 h-20 bg-system-secondary-bg rounded-md border border-system-secondary-accent overflow-hidden flex flex-col justify-center items-center'>
-												<svg
+											<img src={document} alt='' className='h-8 cursor-pointer' />
+												
+												{/* <svg
 													xmlns='http://www.w3.org/2000/svg'
 													aria-hidden='true'
 													className='w-6 h-6 text-brand-gray cursor-pointer'
@@ -570,7 +581,7 @@ const PostComponent = ({
 														className='text-brand-gray '
 														d='M720-330q0 104-73 177T470-80q-104 0-177-73t-73-177v-370q0-75 52.5-127.5T400-880q75 0 127.5 52.5T580-700v350q0 46-32 78t-78 32q-46 0-78-32t-32-78v-370h80v370q0 13 8.5 21.5T470-320q13 0 21.5-8.5T500-350v-350q-1-42-29.5-71T400-800q-42 0-71 29t-29 71v370q-1 71 49 120.5T470-160q70 0 119-49.5T640-330v-390h80v390Z'
 													/>
-												</svg>
+												</svg> */}
 											</div>
 										</div>
 									)
