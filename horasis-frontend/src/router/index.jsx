@@ -31,6 +31,7 @@ import Mentions from '../pages/Mentions'
 import ChatPage from '../pages/ChatPage'
 import Saved from '../pages/Saved'
 import SuggestionsPage from '../pages/SuggestionsPage'
+import NotFoundPage from '../pages/NotFoundPage'
 
 export const router = createBrowserRouter(
 	createRoutesFromElements(
@@ -70,6 +71,7 @@ export const router = createBrowserRouter(
 			<Route path='welcome' element={<UnAuthLayout />}>
 				<Route index element={<WelcomePage />} />
 			</Route>
+			<Route path='*' element={<NotFoundPage />} />
 		</Route>
 	)
 )
