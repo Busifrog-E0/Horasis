@@ -28,9 +28,10 @@ const ActivityComponent = ({
 	timeSize='text-base',
 	ShowImage = true,
 	iconSize='6',
+	openComment=false,
 	onSaveRemoveCallback = () => { }
 }) => {
-	const [showComment, setShowComment] = useState(false)
+	const [showComment, setShowComment] = useState(openComment)
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
 	const toast = useToast()
 	const [isDeleting, setIsDeleting] = useState(false)
@@ -49,9 +50,11 @@ const ActivityComponent = ({
 	const [singleActivity, setSingleActivity] = useState(activity)
 
 	const onLikeBtnClicked = () => {
+		const actId = singleActivity?singleActivity.DocId:activityId
+
 		setIsLiking(true)
 		postItem(
-			`users/${currentUserData.CurrentUser.UserId}/activities/${singleActivity.DocId}/like`,
+			`users/${currentUserData.CurrentUser.UserId}/activities/${actId}/like`,
 			{},
 			(result) => {
 				console.log(result)
@@ -71,9 +74,11 @@ const ActivityComponent = ({
 	}
 
 	const onSaveClicked = () => {
+		const actId = singleActivity?singleActivity.DocId:activityId
+
 		setIsSaving(true)
 		postItem(
-			`users/${currentUserData.CurrentUser.UserId}/activities/${singleActivity.DocId}/save`,
+			`users/${currentUserData.CurrentUser.UserId}/activities/${actId}/save`,
 			{},
 			(result) => {
 				console.log(result)
@@ -93,9 +98,11 @@ const ActivityComponent = ({
 	}
 
 	const OnRemoveClicked = () => {
+		const actId = singleActivity?singleActivity.DocId:activityId
+
 		setIsSaving(true)
 		deleteItem(
-			`users/${currentUserData.CurrentUser.UserId}/activities/${singleActivity.DocId}/save`,
+			`users/${currentUserData.CurrentUser.UserId}/activities/${actId}/save`,
 			(result) => {
 				console.log(result)
 				if (result === true) {
@@ -114,9 +121,11 @@ const ActivityComponent = ({
 		)
 	}
 	const onUnLikeBtnClicked = () => {
+		const actId = singleActivity?singleActivity.DocId:activityId
+
 		setIsLiking(true)
 		deleteItem(
-			`users/${currentUserData.CurrentUser.UserId}/activities/${singleActivity.DocId}/disLike`,
+			`users/${currentUserData.CurrentUser.UserId}/activities/${actId}/disLike`,
 			(result) => {
 				console.log(result)
 				if (result === true) {
@@ -134,14 +143,16 @@ const ActivityComponent = ({
 		)
 	}
 	const onDeleteBtnClicked = () => {
+		const actId = singleActivity?singleActivity.DocId:activityId
+
 		setIsDeleting(true)
 		deleteItem(
-			`activities/${singleActivity.DocId}`,
+			`activities/${actId}`,
 			(result) => {
 				setIsDeleting(false)
 				console.log(result)
 				if (result === true) {
-					onDelete(singleActivity.DocId)
+					onDelete(actId)
 				}
 			},
 			(err) => {
@@ -184,7 +195,8 @@ const ActivityComponent = ({
 	}
 
 	const getAllActivityComments = (tempActivites) => {
-		getData(`activities/${singleActivity.DocId}/comments?&${jsonToQuery(filters)}`, tempActivites, setCommentsData)
+		const actId = singleActivity?singleActivity.DocId:activityId
+		getData(`activities/${actId}/comments?&${jsonToQuery(filters)}`, tempActivites, setCommentsData)
 	}
 	const getData = (endpoint, tempData, setData) => {
 		setLoadingCom(tempData, true)
@@ -230,7 +242,8 @@ const ActivityComponent = ({
 	const fetchMore = () => fetchData(false)
 
 	useEffect(() => {
-		if (commentsData.length > 0) hasAnyLeft(`activities/${singleActivity.DocId}/comments`, commentsData)
+		const actId = singleActivity?singleActivity.DocId:activityId
+		if (commentsData.length > 0) hasAnyLeft(`activities/${actId}/comments`, commentsData)
 	}, [commentsData])
 
 	useEffect(() => {
