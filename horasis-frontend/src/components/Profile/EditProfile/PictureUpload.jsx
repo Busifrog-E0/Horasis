@@ -3,6 +3,10 @@ import Spinner from '../../ui/Spinner'
 import Button from '../../ui/Button'
 import avatar from '../../../assets/icons/avatar.svg'
 import cover from '../../../assets/icons/cover.svg'
+import change from '../../../assets/icons/change.svg'
+import confirm from '../../../assets/icons/confirm.svg'
+import deleteIcon from '../../../assets/icons/delete.svg'
+
 import { useToast } from '../../Toast/ToastService'
 
 const PictureUpload = ({
@@ -101,24 +105,24 @@ const PictureUpload = ({
 						) : (
 							<>
 								{isUploading ? (
-									<div className='w-24 lg:w-60 h-24 lg:h-60 rounded-full flex items-center justify-center relative'>
+									<div className='w-52 lg:w-60 h-52 lg:h-60 rounded-full flex items-center justify-center relative'>
 										<Spinner />
 										<div className='w-full h-full rounded-full flex items-center justify-center bg-black absolute top-0 bottom-0 left-0 right-0 opacity-20'>
 											<img
 												src={selectedImage}
 												alt={altTitle}
 												// className='h-32 w-32 rounded-full object-cover'
-												className='w-24 lg:w-60 h-24 lg:h-60 rounded-full object-cover cursor-pointer'
+												className='w-52 lg:w-60 h-52 lg:h-60 rounded-full object-cover cursor-pointer'
 											/>
 										</div>
 									</div>
 								) : (
-									<div className='w-24 lg:w-60 h-24 lg:h-60 rounded-full flex items-center justify-center bg-black'>
+									<div className='w-52 lg:w-60 h-52 lg:h-60 rounded-full flex items-center justify-center bg-black'>
 										<img
 											src={selectedImage}
 											alt={altTitle}
 											// className='h-32 w-32 rounded-full object-cover'
-											className='w-24 lg:w-60 h-24 lg:h-60 rounded-full object-cover cursor-pointer'
+											className='w-52 lg:w-60 h-52 lg:h-60 rounded-full object-cover cursor-pointer'
 											onClick={handleClick}
 										/>
 									</div>
@@ -165,16 +169,20 @@ const PictureUpload = ({
 				)}
 			</div>
 
-			<div className='p-2 flex flex-col-reverse sm:flex-row items-start sm:items-center gap-4 justify-between w-full'>
+			<div className='p-2 flex  flex-row items-center gap-4 justify-between w-full'>
 				<p
 					className='font-medium text-brand-gray-dim text-lg cursor-pointer'
 					onClick={onImageDelete}
 					disabled={isUploading}>
-					Delete Image
+					<img src={deleteIcon} alt='' className='h-6 sm:hidden' />
+
+					<span className='hidden  sm:inline'>Delete Image</span>
 				</p>
 				<div className='flex gap-2'>
 					<Button onClick={handleClick} size='md' variant='outline' className='text-md' disabled={isUploading}>
-						Change Image
+						<img src={change} alt='' className='h-6 sm:hidden' />
+
+						<span className='hidden  sm:inline'>Change Image</span>
 					</Button>
 					<Button
 						onClick={() => {
@@ -184,7 +192,8 @@ const PictureUpload = ({
 						variant='black'
 						className='text-md'
 						disabled={isUploading}>
-						Apply
+						<img src={confirm} alt='' className='h-6 sm:hidden' />
+						<span className='hidden  sm:inline'>Apply</span>
 					</Button>
 				</div>
 			</div>
