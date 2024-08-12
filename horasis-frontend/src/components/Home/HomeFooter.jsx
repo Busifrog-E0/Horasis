@@ -1,3 +1,9 @@
+import playstore from '../../assets/images/playstore.png'
+import appstore from '../../assets/images/appstore.svg'
+import facebook from '../../assets/icons/facebook.svg'
+import twitter from '../../assets/icons/twitter.svg'
+import linkedin from '../../assets/icons/linkedin.svg'
+
 const HomeFooter = () => {
 	return (
 		<div className='bg-system-primary-accent h-max flex flex-col items-center'>
@@ -9,17 +15,23 @@ const HomeFooter = () => {
 							Horasis is an independent, international think tank, headquartered in Zurich, Switzerland. Founded in
 							2005, by Frank-Jurgen Ritcher, former director of the World Economic Forum.
 						</p>
-						<div className='flex gap-2'>
-							<p>facebook</p>
+						<div className='flex gap-2 items-end'>
+							<img src={facebook} alt='' className='h-6' />
+							<img src={twitter} alt='' className='h-6' />
+							<img src={linkedin} alt='' className='h-6' />
+							{/* <p>facebook</p>
 							<p>twitter</p>
-							<p>linkedin</p>
+							<p>linkedin</p> */}
 						</div>
 					</div>
 					<div className='flex flex-col gap-8 md:items-center'>
 						<p className='text-lg'>Download the app by clicking the link below :</p>
 						<div className='flex flex-col gap-2'>
+							<img src={playstore} alt='' className='w-40' />
+							<img src={appstore} alt='' className='w-32' />
+							{/* 
 							<p>Google Play Store</p>
-							<p>App Store</p>
+							<p>App Store</p> */}
 						</div>
 					</div>
 					<div className='flex flex-col gap-8'>
@@ -34,9 +46,9 @@ const HomeFooter = () => {
 						</div>
 					</div>
 				</div>
-        <div>
-          <h1 className="text-system-secondary-bg">Copyright &copy; 2022 Horasis</h1>
-        </div>
+				<div>
+					<h1 className='text-system-secondary-bg'>Copyright &copy; 2022 Horasis</h1>
+				</div>
 			</div>
 		</div>
 	)
