@@ -4,7 +4,7 @@ import { ReadOneFromComments, ReadComments, UpdateComments, CreateComments, Remo
 import { IncrementActivities } from '../databaseControllers/activities-databaseController.js';
 import { ReadOneFromUsers } from '../databaseControllers/users-databaseController.js';
 import { ExtractMentionedUsersFromContent } from './activities-controller.js';
-import { SendNotificationToUserOnCommentPost } from './notifications-controller.js';
+import { SendNotificationstoCommentMentions, SendNotificationToUserOnCommentPost } from './notifications-controller.js';
 /**
  * @typedef {import('./../databaseControllers/comments-databaseController.js').CommentData} CommentData 
  */
@@ -59,6 +59,7 @@ const PostComments = async (req, res) => {
     req.body = CommentInit(req.body);
     await CreateComments({ ...req.body, Mentions });
     await SendNotificationToUserOnCommentPost(ActivityId, req.body.UserId);
+    await SendNotificationstoCommentMentions(Mentions, req.body.UserId, ActivityId);
     return res.json(true);
 }
 
