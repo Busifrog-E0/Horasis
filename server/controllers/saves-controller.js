@@ -6,6 +6,7 @@ import { ReadOneFromUsers } from '../databaseControllers/users-databaseControlle
 import { AlertBoxObject } from './common.js';
 import { ReadLikes } from '../databaseControllers/likes-databaseController.js';
 import { ReadOneFromDiscussions } from '../databaseControllers/discussions-databaseController.js';
+import { ReadOneFromArticles } from '../databaseControllers/articles-databaseController.js';
 /**
  * @typedef {import('./../databaseControllers/saves-databaseController.js').SaveData} SaveData 
  */
@@ -53,6 +54,17 @@ const GetSaves = async (req, res) => {
             return { ...Discussion, UserDetails, HasSaved, NextId: Save.NextId }
         }));
 
+    }
+    if (req.body.Type === "Article") {
+        data = await Promise.all(Saves.map(async Save => {
+            const Article = await ReadOneFromArticles(Save.EntityId);
+            const [UserDetails] = await Promise.all([
+                ReadOneFromUsers(Article.AuthorId),
+            ])
+            const HasSaved = true;
+            //@ts-ignore
+            return { ...Article, UserDetails, HasSaved, NextId: Save.NextId }
+        }));
     }
     return res.json(data);
 }
