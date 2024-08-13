@@ -1,6 +1,7 @@
 import e from 'express';
 
 import { ReadOneFromArticles, ReadArticles, UpdateArticles, CreateArticles, RemoveArticles, } from './../databaseControllers/articles-databaseController.js';
+import { ReadOneFromUsers } from '../databaseControllers/users-databaseController.js';
 /**
  * @typedef {import('./../databaseControllers/articles-databaseController.js').ArticleData} ArticleData 
  */
@@ -37,7 +38,9 @@ const GetArticles = async (req, res) => {
  * @returns {Promise<e.Response<true>>}
  */
 const PostArticles = async (req, res) => {
-    await CreateArticles(req.body);
+    const { AuthorId } = req.body;
+    const UserDetails = await ReadOneFromUsers(AuthorId);
+    await CreateArticles({ ...req.body, UserDetails });
     return res.json(true);
 }
 

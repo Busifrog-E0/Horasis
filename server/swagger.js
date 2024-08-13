@@ -7,6 +7,7 @@ import chatDefinitions from './swaggerDocs/chatDefinitions.js';
 import discussionsDefinitions from './swaggerDocs/discussionsDefinitions.js';
 import membersDefinitions from './swaggerDocs/membersDefinitions.js';
 import eventsDefinitions from './swaggerDocs/eventsDefinitions.js';
+import articlesDefinitions from './swaggerDocs/articlesDefinitions.js';
 
 const doc = {
     info: {
@@ -60,6 +61,11 @@ const doc = {
             "name": "Guests",
             "description": "",
         }
+        ,
+        {
+            "name": "Articles",
+            "description": "",
+        }
     ],
     securityDefinitions: {
         BearerAuth: {
@@ -82,7 +88,8 @@ const doc = {
         ...chatDefinitions,
         ...discussionsDefinitions,
         ...membersDefinitions,
-        ...eventsDefinitions
+        ...eventsDefinitions,
+        ...articlesDefinitions
     }
 }
 
