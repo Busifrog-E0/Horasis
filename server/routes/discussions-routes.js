@@ -21,6 +21,7 @@ import { GetActivities, GetFilteredActivities, PostActivities } from '../control
 import { ValidatePostActivities } from '../validations/activities-validations.js';
 import { MemberPostActivityMiddleware } from '../middleware/members-middleware.js';
 import { DeleteSaves, GetSaves, PostSaves } from '../controllers/saves-controller.js';
+import { ValidateGetMembers } from '../validations/members-validations.js';
 const router = e.Router();
 
 
@@ -109,7 +110,7 @@ router.delete('/discussions/:EntityId/leave', decodeIDToken, ensureAuthorized("U
 
 /*****************************************************MEMBERS************************************************************************************* */
 router.get('/discussions/:EntityId/members', decodeIDToken, ensureAuthorized("User"),
-    ValidateGetEntity, QueryParameterFormatting, SwaggerDocs.get_Discussions_DiscussionId_Members,
+    ValidateGetMembers, QueryParameterFormatting, SwaggerDocs.get_Discussions_DiscussionId_Members,
     //@ts-ignore
     asyncHandler(GetMembers));
 
