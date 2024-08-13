@@ -3,7 +3,7 @@ import e from 'express';
 import { ReadOneFromDiscussions, ReadDiscussions, UpdateDiscussions, CreateDiscussions, RemoveDiscussions, AggregateDiscussions, } from './../databaseControllers/discussions-databaseController.js';
 import { ReadOneFromUsers } from '../databaseControllers/users-databaseController.js';
 import { CreateMembers, ReadMembers } from '../databaseControllers/members-databaseController.js';
-import {  PermissionObjectInit } from './members-controller.js';
+import { PermissionObjectInit } from './members-controller.js';
 
 import { ReadSaves } from '../databaseControllers/saves-databaseController.js';
 import { MemberInit } from './members-controller.js';
@@ -141,7 +141,7 @@ const GetPublicDiscussions = async (req, res) => {
     // @ts-ignore
     Filter.Privacy = "Public";
     // @ts-ignore
-    const data = await ReadDiscussions(Filter, NextId, Limit, OrderBy);  
+    const data = await ReadDiscussions(Filter, NextId, Limit, OrderBy);
     return res.json(data)
 }
 
@@ -156,7 +156,7 @@ const PostDiscussions = async (req, res) => {
     const UserDetails = await ReadOneFromUsers(OrganiserId);
     req.body = DiscussionInit(req.body);
     const DiscussionId = await CreateDiscussions({ ...req.body, UserDetails });
-    const Member = MemberInit({ MemberId: OrganiserId, EntityId: DiscussionId, UserDetails },true);
+    const Member = MemberInit({ MemberId: OrganiserId, EntityId: DiscussionId, UserDetails }, true);
     await CreateMembers(Member);
     return res.json(DiscussionId);
 }
@@ -206,10 +206,11 @@ const DiscussionInit = (Discussion) => {
  * @returns 
  */
 const SetDiscussionDataForGet = async (Discussion, UserId) => {
-    const DiscussionMemberObject = { IsMember: false, };
+    const DiscussionMemberObject = { IsMember: false, Permissions: {} };
     const Member = await ReadMembers({ MemberId: UserId, EntityId: Discussion.DocId }, undefined, 1, undefined);
     if (Member.length > 0) {
         for (const PermissionField in Discussion.MemberPermissions) {
+            console.log(PermissionField)
             if (Discussion.MemberPermissions[PermissionField] === true) {
                 DiscussionMemberObject.Permissions[PermissionField] = true
             }
@@ -228,5 +229,5 @@ const SetDiscussionDataForGet = async (Discussion, UserId) => {
 
 export {
     GetOneFromDiscussions, GetDiscussions, PostDiscussions, PatchDiscussions, DeleteDiscussions,
-    GetUserDiscussions, GetInvitedDiscussions,GetPublicDiscussions
+    GetUserDiscussions, GetInvitedDiscussions, GetPublicDiscussions
 }
