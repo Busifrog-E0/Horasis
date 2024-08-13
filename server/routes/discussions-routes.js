@@ -120,7 +120,7 @@ router.patch('/discussions/:EntityId/member/permissions', decodeIDToken, ensureA
     asyncHandler(UpdateMemberPermissions));
 
 router.patch('/discussions/:EntityId/member/:MemberId/permissions/remove', decodeIDToken, ensureAuthorized("User"), ValidatePatchRemovePermission,
-    SwaggerDocs.patch_Discussions_EntityId_Member_Permissions_Remove,
+    InsertDiscussionTypeMiddleware, SwaggerDocs.patch_Discussions_EntityId_Member_Permissions_Remove,
     //@ts-ignore
     asyncHandler(RemoveMemberPermissions));
 
