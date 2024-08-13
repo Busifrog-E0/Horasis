@@ -87,7 +87,7 @@ router.post('/discussions/:EntityId/invite/:InviteeId', decodeIDToken, ensureAut
     //@ts-ignore
     asyncHandler(InviteMembers));
 
-router.patch('/discussions/:EntityId/invite/accept', decodeIDToken, ensureAuthorized("User"),
+router.patch('/discussions/:EntityId/invite/accept', decodeIDToken, ensureAuthorized("User"), InsertDiscussionTypeMiddleware,
     SwaggerDocs.patch_Discussions_EntityId_Invite_Accept,
     //@ts-ignore
     asyncHandler(AcceptMemberInvitation));
