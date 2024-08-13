@@ -47,6 +47,10 @@
     {
       "name": "Guests",
       "description": ""
+    },
+    {
+      "name": "Articles",
+      "description": ""
     }
   ],
   "schemes": [
@@ -6002,6 +6006,202 @@
           }
         ]
       }
+    },
+    "/api/articles": {
+      "get": {
+        "tags": [
+          "Articles"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "NextId",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "Limit",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "Keyword",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "OrderBy",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Article Data",
+            "schema": {
+              "$ref": "#/definitions/ArticleDataArray"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "402": {
+            "description": "Payment Required"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Articles"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/PostArticlesData"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "402": {
+            "description": "Payment Required"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/articles/{ArticleId}": {
+      "get": {
+        "tags": [
+          "Articles"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "ArticleId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Article Data",
+            "schema": {
+              "$ref": "#/definitions/ArticleData"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "402": {
+            "description": "Payment Required"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "patch": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "ArticleId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized"
+          },
+          "402": {
+            "description": "Payment Required"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      },
+      "delete": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "ArticleId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized"
+          },
+          "402": {
+            "description": "Payment Required"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -7835,6 +8035,206 @@
             "type": "string",
             "example": "Accepted"
           }
+        }
+      }
+    },
+    "ArticleData": {
+      "type": "object",
+      "properties": {
+        "ArticleName": {
+          "type": "string",
+          "example": "Introduction to Node.js"
+        },
+        "Description": {
+          "type": "string",
+          "example": "A comprehensive guide to getting started with Node.js."
+        },
+        "Content": {
+          "type": "string",
+          "example": "Node.js is a JavaScript runtime built on Chrome's V8 JavaScript engine..."
+        },
+        "DocId": {
+          "type": "string",
+          "example": "abc123"
+        },
+        "CoverPhoto": {
+          "type": "string",
+          "example": "https://example.com/images/nodejs-cover.jpg"
+        },
+        "CreatedIndex": {
+          "type": "number",
+          "example": 1
+        },
+        "AuthorId": {
+          "type": "string",
+          "example": "author456"
+        },
+        "UserDetails": {
+          "type": "object",
+          "properties": {
+            "FullName": {
+              "type": "string",
+              "example": "Jane Doe"
+            },
+            "Username": {
+              "type": "string",
+              "example": "janedoe"
+            },
+            "Email": {
+              "type": "string",
+              "example": "jane.doe@example.com"
+            },
+            "DocId": {
+              "type": "string",
+              "example": "abc123DEF"
+            },
+            "Country": {
+              "type": "string",
+              "example": "Canada"
+            },
+            "City": {
+              "type": "string",
+              "example": "Toronto"
+            },
+            "JobTitle": {
+              "type": "string",
+              "example": "Product Manager"
+            },
+            "Industry": {
+              "type": "string",
+              "example": "Software"
+            },
+            "CompanyName": {
+              "type": "string",
+              "example": "InnovateTech"
+            },
+            "About": {
+              "type": "string",
+              "example": "Seasoned product manager with over 10 years of experience in the software industry."
+            },
+            "CoverPicture": {
+              "type": "string",
+              "example": "string"
+            },
+            "ProfilePicture": {
+              "type": "string",
+              "example": "string"
+            }
+          }
+        }
+      }
+    },
+    "ArticleDataArray": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "ArticleName": {
+            "type": "string",
+            "example": "Introduction to Node.js"
+          },
+          "Description": {
+            "type": "string",
+            "example": "A comprehensive guide to getting started with Node.js."
+          },
+          "Content": {
+            "type": "string",
+            "example": "Node.js is a JavaScript runtime built on Chrome's V8 JavaScript engine..."
+          },
+          "DocId": {
+            "type": "string",
+            "example": "abc123"
+          },
+          "CoverPhoto": {
+            "type": "string",
+            "example": "https://example.com/images/nodejs-cover.jpg"
+          },
+          "CreatedIndex": {
+            "type": "number",
+            "example": 1
+          },
+          "AuthorId": {
+            "type": "string",
+            "example": "author456"
+          },
+          "UserDetails": {
+            "type": "object",
+            "properties": {
+              "FullName": {
+                "type": "string",
+                "example": "Jane Doe"
+              },
+              "Username": {
+                "type": "string",
+                "example": "janedoe"
+              },
+              "Email": {
+                "type": "string",
+                "example": "jane.doe@example.com"
+              },
+              "DocId": {
+                "type": "string",
+                "example": "abc123DEF"
+              },
+              "Country": {
+                "type": "string",
+                "example": "Canada"
+              },
+              "City": {
+                "type": "string",
+                "example": "Toronto"
+              },
+              "JobTitle": {
+                "type": "string",
+                "example": "Product Manager"
+              },
+              "Industry": {
+                "type": "string",
+                "example": "Software"
+              },
+              "CompanyName": {
+                "type": "string",
+                "example": "InnovateTech"
+              },
+              "About": {
+                "type": "string",
+                "example": "Seasoned product manager with over 10 years of experience in the software industry."
+              },
+              "CoverPicture": {
+                "type": "string",
+                "example": "string"
+              },
+              "ProfilePicture": {
+                "type": "string",
+                "example": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "PostArticleData": {
+      "type": "object",
+      "properties": {
+        "ArticleName": {
+          "type": "string",
+          "example": "Introduction to Node.js"
+        },
+        "Description": {
+          "type": "string",
+          "example": "A comprehensive guide to getting started with Node.js."
+        },
+        "Content": {
+          "type": "string",
+          "example": "Node.js is a JavaScript runtime built on Chrome's V8 JavaScript engine..."
+        },
+        "CoverPhoto": {
+          "type": "string",
+          "example": "https://example.com/images/nodejs-cover.jpg"
+        },
+        "AuthorId": {
+          "type": "string",
+          "example": "author456"
         }
       }
     }
