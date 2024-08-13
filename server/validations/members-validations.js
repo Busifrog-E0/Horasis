@@ -8,8 +8,8 @@ const MembersGetSchema = QueryParametersSchema.keys({
     'Permissions.CanCreateAlbum': Joi.boolean(),
     'Permissions.CanUploadVideo': Joi.boolean(),
     'Permissions.IsAdmin': Joi.boolean(),
-}).xor('Permissions.CanInviteOthers', 'Permissions.CanPostActivity', 'Permissions.CanUploadPhoto',
-    'Permissions.CanCreateAlbum', 'Permissions.CanUploadVideo', 'Permissions.IsAdmin');
+    'MembershipStatus' : Joi.string().valid("Accepted", "Invited", "Requested")
+});
 
 
 const ValidateGetMembers = async (req, res, next) => {
