@@ -168,8 +168,8 @@ const PostDiscussions = async (req, res) => {
  * @returns {Promise<e.Response<true>>}
  */
 const PatchDiscussions = async (req, res) => {
-    const { DiscussionId } = req.params;
-    await UpdateDiscussions(req.body, DiscussionId);
+    const { EntityId } = req.params;
+    await UpdateDiscussions(req.body, EntityId);
     return res.json(true);
 }
 

@@ -75,14 +75,12 @@ const ValidatePatchRemovePermission = async (req, res, next) => {
 
 const ValidateAddPermissionForEveryone = async (req, res, next) => {
     const Result = Joi.object({
-        'MemberPermissions.CanPostActivity': Joi.boolean().required(),
-        'MemberPermissions.CanInviteOthers': Joi.boolean().required(),
-        'MemberPermissions.CanUploadPhoto': Joi.boolean().required(),
-        'MemberPermissions.CanCreateAlbum': Joi.boolean().required(),
-        'MemberPermissions.CanUploadVideo': Joi.boolean().required(),
-    }).xor('MemberPermissions.CanPostActivity', 'MemberPermissions.CanInviteOthers',
-        'MemberPermissions.CanUploadPhoto', 'MemberPermissions.CanCreateAlbum', 'MemberPermissions.CanUploadVideo')
-        .validate(req.body, { stripUnknown: true });
+        'MemberPermissions.CanPostActivity': Joi.boolean(),
+        'MemberPermissions.CanInviteOthers': Joi.boolean(),
+        'MemberPermissions.CanUploadPhoto': Joi.boolean(),
+        'MemberPermissions.CanCreateAlbum': Joi.boolean(),
+        'MemberPermissions.CanUploadVideo': Joi.boolean(),
+    }).validate(req.body, { stripUnknown: true, convert: true });
     if (Result.error) {
         const message = Result.error.details.map((detail) => detail.message).join(', ');
         return res.status(400).json(message);
