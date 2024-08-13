@@ -274,7 +274,7 @@ const UpdateMemberPermissions = async (req, res) => {
     }
     await Promise.all(Object.keys(req.body).map(async (PermissionArray) => {
         if (req.body[PermissionArray].length > 0) {
-            await UpdateManyMembers({ "$set": { [`Permissions.${PermissionArray}`]: true } }, { EntityId, MemberId: { $in: req.body[PermissionArray] } });
+            await UpdateManyMembers({ [`Permissions.${PermissionArray}`]: true }, { EntityId, MemberId: { $in: req.body[PermissionArray] } });
         }
     }))
     return res.json(true);
@@ -288,7 +288,7 @@ const UpdateMemberPermissions = async (req, res) => {
  */
 const RemoveMemberPermissions = async (req, res) => {
     const { EntityId, MemberId } = req.params;
-    const PermissionField = req.body;
+    const { PermissionField } = req.body;
     const Member = await ReadMembers({ MemberId: MemberId, EntityId }, undefined, 1, undefined);
     await UpdateMembers({ [`Permissions.${PermissionField}`]: false }, Member[0].DocId);
     return res.json(true);
@@ -377,5 +377,5 @@ export {
     PermissionObjectInit, InviteMembers, AcceptMemberInvitation, UpdateMemberPermissions, GetJoinRequests,
     AcceptJoinRequest, GetMembersToInvite, DeleteTempMembers,
     RemoveMemberPermissions, MemberInit,
-    
+
 }

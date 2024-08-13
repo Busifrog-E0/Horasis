@@ -2220,6 +2220,18 @@
             "name": "authorization",
             "in": "header",
             "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Type": {
+                  "example": "any"
+                }
+              }
+            }
           }
         ],
         "responses": {
@@ -4162,7 +4174,7 @@
         ]
       }
     },
-    "/api/discussions/{EntityId}/member/permissions/remove": {
+    "/api/discussions/{EntityId}/member/{MemberId}/permissions/remove": {
       "patch": {
         "tags": [
           "Discussions"
@@ -4171,6 +4183,12 @@
         "parameters": [
           {
             "name": "EntityId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "MemberId",
             "in": "path",
             "required": true,
             "type": "string"
@@ -4420,6 +4438,18 @@
             "name": "authorization",
             "in": "header",
             "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Type": {
+                  "example": "any"
+                }
+              }
+            }
           }
         ],
         "responses": {
