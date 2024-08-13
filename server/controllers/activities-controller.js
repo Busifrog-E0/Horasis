@@ -26,14 +26,8 @@ const GetOneFromActivities = async (req, res) => {
     //@ts-ignore
     const { UserId } = req.user;
     const Activity = await ReadOneFromActivities(ActivityId);
-    const [UserDetails, checkLike, checkSave] = await Promise.all([
-        ReadOneFromUsers(Activity.UserId),
-        ReadLikes({ EntityId: Activity.DocId, UserId }, undefined, 1, undefined),
-        ReadSaves({ EntityId: Activity.DocId, UserId }, undefined, 1, undefined)
-    ])
-    const HasLiked = checkLike.length > 0;
-    const HasSaved = checkSave.length > 0;
-    return res.json({ ...Activity, UserDetails, HasLiked, HasSaved });
+    const data = await SetActivityDataForGet(Activity, UserId);
+    return res.json(data);
 }
 
 /**
@@ -141,16 +135,7 @@ const GetFilteredActivities = async (req, res) => {
     const { Filter, NextId, Limit, OrderBy } = req.query;
     //@ts-ignore
     const Activities = await ReadActivities(Filter, NextId, Limit, OrderBy);
-    const data = await Promise.all(Activities.map(async Activity => {
-        const [UserDetails, checkLike, checkSave] = await Promise.all([
-            ReadOneFromUsers(Activity.UserId),
-            ReadLikes({ EntityId: Activity.DocId, UserId }, undefined, 1, undefined),
-            ReadSaves({ ActivityId: Activity.DocId, UserId }, undefined, 1, undefined)
-        ])
-        const HasSaved = checkSave.length > 0;
-        const HasLiked = checkLike.length > 0;
-        return { ...Activity, UserDetails, HasLiked, HasSaved }
-    }))
+    const data = await Promise.all(Activities.map(async Activity => await SetActivityDataForGet(Activity, UserId)))
     return res.json(data)
 }
 
@@ -199,7 +184,7 @@ const PatchActivities = async (req, res) => {
     req.body.Mentions = await ExtractMentionedUsersFromContent(req.body.Content);
     await UpdateActivities(req.body, ActivityId);
     //@ts-ignore
-    await RemoveNotificationsAfterActivityMentionPatch(req.body.Mentions,Activity.Mentions,req.user.UserId,ActivityId);
+    await RemoveNotificationsAfterActivityMentionPatch(req.body.Mentions, Activity.Mentions, req.user.UserId, ActivityId);
     return res.json(true);
 }
 
@@ -328,11 +313,28 @@ const ExtractMentionedUsersFromContent = async (Content) => {
     return Users;
 };
 
+/**
+ * 
+ * @param {ActivityData} Activity 
+ * @param {string} UserId 
+ * @returns 
+ */
+const SetActivityDataForGet = async (Activity, UserId) => {
+    const [UserDetails, checkLike, checkSave] = await Promise.all([
+        ReadOneFromUsers(Activity.UserId),
+        ReadLikes({ EntityId: Activity.DocId, UserId }, undefined, 1, undefined),
+        ReadSaves({ ActivityId: Activity.DocId, UserId }, undefined, 1, undefined)
+    ])
+    const HasSaved = checkSave.length > 0;
+    const HasLiked = checkLike.length > 0;
+    return { ...Activity, UserDetails, HasLiked, HasSaved }
+}
 
 
 
 
 export {
     GetOneFromActivities, GetActivities, PostActivities, PatchActivities, DeleteActivities,
-    PostActivityForProfilePatch, GetFilteredActivities, ExtractMentionedUsersFromContent
+    PostActivityForProfilePatch, GetFilteredActivities, ExtractMentionedUsersFromContent,
+    SetActivityDataForGet
 }
