@@ -11,13 +11,13 @@ const PostDiscussionSchema = Joi.object({
 });
 
 const UpdatePermissionSchema = Joi.object({
-    IsAdmin: Joi.array().items(Joi.string()).required(),
-    CanInviteOthers: Joi.array().items(Joi.string()).required(),
-    CanPostActivity: Joi.array().items(Joi.string()).required(),
-    CanUploadPhoto: Joi.array().items(Joi.string()).required(),
-    CanCreateAlbum: Joi.array().items(Joi.string()).required(),
-    CanUploadVideo: Joi.array().items(Joi.string()).required()
-})
+    IsAdmin: Joi.array().items(Joi.string()),
+    CanInviteOthers: Joi.array().items(Joi.string()),
+    CanPostActivity: Joi.array().items(Joi.string()),
+    CanUploadPhoto: Joi.array().items(Joi.string()),
+    CanCreateAlbum: Joi.array().items(Joi.string()),
+    CanUploadVideo: Joi.array().items(Joi.string())
+}).xor('IsAdmin', 'CanInviteOthers', 'CanPostActivity', 'CanUploadPhoto', 'CanCreateAlbum', 'CanUploadVideo');
 
 const DiscussionCoverPhotoSchema = Joi.object({
     CoverPicture: Joi.string().required(),
