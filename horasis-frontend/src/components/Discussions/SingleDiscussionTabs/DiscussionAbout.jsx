@@ -5,7 +5,7 @@ const DiscussionAbout = ({ discussion }) => {
 		<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
 			<div className='flex flex-row justify-between text-system-primary-accent'>
 				<h4 className='font-semibold text-2xl text-system-primary-text'>Description</h4>
-				{discussion.Permissions.IsAdmin && <></>}
+				{/* {discussion.Permissions.IsAdmin && <></>} */}
 				{/* <svg
 					className='w-6 h-6 cursor-pointer'
 					aria-hidden='true'

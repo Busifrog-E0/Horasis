@@ -7,6 +7,7 @@ import { getNextId } from '../../../utils/URLParams'
 import { jsonToQuery } from '../../../utils/searchParams/extractSearchParams'
 import { getItem, patchItem } from '../../../constants/operations'
 import { useNavigate } from 'react-router-dom'
+import Permissions from '../Permissions/Permissions'
 
 const DiscussionSettings = ({ discussionId, from = 'settings' }) => {
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
@@ -171,7 +172,7 @@ const DiscussionSettings = ({ discussionId, from = 'settings' }) => {
 					</p>
 				</div>
 			)}
-			<div>
+			{/* <div>
 				<h1 className='text-system-primary-text font-medium text-lg'>Group Invitations</h1>
 				<p className='text-brand-gray mt-1 mb-2 text-base'>Which members of this group are allowed to invite others?</p>
 				<SelectEventMembers
@@ -237,13 +238,20 @@ const DiscussionSettings = ({ discussionId, from = 'settings' }) => {
 					pageDisabled={pageDisabled}
 					fetchMore={fetchMore}
 				/>
-			</div>
+			</div> */}
 
-			<div>
+			<Permissions discussionId={discussionId} permissionType='CanInviteOthers' />
+			<Permissions discussionId={discussionId} permissionType='CanPostActivity' />
+			<Permissions discussionId={discussionId} permissionType='CanUploadPhoto' />
+			<Permissions discussionId={discussionId} permissionType='CanCreateAlbum' />
+			<Permissions discussionId={discussionId} permissionType='CanUploadVideo' />
+			<Permissions discussionId={discussionId} permissionType='IsAdmin' />
+
+			{/* <div>
 				<Button variant='black' size='md' onClick={() => handleSavePermissions()}>
 					Save Permissions
 				</Button>
-			</div>
+			</div> */}
 		</div>
 	)
 }
