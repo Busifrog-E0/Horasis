@@ -18,7 +18,7 @@ const DiscussionTab = ({ discussion, onClick, fetch, updateList, data }) => {
 			(result) => {
 				if (result === true) {
 					// fetch()
-					getSingleDiscussion(discussion.DocId, 'UPDATE')
+					getSingleDiscussion(discussion.DocId)
 				}
 			},
 			(err) => {
@@ -37,10 +37,10 @@ const DiscussionTab = ({ discussion, onClick, fetch, updateList, data }) => {
 			(result) => {
 				if (result === true) {
 					// fetch()
-					getSingleDiscussion(discussion.DocId, 'UPDATE')
+					getSingleDiscussion(discussion.DocId)
 				} else if (typeof result === 'object') {
 					// fetch()
-					getSingleDiscussion(discussion.DocId, 'UPDATE')
+					getSingleDiscussion(discussion.DocId)
 				}
 			},
 			(err) => {
@@ -58,7 +58,7 @@ const DiscussionTab = ({ discussion, onClick, fetch, updateList, data }) => {
 			(result) => {
 				if (result === true) {
 					// fetch()
-					getSingleDiscussion(discussion.DocId, 'REMOVE')
+					getSingleDiscussion(discussion.DocId)
 				}
 			},
 			(err) => {
@@ -77,7 +77,7 @@ const DiscussionTab = ({ discussion, onClick, fetch, updateList, data }) => {
 			(result) => {
 				if (result === true) {
 					// fetch()
-					getSingleDiscussion(discussion.DocId, 'REMOVE')
+					getSingleDiscussion(discussion.DocId)
 				}
 			},
 			(err) => {
@@ -95,7 +95,7 @@ const DiscussionTab = ({ discussion, onClick, fetch, updateList, data }) => {
 			(result) => {
 				if (result === true) {
 					// fetch()
-					getSingleDiscussion(discussion.DocId, 'REMOVE')
+					getSingleDiscussion(discussion.DocId)
 				}
 			},
 			(err) => {
@@ -107,18 +107,12 @@ const DiscussionTab = ({ discussion, onClick, fetch, updateList, data }) => {
 		)
 	}
 
-	const getSingleDiscussion = (discussionId, actionType = 'UPDATE') => {
+	const getSingleDiscussion = (discussionId) => {
 		setIsLoading(true)
 		getItem(
 			`discussions/${discussionId}`,
 			(result) => {
-				if (actionType === 'UPDATE') {
-					updateList(
-						data.map((discussion) => (discussion.DocId === discussionId ? { ...discussion, ...result } : discussion))
-					)
-				} else if (actionType === 'REMOVE') {
-					updateList(data.filter((discussion) => discussion.DocId !== discussionId))
-				}
+				updateList(data.map((discussion) => (discussion.DocId === discussionId ? result : discussion)))
 				setIsLoading(false)
 			},
 			(err) => {
@@ -153,7 +147,11 @@ const DiscussionTab = ({ discussion, onClick, fetch, updateList, data }) => {
 						{discussion.IsMember ? (
 							<>
 								{currentUserData.CurrentUser.UserId !== discussion.OrganiserId && (
-									<Button variant='outline' onClick={() => unFollowDiscussion()}>
+									<Button
+										variant='outline'
+										onClick={() => {
+											unFollowDiscussion()
+										}}>
 										Unfollow
 									</Button>
 								)}
@@ -161,7 +159,11 @@ const DiscussionTab = ({ discussion, onClick, fetch, updateList, data }) => {
 						) : (
 							<>
 								{discussion.MembershipStatus === undefined && (
-									<Button variant='black' onClick={() => joinDiscussion()}>
+									<Button
+										variant='black'
+										onClick={() => {
+											joinDiscussion()
+										}}>
 										Follow
 									</Button>
 								)}
