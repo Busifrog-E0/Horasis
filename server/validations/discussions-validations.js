@@ -1,3 +1,4 @@
+import { Permission } from "@aws-sdk/client-s3";
 import Joi from "joi";
 
 const PostDiscussionSchema = Joi.object({
@@ -11,13 +12,9 @@ const PostDiscussionSchema = Joi.object({
 });
 
 const UpdatePermissionSchema = Joi.object({
-    IsAdmin: Joi.array().items(Joi.string()),
-    CanInviteOthers: Joi.array().items(Joi.string()),
-    CanPostActivity: Joi.array().items(Joi.string()),
-    CanUploadPhoto: Joi.array().items(Joi.string()),
-    CanCreateAlbum: Joi.array().items(Joi.string()),
-    CanUploadVideo: Joi.array().items(Joi.string())
-}).xor('IsAdmin', 'CanInviteOthers', 'CanPostActivity', 'CanUploadPhoto', 'CanCreateAlbum', 'CanUploadVideo');
+    PermissionField: Joi.string().valid("CanInviteOthers", "CanPostActivity", "CanUploadPhoto", "CanCreateAlbum", "CanUploadVideo", "IsAdmin").required(),
+    UserIds: Joi.array().required()
+});
 
 const DiscussionCoverPhotoSchema = Joi.object({
     CoverPicture: Joi.string().required(),

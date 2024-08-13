@@ -31,11 +31,8 @@ const DiscussionsData = {
 const DiscussionDataArray = [DiscussionsData];
 
 const UpdatePermissionData = {
-    CanInviteOthers: ['user1', 'user2', 'user3'],
-    CanPostActivity: ['user4', 'user5'],
-    CanUploadPhoto: ['user6', 'user7'],
-    CanCreateAlbum: ['user8'],
-    CanUploadVideo: ['user9', 'user10']
+    PermissionField: 'CanPostActivity',
+    UserIds : ["user123","user124"]
 }
 
 export default {

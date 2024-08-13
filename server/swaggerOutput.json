@@ -4231,6 +4231,9 @@
           },
           "403": {
             "description": "Forbidden"
+          },
+          "444": {
+            "description": "Connection Closed Without Response"
           }
         },
         "security": [
@@ -5688,6 +5691,9 @@
           },
           "403": {
             "description": "Forbidden"
+          },
+          "444": {
+            "description": "Connection Closed Without Response"
           }
         },
         "security": [
