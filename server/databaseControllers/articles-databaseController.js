@@ -8,7 +8,6 @@ import dataHandling from './functions.js'
  * @typedef {object} ArticleData
  * @property {string} ArticleName
  * @property {string} Description
- * @property {string} Content
  * @property {string} DocId
  * @property {string} CoverPhoto
  * @property {number} CreatedIndex
