@@ -323,7 +323,7 @@ const SetActivityDataForGet = async (Activity, UserId) => {
     const [UserDetails, checkLike, checkSave] = await Promise.all([
         ReadOneFromUsers(Activity.UserId),
         ReadLikes({ EntityId: Activity.DocId, UserId }, undefined, 1, undefined),
-        ReadSaves({ ActivityId: Activity.DocId, UserId }, undefined, 1, undefined)
+        ReadSaves({ EntityId: Activity.DocId, UserId }, undefined, 1, undefined)
     ])
     const HasSaved = checkSave.length > 0;
     const HasLiked = checkLike.length > 0;
