@@ -31,7 +31,14 @@ const GetOneFromMembers = async (req, res) => {
  * @returns {Promise<e.Response<Array<MemberData>>>}
  */
 const GetMembers = async (req, res) => {
-    const { Filter, NextId, Limit, OrderBy } = req.query;
+    const { Filter, NextId, Limit, OrderBy, Keyword } = req.query;
+    if (Keyword) {
+        //@ts-ignore
+        Filter.$or = [
+            { "UserDetails.FullName": { $regex: Keyword, $options: 'i' } },
+            { "UserDetails.Username": { $regex: Keyword, $options: 'i' } },
+        ];
+    }
     // @ts-ignore
     Filter.EntityId = req.params.EntityId;
     //@ts-ignore

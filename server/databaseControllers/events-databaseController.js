@@ -23,7 +23,7 @@ import dataHandling from './functions.js'
  * @property {string} EndTime
  * @property {AgendaData[]} Agenda
  * @property {"Public"|"Private"} Privacy
- * @property {"Virtual"|"Offline"} Type
+ * @property {"Virtual"|"Physical"} Type
  * @property {string} Country
  * @property {number} NoOfMembers
  * @property {string} DisplayPicture
