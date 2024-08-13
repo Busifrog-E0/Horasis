@@ -8,6 +8,7 @@ const MembersGetSchema = QueryParametersSchema.keys({
     'Permissions.CanCreateAlbum': Joi.boolean(),
     'Permissions.CanUploadVideo': Joi.boolean(),
     'Permissions.IsAdmin': Joi.boolean(),
+    'MembershipStatus' : Joi.string().valid("Accepted", "Invited", "Requested")
 });
 
 
