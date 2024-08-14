@@ -30,17 +30,11 @@ const EventsData = {
 
 const EventDataArray = [EventsData];
 
-const UpdatePermissionData = {
-    CanInviteOthers: ['user1', 'user2', 'user3'],
-    CanPostActivity: ['user4', 'user5'],
-    CanUploadPhoto: ['user6', 'user7'],
-    CanCreateAlbum: ['user8'],
-    CanUploadVideo: ['user9', 'user10']
-}
+
 
 export default {
     PostEventsData,
     PatchEventsCoverData,
     EventsData, EventDataArray,
-    UpdatePermissionData
+    
 }

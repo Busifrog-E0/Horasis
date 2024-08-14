@@ -40,8 +40,8 @@ const GetArticles = async (req, res) => {
 const PostArticles = async (req, res) => {
     const { AuthorId } = req.body;
     const UserDetails = await ReadOneFromUsers(AuthorId);
-    await CreateArticles({ ...req.body, UserDetails });
-    return res.json(true);
+    const ArticleId = await CreateArticles({ ...req.body, UserDetails });
+    return res.json(ArticleId);
 }
 
 /**

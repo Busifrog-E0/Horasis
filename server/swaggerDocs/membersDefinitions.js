@@ -18,7 +18,12 @@ const MemberData =  {
     }
 };
 
+const UpdatePermissionData = {
+    PermissionField: 'CanPostActivity',
+    UserIds: ["user123", "user124"]
+}
 
 export default {
-    MemberData
+    MemberData,
+    UpdatePermissionData
 }

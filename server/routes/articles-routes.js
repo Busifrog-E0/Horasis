@@ -5,13 +5,13 @@ import asyncHandler from 'express-async-handler';
 import SwaggerDocs from '../swaggerDocs/articles-swaggerDocs.js'
 import e from 'express';
 import { decodeIDToken, ensureAuthorized } from '../middleware/auth-middleware.js';
-import { ValidatePatchArticles, ValidatePatchArticlesCoverPicture, ValidatePostArticles } from '../validations/articles-validations.js';
+import { ValidateGetArticles, ValidatePatchArticles, ValidatePatchArticlesCoverPicture, ValidatePostArticles } from '../validations/articles-validations.js';
 import { QueryParameterFormatting, ValidateGetEntity } from '../middleware/common.js';
 import { InsertArticleTypeMiddleware } from '../middleware/articles-middleware.js';
 import { DeleteSaves, GetSaves, PostSaves } from '../controllers/saves-controller.js';
 const router = e.Router();
 
-router.get('/articles', decodeIDToken, ensureAuthorized("User"), ValidateGetEntity, QueryParameterFormatting,
+router.get('/articles', decodeIDToken, ensureAuthorized("User"), ValidateGetArticles, QueryParameterFormatting,
     SwaggerDocs.get_Articles,
     // @ts-ignore
     asyncHandler(GetArticles));
@@ -51,7 +51,7 @@ router.patch('/articles/:ArticleId', decodeIDToken, ensureAuthorized("User"), Va
 router.patch('/articles/:ArticleId/coverPicture', decodeIDToken, ensureAuthorized("User"), ValidatePatchArticlesCoverPicture,
     SwaggerDocs.patch_Articles_ArticleId_CoverPicture,
     // @ts-ignore
-    asyncHandler(PatchArticles));    
+    asyncHandler(PatchArticles));
 
 router.delete('/articles/:ArticleId', decodeIDToken, ensureAuthorized("User"),
     // @ts-ignore

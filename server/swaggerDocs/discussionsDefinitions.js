@@ -25,19 +25,16 @@ const DiscussionsData = {
     CoverPicture: "https://example.com/images/cover.jpg",
     NoOfMembers: 10,
     isMember: true,
-    MembershipStatus : "Accepted",
+    MembershipStatus: "Accepted",
 };
 
 const DiscussionDataArray = [DiscussionsData];
 
-const UpdatePermissionData = {
-    PermissionField: 'CanPostActivity',
-    UserIds : ["user123","user124"]
-}
+
 
 export default {
     PostDiscussionsData,
     PatchDiscussionsCoverData,
     DiscussionsData, DiscussionDataArray,
-    UpdatePermissionData
+    
 }
