@@ -20,6 +20,10 @@ import CreateDiscussionStep3 from '../components/Discussions/CreateDiscussion/Cr
 import DiscussionAbout from '../components/Discussions/SingleDiscussionTabs/DiscussionAbout'
 import DiscussionJoinRequest from '../components/Discussions/SingleDiscussionTabs/DiscussionJoinRequest'
 import arrowback from '../assets/icons/arrowback.svg'
+import camera from '../assets/icons/camera.svg'
+import Modal from '../components/ui/Modal'
+import PictureUpload from '../components/Profile/EditProfile/PictureUpload'
+import close from '../assets/icons/close.svg'
 
 const SingleDiscussion = () => {
 	const [activeTab, setActiveTab] = useState(0)
@@ -298,8 +302,101 @@ const SingleDiscussion = () => {
 		)
 	}
 
+		// cover photo upload logic
+	const [isImageUploading, setIsImageUploading] = useState(false)
+		const [selectedCoverImage, setSelectedCoverImage] = useState(null)
+		const [coverImageToUpload, setCoverImageToUpload] = useState(null)
+		const [isCoverPictureOpen, setIsCoverPictureOpen] = useState(false)
+		const onCoverImageSelect = (imageData) => {
+			setCoverImageToUpload(imageData)
+			const tempUrl = URL.createObjectURL(new Blob([new Uint8Array(imageData.FileData)]))
+			setSelectedCoverImage(tempUrl)
+		}
+		const onCoverImageDelete = () => {
+			setCoverImageToUpload(null)
+			setSelectedCoverImage(null)
+		}
+		const onCoverImageSet = (url) => {
+			setIsImageUploading(true)
+	
+			patchItem(
+				`discussions/${discussionid}/coverPicture`,
+				{
+					CoverPicture: url,
+				},
+				(result) => {
+					if (result === true) {
+						setIsCoverPictureOpen(false)
+						getDiscussion()
+					}
+					setIsImageUploading(false)
+				},
+				(err) => {
+					// console.log(err)
+					setIsImageUploading(false)
+				},
+				updateCurrentUser,
+				currentUserData,
+				toast
+			)
+		}
+		const onCoverImageUpload = () => {
+			if (coverImageToUpload) {
+				setIsImageUploading(true)
+	
+				postItem(
+					'files/users',
+					coverImageToUpload,
+					(result) => {
+						onCoverImageSet(result.FileUrl)
+					},
+					(err) => {
+						// console.log(err)
+						setIsImageUploading(false)
+					},
+					updateCurrentUser,
+					currentUserData,
+					toast
+				)
+			} else {
+				onCoverImageSet('')
+			}
+		}
+
 	return (
 		<>
+			<Modal isOpen={isCoverPictureOpen} maxWidth='max-w-4xl'>
+				<Modal.Header>
+					<div className='p-2 flex items-center justify-between w-full'>
+						<p className='text-lg font-medium'>Cover Photo</p>
+						<button
+							onClick={() => {
+								setIsCoverPictureOpen(false)
+							}}
+							disabled={isImageUploading}>
+							<img src={close} className='h-6  cursor-pointer' alt='' />
+						</button>
+					</div>
+				</Modal.Header>
+				<Modal.Body>
+					<p className='text-lg font-medium text-center'>
+						Your cover photo will be used to customize the header of your profile.
+					</p>
+					<div className=' flex flex-col items-center justify-center pt-10'>
+						<PictureUpload
+							// isBanner={false}
+							altTitle='Cover Picture'
+							selectedImage={selectedCoverImage}
+							setSelectedImage={setSelectedCoverImage}
+							onImageSelect={onCoverImageSelect}
+							onImageDelete={onCoverImageDelete}
+							onUploadImage={onCoverImageUpload}
+							fileFieldName={'CoverPicture'}
+							isUploading={isImageUploading}
+						/>
+					</div>
+				</Modal.Body>
+			</Modal>
 			<div className='overflow-hidden h-80 lg:h-96 relative'>
 				{discussion.CoverPicture ? (
 					<>
@@ -313,26 +410,26 @@ const SingleDiscussion = () => {
 
 				<div className='absolute top-0 right-0 left-0 bottom-0 flex flex-col justify-between items-start p-4 lg:px-10 lg:py-6  h-100 overflow-hidden overflow-y-auto'>
 					<div className='flex w-full items-start justify-between'>
-					<div
-								className={`inline-flex items-center justify-center w-12 h-12 p-3 overflow-hidden rounded-full border border-white bg-white cursor-pointer`}
-								onClick={handleGoBack}>
-								<img src={arrowback} alt='' className='h-6 cursor-pointer' />
+						<div
+							className={`inline-flex items-center justify-center w-12 h-12 p-3 overflow-hidden rounded-full border border-white bg-white cursor-pointer`}
+							onClick={handleGoBack}>
+							<img src={arrowback} alt='' className='h-6 cursor-pointer' />
 
-								{/* <h4 className='font-medium text-xl text-brand-secondary'>Back</h4> */}
-							</div>
-			
-						{/* <div
+							{/* <h4 className='font-medium text-xl text-brand-secondary'>Back</h4> */}
+						</div>
+
+						<div
+							onClick={() => {
+								setIsCoverPictureOpen(true)
+								if (discussion.CoverPicture) {
+									setSelectedCoverImage(discussion.CoverPicture)
+								} else {
+									setSelectedCoverImage(null)
+								}
+							}}
 							className={`inline-flex items-center justify-center w-12 h-12 p-3 overflow-hidden rounded-full border border-white bg-white cursor-pointer`}>
-							<svg aria-hidden='true' xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'>
-								<path
-									stroke='currentColor'
-									strokeLinecap='round'
-									strokeLinejoin='round'
-									strokeWidth='2'
-									d='M4 12.25V1m0 11.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M4 19v-2.25m6-13.5V1m0 2.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M10 19V7.75m6 4.5V1m0 11.25a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5ZM16 19v-2'
-								/>
-							</svg>
-						</div> */}
+							<img src={camera} alt='' className='h-6 cursor-pointer' />
+						</div>
 					</div>
 					<div>
 						<h4 className='font-medium shadow-lg text-4xl text-white mb-3'>{discussion.DiscussionName}</h4>
@@ -358,8 +455,7 @@ const SingleDiscussion = () => {
 								<div className='flex flex-row justify-between mt-1 lg:mt-3'>
 									<h4 className='font-semibold text-2xl text-system-primary-text'>Brief</h4>
 								</div>
-								<h4
-								className='text-xl text-brand-gray mt-2 mb-12 leading-8 whitespace-pre-line'>{discussion.Brief}</h4>
+								<h4 className='text-xl text-brand-gray mt-2 mb-12 leading-8 whitespace-pre-line'>{discussion.Brief}</h4>
 								<div className='flex gap-2'>
 									{discussion.IsMember ? (
 										<>
