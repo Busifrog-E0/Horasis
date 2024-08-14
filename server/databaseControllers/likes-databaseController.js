@@ -10,7 +10,7 @@ import dataHandling from './functions.js'
  * @property {UserData} UserDetails
  * @property {number} CreatedIndex
  * @property {string} DocId
- * @property {'Activity'|'Comment'} Type
+ * @property {'Activity'|'Comment'|'Article'} Type
  */
 
 

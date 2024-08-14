@@ -12,6 +12,8 @@ import dataHandling from './functions.js'
  * @property {string} CoverPhoto
  * @property {number} CreatedIndex
  * @property {string} AuthorId
+ * @property {number} NoOfLikes
+ * @property {number} NoOfComments
  * @property {UserData} UserDetails
  * 
  */
@@ -69,11 +71,15 @@ const RemoveArticles = async (DocId) => {
     return dataHandling.Delete('Articles', DocId);
 }
 
+const IncrementArticles = async (data, DocId) => {
+    return dataHandling.Update("Articles", data, DocId, ["$inc"], false);
+}
 
 export {
     ReadArticles,
     ReadOneFromArticles,
     UpdateArticles,
     CreateArticles,
-    RemoveArticles
+    RemoveArticles,
+    IncrementArticles
 }

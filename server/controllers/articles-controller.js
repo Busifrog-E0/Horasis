@@ -25,7 +25,12 @@ const GetOneFromArticles = async (req, res) => {
  * @returns {Promise<e.Response<Array<ArticleData>>>}
  */
 const GetArticles = async (req, res) => {
-    const { Filter, NextId, Limit, OrderBy } = req.query;
+    const { Filter, NextId, Limit, OrderBy,Keyword } = req.query;
+    if (Keyword) {
+        //@ts-ignore
+        Filter["ArticleName"] = { $regex: Keyword, $options: 'i' };
+
+    }
     // @ts-ignore
     const data = await ReadArticles(Filter, NextId, Limit, OrderBy);
     return res.json(data);
@@ -40,6 +45,7 @@ const GetArticles = async (req, res) => {
 const PostArticles = async (req, res) => {
     const { AuthorId } = req.body;
     const UserDetails = await ReadOneFromUsers(AuthorId);
+    req.body = ArticleInit(req.body);
     const ArticleId = await CreateArticles({ ...req.body, UserDetails });
     return res.json(ArticleId);
 }
@@ -66,6 +72,14 @@ const DeleteArticles = async (req, res) => {
     const { ArticleId } = req.params;
     await RemoveArticles(ArticleId);
     return res.json(true);
+}
+
+const ArticleInit = (Article) => {
+    return {
+        ...Article,
+        NoOfLikes: 0,
+        NoOfComments : 0
+    }
 }
 
 
