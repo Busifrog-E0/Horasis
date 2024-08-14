@@ -97,7 +97,7 @@ const SavedActivityTab = () => {
 	}, [filters])
 
 	return (
-		<div className='p-5 bg-system-secondary-bg rounded-lg mt-4 lg:mt-8'>
+		<div className='p-5 bg-system-secondary-bg rounded-lg'>
 			<div className='flex items-center justify-between gap-2 mb-1'>
 				<h4 className='font-medium text-2xl text-system-primary-text'>Saved Posts</h4>
 				<img src={arrowfor} alt='' className='h-6 w-6 cursor-pointer' onClick={() => navigate('/Saved')} />

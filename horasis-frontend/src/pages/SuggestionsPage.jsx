@@ -26,7 +26,7 @@ const SuggestionsPage = () => {
 						<SuggestionsSection loadMoreEnabled={true} limit={8} iconPresent={false} />
 						{/* <SavedActivities gapBnTabs="gap-3" classNameForPost='p-5 pr-10 ' header="All Updates" /> */}
 					</div>
-					<div>
+					<div className='flex flex-col gap-4'>
 						{/* <div className='p-5 bg-system-secondary-bg rounded-lg'>
 							<div className='flex items-center justify-between gap-2 mb-5'>
 								<h4 className='font-medium text-2xl text-system-primary-text'>Events</h4>
