@@ -204,33 +204,33 @@ const CreateDiscussion = () => {
 							{activeStep === 4 && <DiscussionSettings discussionId={discussionId} from='create' />}
 
 							{/* {activeStep !== 4 && */}
-							<div className='grid grid-cols-2 lg:grid-cols-3 gap-4 py-8'>
+							<div className='flex justify-end gap-4 py-8'>
 								<div className='hidden lg:block'></div>
 								<div className='col-span-1'>
 									{!isFirstStep && !isThirdStep && (
-										<Button onClick={() => changeStep(activeStep - 1)} variant='outline' width='full'>
+										<Button onClick={() => changeStep(activeStep - 1)} variant='outline' width='full' className='px-10'>
 											Back
 										</Button>
 									)}
 								</div>
 								<div className='col-span-1'>
 									{isFirstStep && (
-										<Button onClick={() => validate(() => changeStep(activeStep + 1))} width='full' variant='black'>
+										<Button onClick={() => validate(() => changeStep(activeStep + 1))} width='full' className='px-10' variant='black'>
 											Next
 										</Button>
 									)}
 									{isSecondStep && (
-										<Button onClick={() => setIsModalOpen(true)} width='full' variant='black'>
+										<Button onClick={() => setIsModalOpen(true)} width='full' className='px-10' variant='black'>
 											Create Discussion
 										</Button>
 									)}
 									{isThirdStep && (
-										<Button onClick={() => changeStep(activeStep + 1)} width='full' variant='black'>
+										<Button onClick={() => changeStep(activeStep + 1)} width='full' className='px-10' variant='black'>
 											Next
 										</Button>
 									)}
 									{isFourthStep && (
-										<Button onClick={() => changeStep(activeStep + 1)} width='full' variant='black'>
+										<Button onClick={() => changeStep(activeStep + 1)} width='full' className='px-10' variant='black'>
 											Done
 										</Button>
 									)}

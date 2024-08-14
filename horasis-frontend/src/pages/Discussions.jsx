@@ -30,7 +30,7 @@ const Discussions = () => {
                 <div className="lg:col-span-2">
                     <DiscussionSection />
                 </div>
-                <div>
+                <div  className="flex flex-col gap-4">
                     <Button
                         onClick={() => OnClickCreateNew('/discussions/create/new')}
                         width="full"

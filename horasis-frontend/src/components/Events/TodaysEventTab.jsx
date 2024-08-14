@@ -20,7 +20,7 @@ const TodaysEventTab = () => {
                 </div>
             </div>
             <div className="p-3 px-2 grid grid-cols-5 gap-3 items-center">
-                <div className="p-3 px-5 bg-system-secondary-bg rounded-lg shadow-lg">
+                <div className="p-3 px-5 bg-system-secondary-bg rounded-lg shadow-lg flex flex-col items-center h-full justify-center">
                     <h4 className="text-sm text-center text-system-primary-text m-0">Jan</h4>
                     <h4 className="font-semibold text-xl text-center text-system-primary-text m-0">08</h4>
                 </div>
