@@ -47,7 +47,7 @@ const DashboardHeader = () => {
 					<h1 className='text-4xl font-bold text-brand-violet' onClick={() => OnClickItem('/home')}>
 						<Logo />
 					</h1>
-					<div className='px-10 hidden lg:flex flex-row flex-wrap gap-6 flex-1'>
+					<div className='px-10 hidden lg:flex flex-row flex-wrap gap-8 flex-1'>
 						<div className='w-max flex flex-col items-center'>
 							<a
 								className={`cursor-pointer  font-medium text-xl  ${
@@ -129,7 +129,7 @@ const DashboardHeader = () => {
 								}`}></div>
 					</div> */}
 					</div>
-					<div className='flex flex-row flex-wrap gap-4 md:gap-2'>
+					<div className='flex flex-row flex-wrap gap-4 md:gap-4'>
 						{/* <button
             type="button"
             className="inline-flex justify-center rounded-md border-none bg-system-secondary-bg text-md px-0 font-medium text-brand-gray-dim"
