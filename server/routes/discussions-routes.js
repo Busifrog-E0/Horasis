@@ -153,7 +153,7 @@ router.get('/users/:UserId/discussions/save', decodeIDToken, ensureAuthorized("U
     //@ts-ignore
     asyncHandler(GetSaves));
 
-router.delete('/users/:UserId/discussions/save', decodeIDToken, ensureAuthorized("User"),
+router.delete('/discussions/:EntityId/save', decodeIDToken, ensureAuthorized("User"),
     SwaggerDocs.delete_Discussions_DiscussionId_Save,
     //@ts-ignore
     asyncHandler(DeleteSaves));

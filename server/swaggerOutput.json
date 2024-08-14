@@ -4231,6 +4231,9 @@
           },
           "403": {
             "description": "Forbidden"
+          },
+          "444": {
+            "description": "Connection Closed Without Response"
           }
         },
         "security": [
@@ -4478,6 +4481,47 @@
             "BearerAuth": []
           }
         ]
+      },
+      "delete": {
+        "tags": [
+          "Discussions"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "EntityId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "402": {
+            "description": "Payment Required"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "444": {
+            "description": "Connection Closed Without Response"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
       }
     },
     "/api/users/{UserId}/discussions/save": {
@@ -4534,47 +4578,6 @@
           },
           "403": {
             "description": "Forbidden"
-          }
-        },
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ]
-      },
-      "delete": {
-        "tags": [
-          "Discussions"
-        ],
-        "description": "",
-        "parameters": [
-          {
-            "name": "UserId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "402": {
-            "description": "Payment Required"
-          },
-          "403": {
-            "description": "Forbidden"
-          },
-          "444": {
-            "description": "Connection Closed Without Response"
           }
         },
         "security": [
@@ -5688,6 +5691,9 @@
           },
           "403": {
             "description": "Forbidden"
+          },
+          "444": {
+            "description": "Connection Closed Without Response"
           }
         },
         "security": [
@@ -6149,6 +6155,9 @@
         ]
       },
       "patch": {
+        "tags": [
+          "Articles"
+        ],
         "description": "",
         "parameters": [
           {
@@ -6164,6 +6173,15 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "Article Data",
+            "schema": {
+              "$ref": "#/definitions/ArticlePatchData"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
           "401": {
             "description": "Unauthorized"
           },
@@ -6173,7 +6191,12 @@
           "403": {
             "description": "Forbidden"
           }
-        }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
       },
       "delete": {
         "description": "",
@@ -6201,6 +6224,222 @@
             "description": "Forbidden"
           }
         }
+      }
+    },
+    "/apiarticles/{EntityId}/save": {
+      "post": {
+        "tags": [
+          "Articles"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "EntityId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Type": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "402": {
+            "description": "Payment Required"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "444": {
+            "description": "Connection Closed Without Response"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/users/{UserId}/articles/save": {
+      "get": {
+        "tags": [
+          "Articles"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "UserId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "Filter",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "NextId",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "Limit",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "OrderBy",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Article Data",
+            "schema": {
+              "$ref": "#/definitions/ArticleDataArray"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "402": {
+            "description": "Payment Required"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/articles/{EntityId}/save": {
+      "delete": {
+        "tags": [
+          "Articles"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "EntityId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "402": {
+            "description": "Payment Required"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "444": {
+            "description": "Connection Closed Without Response"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/articles/{ArticleId}/coverPicture": {
+      "patch": {
+        "tags": [
+          "Articles"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "ArticleId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Article Data",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "CoverPhoto": {
+                  "type": "string",
+                  "example": "string"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "402": {
+            "description": "Payment Required"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
       }
     }
   },
@@ -8224,10 +8463,6 @@
           "type": "string",
           "example": "A comprehensive guide to getting started with Node.js."
         },
-        "Content": {
-          "type": "string",
-          "example": "Node.js is a JavaScript runtime built on Chrome's V8 JavaScript engine..."
-        },
         "CoverPhoto": {
           "type": "string",
           "example": "https://example.com/images/nodejs-cover.jpg"
@@ -8235,6 +8470,19 @@
         "AuthorId": {
           "type": "string",
           "example": "author456"
+        }
+      }
+    },
+    "ArticlePatchData": {
+      "type": "object",
+      "properties": {
+        "ArticleName": {
+          "type": "string",
+          "example": "Introduction to Node.js"
+        },
+        "Description": {
+          "type": "string",
+          "example": "A comprehensive guide to getting started with Node.js."
         }
       }
     }

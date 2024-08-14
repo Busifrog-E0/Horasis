@@ -275,15 +275,13 @@ const UpdateMemberPermissions = async (req, res) => {
     const { EntityId } = req.params;
     //@ts-ignore
     const { UserId } = req.user;
+    const { PermissionField, UserIds } = req.body;
     const Member = await ReadMembers({ MemberId: UserId, EntityId }, undefined, 1, undefined);
     if (!Member[0].Permissions.IsAdmin) {
         return res.status(444).json(AlertBoxObject("Cannot Update Permissions", "You are not an admin of this discussion"));
     }
-    await Promise.all(Object.keys(req.body).map(async (PermissionArray) => {
-        if (req.body[PermissionArray].length > 0) {
-            await UpdateManyMembers({ [`Permissions.${PermissionArray}`]: true }, { EntityId, MemberId: { $in: req.body[PermissionArray] } });
-        }
-    }))
+
+    await UpdateManyMembers({ [`Permissions.${PermissionField}`]: true }, { EntityId, MemberId: { $in: UserIds } });
     return res.json(true);
 }
 
@@ -298,7 +296,7 @@ const RemoveMemberPermissions = async (req, res) => {
     //@ts-ignore
     const { UserId } = req.user
     const { PermissionField } = req.body;
-    const [Entity, Member,User] = await Promise.all([
+    const [Entity, Member, User] = await Promise.all([
         req.body.Type === "Discussion" ?
             ReadOneFromDiscussions(EntityId)
             :
