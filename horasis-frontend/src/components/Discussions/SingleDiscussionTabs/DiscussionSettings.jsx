@@ -9,7 +9,7 @@ import { getItem, patchItem } from '../../../constants/operations'
 import { useNavigate } from 'react-router-dom'
 import Permissions from '../Permissions/Permissions'
 
-const DiscussionSettings = ({ discussionId, from = 'settings' }) => {
+const DiscussionSettings = ({ discussionId, from = 'settings',discussion }) => {
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
 	const toast = useToast()
 	const [isLoading, setIsLoading] = useState(true)
@@ -240,12 +240,12 @@ const DiscussionSettings = ({ discussionId, from = 'settings' }) => {
 				/>
 			</div> */}
 
-			<Permissions discussionId={discussionId} permissionType='CanInviteOthers' />
-			<Permissions discussionId={discussionId} permissionType='CanPostActivity' />
-			<Permissions discussionId={discussionId} permissionType='CanUploadPhoto' />
-			<Permissions discussionId={discussionId} permissionType='CanCreateAlbum' />
-			<Permissions discussionId={discussionId} permissionType='CanUploadVideo' />
-			<Permissions discussionId={discussionId} permissionType='IsAdmin' />
+			<Permissions from={from} discussion={discussion} discussionId={discussionId} permissionType='CanInviteOthers' />
+			<Permissions from={from} discussion={discussion} discussionId={discussionId} permissionType='CanPostActivity' />
+			<Permissions from={from} discussion={discussion} discussionId={discussionId} permissionType='CanUploadPhoto' />
+			<Permissions from={from} discussion={discussion} discussionId={discussionId} permissionType='CanCreateAlbum' />
+			<Permissions from={from} discussion={discussion} discussionId={discussionId} permissionType='CanUploadVideo' />
+			<Permissions from={from} discussion={discussion} discussionId={discussionId} permissionType='IsAdmin' />
 
 			{/* <div>
 				<Button variant='black' size='md' onClick={() => handleSavePermissions()}>

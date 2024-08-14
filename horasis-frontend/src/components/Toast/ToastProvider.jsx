@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import ToastContext from './ToastService'
 import closeIcon from '../../assets/icons/close.svg'
 
@@ -12,8 +12,10 @@ const ToastProvider = ({ children }) => {
 
 	const close = (id) => setToasts((toasts) => toasts.filter((toast) => toast.id !== id))
 
+	const contextValue = useMemo(() => ({ open, close }), [])
+
 	return (
-		<ToastContext.Provider value={{ open, close }}>
+		<ToastContext.Provider value={contextValue}>
 			{children}
 			<div className='space-y-2 absolute bottom-4 right-2 sm:right-4 left-auto transition-all z-50 '>
 				{toasts.map(({ id, message, type, title }) => {

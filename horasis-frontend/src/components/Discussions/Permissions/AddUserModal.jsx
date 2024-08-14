@@ -9,8 +9,15 @@ import { MemberTab, SelectedMember } from './Permissions'
 import { jsonToQuery } from '../../../utils/searchParams/extractSearchParams'
 import { getNextId } from '../../../utils/URLParams'
 import Button from '../../ui/Button'
+import Spinner from '../../ui/Spinner'
 
-const AddUserModal = ({ isAddPeopleModal, setAddPeopleModal, permissionType, discussionId }) => {
+const AddUserModal = ({
+	isAddPeopleModal,
+	setAddPeopleModal,
+	permissionType,
+	discussionId,
+	permissionChangeCallback = () => {},
+}) => {
 	const { currentUserData, updateCurrentUser } = useContext(AuthContext)
 	const toast = useToast()
 
@@ -104,6 +111,8 @@ const AddUserModal = ({ isAddPeopleModal, setAddPeopleModal, permissionType, dis
 		fetchAddUsers()
 	}, [addUserFilters])
 
+	const [permissionLoading, setPermissionLoading] = useState(false)
+
 	const handleSubmitPermissions = () => {
 		const memberIds = addedMembers.map((member) => {
 			return member.UserDetails.DocId
@@ -111,22 +120,28 @@ const AddUserModal = ({ isAddPeopleModal, setAddPeopleModal, permissionType, dis
 		const dataToSend = {
 			[`${permissionType}`]: memberIds,
 		}
-
+		setPermissionLoading(true)
 		patchItem(
 			`discussions/${discussionId}/member/permissions`,
 			dataToSend,
 			(result) => {
-				if(result === true){
+				setPermissionLoading(false)
+				if (result === true) {
+					permissionChangeCallback()
+					setAddedMembers([])
 					setAddPeopleModal(false)
-
 				}
 			},
-			(err) => {},
+			(err) => {
+				setPermissionLoading(false)
+			},
 			updateCurrentUser,
 			currentUserData,
 			toast
 		)
 	}
+
+
 
 	return (
 		<>
@@ -174,17 +189,23 @@ const AddUserModal = ({ isAddPeopleModal, setAddPeopleModal, permissionType, dis
 						</>
 					)}
 					<div className='flex items-center justify-end gap-4 py-2'>
-						<Button
-							size='md'
-							variant='outline'
-							onClick={() => {
-								setAddPeopleModal(false)
-							}}>
-							Cancel
-						</Button>
-						<Button size='md' variant='black' onClick={handleSubmitPermissions}>
-							Add Users
-						</Button>
+						{permissionLoading && <Spinner />}
+						{!permissionLoading && (
+							<>
+								<Button
+									disabled={permissionLoading}
+									size='md'
+									variant='outline'
+									onClick={() => {
+										setAddPeopleModal(false)
+									}}>
+									Cancel
+								</Button>
+								<Button disabled={permissionLoading} size='md' variant='black' onClick={handleSubmitPermissions}>
+									Add Users
+								</Button>
+							</>
+						)}
 					</div>
 				</Modal.Body>
 			</Modal>

@@ -15,7 +15,7 @@ import { getItem, patchItem } from '../../../constants/operations'
 import AddUserModal from './AddUserModal'
 import Spinner from '../../ui/Spinner'
 
-const Permissions = ({ permissionType, discussionId }) => {
+const Permissions = ({ permissionType, discussionId, discussion, from = 'settings' }) => {
 	const { currentUserData, updateCurrentUser } = useContext(AuthContext)
 	const toast = useToast()
 
@@ -100,23 +100,36 @@ const Permissions = ({ permissionType, discussionId }) => {
 		[`Permissions.${permissionType}`]: false,
 	})
 
+	const [isRemoving, setIsRemoving] = useState(false)
 	const removeUserPermission = (member) => {
+		setIsRemoving(true)
 		patchItem(
 			`discussions/${discussionId}/member/${member.UserDetails.DocId}/permissions/remove`,
 			{
 				PermissionField: `${permissionType}`,
 			},
 			(result) => {
-				console.log(result)
+				if (result === true) {
+					fetchPermittedUsers()
+				}
+				setIsRemoving(false)
 			},
-			(err) => {},
+			(err) => {
+				setIsRemoving(false)
+			},
 			updateCurrentUser,
 			currentUserData,
 			toast
 		)
 	}
 
-	const [permitEveryone, setPermitEveryone] = useState(false)
+	const [permitEveryone, setPermitEveryone] = useState(() => {
+		if (from === 'settings') {
+			return discussion.MemberPermissions[`${permissionType}`]
+		} else {
+			return false
+		}
+	})
 	const [isEveryoneModal, setIsEveryoneModal] = useState(false)
 	const [isAddPeopleModal, setAddPeopleModal] = useState(false)
 
@@ -147,7 +160,43 @@ const Permissions = ({ permissionType, discussionId }) => {
 		},
 	}
 
-	
+	const permissionForEveryone = () => {
+		patchItem(
+			`discussions/${discussionId}/member/permissions/everyone`,
+			{
+				[`MemberPermissions.${permissionType}`]: true,
+			},
+			(result) => {
+				setIsEveryoneModal(false)
+				setPermitEveryone(true)
+			},
+			(err) => {},
+			updateCurrentUser,
+			currentUserData,
+			toast
+		)
+	}
+
+	const removePermissionForEveryone = () => {
+		patchItem(
+			`discussions/${discussionId}/member/permissions/everyone`,
+			{
+				[`MemberPermissions.${permissionType}`]: false,
+			},
+			(result) => {
+				setIsEveryoneModal(false)
+				setPermitEveryone(false)
+			},
+			(err) => {},
+			updateCurrentUser,
+			currentUserData,
+			toast
+		)
+	}
+
+	useEffect(() => {
+		// console.log(discussion)
+	}, [])
 
 	return (
 		<>
@@ -156,6 +205,7 @@ const Permissions = ({ permissionType, discussionId }) => {
 				setAddPeopleModal={setAddPeopleModal}
 				permissionType={permissionType}
 				discussionId={discussionId}
+				permissionChangeCallback={fetchPermittedUsers}
 			/>
 			{/* <Modal isOpen={isAddPeopleModal}>
 				<Modal.Header>
@@ -232,8 +282,7 @@ const Permissions = ({ permissionType, discussionId }) => {
 							<Button
 								variant='black'
 								onClick={() => {
-									setIsEveryoneModal(false)
-									setPermitEveryone(true)
+									permissionForEveryone()
 								}}>
 								Grant
 							</Button>
@@ -242,8 +291,7 @@ const Permissions = ({ permissionType, discussionId }) => {
 							<Button
 								variant='black'
 								onClick={() => {
-									setIsEveryoneModal(false)
-									setPermitEveryone(false)
+									removePermissionForEveryone()
 								}}>
 								Remove
 							</Button>
@@ -292,7 +340,7 @@ const Permissions = ({ permissionType, discussionId }) => {
 						)}
 					</div>
 				</div>
-				{isLoading ? (
+				{isLoading || isRemoving ? (
 					<div className='h-10 py-20'>
 						<Spinner />
 					</div>

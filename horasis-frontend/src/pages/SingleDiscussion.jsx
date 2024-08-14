@@ -117,7 +117,7 @@ const SingleDiscussion = () => {
 					title: 'Settings',
 					render: () => (
 						<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
-							<DiscussionSettings discussionId={discussion.DocId} />
+							<DiscussionSettings discussionId={discussion.DocId} discussion={discussion} />
 						</div>
 					),
 				},
@@ -165,7 +165,7 @@ const SingleDiscussion = () => {
 					title: 'Settings',
 					render: () => (
 						<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
-							<DiscussionSettings discussionId={discussion.DocId} />
+							<DiscussionSettings discussionId={discussion.DocId} discussion={discussion} />
 						</div>
 					),
 				},
