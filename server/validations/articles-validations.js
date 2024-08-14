@@ -1,4 +1,5 @@
 import Joi from 'joi';
+import { QueryParametersSchema } from './common';
 
 
 const ArticleSchema = Joi.object({
@@ -7,6 +8,21 @@ const ArticleSchema = Joi.object({
     CoverPhoto: Joi.string().required(),
     AuthorId: Joi.string().required(),
 });
+
+
+const ValidateGetArticles = async (req, res, next) => {
+    const Result = QueryParametersSchema.keys({
+        UserId : Joi.string(),
+    }).validate(req.query, { stripUnknown: true });
+    if (Result.error) {
+        const message = Result.error.details.map((detail) => detail.message).join(',');
+        return res.status(400).json(message);
+    }
+    else {
+        req.query = Result.value;
+        return next();
+    }
+}
 
 
 const ValidatePostArticles = async (req, res, next) => {
@@ -54,5 +70,6 @@ const ValidatePatchArticlesCoverPicture = async (req, res, next) => {
 export {
     ValidatePostArticles,
     ValidatePatchArticlesCoverPicture,
-    ValidatePatchArticles
+    ValidatePatchArticles,
+    ValidateGetArticles
 }
