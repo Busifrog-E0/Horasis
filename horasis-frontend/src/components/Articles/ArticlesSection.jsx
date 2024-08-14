@@ -119,7 +119,7 @@ const ArticlesSection = () => {
 					onClick={() => {
 						fetchMore()
 					}}
-					className='flex flex-row justify-end mt-4 mb-2'>
+					className='flex flex-row justify-start mt-4 mb-2'>
 					<div className='cursor-pointer flex items-center gap-2'>
 						<h4 className='font-semibold text-xl text-system-primary-accent'>Load More</h4>
 						{/* <svg className="text-system-primary-accent h-3 w-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
