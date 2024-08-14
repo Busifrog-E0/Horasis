@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { _storeData, _retrieveData, _clearData, CURRENTUSERDATA } from './LocalStorage'
 import { useRef } from 'react'
 
@@ -167,6 +167,7 @@ export const AuthProvider = ({ children }) => {
 		</AuthContext.Provider>
 	)
 }
+export const useAuth = () => useContext(AuthContext)
 
 export const defaultUser = {
 	CurrentUser: {

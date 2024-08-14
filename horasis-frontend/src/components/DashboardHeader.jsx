@@ -47,7 +47,7 @@ const DashboardHeader = () => {
 					<h1 className='text-4xl font-bold text-brand-violet' onClick={() => OnClickItem('/home')}>
 						<Logo />
 					</h1>
-					<div className='px-10 hidden lg:flex flex-row flex-wrap gap-3 flex-1'>
+					<div className='px-10 hidden lg:flex flex-row flex-wrap gap-6 flex-1'>
 						<div className='w-max flex flex-col items-center'>
 							<a
 								className={`cursor-pointer  font-medium text-xl  ${
@@ -102,6 +102,19 @@ const DashboardHeader = () => {
 							<div
 								className={`h-1 w-10 rounded-full ${
 									location.pathname === '/Connections' ? 'bg-system-primary-accent' : 'bg-transparent'
+								}`}></div>
+						</div>
+						<div className='w-max flex flex-col items-center'>
+							<a
+								className={`cursor-pointer  font-medium text-xl  ${
+									location.pathname === '/Articles' ? 'text-system-primary-accent' : 'text-system-primary-text'
+								}`}
+								onClick={() => OnClickItem('/Articles')}>
+								Articles
+							</a>
+							<div
+								className={`h-1 w-10 rounded-full ${
+									location.pathname === '/Articles' ? 'bg-system-primary-accent' : 'bg-transparent'
 								}`}></div>
 						</div>
 						{/* <div className='w-max flex flex-col items-center'>

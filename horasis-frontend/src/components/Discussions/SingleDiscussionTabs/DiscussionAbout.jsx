@@ -25,7 +25,7 @@ const DiscussionAbout = ({ discussion }) => {
 				<img src={save} alt="" className='h-8 ' /> */}
 
 			</div>
-			<h4 className='text-xl text-brand-gray mt-2 lg:mt-6 mb-6 leading-8'>{discussion.Description}</h4>
+			<h4 className='text-xl text-brand-gray mt-2 lg:mt-6 mb-6 leading-8 whitespace-pre-line'>{discussion.Description}</h4>
 		</div>
 	)
 }

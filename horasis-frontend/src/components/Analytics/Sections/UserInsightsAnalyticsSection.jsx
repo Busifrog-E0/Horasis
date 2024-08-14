@@ -133,7 +133,7 @@ const TabList = ({ setActiveTab, activeTab, tablist }) => {
                 return (
                     <div onClick={() => {
                         setActiveTab(index)
-                    }} key={index} className={`rounded-lg border border-2 p-2 px-3 cursor-pointer ${activeTab === index
+                    }} key={index} className={`rounded-lg  border-2 p-2 px-3 cursor-pointer ${activeTab === index
                         ? "border-system-primary-accent"
                         : "border-transparent"
                         }`}>

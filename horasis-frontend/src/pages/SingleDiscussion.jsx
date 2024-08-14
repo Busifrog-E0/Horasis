@@ -358,7 +358,8 @@ const SingleDiscussion = () => {
 								<div className='flex flex-row justify-between mt-1 lg:mt-3'>
 									<h4 className='font-semibold text-2xl text-system-primary-text'>Brief</h4>
 								</div>
-								<h4 className='text-xl text-brand-gray mt-2 mb-12 leading-8'>{discussion.Brief}</h4>
+								<h4
+								className='text-xl text-brand-gray mt-2 mb-12 leading-8 whitespace-pre-line'>{discussion.Brief}</h4>
 								<div className='flex gap-2'>
 									{discussion.IsMember ? (
 										<>

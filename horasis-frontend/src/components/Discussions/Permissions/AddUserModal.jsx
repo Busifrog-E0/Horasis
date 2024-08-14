@@ -118,7 +118,8 @@ const AddUserModal = ({
 			return member.UserDetails.DocId
 		})
 		const dataToSend = {
-			[`${permissionType}`]: memberIds,
+			PermissionField: permissionType,
+			UserIds: memberIds,
 		}
 		setPermissionLoading(true)
 		patchItem(
@@ -140,8 +141,6 @@ const AddUserModal = ({
 			toast
 		)
 	}
-
-
 
 	return (
 		<>

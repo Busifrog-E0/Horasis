@@ -32,6 +32,7 @@ import ChatPage from '../pages/ChatPage'
 import Saved from '../pages/Saved'
 import SuggestionsPage from '../pages/SuggestionsPage'
 import NotFoundPage from '../pages/NotFoundPage'
+import SingleArticles from '../pages/SingleArticles'
 
 export const router = createBrowserRouter(
 	createRoutesFromElements(
@@ -49,11 +50,13 @@ export const router = createBrowserRouter(
 					<Route path='/MyProfile' element={<MyProfile />} />
 					<Route path='/ViewProfile/:userid' element={<ShowUserProfile />} />
 					<Route path='/Discussions' element={<Discussions />} />
-					<Route path='/Discussions/create/new' element={<CreateDiscussion />} />
+					<Route path='/Discussions/Create/New' element={<CreateDiscussion />} />
 					<Route path='/Discussions/:discussionid' element={<SingleDiscussion />} />
-					{/* <Route path='/universalsearchdetails' element={<UniversalSearchDetails />} />
-					
-					*/}
+					<Route path='/Articles' element={<Articles />} />
+					<Route path='/Articles/Create/New' element={<CreateArticle />} />
+					<Route path='/Articles/:articleid' element={<SingleArticles />} />
+
+					<Route path='/universalsearchdetails' element={<UniversalSearchDetails />} />
 
 					{/* <Route path='/Events' element={<Events />} />
           <Route path='/Events/create/new' element={<CreateEvent />} /> */}
