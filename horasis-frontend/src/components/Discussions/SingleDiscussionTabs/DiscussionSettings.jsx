@@ -5,11 +5,13 @@ import { AuthContext } from '../../../utils/AuthProvider'
 import { useToast } from '../../Toast/ToastService'
 import { getNextId } from '../../../utils/URLParams'
 import { jsonToQuery } from '../../../utils/searchParams/extractSearchParams'
-import { getItem, patchItem } from '../../../constants/operations'
+import { deleteItem, getItem, patchItem } from '../../../constants/operations'
 import { useNavigate } from 'react-router-dom'
 import Permissions from '../Permissions/Permissions'
+import Modal from '../../ui/Modal'
+import close from '../../../assets/icons/close.svg'
 
-const DiscussionSettings = ({ discussionId, from = 'settings',discussion }) => {
+const DiscussionSettings = ({ discussionId, from = 'settings', discussion }) => {
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
 	const toast = useToast()
 	const [isLoading, setIsLoading] = useState(true)
@@ -163,16 +165,55 @@ const DiscussionSettings = ({ discussionId, from = 'settings',discussion }) => {
 
 	const viewDiscussionPage = () => navigate(`/Discussions/${discussionId}`)
 
+	const [deleteModal, setDeleteModal] = useState(false)
+
+	const deleteDiscussion = () => {
+		deleteItem(
+			`discussions/${discussionId}`,
+			(result) => {
+				if (result === true) {
+					navigate('/Discussions')
+				}
+			},
+			(err) => {},
+			updateCurrentUser,
+			currentUserData,
+			toast
+		)
+	}
+
 	return (
-		<div className='flex flex-col gap-4'>
-			{from === 'create' && (
-				<div className='self-end'>
-					<p className='text-system-primary-accent font-medium cursor-pointer' onClick={() => viewDiscussionPage()}>
-						Skip for now
-					</p>
-				</div>
-			)}
-			{/* <div>
+		<>
+			<Modal isOpen={deleteModal}>
+				<Modal.Header>
+					<p className='text-lg font-medium'>You are about delete the discussion</p>
+					<button
+						onClick={() => {
+							setDeleteModal(false)
+						}}>
+						<img src={close} className='h-6  cursor-pointer' alt='' />
+					</button>
+				</Modal.Header>
+				<Modal.Body>
+					<div className='flex items-center justify-end gap-2'>
+						<Button variant='outline' onClick={() => setDeleteModal(false)}>
+							Cancel
+						</Button>
+						<Button variant='danger' onClick={deleteDiscussion}>
+							Delete Discussion
+						</Button>
+					</div>
+				</Modal.Body>
+			</Modal>
+			<div className='flex flex-col gap-4'>
+				{from === 'create' && (
+					<div className='self-end'>
+						<p className='text-system-primary-accent font-medium cursor-pointer' onClick={() => viewDiscussionPage()}>
+							Skip for now
+						</p>
+					</div>
+				)}
+				{/* <div>
 				<h1 className='text-system-primary-text font-medium text-lg'>Group Invitations</h1>
 				<p className='text-brand-gray mt-1 mb-2 text-base'>Which members of this group are allowed to invite others?</p>
 				<SelectEventMembers
@@ -240,19 +281,37 @@ const DiscussionSettings = ({ discussionId, from = 'settings',discussion }) => {
 				/>
 			</div> */}
 
-			<Permissions from={from} discussion={discussion} discussionId={discussionId} permissionType='CanInviteOthers' />
-			<Permissions from={from} discussion={discussion} discussionId={discussionId} permissionType='CanPostActivity' />
-			<Permissions from={from} discussion={discussion} discussionId={discussionId} permissionType='CanUploadPhoto' />
-			<Permissions from={from} discussion={discussion} discussionId={discussionId} permissionType='CanCreateAlbum' />
-			<Permissions from={from} discussion={discussion} discussionId={discussionId} permissionType='CanUploadVideo' />
-			<Permissions from={from} discussion={discussion} discussionId={discussionId} permissionType='IsAdmin' />
+				<Permissions from={from} discussion={discussion} discussionId={discussionId} permissionType='CanInviteOthers' />
+				<Permissions from={from} discussion={discussion} discussionId={discussionId} permissionType='CanPostActivity' />
+				<Permissions from={from} discussion={discussion} discussionId={discussionId} permissionType='CanUploadPhoto' />
+				<Permissions from={from} discussion={discussion} discussionId={discussionId} permissionType='CanCreateAlbum' />
+				<Permissions from={from} discussion={discussion} discussionId={discussionId} permissionType='CanUploadVideo' />
+				<Permissions from={from} discussion={discussion} discussionId={discussionId} permissionType='IsAdmin' />
 
-			{/* <div>
+				{/* <div>
 				<Button variant='black' size='md' onClick={() => handleSavePermissions()}>
 					Save Permissions
 				</Button>
 			</div> */}
-		</div>
+				{from === 'settings' && (
+					<div className='border flex flex-col p-4 rounded-md justify-between'>
+						<div className='flex flex-col md:flex-row gap-2 justify-between mb-6 md:mb-0 md:items-center'>
+							<div>
+								<h1 className='text-system-error font-medium text-lg'>Delete the discussion</h1>
+								<p className='text-brand-gray mt-1 mb-2 text-base'>
+									Deleting discussion will remove all the activity and data in the discussion.
+								</p>
+							</div>
+							<div className='flex gap-4 items-start'>
+								<Button variant='danger_outlined' size='md' onClick={() => setDeleteModal(true)}>
+									Delete
+								</Button>
+							</div>
+						</div>
+					</div>
+				)}
+			</div>
+		</>
 	)
 }
 

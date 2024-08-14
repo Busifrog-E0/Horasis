@@ -31,7 +31,7 @@ const buttonVariants = cva(
           "bg-system-secondary-bg text-system-link hover:bg-system-link hover:text-white  border border-system-file-border hover:brand-seagreen shadow-md ",
         primary: "bg-brand-violet text-white border border-brand-violet shadow",
         danger_outlined:
-          "bg-system-secondary-bg text-system-error hover:bg-system-error hover:text-white border border-system-file-border hover:border-system-error shadow-md",
+          "bg-system-secondary-bg text-system-error hover:bg-system-error hover:text-white border border-system-error hover:border-system-error shadow-md",
         danger:
           "bg-system-error text-white  border border-system-error shadow outline-none",
         success:
