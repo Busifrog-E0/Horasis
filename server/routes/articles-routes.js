@@ -21,7 +21,7 @@ router.get('/articles/:ArticleId', decodeIDToken, ensureAuthorized("User"),
     // @ts-ignore
     asyncHandler(GetOneFromArticles));
 
-router.post('articles/:EntityId/save', decodeIDToken, ensureAuthorized("User"), InsertArticleTypeMiddleware,
+router.post('/articles/:EntityId/save', decodeIDToken, ensureAuthorized("User"), InsertArticleTypeMiddleware,
     SwaggerDocs.post_Articles_ArticleId_Save,
     // @ts-ignore
     asyncHandler(PostSaves));
