@@ -10,7 +10,7 @@ import { decodeIDToken, ensureAuthorized } from '../middleware/auth-middleware.j
 import { QueryParameterFormatting, ValidateGetEntity } from '../middleware/common.js';
 import { ValidatePostComments } from '../validations/comments-validations.js';
 import { DeleteLikes, GetLikes, PostLikes } from '../controllers/likes-controller.js';
-import { PostCommentsLikeMiddleware } from '../middleware/comments-middleware.js';
+import { InsertActivityInCommentMiddleware, PostCommentsLikeMiddleware } from '../middleware/comments-middleware.js';
 const router = e.Router();
 
 router.get('/activities/:ParentId/comments/', decodeIDToken, ensureAuthorized("User"), ValidateGetEntity, QueryParameterFormatting, SwaggerDocs.get_Comments,
@@ -21,11 +21,14 @@ router.get('/comments/:CommentId', decodeIDToken, ensureAuthorized("User"), Swag
     // @ts-ignore
     asyncHandler(GetOneFromComments));
 
-router.post('/activities/:ActivityId/comments', decodeIDToken, ensureAuthorized("User"), ValidatePostComments, SwaggerDocs.post_Comments,
+router.post('/activities/:ActivityId/comments', decodeIDToken, ensureAuthorized("User"), ValidatePostComments, InsertActivityInCommentMiddleware,
+    SwaggerDocs.post_Comments,
     // @ts-ignore
     asyncHandler(PostComments));
 
-router.post('/activities/:ActivityId/comments/:CommentId/reply', decodeIDToken, ensureAuthorized("User"), ValidatePostComments, SwaggerDocs.post_Comments,
+router.post('/activities/:ActivityId/comments/:CommentId/reply', decodeIDToken, ensureAuthorized("User"), ValidatePostComments,
+    InsertActivityInCommentMiddleware,
+    SwaggerDocs.post_Comments,
     // @ts-ignore
     asyncHandler(PostComments));
 
@@ -40,7 +43,7 @@ router.delete('/comments/:EntityId/dislike', decodeIDToken, ensureAuthorized("Us
 
 router.get('/comments/:EntityId/likedUsers', decodeIDToken, ensureAuthorized("User"), ValidateGetEntity, QueryParameterFormatting, SwaggerDocs.get_Comments_CommentId_LikedUsers,
     //@ts-ignore
-    asyncHandler(GetLikes))    
+    asyncHandler(GetLikes))
 
 router.patch('/comments/:CommentId', decodeIDToken, ensureAuthorized("User"),
     // @ts-ignore

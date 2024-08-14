@@ -3,6 +3,18 @@ const PostCommentsLikeMiddleware = (req, res, next) => {
     return next();
 }
 
+const InsertActivityInCommentMiddleware = (req, res, next) => {
+    req.body = { ...req.body, ParentType: "Activity" };
+    return next();
+}
+
+const InsertArticleInCommentMiddleware = (req, res, next) => {
+    req.body = { ...req.body, ParentType: "Article" };
+    return next();
+}
+
 export {
-    PostCommentsLikeMiddleware
+    PostCommentsLikeMiddleware,
+    InsertActivityInCommentMiddleware,
+    InsertArticleInCommentMiddleware
 }

@@ -10,6 +10,7 @@ import dataHandling from './functions.js'
  * @property {number} NoOfLikes
  * @property {{Username : string,UserId: string,FullName : string}[]} Mentions
  * @property {'Comment'|'Reply'} Type
+ * @property {'Activity'|'Article'} ParentType
  */
 
 
