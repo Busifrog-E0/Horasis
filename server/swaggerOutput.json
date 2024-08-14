@@ -2231,7 +2231,7 @@
             "schema": {
               "type": "object",
               "properties": {
-                "Type": {
+                "EntityId": {
                   "example": "any"
                 }
               }
@@ -4454,6 +4454,9 @@
               "properties": {
                 "Type": {
                   "example": "any"
+                },
+                "EntityId": {
+                  "example": "any"
                 }
               }
             }
@@ -6250,7 +6253,7 @@
             "schema": {
               "type": "object",
               "properties": {
-                "Type": {
+                "EntityId": {
                   "example": "any"
                 }
               }
@@ -6438,6 +6441,150 @@
             "BearerAuth": []
           }
         ]
+      }
+    },
+    "/api/saves": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "NextId",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "Limit",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "Keyword",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "OrderBy",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "Filter",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "402": {
+            "description": "Payment Required"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Saves"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "EntityId": {
+                  "type": "string",
+                  "example": "string"
+                },
+                "Type": {
+                  "type": "string",
+                  "example": "Activity"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "402": {
+            "description": "Payment Required"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "444": {
+            "description": "Connection Closed Without Response"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/saves/{EntityId}": {
+      "delete": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "EntityId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "402": {
+            "description": "Payment Required"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "444": {
+            "description": "Connection Closed Without Response"
+          }
+        }
       }
     }
   },
