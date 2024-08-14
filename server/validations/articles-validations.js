@@ -1,5 +1,5 @@
 import Joi from 'joi';
-import { QueryParametersSchema } from './common';
+import { QueryParametersSchema } from './common.js';
 
 
 const ArticleSchema = Joi.object({
