@@ -33,9 +33,10 @@ const ConnectionSection = () => {
 		Limit: 10,
 		Keyword: '',
 	})
-	const [activeTab, setActiveTab] = useState(
-		_retrieveData(MAINTAB) && _retrieveData(MAINTAB)['connections'] ? Number(_retrieveData(MAINTAB)['connections']) : 0
-	)
+	// const [activeTab, setActiveTab] = useState(
+	// 	_retrieveData(MAINTAB) && _retrieveData(MAINTAB)['connections'] ? Number(_retrieveData(MAINTAB)['connections']) : 0
+	// )
+	const [activeTab, setActiveTab] = useState(0)
 
 	const setLoadingCom = (tempArr, value) => {
 		if (tempArr.length > 0) {
@@ -48,7 +49,7 @@ const ConnectionSection = () => {
 	const onTabChange = (item) => {
 		setPageDisabled(true)
 		setActiveTab(item.key)
-		_storeData(MAINTAB, { connections: item.key })
+		// _storeData(MAINTAB, { connections: item.key })
 	}
 
 	const tabs = () => [
@@ -108,7 +109,6 @@ const ConnectionSection = () => {
 			title: 'Sent',
 			render: () => (
 				<SendConnectionTab
-
 					data={connectionsSend}
 					getAllData={getConnectionsSend}
 					isLoading={isLoading}
@@ -162,7 +162,7 @@ const ConnectionSection = () => {
 			(result) => {
 				setConnectionCount(result)
 			},
-			(err) => { },
+			(err) => {},
 			updateCurrentUser,
 			currentUserData,
 			toast

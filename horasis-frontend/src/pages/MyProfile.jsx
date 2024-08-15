@@ -1,35 +1,29 @@
-import { useNavigate } from 'react-router-dom'
-import Tab from '../components/ui/Tab'
 import { useContext, useEffect, useState } from 'react'
-import { MAINTAB, _retrieveData, _storeData } from '../utils/LocalStorage'
-import { getItem, patchItem, postItem } from '../constants/operations'
-import { AuthContext } from '../utils/AuthProvider'
-import Modal from '../components/ui/Modal'
-import Spinner from '../components/ui/Spinner'
-import AboutProfile from '../components/Profile/AboutProfile'
-import PictureUpload from '../components/Profile/EditProfile/PictureUpload'
-import avatar from '../assets/icons/avatar.svg'
-import cover from '../assets/icons/cover.svg'
-import { useToast } from '../components/Toast/ToastService'
-import TimeLineTab from '../components/Activities/TimeLineTab'
-import MyConnectionsTab from '../components/Connections/MyConnectionsTab'
-import AboutTab from '../components/Profile/Tabs/AboutTab'
-import { relativeTime } from '../utils/date'
-import VideoPlayer from '../components/ui/VideoPlayer'
-import StaggeredList from '../components/ui/StaggeredList'
-import DropdownMenu from '../components/ui/DropdownMenu'
-import VideosTab from '../components/Profile/Tabs/VideosTab'
-import ImagesTab from '../components/Profile/Tabs/ImagesTab'
-import DocumentTab from '../components/Profile/Tabs/DocumentTab'
-import DiscussionsTab from '../components/Profile/Tabs/DiscussionsTab'
+import { useNavigate } from 'react-router-dom'
 import altmail from '../assets/icons/altmail.svg'
+import arrowback from '../assets/icons/arrowback.svg'
+import avatar from '../assets/icons/avatar.svg'
+import camera from '../assets/icons/camera.svg'
+import close from '../assets/icons/close.svg'
+import company from '../assets/icons/company.svg'
+import cover from '../assets/icons/cover.svg'
 import globe from '../assets/icons/globe.svg'
 import job from '../assets/icons/job.svg'
-import company from '../assets/icons/company.svg'
-import camera from '../assets/icons/camera.svg'
-import arrowback from '../assets/icons/arrowback.svg'
-import close from '../assets/icons/close.svg'
-
+import TimeLineTab from '../components/Activities/TimeLineTab'
+import MyConnectionsTab from '../components/Connections/MyConnectionsTab'
+import PictureUpload from '../components/Profile/EditProfile/PictureUpload'
+import AboutTab from '../components/Profile/Tabs/AboutTab'
+import DiscussionsTab from '../components/Profile/Tabs/DiscussionsTab'
+import DocumentTab from '../components/Profile/Tabs/DocumentTab'
+import ImagesTab from '../components/Profile/Tabs/ImagesTab'
+import VideosTab from '../components/Profile/Tabs/VideosTab'
+import { useToast } from '../components/Toast/ToastService'
+import Modal from '../components/ui/Modal'
+import Spinner from '../components/ui/Spinner'
+import Tab from '../components/ui/Tab'
+import { getItem, patchItem, postItem } from '../constants/operations'
+import { AuthContext } from '../utils/AuthProvider'
+import { MAINTAB, _retrieveData, _storeData } from '../utils/LocalStorage'
 
 const tabs = (user, getUserDetails) => [
 	{
@@ -83,9 +77,10 @@ const tabs = (user, getUserDetails) => [
 ]
 
 const MyProfile = () => {
-	const [activeTab, setActiveTab] = useState(
-		_retrieveData(MAINTAB) && _retrieveData(MAINTAB)['MyProfile'] ? Number(_retrieveData(MAINTAB)['MyProfile']) : 0
-	)
+	// const [activeTab, setActiveTab] = useState(
+	// 	_retrieveData(MAINTAB) && _retrieveData(MAINTAB)['MyProfile'] ? Number(_retrieveData(MAINTAB)['MyProfile']) : 0
+	// )
+	const [activeTab, setActiveTab] = useState(0)
 	const navigate = useNavigate()
 	const handleGoBack = () => {
 		navigate(-1)
@@ -93,7 +88,7 @@ const MyProfile = () => {
 
 	const onTabChange = (item) => {
 		setActiveTab(item.key)
-		_storeData(MAINTAB, { MyProfile: item.key })
+		// _storeData(MAINTAB, { MyProfile: item.key })
 	}
 	const { currentUserData, updateCurrentUser } = useContext(AuthContext)
 	const toast = useToast()
@@ -374,8 +369,7 @@ const MyProfile = () => {
 								setIsProfilePictureOpen(false)
 							}}
 							disabled={isImageUploading}>
-					<img src={close} className='h-6  cursor-pointer' alt="" />
-							
+							<img src={close} className='h-6  cursor-pointer' alt='' />
 						</button>
 					</div>
 				</Modal.Header>
@@ -408,8 +402,7 @@ const MyProfile = () => {
 								setIsCoverPictureOpen(false)
 							}}
 							disabled={isImageUploading}>
-					<img src={close} className='h-6  cursor-pointer' alt="" />
-							
+							<img src={close} className='h-6  cursor-pointer' alt='' />
 						</button>
 					</div>
 				</Modal.Header>
