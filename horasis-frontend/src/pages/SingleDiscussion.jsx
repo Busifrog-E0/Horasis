@@ -233,6 +233,7 @@ const SingleDiscussion = () => {
 			(result) => {
 				if (result === true) {
 					getDiscussion()
+					onTabChange(tabs(discussion)[0])
 				}
 			},
 			(err) => {},
@@ -248,8 +249,10 @@ const SingleDiscussion = () => {
 			(result) => {
 				if (result === true) {
 					getDiscussion()
+					onTabChange(tabs(discussion)[0])
 				} else if (typeof result === 'object') {
 					getDiscussion()
+					onTabChange(tabs(discussion)[0])
 				}
 			},
 			(err) => console.log(err),
@@ -264,6 +267,7 @@ const SingleDiscussion = () => {
 			(result) => {
 				if (result === true) {
 					getDiscussion()
+					onTabChange(tabs(discussion)[0])
 				}
 			},
 			(err) => {},
@@ -278,6 +282,7 @@ const SingleDiscussion = () => {
 			(result) => {
 				if (result === true) {
 					getDiscussion()
+					onTabChange(tabs(discussion)[0])
 				}
 			},
 			(err) => {},
@@ -293,6 +298,7 @@ const SingleDiscussion = () => {
 			(result) => {
 				if (result === true) {
 					getDiscussion()
+					onTabChange(tabs(discussion)[0])
 				}
 			},
 			(err) => {},
@@ -302,34 +308,53 @@ const SingleDiscussion = () => {
 		)
 	}
 
-		// cover photo upload logic
+	// cover photo upload logic
 	const [isImageUploading, setIsImageUploading] = useState(false)
-		const [selectedCoverImage, setSelectedCoverImage] = useState(null)
-		const [coverImageToUpload, setCoverImageToUpload] = useState(null)
-		const [isCoverPictureOpen, setIsCoverPictureOpen] = useState(false)
-		const onCoverImageSelect = (imageData) => {
-			setCoverImageToUpload(imageData)
-			const tempUrl = URL.createObjectURL(new Blob([new Uint8Array(imageData.FileData)]))
-			setSelectedCoverImage(tempUrl)
-		}
-		const onCoverImageDelete = () => {
-			setCoverImageToUpload(null)
-			setSelectedCoverImage(null)
-		}
-		const onCoverImageSet = (url) => {
+	const [selectedCoverImage, setSelectedCoverImage] = useState(null)
+	const [coverImageToUpload, setCoverImageToUpload] = useState(null)
+	const [isCoverPictureOpen, setIsCoverPictureOpen] = useState(false)
+	const onCoverImageSelect = (imageData) => {
+		setCoverImageToUpload(imageData)
+		const tempUrl = URL.createObjectURL(new Blob([new Uint8Array(imageData.FileData)]))
+		setSelectedCoverImage(tempUrl)
+	}
+	const onCoverImageDelete = () => {
+		setCoverImageToUpload(null)
+		setSelectedCoverImage(null)
+	}
+	const onCoverImageSet = (url) => {
+		setIsImageUploading(true)
+
+		patchItem(
+			`discussions/${discussionid}/coverPicture`,
+			{
+				CoverPicture: url,
+			},
+			(result) => {
+				if (result === true) {
+					setIsCoverPictureOpen(false)
+					getDiscussion()
+				}
+				setIsImageUploading(false)
+			},
+			(err) => {
+				// console.log(err)
+				setIsImageUploading(false)
+			},
+			updateCurrentUser,
+			currentUserData,
+			toast
+		)
+	}
+	const onCoverImageUpload = () => {
+		if (coverImageToUpload) {
 			setIsImageUploading(true)
-	
-			patchItem(
-				`discussions/${discussionid}/coverPicture`,
-				{
-					CoverPicture: url,
-				},
+
+			postItem(
+				'files/users',
+				coverImageToUpload,
 				(result) => {
-					if (result === true) {
-						setIsCoverPictureOpen(false)
-						getDiscussion()
-					}
-					setIsImageUploading(false)
+					onCoverImageSet(result.FileUrl)
 				},
 				(err) => {
 					// console.log(err)
@@ -339,29 +364,10 @@ const SingleDiscussion = () => {
 				currentUserData,
 				toast
 			)
+		} else {
+			onCoverImageSet('')
 		}
-		const onCoverImageUpload = () => {
-			if (coverImageToUpload) {
-				setIsImageUploading(true)
-	
-				postItem(
-					'files/users',
-					coverImageToUpload,
-					(result) => {
-						onCoverImageSet(result.FileUrl)
-					},
-					(err) => {
-						// console.log(err)
-						setIsImageUploading(false)
-					},
-					updateCurrentUser,
-					currentUserData,
-					toast
-				)
-			} else {
-				onCoverImageSet('')
-			}
-		}
+	}
 
 	return (
 		<>
