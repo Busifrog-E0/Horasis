@@ -58,8 +58,8 @@ export const router = createBrowserRouter(
 
 					<Route path='/universalsearchdetails' element={<UniversalSearchDetails />} />
 
-					{/* <Route path='/Events' element={<Events />} />
-          <Route path='/Events/create/new' element={<CreateEvent />} /> */}
+					<Route path='/Events' element={<Events />} />
+          <Route path='/Events/create/new' element={<CreateEvent />} />
 
 					<Route path='/Chat/:userid' element={<ChatPage />} />
 				</Route>

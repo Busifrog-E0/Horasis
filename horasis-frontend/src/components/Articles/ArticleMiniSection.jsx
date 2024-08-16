@@ -22,7 +22,7 @@ const ArticleMiniSection = () => {
 
 	const [filters, setFilters] = useState({
 		OrderBy: 'Index',
-		Limit: 3,
+		Limit: 5,
 		Keyword: '',
 	})
 

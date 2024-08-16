@@ -70,7 +70,7 @@ const CreateArticle = () => {
 		setIsImageUploading(true)
 		postItem(
 			'articles',
-			{ ...postArticleData, CoverPhoto: url },
+			{ ...postArticleData, CoverPicture: url },
 			(result) => {
 				if (result) {
 					setIsModalOpen(false)
@@ -147,7 +147,7 @@ const CreateArticle = () => {
 		<>
 			<Modal isOpen={isModalOpen}>
 				<Modal.Header>
-					<p className='font-medium text-lg'>Confirm discussion creation ?</p>
+					<p className='font-medium text-lg'>Are you sure to publish article ?</p>
 				</Modal.Header>
 				<Modal.Body>
 					<div className='flex items-center gap-2 justify-end'>
@@ -220,7 +220,6 @@ const CreateArticle = () => {
 					</div>
 					<div>
 						<ArticleMiniSection />
-				
 					</div>
 				</div>
 			</div>
