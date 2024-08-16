@@ -46,7 +46,10 @@ const GetLikes = async (req, res) => {
  * @returns {Promise<e.Response<true>>}
  */
 const PostLikes = async (req, res) => {
-    const { EntityId, UserId } = req.params;
+    const { EntityId: entityId } = req.body;
+    const EntityId = entityId || req.params.EntityId;
+    //@ts-ignore
+    const { UserId } = req.user;
     const CheckLike = await ReadLikes({ EntityId, UserId }, undefined, 1, undefined);
     if (CheckLike.length > 0) {
         return res.status(444).json(AlertBoxObject("Cannot Like", "You cannot like twice"));
@@ -86,7 +89,9 @@ const PatchLikes = async (req, res) => {
  * @returns {Promise<e.Response<true>>}
  */
 const DeleteLikes = async (req, res) => {
-    const { EntityId, UserId } = req.params;
+    const { EntityId } = req.params;
+    //@ts-ignore
+    const { UserId } = req.user;
     const CheckLike = await ReadLikes({ EntityId, UserId }, undefined, 1, undefined);
     if (CheckLike.length === 0) {
         return res.status(444).json(AlertBoxObject("Cannot DisLike", "You have not liked this activity"));
