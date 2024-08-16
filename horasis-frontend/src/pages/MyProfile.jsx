@@ -24,6 +24,7 @@ import Tab from '../components/ui/Tab'
 import { getItem, patchItem, postItem } from '../constants/operations'
 import { AuthContext } from '../utils/AuthProvider'
 import { MAINTAB, _retrieveData, _storeData } from '../utils/LocalStorage'
+import MyArticlesTab from '../components/Profile/Tabs/MyArticlesTab'
 
 const tabs = (user, getUserDetails) => [
 	{
@@ -73,6 +74,11 @@ const tabs = (user, getUserDetails) => [
 		key: 6,
 		title: 'Documents',
 		render: () => <DocumentTab />,
+	},
+	{
+		key: 7,
+		title: 'Articles',
+		render: () => <MyArticlesTab />,
 	},
 ]
 
