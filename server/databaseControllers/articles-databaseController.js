@@ -9,7 +9,7 @@ import dataHandling from './functions.js'
  * @property {string} ArticleName
  * @property {string} Description
  * @property {string} DocId
- * @property {string} CoverPhoto
+ * @property {string} CoverPicture
  * @property {number} CreatedIndex
  * @property {string} AuthorId
  * @property {number} NoOfLikes

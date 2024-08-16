@@ -11,7 +11,7 @@ const fileFormats = {
     },
     image: {
         extensions: [
-            'jpeg', 'jpg','png'],
+            'jpeg', 'jpg', 'png'],
         size: 1234556789
     },
     video: {
@@ -116,7 +116,10 @@ const PostFilesUsers = async (req, res) => {
     //@ts-ignore
     const { mime: FileType } = await fileTypeFromBuffer(FileData8Array);
     // @ts-ignore
-    const FilePath = `${req.user.UserId}/${req.body.FileFieldName}`;
+    let FilePath = `${req.user.UserId}/${req.body.FileFieldName}`;
+    if (req.body.Type) {
+        FilePath = FilePath + `${req.body.Type}/${Math.floor(Math.random() * 10000) + 1}`
+    }
     SaveFileToSpaces("Users", FilePath, req.body.FileData, FileType, res)
 }
 

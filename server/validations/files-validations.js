@@ -9,7 +9,8 @@ const FilesSchema = Joi.object({
 
 const ValidatePostFilesUser = async (req, res, next) => {
     const Result = FilesSchema.keys({
-        FileFieldName: Joi.string().valid("ProfilePicture", "CoverPicture").required(),
+        FileFieldName: Joi.string().required(),
+        Type: Joi.string().valid("Events", "Discussions", "Articles")
     }).validate(req.body, { allowUnknown: true });
     if (Result.error) {
         return res.status(400).json(Result.error.details)

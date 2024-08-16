@@ -5,14 +5,14 @@ import { QueryParametersSchema } from './common.js';
 const ArticleSchema = Joi.object({
     ArticleName: Joi.string().required(),
     Description: Joi.string().required(),
-    CoverPhoto: Joi.string().required(),
+    CoverPicture: Joi.string().required(),
     AuthorId: Joi.string().required(),
 });
 
 
 const ValidateGetArticles = async (req, res, next) => {
     const Result = QueryParametersSchema.keys({
-        UserId : Joi.string(),
+        AuthorId : Joi.string(),
     }).validate(req.query, { stripUnknown: true });
     if (Result.error) {
         const message = Result.error.details.map((detail) => detail.message).join(',');
@@ -54,7 +54,7 @@ const ValidatePatchArticles = async (req, res, next) => {
 
 const ValidatePatchArticlesCoverPicture = async (req, res, next) => {
     const Result = Joi.object({
-        CoverPhoto: ArticleSchema.extract("CoverPhoto"),
+        CoverPicture: ArticleSchema.extract("CoverPicture"),
     }).validate(req.body, { stripUnknown: true });
     if (Result.error) {
         const message = Result.error.details.map((detail) => detail.message).join(',');

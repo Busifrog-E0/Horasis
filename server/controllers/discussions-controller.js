@@ -7,6 +7,7 @@ import { PermissionObjectInit } from './members-controller.js';
 
 import { ReadSaves } from '../databaseControllers/saves-databaseController.js';
 import { MemberInit } from './members-controller.js';
+import { AlertBoxObject } from './common.js';
 /**
  * @typedef {import('./../databaseControllers/discussions-databaseController.js').DiscussionData} DiscussionData 
  */
@@ -168,7 +169,13 @@ const PostDiscussions = async (req, res) => {
  * @returns {Promise<e.Response<true>>}
  */
 const PatchDiscussions = async (req, res) => {
+    //@ts-ignore
+    const { UserId } = req.user
     const { EntityId } = req.params;
+    const Member = (await ReadMembers({ EntityId, MemberId: UserId }, undefined, 1, undefined))[0];
+    if (!Member.Permissions.IsAdmin) {
+        return res.status(444).json(AlertBoxObject("Cannot Edit", "You are not an admin of this discussion"))
+    }
     await UpdateDiscussions(req.body, EntityId);
     return res.json(true);
 }
