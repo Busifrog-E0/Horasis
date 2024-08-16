@@ -38,8 +38,8 @@ const Discussions = () => {
                     >
                         Create Discussion
                     </Button>
-                    {/* <SavedDiscussionTab bordered={true} /> */}
-                    <SavedActivityTab/>
+                    <SavedDiscussionTab bordered={true} />
+                    {/* <SavedActivityTab/> */}
                 </div>
             </div>
         </div>

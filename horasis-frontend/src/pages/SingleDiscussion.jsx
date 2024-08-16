@@ -64,6 +64,66 @@ const SingleDiscussion = () => {
 		getDiscussion()
 	}, [])
 
+	const [isSaving, setIsSaving] = useState(false)
+	const getDiscussionUpdate = () => {
+		setIsSaving(true)
+
+		getItem(
+			`discussions/${discussionid}`,
+			(result) => {
+				setIsSaving(false)
+
+				setDiscussion(result)
+			},
+			(err) => {
+				setIsSaving(false)
+			},
+			updateCurrentUser,
+			currentUserData,
+			toast
+		)
+	}
+
+	const saveDiscussion = (id) => {
+		setIsSaving(true)
+		postItem(
+			`saves`,
+			{
+				EntityId: id,
+				Type: 'Discussion',
+			},
+			(result) => {
+				if (result === true) {
+					getDiscussionUpdate()
+				}
+			},
+			(err) => {
+				setIsSaving(false)
+			},
+			updateCurrentUser,
+			currentUserData,
+			toast
+		)
+	}
+
+	const removeDiscussion = (id) => {
+		setIsSaving(true)
+		deleteItem(
+			`saves/${id}`,
+			(result) => {
+				if (result === true) {
+					getDiscussionUpdate()
+				}
+			},
+			(err) => {
+				setIsSaving(false)
+			},
+			updateCurrentUser,
+			currentUserData,
+			toast
+		)
+	}
+
 	const tabs = (discussion) => {
 		const isPrivate = discussion.Privacy === 'Private'
 		const isMember = discussion.IsMember
@@ -74,7 +134,14 @@ const SingleDiscussion = () => {
 				{
 					key: 0,
 					title: 'About',
-					render: () => <DiscussionAbout discussion={discussion} />,
+					render: () => (
+						<DiscussionAbout
+							discussion={discussion}
+							saveDiscussion={saveDiscussion}
+							removeDiscussion={removeDiscussion}
+							isSaving={isSaving}
+						/>
+					),
 				},
 				{
 					key: 1,
@@ -131,7 +198,14 @@ const SingleDiscussion = () => {
 				{
 					key: 0,
 					title: 'About',
-					render: () => <DiscussionAbout discussion={discussion} />,
+					render: () => (
+						<DiscussionAbout
+							discussion={discussion}
+							saveDiscussion={saveDiscussion}
+							removeDiscussion={removeDiscussion}
+							isSaving={isSaving}
+						/>
+					),
 				},
 				{
 					key: 1,
@@ -179,7 +253,14 @@ const SingleDiscussion = () => {
 				{
 					key: 0,
 					title: 'About',
-					render: () => <DiscussionAbout discussion={discussion} />,
+					render: () => (
+						<DiscussionAbout
+							discussion={discussion}
+							saveDiscussion={saveDiscussion}
+							removeDiscussion={removeDiscussion}
+							isSaving={isSaving}
+						/>
+					),
 				},
 				{
 					key: 1,
@@ -220,7 +301,14 @@ const SingleDiscussion = () => {
 				{
 					key: 0,
 					title: 'About',
-					render: () => <DiscussionAbout discussion={discussion} />,
+					render: () => (
+						<DiscussionAbout
+							discussion={discussion}
+							saveDiscussion={saveDiscussion}
+							removeDiscussion={removeDiscussion}
+							isSaving={isSaving}
+						/>
+					),
 				},
 			]
 		}
@@ -314,7 +402,7 @@ const SingleDiscussion = () => {
 	const [coverImageToUpload, setCoverImageToUpload] = useState(null)
 	const [isCoverPictureOpen, setIsCoverPictureOpen] = useState(false)
 	const onCoverImageSelect = (imageData) => {
-		setCoverImageToUpload({...imageData,Type:'Discussions'})
+		setCoverImageToUpload({ ...imageData, Type: 'Discussions' })
 		const tempUrl = URL.createObjectURL(new Blob([new Uint8Array(imageData.FileData)]))
 		setSelectedCoverImage(tempUrl)
 	}

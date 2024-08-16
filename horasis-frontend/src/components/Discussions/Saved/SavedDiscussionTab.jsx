@@ -18,6 +18,7 @@ const SavedDiscussionTab = ({ bordered = false }) => {
 		OrderBy: 'Index',
 		Limit: 10,
 		Keyword: '',
+		Type:'Discussion'
 	})
 
 	const onDelete = (DocId) => {
@@ -33,12 +34,10 @@ const SavedDiscussionTab = ({ bordered = false }) => {
 		}
 	}
 
+	const api = 'saves'
+
 	const getDiscussions = (tempActivites) => {
-		getData(
-			`users/${currentUserData.CurrentUser.UserId}/discussions/save?&${jsonToQuery(filters)}`,
-			tempActivites,
-			setDiscussions
-		)
+		getData(`${api}?&${jsonToQuery(filters)}`, tempActivites, setDiscussions)
 	}
 	const getData = (endpoint, tempData, setData) => {
 		setLoadingCom(tempData, true)
@@ -86,7 +85,7 @@ const SavedDiscussionTab = ({ bordered = false }) => {
 	const fetchMore = () => fetchData(false)
 
 	useEffect(() => {
-		if (discussions.length > 0) hasAnyLeft(`users/${currentUserData.CurrentUser.UserId}/discussions/save`, discussions)
+		if (discussions.length > 0) hasAnyLeft(`${api}`, discussions)
 	}, [discussions])
 
 	useEffect(() => {
@@ -104,6 +103,10 @@ const SavedDiscussionTab = ({ bordered = false }) => {
 					<Spinner />
 				) : discussions.length > 0 ? (
 					<>
+						{discussions.map((discussion, index) => {
+							let lastItem = discussion.length - 1 === index
+							return <SavedDiscussionItem discussion={discussion} lastItem={lastItem} />
+						})}
 						{/* <ActivityListComponent\
                          ShowImage={false}
                         className={`p-5 bg-system-secondary-bg rounded-lg ${bordered && 'border border-system-file-border'} relative`}
@@ -115,13 +118,66 @@ const SavedDiscussionTab = ({ bordered = false }) => {
                         bordered={true}
                         discussions={discussions}
                     /> */}
-						<EmptyMembers emptyText={`${discussions.length} saved posts. But some error occured!`} />
+						{/* <EmptyMembers emptyText={`${discussions.length} saved posts. But some error occured!`} /> */}
 					</>
 				) : (
 					<EmptyMembers emptyText={'No saved discussions'} />
 				)}
 			</div>
 		</div>
+	)
+}
+
+const SavedDiscussionItem = ({ discussion, lastItem }) => {
+	return (
+		<>
+			<div className={`mt-4 flex flex-row gap-2 ${!lastItem && 'border-b'} pb-4 border-system-file-border`}>
+				<div className='h-16 w-28  overflow-hidden rounded-lg'>
+					<img src={discussion.CoverPicture} className='object-cover h-full w-full' />
+				</div>
+				<div className='flex-1'>
+					<h4 className='font-semibold text-sm text-system-primary-text'>{discussion.DiscussionName}</h4>
+					<div className='flex flex-row gap-3'>
+						<p className='text-xs text-brand-gray-dim mt-1 line-clamp-1'>{discussion.Description}</p>
+						{/* <svg
+					className='cursor-pointer w-12 h-12 text-system-primary-text'
+					aria-hidden='true'
+					xmlns='http://www.w3.org/2000/svg'
+					fill='currentColor'
+					viewBox='0 0 20 20'>
+					<path d='m19.707 9.293-2-2-7-7a1 1 0 0 0-1.414 0l-7 7-2 2a1 1 0 0 0 1.414 1.414L2 10.414V18a2 2 0 0 0 2 2h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a2 2 0 0 0 2-2v-7.586l.293.293a1 1 0 0 0 1.414-1.414Z' />
+					</svg> */}
+					</div>
+				</div>
+				{/* {saving === article.DocId ? (
+					<div className=' self-end'>
+						<Spinner />
+					</div>
+				) : (
+					<>
+						{article.HasSaved ? (
+							<>
+								<img
+									src={saveFill}
+									alt=''
+									className='h-6 cursor-pointer self-end'
+									onClick={() => removeSaveArticle(article.DocId)}
+								/>
+							</>
+						) : (
+							<>
+								<img
+									src={saveOutline}
+									alt=''
+									className='h-6 cursor-pointer self-end'
+									onClick={() => saveArticle(article.DocId)}
+								/>
+							</>
+						)}
+					</>
+				)} */}
+			</div>
+		</>
 	)
 }
 
