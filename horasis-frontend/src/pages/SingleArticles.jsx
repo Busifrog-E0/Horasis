@@ -6,6 +6,7 @@ import { useAuth } from '../utils/AuthProvider'
 import { useToast } from '../components/Toast/ToastService'
 import arrowback from '../assets/icons/arrowback.svg'
 import camera from '../assets/icons/camera.svg'
+import close from '../assets/icons/close.svg'
 import { getDateInWordsFormat } from '../utils/date'
 import Modal from '../components/ui/Modal'
 import PictureUpload from '../components/Profile/EditProfile/PictureUpload'
@@ -48,7 +49,7 @@ const SingleArticles = () => {
 	const [coverImageToUpload, setCoverImageToUpload] = useState(null)
 	const [isCoverPictureOpen, setIsCoverPictureOpen] = useState(false)
 	const onCoverImageSelect = (imageData) => {
-		setCoverImageToUpload(imageData)
+		setCoverImageToUpload({ ...imageData, Type: 'Articles' })
 		const tempUrl = URL.createObjectURL(new Blob([new Uint8Array(imageData.FileData)]))
 		setSelectedCoverImage(tempUrl)
 	}
@@ -62,12 +63,12 @@ const SingleArticles = () => {
 		patchItem(
 			`articles/${articleid}/coverPicture`,
 			{
-				CoverPhoto: url,
+				CoverPicture: url,
 			},
 			(result) => {
 				if (result === true) {
 					setIsCoverPictureOpen(false)
-					getDiscussion()
+					getArticle()
 				}
 				setIsImageUploading(false)
 			},
@@ -139,9 +140,9 @@ const SingleArticles = () => {
 			</Modal>
 			<div className='p-4 md:px-10 max-w-9xl md:py-10'>
 				<div className='overflow-hidden h-80 lg:h-96 relative rounded-t-2xl'>
-					{article.CoverPhoto ? (
+					{article.CoverPicture ? (
 						<>
-							<img src={article.CoverPhoto} className='object-cover h-full w-full' />
+							<img src={article.CoverPicture} className='object-cover h-full w-full' />
 						</>
 					) : (
 						<>
@@ -161,8 +162,8 @@ const SingleArticles = () => {
 								<div
 									onClick={() => {
 										setIsCoverPictureOpen(true)
-										if (article.CoverPhoto) {
-											setSelectedCoverImage(article.CoverPhoto)
+										if (article.CoverPicture) {
+											setSelectedCoverImage(article.CoverPicture)
 										} else {
 											setSelectedCoverImage(null)
 										}

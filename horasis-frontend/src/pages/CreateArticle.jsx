@@ -45,7 +45,7 @@ const CreateArticle = () => {
 		ArticleName: '',
 		Description: '',
 		AuthorId: currentUserData.CurrentUser.UserId,
-		CoverPhoto: '',
+		CoverPicture: '',
 	})
 
 	const postArticle = () => {
@@ -57,7 +57,7 @@ const CreateArticle = () => {
 	const [selectedCoverImage, setSelectedCoverImage] = useState(null)
 	const [coverImageToUpload, setCoverImageToUpload] = useState(null)
 	const onCoverImageSelect = (imageData) => {
-		setCoverImageToUpload(imageData)
+		setCoverImageToUpload({...imageData,Type:'Articles'})
 		const tempUrl = URL.createObjectURL(new Blob([new Uint8Array(imageData.FileData)]))
 		setSelectedCoverImage(tempUrl)
 	}

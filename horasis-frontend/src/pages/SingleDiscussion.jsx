@@ -314,7 +314,7 @@ const SingleDiscussion = () => {
 	const [coverImageToUpload, setCoverImageToUpload] = useState(null)
 	const [isCoverPictureOpen, setIsCoverPictureOpen] = useState(false)
 	const onCoverImageSelect = (imageData) => {
-		setCoverImageToUpload(imageData)
+		setCoverImageToUpload({...imageData,Type:'Discussions'})
 		const tempUrl = URL.createObjectURL(new Blob([new Uint8Array(imageData.FileData)]))
 		setSelectedCoverImage(tempUrl)
 	}

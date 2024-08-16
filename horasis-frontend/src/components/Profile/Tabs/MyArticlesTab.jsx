@@ -140,7 +140,7 @@ const ArticleItem = ({ article }) => {
 			onClick={() => navigate(`/Articles/${article.DocId}`)}>
 			<div className='flex items-start gap-2'>
 				<div className='h-20 md:h-28  overflow-hidden rounded-lg'>
-					<img className='w-full h-full object-cover' src={article.CoverPhoto} alt='Rounded avatar' />
+					<img className='w-full h-full object-cover' src={article.CoverPicture} alt='Rounded avatar' />
 				</div>
 
 				<div className='flex-1'>
