@@ -20,16 +20,16 @@ import { ReadOneFromArticles } from '../databaseControllers/articles-databaseCon
  * @returns {Promise<e.Response<Array<SaveData>>>}
  */
 const GetSaves = async (req, res) => {
-    const { UserId } = req.params;
-    let data = {};
+    // @ts-ignore
+    const { UserId } = req.user;
+    let data = [];
     const { Filter, NextId, Limit, OrderBy } = req.query;
     // @ts-ignore
-    Filter.UserId = UserId;
-    // @ts-ignore
-    Filter.Type = req.body.Type;
+    Filter.UserId = req.user.UserId;
     //@ts-ignore
     const Saves = await ReadSaves(Filter, NextId, Limit, OrderBy);
-    if (req.body.Type === "Activity") {
+    //@ts-ignore
+    if (Filter.Type === "Activity") {
         data = await Promise.all(Saves.map(async Save => {
             const Activity = await ReadOneFromActivities(Save.EntityId);
             const [UserDetails, checkLike] = await Promise.all([
@@ -43,7 +43,8 @@ const GetSaves = async (req, res) => {
         }));
 
     }
-    if (req.body.Type === "Discussion") {
+    //@ts-ignore
+    if (Filter.Type === "Discussion") {
         data = await Promise.all(Saves.map(async Save => {
             const Discussion = await ReadOneFromDiscussions(Save.EntityId);
             const [UserDetails] = await Promise.all([
@@ -55,7 +56,8 @@ const GetSaves = async (req, res) => {
         }));
 
     }
-    if (req.body.Type === "Article") {
+    //@ts-ignore
+    if (Filter.Type === "Article") {
         data = await Promise.all(Saves.map(async Save => {
             const Article = await ReadOneFromArticles(Save.EntityId);
             const [UserDetails] = await Promise.all([
