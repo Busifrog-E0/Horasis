@@ -25,11 +25,11 @@ const ActivityComponent = ({
 	className,
 	avatarSize,
 	descriptionSize,
-	timeSize='text-base',
+	timeSize = 'text-base',
 	ShowImage = true,
-	iconSize='6',
-	openComment=false,
-	onSaveRemoveCallback = () => { }
+	iconSize = '6',
+	openComment = false,
+	onSaveRemoveCallback = () => {},
 }) => {
 	const [showComment, setShowComment] = useState(openComment)
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
@@ -50,7 +50,7 @@ const ActivityComponent = ({
 	const [singleActivity, setSingleActivity] = useState(activity)
 
 	const onLikeBtnClicked = () => {
-		const actId = singleActivity?singleActivity.DocId:activityId
+		const actId = singleActivity ? singleActivity.DocId : activityId
 
 		setIsLiking(true)
 		postItem(
@@ -74,7 +74,7 @@ const ActivityComponent = ({
 	}
 
 	const onSaveClicked = () => {
-		const actId = singleActivity?singleActivity.DocId:activityId
+		const actId = singleActivity ? singleActivity.DocId : activityId
 
 		setIsSaving(true)
 		postItem(
@@ -98,7 +98,7 @@ const ActivityComponent = ({
 	}
 
 	const OnRemoveClicked = () => {
-		const actId = singleActivity?singleActivity.DocId:activityId
+		const actId = singleActivity ? singleActivity.DocId : activityId
 
 		setIsSaving(true)
 		deleteItem(
@@ -121,7 +121,7 @@ const ActivityComponent = ({
 		)
 	}
 	const onUnLikeBtnClicked = () => {
-		const actId = singleActivity?singleActivity.DocId:activityId
+		const actId = singleActivity ? singleActivity.DocId : activityId
 
 		setIsLiking(true)
 		deleteItem(
@@ -143,7 +143,7 @@ const ActivityComponent = ({
 		)
 	}
 	const onDeleteBtnClicked = () => {
-		const actId = singleActivity?singleActivity.DocId:activityId
+		const actId = singleActivity ? singleActivity.DocId : activityId
 
 		setIsDeleting(true)
 		deleteItem(
@@ -195,7 +195,7 @@ const ActivityComponent = ({
 	}
 
 	const getAllActivityComments = (tempActivites) => {
-		const actId = singleActivity?singleActivity.DocId:activityId
+		const actId = singleActivity ? singleActivity.DocId : activityId
 		getData(`activities/${actId}/comments?&${jsonToQuery(filters)}`, tempActivites, setCommentsData)
 	}
 	const getData = (endpoint, tempData, setData) => {
@@ -242,7 +242,7 @@ const ActivityComponent = ({
 	const fetchMore = () => fetchData(false)
 
 	useEffect(() => {
-		const actId = singleActivity?singleActivity.DocId:activityId
+		const actId = singleActivity ? singleActivity.DocId : activityId
 		if (commentsData.length > 0) hasAnyLeft(`activities/${actId}/comments`, commentsData)
 	}, [commentsData])
 
@@ -308,7 +308,7 @@ const ActivityComponent = ({
 						<p className='text-system-primary-text font-normal text-xs m-0'>{singleActivity.Mentions?.length} Mentions</p>
 					</div>
 				} */}
-				{ }
+				{}
 				{ShowImage && singleActivity?.MediaFiles && singleActivity.MediaFiles.length > 0 && (
 					<div>
 						<ActivityCarousel slides={singleActivity.MediaFiles} />
@@ -327,7 +327,11 @@ const ActivityComponent = ({
 						) : (
 							<div className='flex items-center gap-2'>
 								{singleActivity.HasLiked ? (
-									<img src={liked} className={`h-${iconSize} w-${iconSize} cursor-pointer text-system-error`} onClick={onUnLikeBtnClicked} />
+									<img
+										src={liked}
+										className={`h-${iconSize} w-${iconSize} cursor-pointer text-system-error`}
+										onClick={onUnLikeBtnClicked}
+									/>
 								) : (
 									<img src={like} className={`h-${iconSize} w-${iconSize} cursor-pointer`} onClick={onLikeBtnClicked} />
 								)}
@@ -335,7 +339,7 @@ const ActivityComponent = ({
 							</div>
 						)}
 						<div className='flex items-center gap-2 cursor-pointer' onClick={() => setShowComment((prev) => !prev)}>
-							<img src={reply} className={`h-${iconSize} w-${iconSize} `}/>
+							<img src={reply} className={`h-${iconSize} w-${iconSize} `} />
 							<p className={`text-brand-gray-dim mt-1 ${timeSize}`}>{singleActivity.NoOfComments} replies</p>
 						</div>
 						{/* {isDeleting ? (

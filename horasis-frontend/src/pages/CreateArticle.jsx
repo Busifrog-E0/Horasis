@@ -73,7 +73,7 @@ const CreateArticle = () => {
 			(result) => {
 				if (result) {
 					setIsModalOpen(false)
-					navigate(`Articles/${result}`)
+					navigate(`/Articles/${result}`)
 				}
 				setIsImageUploading(false)
 			},

@@ -423,19 +423,20 @@ const SingleDiscussion = () => {
 
 							{/* <h4 className='font-medium text-xl text-brand-secondary'>Back</h4> */}
 						</div>
-
-						<div
-							onClick={() => {
-								setIsCoverPictureOpen(true)
-								if (discussion.CoverPicture) {
-									setSelectedCoverImage(discussion.CoverPicture)
-								} else {
-									setSelectedCoverImage(null)
-								}
-							}}
-							className={`inline-flex items-center justify-center w-12 h-12 p-3 overflow-hidden rounded-full border border-white bg-white cursor-pointer`}>
-							<img src={camera} alt='' className='h-6 cursor-pointer' />
-						</div>
+						{discussion?.Permissions?.IsAdmin && (
+							<div
+								onClick={() => {
+									setIsCoverPictureOpen(true)
+									if (discussion.CoverPicture) {
+										setSelectedCoverImage(discussion.CoverPicture)
+									} else {
+										setSelectedCoverImage(null)
+									}
+								}}
+								className={`inline-flex items-center justify-center w-12 h-12 p-3 overflow-hidden rounded-full border border-white bg-white cursor-pointer`}>
+								<img src={camera} alt='' className='h-6 cursor-pointer' />
+							</div>
+						)}
 					</div>
 					<div>
 						<h4 className='font-medium shadow-lg text-4xl text-white mb-3'>{discussion.DiscussionName}</h4>
