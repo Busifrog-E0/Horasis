@@ -3,7 +3,7 @@ import { useAuth } from '../../utils/AuthProvider'
 import { useToast } from '../Toast/ToastService'
 import { getNextId } from '../../utils/URLParams'
 import { jsonToQuery } from '../../utils/searchParams/extractSearchParams'
-import { getItem, postItem } from '../../constants/operations'
+import { deleteItem, getItem, postItem } from '../../constants/operations'
 import Spinner from '../ui/Spinner'
 import EmptyMembers from '../Common/EmptyMembers'
 import arrowfor from '../../assets/icons/arrowfor.svg'
@@ -90,16 +90,54 @@ const ArticleMiniSection = () => {
 		fetch()
 	}, [filters])
 
-	const [saving, setSaving] = useState(false)
+	const getSingleArticle = (id) => {
+		setSaving(id)
+		getItem(
+			`articles/${id}`,
+			(result) => {
+				setSaving(null)
+				setArticles(articles.map((article) => (article.DocId === result.DocId ? result : article)))
+			},
+			(err) => {
+				setSaving(null)
+			},
+			updateCurrentUser,
+			currentUserData,
+			toast
+		)
+	}
+
+	const [saving, setSaving] = useState(null)
 	const saveArticle = (id) => {
+		setSaving(id)
 		postItem(
 			`saves`,
 			{ EntityId: id, Type: 'Article' },
 			(result) => {
-				console.log(result)
+				if (result === true) {
+					getSingleArticle(id)
+				}
 			},
 			(err) => {
-				console.log(err)
+				setSaving(null)
+			},
+			updateCurrentUser,
+			currentUserData,
+			toast
+		)
+	}
+
+	const removeSaveArticle = (id) => {
+		setSaving(id)
+		deleteItem(
+			`saves/${id}`,
+			(result) => {
+				if (result === true) {
+					getSingleArticle(id)
+				}
+			},
+			(err) => {
+				setSaving(null)
 			},
 			updateCurrentUser,
 			currentUserData,
@@ -125,7 +163,14 @@ const ArticleMiniSection = () => {
 							{articles.map((article, index) => {
 								let lastItem = articles.length - 1 === index
 								return (
-									<ArticleMiniTab article={article} key={article.DocId} lastItem={lastItem} saveArticle={saveArticle} />
+									<ArticleMiniTab
+										article={article}
+										key={article.DocId}
+										lastItem={lastItem}
+										saveArticle={saveArticle}
+										removeSaveArticle={removeSaveArticle}
+										saving={saving}
+									/>
 								)
 							})}
 						</>
@@ -140,7 +185,7 @@ const ArticleMiniSection = () => {
 	)
 }
 
-const ArticleMiniTab = ({ article, lastItem, saveArticle }) => {
+const ArticleMiniTab = ({ article, lastItem, saveArticle, removeSaveArticle, saving }) => {
 	return (
 		<>
 			<div className={`mt-4 flex flex-row gap-2 ${!lastItem && 'border-b'} pb-4 border-system-file-border`}>
@@ -161,12 +206,33 @@ const ArticleMiniTab = ({ article, lastItem, saveArticle }) => {
               </svg> */}
 					</div>
 				</div>
-				{/* <img
-					src={saveOutline}
-					alt=''
-					className='h-6 cursor-pointer self-end'
-					onClick={() => saveArticle(article.DocId)}
-				/> */}
+				{saving === article.DocId ? (
+					<div className=' self-end'>
+						<Spinner />
+					</div>
+				) : (
+					<>
+						{article.HasSaved ? (
+							<>
+								<img
+									src={saveFill}
+									alt=''
+									className='h-6 cursor-pointer self-end'
+									onClick={() => removeSaveArticle(article.DocId)}
+								/>
+							</>
+						) : (
+							<>
+								<img
+									src={saveOutline}
+									alt=''
+									className='h-6 cursor-pointer self-end'
+									onClick={() => saveArticle(article.DocId)}
+								/>
+							</>
+						)}
+					</>
+				)}
 			</div>
 		</>
 	)
