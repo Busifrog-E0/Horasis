@@ -373,6 +373,13 @@ const DeleteMembers = async (req, res) => {
     return res.json(true);
 }
 
+/**\
+ * @param {string} DiscussionId
+ */
+const DeleteMembersOfDiscussion = async (DiscussionId) => {
+    const Members = await ReadMembers({ EntityId: DiscussionId }, undefined, -1, undefined);
+    return await Promise.all(Members.map((Member) => RemoveMembers(Member.DocId)));
+}
 
 const MemberInit = (Member, IsAdmin = false) => {
     return {
@@ -396,6 +403,6 @@ export {
     GetOneFromMembers, GetMembers, PostMembers, PatchMembers, DeleteMembers,
     PermissionObjectInit, InviteMembers, AcceptMemberInvitation, UpdateMemberPermissions, GetJoinRequests,
     AcceptJoinRequest, GetMembersToInvite, DeleteTempMembers,
-    RemoveMemberPermissions, MemberInit,
+    RemoveMemberPermissions, MemberInit, DeleteMembersOfDiscussion
 
 }
