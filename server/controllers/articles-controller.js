@@ -2,6 +2,8 @@ import e from 'express';
 
 import { ReadOneFromArticles, ReadArticles, UpdateArticles, CreateArticles, RemoveArticles, } from './../databaseControllers/articles-databaseController.js';
 import { ReadOneFromUsers } from '../databaseControllers/users-databaseController.js';
+import { ReadLikes } from '../databaseControllers/likes-databaseController.js';
+import { ReadSaves } from '../databaseControllers/saves-databaseController.js';
 /**
  * @typedef {import('./../databaseControllers/articles-databaseController.js').ArticleData} ArticleData 
  */
@@ -14,7 +16,10 @@ import { ReadOneFromUsers } from '../databaseControllers/users-databaseControlle
  */
 const GetOneFromArticles = async (req, res) => {
     const { ArticleId } = req.params;
-    const data = await ReadOneFromArticles(ArticleId);
+    //@ts-ignore
+    const { UserId } = req.user;
+    const Article = await ReadOneFromArticles(ArticleId);
+    const data = await SetArticleDataForGet(Article, UserId);
     return res.json(data);
 }
 
@@ -25,14 +30,17 @@ const GetOneFromArticles = async (req, res) => {
  * @returns {Promise<e.Response<Array<ArticleData>>>}
  */
 const GetArticles = async (req, res) => {
-    const { Filter, NextId, Limit, OrderBy,Keyword } = req.query;
+    const { Filter, NextId, Limit, OrderBy, Keyword } = req.query;
+    //@ts-ignore
+    const { UserId } = req.user;
     if (Keyword) {
         //@ts-ignore
         Filter["ArticleName"] = { $regex: Keyword, $options: 'i' };
 
     }
     // @ts-ignore
-    const data = await ReadArticles(Filter, NextId, Limit, OrderBy);
+    const Articles = await ReadArticles(Filter, NextId, Limit, OrderBy);
+    const data = await Promise.all(Articles.map(async Article => await SetArticleDataForGet(Article, UserId)))
     return res.json(data);
 }
 
@@ -74,11 +82,26 @@ const DeleteArticles = async (req, res) => {
     return res.json(true);
 }
 
+/**
+ * 
+ * @param {ArticleData} Article 
+ * @param {string} UserId
+ */
+const SetArticleDataForGet = async (Article, UserId) => {
+    const [checkLike, checkSave] = await Promise.all([
+        ReadLikes({ EntityId: Article.DocId, UserId }, undefined, 1, undefined),
+        ReadSaves({ EntityId: Article.DocId, UserId }, undefined, 1, undefined)
+    ])
+    const HasSaved = checkSave.length > 0;
+    const HasLiked = checkLike.length > 0;
+    return { ...Article, HasLiked, HasSaved }
+}
+
 const ArticleInit = (Article) => {
     return {
         ...Article,
         NoOfLikes: 0,
-        NoOfComments : 0
+        NoOfComments: 0
     }
 }
 
