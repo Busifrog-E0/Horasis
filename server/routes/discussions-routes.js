@@ -124,7 +124,7 @@ router.patch('/discussions/:EntityId/member/:MemberId/permissions/remove', decod
     //@ts-ignore
     asyncHandler(RemoveMemberPermissions));
 
-router.patch('/discussions/:EntityId/member/permissions/everyone', decodeIDToken, ensureAuthorized("User"), ValidateAddPermissionForEveryone,
+router.patch('/discussions/:DiscussionId/member/permissions/everyone', decodeIDToken, ensureAuthorized("User"), ValidateAddPermissionForEveryone,
     SwaggerDocs.patch_Discussions_EntityId_Member_Permissions_Everyone,
     //@ts-ignore
     asyncHandler(PatchDiscussions));

@@ -172,7 +172,7 @@ const PatchDiscussions = async (req, res) => {
     //@ts-ignore
     const { UserId } = req.user
     const { DiscussionId } = req.params;
-    const [Member] = await ReadMembers({ EntityId : DiscussionId, MemberId: UserId }, undefined, 1, undefined);
+    const [Member] = await ReadMembers({ EntityId: DiscussionId, MemberId: UserId }, undefined, 1, undefined);
     if (!Member.Permissions.IsAdmin) {
         return res.status(444).json(AlertBoxObject("Cannot Edit", "You are not an admin of this discussion"))
     }
