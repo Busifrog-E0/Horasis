@@ -116,11 +116,11 @@ const PostFilesUsers = async (req, res) => {
     //@ts-ignore
     const { mime: FileType } = await fileTypeFromBuffer(FileData8Array);
     // @ts-ignore
-    let FilePath = `${req.user.UserId}/${req.body.FileFieldName}`;
+    let FilePath = `${req.user.UserId}`;
     if (req.body.Type) {
-        FilePath = FilePath + `${req.body.Type}/${Math.floor(Math.random() * 10000) + 1}`
+        FilePath = FilePath + `/${req.body.Type}/${Math.floor(Math.random() * 1000000000000) + 1}`
     }
-    SaveFileToSpaces("Users", FilePath, req.body.FileData, FileType, res)
+    SaveFileToSpaces("Users", FilePath + `/${req.body.FileFieldName}`, req.body.FileData, FileType, res)
 }
 
 
