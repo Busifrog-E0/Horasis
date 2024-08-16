@@ -26,6 +26,8 @@ const GetSaves = async (req, res) => {
     // @ts-ignore
     Filter.UserId = UserId;
     // @ts-ignore
+    Filter.Type = req.body.Type;
+    //@ts-ignore
     const Saves = await ReadSaves(Filter, NextId, Limit, OrderBy);
     if (req.body.Type === "Activity") {
         data = await Promise.all(Saves.map(async Save => {
@@ -75,13 +77,14 @@ const GetSaves = async (req, res) => {
  */
 const PostSaves = async (req, res) => {
     const { EntityId } = req.body;
+    const entityId = EntityId || req.params.EntityId
     //@ts-ignore
     const { UserId } = req.user;
-    const CheckSave = await ReadSaves({ EntityId, UserId }, undefined, 1, undefined);
+    const CheckSave = await ReadSaves({ EntityId: entityId, UserId }, undefined, 1, undefined);
     if (CheckSave.length > 0) {
         return res.status(444).json(AlertBoxObject("Cannot Save", "You cannot Save twice"));
     }
-    const data = { ...req.body, UserId };
+    const data = { ...req.body, UserId , EntityId : entityId };
     await CreateSaves(data);
     return res.json(true);
 }
@@ -95,7 +98,7 @@ const PostSaves = async (req, res) => {
  */
 const DeleteSaves = async (req, res) => {
     const { EntityId } = req.params;
-    //@ts-ignore
+    //@
     const { UserId } = req.user;
     const CheckSave = await ReadSaves({ EntityId, UserId }, undefined, 1, undefined);
     if (CheckSave.length === 0) {
