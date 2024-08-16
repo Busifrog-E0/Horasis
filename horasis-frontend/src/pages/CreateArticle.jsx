@@ -13,6 +13,7 @@ import { useToast } from '../components/Toast/ToastService'
 import Modal from '../components/ui/Modal'
 import { PostArticleSchema } from '../utils/schema/articles/articleValidation'
 import { postItem } from '../constants/operations'
+import ArticleMiniSection from '../components/Articles/ArticleMiniSection'
 
 const CreateArticle = () => {
 	const [activeStep, setActiveStep] = useState(1)
@@ -57,7 +58,7 @@ const CreateArticle = () => {
 	const [selectedCoverImage, setSelectedCoverImage] = useState(null)
 	const [coverImageToUpload, setCoverImageToUpload] = useState(null)
 	const onCoverImageSelect = (imageData) => {
-		setCoverImageToUpload({...imageData,Type:'Articles'})
+		setCoverImageToUpload({ ...imageData, Type: 'Articles' })
 		const tempUrl = URL.createObjectURL(new Blob([new Uint8Array(imageData.FileData)]))
 		setSelectedCoverImage(tempUrl)
 	}
@@ -218,14 +219,8 @@ const CreateArticle = () => {
 						</div>
 					</div>
 					<div>
-						<div className='p-5 bg-system-secondary-bg rounded-lg'>
-							<div className='flex items-center justify-between gap-2 mb-1'>
-								<h4 className='font-semibold text-2xl text-system-primary-text'>Latest Articles</h4>
-								{/* arrow cursor-pointer */}
-							</div>
-							<ArticleMiniTab />
-							<ArticleMiniTab />
-						</div>
+						<ArticleMiniSection />
+				
 					</div>
 				</div>
 			</div>
