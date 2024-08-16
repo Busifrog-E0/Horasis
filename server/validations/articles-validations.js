@@ -12,7 +12,7 @@ const ArticleSchema = Joi.object({
 
 const ValidateGetArticles = async (req, res, next) => {
     const Result = QueryParametersSchema.keys({
-        UserId : Joi.string(),
+        AuthorId : Joi.string(),
     }).validate(req.query, { stripUnknown: true });
     if (Result.error) {
         const message = Result.error.details.map((detail) => detail.message).join(',');
