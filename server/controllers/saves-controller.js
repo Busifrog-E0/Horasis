@@ -98,7 +98,7 @@ const PostSaves = async (req, res) => {
  */
 const DeleteSaves = async (req, res) => {
     const { EntityId } = req.params;
-    //@
+    //@ts-ignore
     const { UserId } = req.user;
     const CheckSave = await ReadSaves({ EntityId, UserId }, undefined, 1, undefined);
     if (CheckSave.length === 0) {
