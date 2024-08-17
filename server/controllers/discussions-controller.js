@@ -233,8 +233,8 @@ const SetDiscussionDataForGet = async (Discussion, UserId) => {
         DiscussionMemberObject.MembershipStatus = Member[0].MembershipStatus
     }
     const Save = await ReadSaves({ EntityId: Discussion.DocId, UserId }, undefined, 1, undefined);
-    const IsSaved = Save.length > 0;
-    return { ...Discussion, ...DiscussionMemberObject, IsSaved }
+    const HasSaved = Save.length > 0;
+    return { ...Discussion, ...DiscussionMemberObject, HasSaved }
 }
 
 export {
