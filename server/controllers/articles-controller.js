@@ -107,5 +107,6 @@ const ArticleInit = (Article) => {
 
 
 export {
-    GetOneFromArticles, GetArticles, PostArticles, PatchArticles, DeleteArticles
+    GetOneFromArticles, GetArticles, PostArticles, PatchArticles, DeleteArticles,
+    SetArticleDataForGet
 }

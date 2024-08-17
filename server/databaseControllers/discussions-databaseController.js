@@ -19,7 +19,7 @@ import dataHandling from './functions.js'
  * @property {number} CreatedIndex
  * @property {string} CoverPicture
  * @property {number} NoOfMembers
- * @property {Omit<PermissionData, 'IsAdmin'>} MemberPermissions
+ * @property {PermissionData} MemberPermissions
  */
 
 

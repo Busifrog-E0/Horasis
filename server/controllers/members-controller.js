@@ -13,6 +13,14 @@ import { IncrementEvents, ReadOneFromEvents } from '../databaseControllers/event
  */
 
 /**
+ * @typedef {import('../databaseControllers/discussions-databaseController.js').DiscussionData} DiscussionData
+ */
+
+/**
+ * @typedef {import('../databaseControllers/events-databaseController.js').EventData} EventData
+ */
+
+/**
  * 
  * @param {e.Request} req 
  * @param {e.Response} res 
@@ -63,25 +71,28 @@ const PostMembers = async (req, res) => {
     if (MemberCheck.length > 0) {
         return res.status(444).json(AlertBoxObject("Cannot Join", "You have already joined this discussion"));
     }
-    const UserDetails = await ReadOneFromUsers(UserId);
-    req.body = { ...MemberInit(req.body), MemberId: UserId, EntityId, UserDetails };
-    const Entity = req.body.Type === "Discussion" ? await ReadOneFromDiscussions(EntityId) : await ReadOneFromEvents(EntityId);
-    if (Entity.Privacy === "Private") {
-        req.body.MembershipStatus = "Requested";
-    }
-    await CreateMembers(req.body);
 
-    if (Entity.Privacy === "Public") {
-        req.body.Type === "Discussion" ?
-            await IncrementDiscussions({ NoOfMembers: 1 }, EntityId)
-            :
-            await IncrementEvents({ NoOfMembers: 1 }, EntityId);
-        await SendNotificationForMemberJoin(req.body.Type, EntityId, UserId);
+    const UserDetails = await ReadOneFromUsers(UserId);;
+    const Entity = req.body.Type === "Discussion" ? await ReadOneFromDiscussions(EntityId) : await ReadOneFromEvents(EntityId);
+
+    if (Entity.Privacy === "Private") {
+        req.body = MemberInit(req.body, "Requested")
+        await Promise.all([
+            SendNotificationForMemberRequest(req.body.Type, EntityId, UserId),
+            CreateMembers({ ...req.body, MemberId: UserId, EntityId, UserDetails })
+        ])
+        return res.status(244).json(AlertBoxObject("Request Sent", "Request has been sent"));
+    }
+    else {
+        req.body = MemberInit(req.body, "Accepted");
+        await Promise.all([
+            SendNotificationForMemberJoin(req.body.Type, EntityId, UserId),
+            CreateMembers({ ...req.body, MemberId: UserId, EntityId, UserDetails }),
+            req.body.Type === "Discussion" ? await IncrementDiscussions({ NoOfMembers: 1 }, EntityId) :
+                await IncrementEvents({ NoOfMembers: 1 }, EntityId)
+        ])
         return res.json(true);
     }
-    await SendNotificationForMemberRequest(req.body.Type, EntityId, UserId);
-    return res.status(244).json(AlertBoxObject("Request Sent", "Request has been sent"));
-
 }
 
 
@@ -148,8 +159,7 @@ const InviteMembers = async (req, res) => {
     }
 
     const UserDetails = await ReadOneFromUsers(InviteeId);
-    req.body = { ...MemberInit(req.body), MemberId: InviteeId, EntityId, UserDetails };
-    req.body.MembershipStatus = "Invited";
+    req.body = { ...MemberInit(req.body, "Invited"), MemberId: InviteeId, EntityId, UserDetails };
     await CreateMembers(req.body);
     await SendNotificationForMemberInvitation(req.body.Type, EntityId, InviteeId, UserId);
     return res.json(true);
@@ -374,17 +384,46 @@ const DeleteMembers = async (req, res) => {
 }
 
 /**\
- * @param {string} DiscussionId
+ * @param {string} EntityId
  */
-const DeleteMembersOfDiscussion = async (DiscussionId) => {
-    const Members = await ReadMembers({ EntityId: DiscussionId }, undefined, -1, undefined);
+const DeleteMembersOfEntity = async (EntityId) => {
+    const Members = await ReadMembers({ EntityId: EntityId }, undefined, -1, undefined);
     return await Promise.all(Members.map((Member) => RemoveMembers(Member.DocId)));
 }
 
-const MemberInit = (Member, IsAdmin = false) => {
+/**
+ * 
+ * @param {MemberData} Member 
+ * @param {DiscussionData|EventData} Entity 
+ */
+const GetPermissionOfMember = (Member, Entity) => {
+    const MembershipObject = { IsMember: false, Permissions: {} };
+    for (const PermissionField in Entity.MemberPermissions) {
+        if (Entity.MemberPermissions[PermissionField] === true) {
+            MembershipObject.Permissions[PermissionField] = true;
+        }
+        else {
+            MembershipObject.Permissions[PermissionField] = Member.Permissions[PermissionField];
+        }
+    }
+
+    MembershipObject.IsMember = (Member.MembershipStatus === "Accepted");
+    MembershipObject.MembershipStatus = Member.MembershipStatus;
+    return { ...Entity, ...MembershipObject };
+}
+
+/**
+ * 
+ * @param {object} Member 
+ * @param {"Accepted"|"Invited"|"Requested"} MembershipStatus 
+ * @param {boolean} IsAdmin 
+ * @returns 
+ */
+const MemberInit = (Member, MembershipStatus = "Accepted", IsAdmin = false) => {
     return {
         ...Member,
-        MembershipStatus: "Accepted",
+        MembershipStatus,
+        IsSpeaker: false,
         Permissions: PermissionObjectInit(IsAdmin)
     }
 }
@@ -403,6 +442,6 @@ export {
     GetOneFromMembers, GetMembers, PostMembers, PatchMembers, DeleteMembers,
     PermissionObjectInit, InviteMembers, AcceptMemberInvitation, UpdateMemberPermissions, GetJoinRequests,
     AcceptJoinRequest, GetMembersToInvite, DeleteTempMembers,
-    RemoveMemberPermissions, MemberInit, DeleteMembersOfDiscussion
+    RemoveMemberPermissions, MemberInit, DeleteMembersOfEntity, GetPermissionOfMember
 
 }
