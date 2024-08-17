@@ -3,13 +3,17 @@ import e from 'express';
 import { ReadOneFromDiscussions, ReadDiscussions, UpdateDiscussions, CreateDiscussions, RemoveDiscussions, AggregateDiscussions, } from './../databaseControllers/discussions-databaseController.js';
 import { ReadOneFromUsers } from '../databaseControllers/users-databaseController.js';
 import { CreateMembers, ReadMembers } from '../databaseControllers/members-databaseController.js';
-import { DeleteMembersOfDiscussion, PermissionObjectInit } from './members-controller.js';
+import {  DeleteMembersOfEntity, GetPermissionOfMember, PermissionObjectInit } from './members-controller.js';
 
 import { ReadSaves } from '../databaseControllers/saves-databaseController.js';
 import { MemberInit } from './members-controller.js';
 import { AlertBoxObject } from './common.js';
 /**
  * @typedef {import('./../databaseControllers/discussions-databaseController.js').DiscussionData} DiscussionData 
+ */
+
+/**
+ * @typedef {import('../databaseControllers/members-databaseController.js').PermissionData} PermissionData
  */
 
 /**
@@ -190,7 +194,7 @@ const DeleteDiscussions = async (req, res) => {
     const { DiscussionId } = req.params;
     await Promise.all([
         RemoveDiscussions(DiscussionId),
-        DeleteMembersOfDiscussion(DiscussionId)
+        DeleteMembersOfEntity(DiscussionId)
     ])
     return res.json(true);
 }
@@ -200,6 +204,7 @@ const DiscussionInit = (Discussion) => {
         ...Discussion,
         NoOfMembers: 1,
         MemberPermissions: {
+            isAdmin: false,
             CanPostActivity: false,
             CanInviteOthers: false,
             CanUploadPhoto: false,
@@ -216,28 +221,17 @@ const DiscussionInit = (Discussion) => {
  * @returns 
  */
 const SetDiscussionDataForGet = async (Discussion, UserId) => {
-    const DiscussionMemberObject = { IsMember: false, Permissions: {} };
     const Member = await ReadMembers({ MemberId: UserId, EntityId: Discussion.DocId }, undefined, 1, undefined);
     if (Member.length > 0) {
-        for (const PermissionField in Discussion.MemberPermissions) {
-            console.log(PermissionField)
-            if (Discussion.MemberPermissions[PermissionField] === true) {
-                DiscussionMemberObject.Permissions[PermissionField] = true
-            }
-            else {
-                DiscussionMemberObject.Permissions[PermissionField] = Member[0].Permissions[PermissionField]
-            }
-        }
-        DiscussionMemberObject.Permissions["IsAdmin"] = Member[0].Permissions["IsAdmin"];
-        DiscussionMemberObject.IsMember = Member[0].MembershipStatus === "Accepted";
-        DiscussionMemberObject.MembershipStatus = Member[0].MembershipStatus
+        //@ts-ignore
+        Discussion = GetPermissionOfMember(Member[0], Discussion);
     }
     const Save = await ReadSaves({ EntityId: Discussion.DocId, UserId }, undefined, 1, undefined);
     const HasSaved = Save.length > 0;
-    return { ...Discussion, ...DiscussionMemberObject, HasSaved }
+    return { ...Discussion, HasSaved }
 }
 
 export {
     GetOneFromDiscussions, GetDiscussions, PostDiscussions, PatchDiscussions, DeleteDiscussions,
-    GetUserDiscussions, GetInvitedDiscussions, GetPublicDiscussions
+    GetUserDiscussions, GetInvitedDiscussions, GetPublicDiscussions ,SetDiscussionDataForGet
 }
