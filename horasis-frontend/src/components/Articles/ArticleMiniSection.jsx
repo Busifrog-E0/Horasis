@@ -188,7 +188,7 @@ const ArticleMiniSection = () => {
 const ArticleMiniTab = ({ article, lastItem, saveArticle, removeSaveArticle, saving }) => {
 	return (
 		<>
-			<div className={`mt-4 flex flex-row gap-2 ${!lastItem && 'border-b'} pb-4 border-system-file-border`}>
+			<div className={`mt-4 flex flex-row gap-2 ${!lastItem ? 'border-b' : ''} pb-4 border-system-file-border`}>
 				<div className='h-16 w-28  overflow-hidden rounded-lg'>
 					<img src={article.CoverPicture} className='object-cover h-full w-full' />
 				</div>

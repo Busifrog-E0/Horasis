@@ -6,10 +6,12 @@ import { getNextId } from '../../../utils/URLParams'
 import { getItem } from '../../../constants/operations'
 import Spinner from '../../ui/Spinner'
 import EmptyMembers from '../../Common/EmptyMembers'
+import { useNavigate } from 'react-router-dom'
 
 const SavedDiscussionTab = ({ bordered = false }) => {
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
 	const toast = useToast()
+	const navigate = useNavigate()
 	const [isLoading, setIsLoading] = useState(true)
 	const [isLoadingMore, setIsLoadingMore] = useState(false)
 	const [discussions, setDiscussions] = useState([])
@@ -18,7 +20,7 @@ const SavedDiscussionTab = ({ bordered = false }) => {
 		OrderBy: 'Index',
 		Limit: 10,
 		Keyword: '',
-		Type:'Discussion'
+		Type: 'Discussion',
 	})
 
 	const onDelete = (DocId) => {
@@ -84,6 +86,10 @@ const SavedDiscussionTab = ({ bordered = false }) => {
 	const fetch = () => fetchData(true)
 	const fetchMore = () => fetchData(false)
 
+	const navigateToDiscussion = (id) => {
+		navigate(`/Discussions/${id}`)
+	}
+
 	useEffect(() => {
 		if (discussions.length > 0) hasAnyLeft(`${api}`, discussions)
 	}, [discussions])
@@ -93,7 +99,7 @@ const SavedDiscussionTab = ({ bordered = false }) => {
 	}, [filters])
 
 	return (
-		<div className='p-5 bg-system-secondary-bg rounded-lg mt-4 lg:mt-8'>
+		<div className='p-5 bg-system-secondary-bg rounded-lg'>
 			<div className='flex items-center justify-between gap-2 mb-1'>
 				<h4 className='font-medium text-2xl text-system-primary-text'>Saved Discussions</h4>
 				{/* arrow cursor-pointer */}
@@ -104,21 +110,9 @@ const SavedDiscussionTab = ({ bordered = false }) => {
 				) : discussions.length > 0 ? (
 					<>
 						{discussions.map((discussion, index) => {
-							let lastItem = discussion.length - 1 === index
-							return <SavedDiscussionItem discussion={discussion} lastItem={lastItem} />
+							let lastItem = discussions.length - 1 === index
+							return <SavedDiscussionItem discussion={discussion} lastItem={lastItem} navigateToDiscussion={navigateToDiscussion} />
 						})}
-						{/* <ActivityListComponent\
-                         ShowImage={false}
-                        className={`p-5 bg-system-secondary-bg rounded-lg ${bordered && 'border border-system-file-border'} relative`}
-                        avatarSize='w-10 h-10'
-                        titleSize="text-md"
-                        descriptionSize="text-sm"
-                        onDelete={onDelete}
-                        gapBnTabs={'gap-3'}
-                        bordered={true}
-                        discussions={discussions}
-                    /> */}
-						{/* <EmptyMembers emptyText={`${discussions.length} saved posts. But some error occured!`} /> */}
 					</>
 				) : (
 					<EmptyMembers emptyText={'No saved discussions'} />
@@ -128,10 +122,12 @@ const SavedDiscussionTab = ({ bordered = false }) => {
 	)
 }
 
-const SavedDiscussionItem = ({ discussion, lastItem }) => {
+const SavedDiscussionItem = ({ discussion, lastItem, navigateToDiscussion }) => {
 	return (
 		<>
-			<div className={`mt-4 flex flex-row gap-2 ${!lastItem && 'border-b'} pb-4 border-system-file-border`}>
+			<div
+				className={`mt-4 flex flex-row gap-2 cursor-pointer ${!lastItem ? 'border-b' : ''} pb-4 border-system-file-border`}
+				onClick={() => navigateToDiscussion(discussion.DocId)}>
 				<div className='h-16 w-28  overflow-hidden rounded-lg'>
 					<img src={discussion.CoverPicture} className='object-cover h-full w-full' />
 				</div>
