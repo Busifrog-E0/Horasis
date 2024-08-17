@@ -33,6 +33,7 @@ import Saved from '../pages/Saved'
 import SuggestionsPage from '../pages/SuggestionsPage'
 import NotFoundPage from '../pages/NotFoundPage'
 import SingleArticles from '../pages/SingleArticles'
+import ForgotPassword from '../pages/ForgotPassword'
 
 export const router = createBrowserRouter(
 	createRoutesFromElements(
@@ -59,12 +60,15 @@ export const router = createBrowserRouter(
 					<Route path='/universalsearchdetails' element={<UniversalSearchDetails />} />
 
 					<Route path='/Events' element={<Events />} />
-          <Route path='/Events/create/new' element={<CreateEvent />} />
+					<Route path='/Events/create/new' element={<CreateEvent />} />
 
 					<Route path='/Chat/:userid' element={<ChatPage />} />
 				</Route>
 			</Route>
 			<Route path='/home' element={<Home />} />
+			<Route path='ForgotPassword' element={<UnAuthLayout />}>
+				<Route index element={<ForgotPassword />} />
+			</Route>
 			<Route path='login' element={<UnAuthLayout />}>
 				<Route index element={<LogIn />} />
 			</Route>

@@ -156,7 +156,17 @@ const LogIn = () => {
 							setShowpass((prev) => !prev)
 						}}
 					/>
+
 					{errorObj['Password'] != undefined && <p className='text-brand-red m-0'>{errorObj['Password']}</p>}
+					<div className='mt-4'>
+						<div className='text-base font-medium text-end'>
+							<p
+								className='cursor-pointer text-system-primary-accent font-medium underline'
+								onClick={() => navigate('/ForgotPassword')}>
+								Forgot Password?
+							</p>
+						</div>
+					</div>
 				</div>
 
 				<div className='mt-4'>
