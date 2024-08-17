@@ -71,25 +71,28 @@ const PostMembers = async (req, res) => {
     if (MemberCheck.length > 0) {
         return res.status(444).json(AlertBoxObject("Cannot Join", "You have already joined this discussion"));
     }
-    const UserDetails = await ReadOneFromUsers(UserId);
-    req.body = { ...MemberInit(req.body), MemberId: UserId, EntityId, UserDetails };
-    const Entity = req.body.Type === "Discussion" ? await ReadOneFromDiscussions(EntityId) : await ReadOneFromEvents(EntityId);
-    if (Entity.Privacy === "Private") {
-        req.body.MembershipStatus = "Requested";
-    }
-    await CreateMembers(req.body);
 
-    if (Entity.Privacy === "Public") {
-        req.body.Type === "Discussion" ?
-            await IncrementDiscussions({ NoOfMembers: 1 }, EntityId)
-            :
-            await IncrementEvents({ NoOfMembers: 1 }, EntityId);
-        await SendNotificationForMemberJoin(req.body.Type, EntityId, UserId);
+    const UserDetails = await ReadOneFromUsers(UserId);;
+    const Entity = req.body.Type === "Discussion" ? await ReadOneFromDiscussions(EntityId) : await ReadOneFromEvents(EntityId);
+
+    if (Entity.Privacy === "Private") {
+        req.body = MemberInit(req.body, "Requested")
+        await Promise.all([
+            SendNotificationForMemberRequest(req.body.Type, EntityId, UserId),
+            CreateMembers({ ...req.body, MemberId: UserId, EntityId, UserDetails })
+        ])
+        return res.status(244).json(AlertBoxObject("Request Sent", "Request has been sent"));
+    }
+    else {
+        req.body = MemberInit(req.body, "Accepted");
+        await Promise.all([
+            SendNotificationForMemberJoin(req.body.Type, EntityId, UserId),
+            CreateMembers({ ...req.body, MemberId: UserId, EntityId, UserDetails }),
+            req.body.Type === "Discussion" ? await IncrementDiscussions({ NoOfMembers: 1 }, EntityId) :
+                await IncrementEvents({ NoOfMembers: 1 }, EntityId)
+        ])
         return res.json(true);
     }
-    await SendNotificationForMemberRequest(req.body.Type, EntityId, UserId);
-    return res.status(244).json(AlertBoxObject("Request Sent", "Request has been sent"));
-
 }
 
 
@@ -156,8 +159,7 @@ const InviteMembers = async (req, res) => {
     }
 
     const UserDetails = await ReadOneFromUsers(InviteeId);
-    req.body = { ...MemberInit(req.body), MemberId: InviteeId, EntityId, UserDetails };
-    req.body.MembershipStatus = "Invited";
+    req.body = { ...MemberInit(req.body, "Invited"), MemberId: InviteeId, EntityId, UserDetails };
     await CreateMembers(req.body);
     await SendNotificationForMemberInvitation(req.body.Type, EntityId, InviteeId, UserId);
     return res.json(true);
@@ -410,10 +412,17 @@ const GetPermissionOfMember = (Member, Entity) => {
     return { ...Entity, ...MembershipObject };
 }
 
-const MemberInit = (Member, IsAdmin = false) => {
+/**
+ * 
+ * @param {object} Member 
+ * @param {"Accepted"|"Invited"|"Requested"} MembershipStatus 
+ * @param {boolean} IsAdmin 
+ * @returns 
+ */
+const MemberInit = (Member, MembershipStatus = "Accepted", IsAdmin = false) => {
     return {
         ...Member,
-        MembershipStatus: "Accepted",
+        MembershipStatus,
         IsSpeaker: false,
         Permissions: PermissionObjectInit(IsAdmin)
     }
