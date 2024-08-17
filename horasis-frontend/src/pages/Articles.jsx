@@ -9,6 +9,8 @@ import InsightsList from '../components/Insights/InsightsList'
 import SearchComponent from '../components/Search/SearchBox/SearchComponent'
 import addIcon from '../assets/icons/add-icon.svg'
 import ArticlesSection from '../components/Articles/ArticlesSection'
+import SavedDiscussionTab from '../components/Discussions/Saved/SavedDiscussionTab'
+import SavedArticlesTab from '../components/Articles/SavedArticlesTab'
 
 const Articles = () => {
 	const navigate = useNavigate()
@@ -35,8 +37,11 @@ const Articles = () => {
 							<RecentlyActiveMemebrsTab />
 						</div>
 					</div>
-					<div className='lg:col-span-3'>
+					<div className='lg:col-span-2'>
 						<ArticlesSection />
+					</div>
+					<div>
+						<SavedArticlesTab />
 					</div>
 				</div>
 			</div>

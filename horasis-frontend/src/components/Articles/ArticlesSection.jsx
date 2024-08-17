@@ -5,7 +5,7 @@ import { useAuth } from '../../utils/AuthProvider'
 import { useToast } from '../Toast/ToastService'
 import { jsonToQuery } from '../../utils/searchParams/extractSearchParams'
 import { getNextId } from '../../utils/URLParams'
-import { getItem } from '../../constants/operations'
+import { deleteItem, getItem, postItem } from '../../constants/operations'
 import Spinner from '../ui/Spinner'
 
 const ArticlesSection = () => {
@@ -87,6 +87,61 @@ const ArticlesSection = () => {
 		fetch()
 	}, [filters])
 
+	const getSingleArticle = (id) => {
+		setSaving(id)
+		getItem(
+			`articles/${id}`,
+			(result) => {
+				setSaving(null)
+				setArticles(articles.map((article) => (article.DocId === result.DocId ? result : article)))
+			},
+			(err) => {
+				setSaving(null)
+			},
+			updateCurrentUser,
+			currentUserData,
+			toast
+		)
+	}
+
+	const [saving, setSaving] = useState(null)
+	const saveArticle = (id) => {
+		setSaving(id)
+		postItem(
+			`saves`,
+			{ EntityId: id, Type: 'Article' },
+			(result) => {
+				if (result === true) {
+					getSingleArticle(id)
+				}
+			},
+			(err) => {
+				setSaving(null)
+			},
+			updateCurrentUser,
+			currentUserData,
+			toast
+		)
+	}
+
+	const removeSaveArticle = (id) => {
+		setSaving(id)
+		deleteItem(
+			`saves/${id}`,
+			(result) => {
+				if (result === true) {
+					getSingleArticle(id)
+				}
+			},
+			(err) => {
+				setSaving(null)
+			},
+			updateCurrentUser,
+			currentUserData,
+			toast
+		)
+	}
+
 	return (
 		<>
 			<div className='mb-3 lg:mb-5'>
@@ -104,7 +159,13 @@ const ArticlesSection = () => {
 			) : (
 				<>
 					<div className='rounded-lg'>
-						<ArticlesList data={articles} emptyText={'No articles'} />
+						<ArticlesList
+							data={articles}
+							emptyText={'No articles'}
+							saveArticle={saveArticle}
+							removeSaveArticle={removeSaveArticle}
+							saving={saving}
+						/>
 					</div>
 				</>
 			)}
