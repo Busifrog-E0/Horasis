@@ -13,6 +13,14 @@ import { IncrementEvents, ReadOneFromEvents } from '../databaseControllers/event
  */
 
 /**
+ * @typedef {import('../databaseControllers/discussions-databaseController.js').DiscussionData} DiscussionData
+ */
+
+/**
+ * @typedef {import('../databaseControllers/events-databaseController.js').EventData} EventData
+ */
+
+/**
  * 
  * @param {e.Request} req 
  * @param {e.Response} res 
@@ -374,17 +382,39 @@ const DeleteMembers = async (req, res) => {
 }
 
 /**\
- * @param {string} DiscussionId
+ * @param {string} EntityId
  */
-const DeleteMembersOfDiscussion = async (DiscussionId) => {
-    const Members = await ReadMembers({ EntityId: DiscussionId }, undefined, -1, undefined);
+const DeleteMembersOfEntity = async (EntityId) => {
+    const Members = await ReadMembers({ EntityId: EntityId }, undefined, -1, undefined);
     return await Promise.all(Members.map((Member) => RemoveMembers(Member.DocId)));
+}
+
+/**
+ * 
+ * @param {MemberData} Member 
+ * @param {DiscussionData|EventData} Entity 
+ */
+const GetPermissionOfMember = (Member, Entity) => {
+    const MembershipObject = { IsMember: false, Permissions: {} };
+    for (const PermissionField in Entity.MemberPermissions) {
+        if (Entity.MemberPermissions[PermissionField] === true) {
+            MembershipObject.Permissions[PermissionField] = true;
+        }
+        else {
+            MembershipObject.Permissions[PermissionField] = Member.Permissions[PermissionField];
+        }
+    }
+
+    MembershipObject.IsMember = (Member.MembershipStatus === "Accepted");
+    MembershipObject.MembershipStatus = Member.MembershipStatus;
+    return { ...Entity, ...MembershipObject };
 }
 
 const MemberInit = (Member, IsAdmin = false) => {
     return {
         ...Member,
         MembershipStatus: "Accepted",
+        IsSpeaker: false,
         Permissions: PermissionObjectInit(IsAdmin)
     }
 }
@@ -403,6 +433,6 @@ export {
     GetOneFromMembers, GetMembers, PostMembers, PatchMembers, DeleteMembers,
     PermissionObjectInit, InviteMembers, AcceptMemberInvitation, UpdateMemberPermissions, GetJoinRequests,
     AcceptJoinRequest, GetMembersToInvite, DeleteTempMembers,
-    RemoveMemberPermissions, MemberInit, DeleteMembersOfDiscussion
+    RemoveMemberPermissions, MemberInit, DeleteMembersOfEntity, GetPermissionOfMember
 
 }
