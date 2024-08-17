@@ -1,5 +1,5 @@
-import saved from '../../../assets/icons/save-fill.svg'
-import save from '../../../assets/icons/save-outline.svg'
+import saved from '../../../assets/icons/graysavefill.svg'
+import save from '../../../assets/icons/graysave.svg'
 import Spinner from '../../ui/Spinner'
 const DiscussionAbout = ({ discussion, saveDiscussion, removeDiscussion, isSaving }) => {
 	return (
@@ -27,7 +27,7 @@ const DiscussionAbout = ({ discussion, saveDiscussion, removeDiscussion, isSavin
 					</div>
 				) : (
 					<>
-						{discussion.IsSaved ? (
+						{discussion.HasSaved ? (
 							<>
 								<img
 									src={saved}
