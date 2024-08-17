@@ -25,6 +25,7 @@ import dataHandling from './functions.js'
  * @property {"Invited"|"Accepted"|"Requested"} MembershipStatus
  * @property {string} DocId
  * @property {"Discussion"|"Event"} Type
+ * @property {boolean} IsSpeaker
  * @property {number} CreatedIndex
  * @property {PermissionData} Permissions
  */
