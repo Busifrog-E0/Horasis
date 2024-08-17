@@ -78,8 +78,11 @@ const ActivityComponent = ({
 
 		setIsSaving(true)
 		postItem(
-			`users/${currentUserData.CurrentUser.UserId}/activities/${actId}/save`,
-			{},
+			`saves`,
+			{
+				EntityId: actId,
+				Type: 'Activity',
+			},
 			(result) => {
 				console.log(result)
 				if (result === true) {
@@ -102,7 +105,7 @@ const ActivityComponent = ({
 
 		setIsSaving(true)
 		deleteItem(
-			`users/${currentUserData.CurrentUser.UserId}/activities/${actId}/save`,
+			`saves/${actId}`,
 			(result) => {
 				console.log(result)
 				if (result === true) {

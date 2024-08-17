@@ -11,7 +11,7 @@ import arrowfor from '../../../assets/icons/arrowfor.svg'
 import { useNavigate } from 'react-router-dom'
 
 const SavedActivityTab = () => {
-    const navigate = useNavigate()
+	const navigate = useNavigate()
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
 	const toast = useToast()
 	const [isLoading, setIsLoading] = useState(true)
@@ -22,6 +22,7 @@ const SavedActivityTab = () => {
 		OrderBy: 'Index',
 		Limit: 10,
 		Keyword: '',
+		Type: 'Activity',
 	})
 
 	const onDelete = (DocId) => {
@@ -37,12 +38,10 @@ const SavedActivityTab = () => {
 		}
 	}
 
+	const api = 'saves'
+
 	const getAllActivities = (tempActivites) => {
-		getData(
-			`user/${currentUserData.CurrentUser.UserId}/activities/save?&${jsonToQuery(filters)}`,
-			tempActivites,
-			setActivitiesData
-		)
+		getData(`${api}?&${jsonToQuery(filters)}`, tempActivites, setActivitiesData)
 	}
 	const getData = (endpoint, tempData, setData) => {
 		setLoadingCom(tempData, true)
@@ -88,8 +87,7 @@ const SavedActivityTab = () => {
 	const fetchMore = () => fetchData(false)
 
 	useEffect(() => {
-		if (activitiesData.length > 0)
-			hasAnyLeft(`user/${currentUserData.CurrentUser.UserId}/activities/save`, activitiesData)
+		if (activitiesData.length > 0) hasAnyLeft(`${api}`, activitiesData)
 	}, [activitiesData])
 
 	useEffect(() => {
@@ -128,7 +126,6 @@ const SavedActivityTab = () => {
 				) : (
 					<EmptyMembers emptyText={'No saved posts'} />
 				)}
-          
 			</div>
 		</div>
 	)
