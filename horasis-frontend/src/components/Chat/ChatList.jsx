@@ -9,6 +9,8 @@ import { useToast } from '../Toast/ToastService'
 import { getItem } from '../../constants/operations'
 import Input from '../../components/ui/Input'
 import mail from '../../assets/icons/mail.svg'
+import chaticon from '../../assets/icons/chaticon.svg'
+
 
 const ChatList = () => {
 	const [isOpen, setIsOpen] = useState(false)
@@ -126,7 +128,7 @@ const ChatList = () => {
 	return (
 		<>
 			<div className='relative inline-block text-left' ref={dropdownRef}>
-				<div className='relative'>
+				<div className='relative flex'>
 					<button
 						type='button'
 						className='inline-flex justify-center rounded-md border-none bg-system-secondary-bg text-md px-0 font-medium text-brand-gray-dim '
@@ -135,7 +137,7 @@ const ChatList = () => {
 							setIsOpen((prev) => !prev)
 						}}>
 						
-					<img src={mail} alt="" className='h-7' />
+					<img src={chaticon} alt="" className='h-7' />
 					</button>
 					<span
 						className={`${

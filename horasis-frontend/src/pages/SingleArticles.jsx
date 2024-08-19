@@ -201,20 +201,52 @@ const SingleArticles = () => {
 
 								{/* <h4 className='font-medium text-xl text-brand-secondary'>Back</h4> */}
 							</div>
-							{article?.UserDetails?.DocId === currentUserData.CurrentUser.UserId && (
+							<div className='flex gap-2'>
+								{article?.UserDetails?.DocId === currentUserData.CurrentUser.UserId && (
+									<div
+										onClick={() => {
+											setIsCoverPictureOpen(true)
+											if (article.CoverPicture) {
+												setSelectedCoverImage(article.CoverPicture)
+											} else {
+												setSelectedCoverImage(null)
+											}
+										}}
+										className={`inline-flex items-center justify-center w-12 h-12 p-3 overflow-hidden rounded-full border border-white bg-white cursor-pointer`}>
+										<img src={camera} alt='' className='h-6 cursor-pointer' />
+									</div>
+								)}
 								<div
-									onClick={() => {
-										setIsCoverPictureOpen(true)
-										if (article.CoverPicture) {
-											setSelectedCoverImage(article.CoverPicture)
-										} else {
-											setSelectedCoverImage(null)
-										}
-									}}
-									className={`inline-flex items-center justify-center w-12 h-12 p-3 overflow-hidden rounded-full border border-white bg-white cursor-pointer`}>
-									<img src={camera} alt='' className='h-6 cursor-pointer' />
+									className={`inline-flex items-center justify-center w-12 h-12 p-3 overflow-hidden rounded-full border border-white bg-white cursor-pointer `}>
+									{saving === article.DocId ? (
+										<div className=' self-end'>
+											<Spinner />
+										</div>
+									) : (
+										<>
+											{article.HasSaved ? (
+												<>
+													<img
+														src={graysavefill}
+														alt=''
+														className='h-6 cursor-pointer'
+														onClick={() => removeSaveArticle(article.DocId)}
+													/>
+												</>
+											) : (
+												<>
+													<img
+														src={graysave}
+														alt=''
+														className='h-6 cursor-pointer'
+														onClick={() => saveArticle(article.DocId)}
+													/>
+												</>
+											)}
+										</>
+									)}
 								</div>
-							)}
+							</div>
 						</div>
 						<div>
 							<h4 className='font-medium shadow-lg text-4xl text-white mb-3'>{article.ArticleName}</h4>
@@ -223,38 +255,6 @@ const SingleArticles = () => {
 								<h4 className='text-2xl text-white'>•</h4>
 								<h4 className='text-2xl text-white'>{getDateInWordsFormat(new Date(article?.CreatedIndex))}</h4>
 							</div>
-						</div>
-						<div
-							className={`inline-flex items-center justify-center w-12 h-12 p-3 overflow-hidden rounded-full border border-white bg-white cursor-pointer absolute right-10`}>
-							{saving === article.DocId ? (
-								<div className=' self-end'>
-									<Spinner />
-								</div>
-							) : (
-								<>
-									{article.HasSaved ? (
-										<>
-											<img
-												src={graysavefill}
-												alt=''
-												className='h-6 cursor-pointer'
-												onClick={() => removeSaveArticle(article.DocId)}
-											/>
-										</>
-									) : (
-										<>
-											<img
-												src={graysave}
-												alt=''
-												className='h-6 cursor-pointer'
-												onClick={() => saveArticle(article.DocId)}
-											/>
-										</>
-									)}
-								</>
-							)}
-
-							{/* <h4 className='font-medium text-xl text-brand-secondary'>Back</h4> */}
 						</div>
 					</div>
 				</div>

@@ -129,7 +129,7 @@ const DashboardHeader = () => {
 								}`}></div>
 					</div> */}
 					</div>
-					<div className='flex flex-row flex-wrap gap-4 md:gap-4'>
+					<div className='flex flex-row flex-wrap items-center gap-4 md:gap-4'>
 						{/* <button
             type="button"
             className="inline-flex justify-center rounded-md border-none bg-system-secondary-bg text-md px-0 font-medium text-brand-gray-dim"
@@ -141,9 +141,10 @@ const DashboardHeader = () => {
 						<AlertList />
 						<button
 							type='button'
-							className='inline-flex justify-center rounded-md border-none bg-system-secondary-bg text-md px-0 font-medium text-brand-red'
+							className='inline-flex justify-center rounded-full border-2 border-system-error bg-system-secondary-bg text-md px-6 py-1 font-medium text-brand-red'
 							onClick={openLogoutModal}>
-							<img src={logoutIcon} alt='' className='h-7' />
+							Logout
+							{/* <img src={logoutIcon} alt='' className='h-7' /> */}
 						</button>
 					</div>
 				</div>

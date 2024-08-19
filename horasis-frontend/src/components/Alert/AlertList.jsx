@@ -133,7 +133,9 @@ const AlertList = () => {
 
 	return (
 		<>
-			<div className='relative inline-block text-left ' ref={dropdownRef}>
+			<div className='relative inline-block text-left' ref={dropdownRef}>
+				<div className="relative flex">
+
 				<button
 					type='button'
 					className='inline-flex justify-center rounded-md border-none bg-system-secondary-bg text-md px-0 font-medium text-brand-gray-dim'
@@ -141,8 +143,10 @@ const AlertList = () => {
 					<img src={notification} alt="" className='h-7' />
 
 				</button>
+				</div>
+				
 				{isOpen && (
-					<div className='overflow-hidden origin-top-right absolute z-[999] right-0 mt-2 w-80 lg:w-96 rounded-md shadow-lg bg-system-secondary-bg ring-1 ring-black ring-opacity-5'>
+					<div className='overflow-hidden origin-top-right absolute z-[999] right-0 mt-10 w-80 lg:w-96 rounded-md shadow-lg bg-system-secondary-bg ring-1 ring-black ring-opacity-5'>
 						<div className='bg-system-primary-accent p-3 px-5'>
 							<p className='text-brand-secondary text-md'>Notifications</p>
 						</div>
