@@ -34,6 +34,7 @@ import SuggestionsPage from '../pages/SuggestionsPage'
 import NotFoundPage from '../pages/NotFoundPage'
 import SingleArticles from '../pages/SingleArticles'
 import ForgotPassword from '../pages/ForgotPassword'
+import SavedArticlesPage from '../pages/SavedArticlesPage'
 
 export const router = createBrowserRouter(
 	createRoutesFromElements(
@@ -45,6 +46,7 @@ export const router = createBrowserRouter(
 					<Route path='/Mentions' element={<Mentions />} />
 					<Route path='/Saved' element={<Saved />} />
 					<Route path='/Suggestions' element={<SuggestionsPage />} />
+					<Route path='/SavedArticles' element={<SavedArticlesPage />} />
 					<Route path='/Activities/:activityid' element={<SingleActivity />} />
 
 					<Route path='/Connections' element={<Connections />} />

@@ -9,8 +9,9 @@ import Spinner from '../ui/Spinner'
 import EmptyMembers from '../Common/EmptyMembers'
 import saveFill from '../../assets/icons/graysavefill.svg'
 import saveOutline from '../../assets/icons/graysave.svg'
+import arrowfor from '../../assets/icons/arrowfor.svg'
 
-const SavedArticlesTab = ({ bordered = false }) => {
+const SavedArticlesTab = ({ bordered = false, loadMoreEnabled = false, iconPresent = true }) => {
 	const { updateCurrentUser, currentUserData } = useAuth()
 	const toast = useToast()
 	const navigate = useNavigate()
@@ -159,6 +160,9 @@ const SavedArticlesTab = ({ bordered = false }) => {
 		<div className='p-5 bg-system-secondary-bg rounded-lg'>
 			<div className='flex items-center justify-between gap-2 mb-1'>
 				<h4 className='font-medium text-2xl text-system-primary-text'>Saved Articles</h4>
+				{iconPresent && (
+					<img src={arrowfor} alt='' className='h-6 w-6 cursor-pointer' onClick={() => navigate('/SavedArticles')} />
+				)}
 				{/* arrow cursor-pointer */}
 			</div>
 			<div>
@@ -183,6 +187,26 @@ const SavedArticlesTab = ({ bordered = false }) => {
 					</>
 				) : (
 					<EmptyMembers emptyText={'No saved articles'} />
+				)}
+				{loadMoreEnabled && (
+					<>
+						{isLoadingMore && (
+							<div className='bg-system-secondary-bg p-4 rounded-b-lg '>
+								<Spinner />
+							</div>
+						)}
+						{!pageDisabled && (
+							<div
+								onClick={() => {
+									fetchMore()
+								}}
+								className='flex flex-row justify-end mt-4 mb-2'>
+								<div className='cursor-pointer flex items-center gap-2'>
+									<h4 className='font-semibold text-xl text-system-primary-accent'>Load More</h4>
+								</div>
+							</div>
+						)}
+					</>
 				)}
 			</div>
 		</div>
