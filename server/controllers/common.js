@@ -1,4 +1,5 @@
 import axios from "axios";
+import moment from "moment";
 
 const UserFields = [
     "FullName",
@@ -48,7 +49,7 @@ const getOTP = (TestUser = false) => {
         OTP += digits[Math.floor(Math.random() * 10)];
     }
     //return OTP;
-     return "123456";
+    return "123456";
 }
 
 /**
@@ -62,17 +63,42 @@ const GetUserNonEmptyFieldsPercentage = (Data) => {
             return Num + 1;
         }
         return Num;
-    },0)
-    return Math.round((NoOfFilledFields / NoOfFields)*100);
+    }, 0)
+    return Math.round((NoOfFilledFields / NoOfFields) * 100);
 }
 
 const GetFileFromURI = async (URI) => {
     const FileResponse = await axios.get(URI, {
-        responseType : "arraybuffer"
+        responseType: "arraybuffer"
     });
     const File = Buffer.from(FileResponse.data, 'binary');
     return File;
 }
+
+const debounceWithMaxWait = (func, wait, maxWait) => {
+    let timeout;
+    let startTime = moment().valueOf();
+
+    return function (...args) {
+        const context = this;
+        const currentTime = moment().valueOf();
+        const elapsedTime = currentTime - startTime;
+
+        clearTimeout(timeout);
+
+        timeout = setTimeout(() => {
+            func.apply(context, args);
+            startTime = moment().valueOf();
+        }, wait);
+
+        if (elapsedTime >= maxWait) {
+            clearTimeout(timeout);
+            func.apply(context, args);
+            startTime = moment().valueOf();
+        }
+    };
+};
+
 
 /**
  * 
@@ -93,4 +119,5 @@ export {
     GetUserNonEmptyFieldsPercentage,
     GetFileFromURI,
     SocketError,
+    debounceWithMaxWait
 }

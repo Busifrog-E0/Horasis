@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken";
 import ENV from "./../Env.js";
 import e from "express";
 import { SocketError } from "../controllers/common.js";
+import { PatchUserLastActive } from "../controllers/users-controller.js";
 
 /**
  * 
@@ -25,6 +26,8 @@ const decodeIDToken = (req, res, next) => {
         req.user = user;
         // @ts-ignore
         console.log(req.user.UserId);
+        //@ts-ignore
+        PatchUserLastActive(req.user.UserId)
     } catch (err) {
         return res.status(401).send("Invalid Token");
     }

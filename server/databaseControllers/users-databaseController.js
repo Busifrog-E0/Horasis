@@ -17,6 +17,7 @@ import dataHandling from './functions.js'
  * @property {string} About
  * @property {string} ProfilePicture
  * @property {string} CoverPicture
+ * @property {string} LastActive
  */
 
 /**
