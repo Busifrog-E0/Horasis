@@ -1,15 +1,19 @@
 import { useNavigate, useParams } from 'react-router-dom'
 import cover from '../assets/icons/cover.svg'
 import { useEffect, useState } from 'react'
-import { getItem, patchItem, postItem } from '../constants/operations'
+import { deleteItem, getItem, patchItem, postItem } from '../constants/operations'
 import { useAuth } from '../utils/AuthProvider'
 import { useToast } from '../components/Toast/ToastService'
 import arrowback from '../assets/icons/arrowback.svg'
 import camera from '../assets/icons/camera.svg'
 import close from '../assets/icons/close.svg'
+import graysave from '../assets/icons/graysave.svg'
+import graysavefill from '../assets/icons/graysavefill.svg'
+
 import { getDateInWordsFormat } from '../utils/date'
 import Modal from '../components/ui/Modal'
 import PictureUpload from '../components/Profile/EditProfile/PictureUpload'
+import Spinner from '../components/ui/Spinner'
 
 const SingleArticles = () => {
 	const { updateCurrentUser, currentUserData } = useAuth()
@@ -28,6 +32,7 @@ const SingleArticles = () => {
 			(result) => {
 				setArticle(result)
 				setIsLoading(false)
+				setSaving(null)
 			},
 			(err) => {
 				console.log(err)
@@ -102,6 +107,44 @@ const SingleArticles = () => {
 		} else {
 			onCoverImageSet('')
 		}
+	}
+
+	const [saving, setSaving] = useState(null)
+	const saveArticle = (id) => {
+		setSaving(id)
+		postItem(
+			`saves`,
+			{ EntityId: id, Type: 'Article' },
+			(result) => {
+				if (result === true) {
+					getArticle(id)
+				}
+			},
+			(err) => {
+				setSaving(null)
+			},
+			updateCurrentUser,
+			currentUserData,
+			toast
+		)
+	}
+
+	const removeSaveArticle = (id) => {
+		setSaving(id)
+		deleteItem(
+			`saves/${id}`,
+			(result) => {
+				if (result === true) {
+					getArticle(id)
+				}
+			},
+			(err) => {
+				setSaving(null)
+			},
+			updateCurrentUser,
+			currentUserData,
+			toast
+		)
 	}
 
 	return (
@@ -180,6 +223,38 @@ const SingleArticles = () => {
 								<h4 className='text-2xl text-white'>•</h4>
 								<h4 className='text-2xl text-white'>{getDateInWordsFormat(new Date(article?.CreatedIndex))}</h4>
 							</div>
+						</div>
+						<div
+							className={`inline-flex items-center justify-center w-12 h-12 p-3 overflow-hidden rounded-full border border-white bg-white cursor-pointer absolute right-10`}>
+							{saving === article.DocId ? (
+								<div className=' self-end'>
+									<Spinner />
+								</div>
+							) : (
+								<>
+									{article.HasSaved ? (
+										<>
+											<img
+												src={graysavefill}
+												alt=''
+												className='h-6 cursor-pointer'
+												onClick={() => removeSaveArticle(article.DocId)}
+											/>
+										</>
+									) : (
+										<>
+											<img
+												src={graysave}
+												alt=''
+												className='h-6 cursor-pointer'
+												onClick={() => saveArticle(article.DocId)}
+											/>
+										</>
+									)}
+								</>
+							)}
+
+							{/* <h4 className='font-medium text-xl text-brand-secondary'>Back</h4> */}
 						</div>
 					</div>
 				</div>
