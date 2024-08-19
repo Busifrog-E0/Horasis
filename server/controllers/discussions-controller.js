@@ -87,6 +87,7 @@ const GetUserDiscussions = async (req, res) => {
         { $unwind: "$Member" },
         {
             $match: {
+                // @ts-ignore
                 ...Filter,
                 "Member.MemberId": UserId,
                 "Member.MembershipStatus": "Accepted"

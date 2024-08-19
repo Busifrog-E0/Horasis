@@ -4,6 +4,7 @@ import { ReadOneFromEvents, ReadEvents, UpdateEvents, CreateEvents, RemoveEvents
 import { ReadOneFromUsers } from '../databaseControllers/users-databaseController.js';
 import { MemberInit } from './members-controller.js';
 import { CreateMembers, ReadMembers } from '../databaseControllers/members-databaseController.js';
+
 /**
  * @typedef {import('./../databaseControllers/events-databaseController.js').EventData} EventData 
  */
@@ -16,7 +17,9 @@ import { CreateMembers, ReadMembers } from '../databaseControllers/members-datab
  */
 const GetOneFromEvents = async (req, res) => {
     const { EventId } = req.params;
-    const data = await ReadOneFromEvents(EventId);
+    const Event = await ReadOneFromEvents(EventId);
+    //@ts-ignore
+    const data = await SetEventDataForGet(Event, req.user.UserId);
     return res.json(data);
 }
 
@@ -72,6 +75,7 @@ const GetUserEvents = async (req, res) => {
         { $unwind: "$Member" },
         {
             $match: {
+                // @ts-ignore
                 ...Filter,
                 "Member.MemberId": UserId,
                 "Member.MembershipStatus": "Accepted"
@@ -80,16 +84,7 @@ const GetUserEvents = async (req, res) => {
         { $project: { Member: 0 } }
     ]
     const Events = await AggregateEvents(AggregateArray, NextId, Limit, OrderBy);
-    const data = await Promise.all(Events.map(async Event => {
-        const EventMemberObject = { IsMember: false, };
-        const Member = await ReadMembers({ MemberId: UserId, EntityId: Event.DocId }, undefined, 1, undefined);
-        if (Member.length > 0) {
-            EventMemberObject.IsMember = Member[0].MembershipStatus === "Accepted";
-            EventMemberObject.Permissions = Member[0].Permissions
-            EventMemberObject.MembershipStatus = Member[0].MembershipStatus
-        }
-        return { ...Event, ...EventMemberObject }
-    }))
+    const data = await Promise.all(Events.map(async Event => await SetEventDataForGet(Event, UserId)));
     return res.json(data);
 }
 
@@ -131,16 +126,7 @@ const GetInvitedEvents = async (req, res) => {
         { $project: { Member: 0 } }
     ]
     const Events = await AggregateEvents(AggregateArray, NextId, Limit, OrderBy);
-    const data = await Promise.all(Events.map(async Event => {
-        const EventMemberObject = { IsMember: false, };
-        const Member = await ReadMembers({ MemberId: UserId, EntityId: Event.DocId }, undefined, 1, undefined);
-        if (Member.length > 0) {
-            EventMemberObject.IsMember = Member[0].MembershipStatus === "Accepted";
-            EventMemberObject.Permissions = Member[0].Permissions
-            EventMemberObject.MembershipStatus = Member[0].MembershipStatus
-        }
-        return { ...Event, ...EventMemberObject }
-    }))
+    const data = await Promise.all(Events.map(async Event => await SetEventDataForGet(Event, UserId)))
     return res.json(data);
 }
 
@@ -155,7 +141,7 @@ const PostEvents = async (req, res) => {
     const UserDetails = await ReadOneFromUsers(OrganiserId);
     req.body = EventInit(req.body);
     const EventId = await CreateEvents({ ...req.body, UserDetails });
-    const Member = MemberInit({ MemberId: OrganiserId, EntityId: EventId, UserDetails }, true);
+    const Member = MemberInit({ MemberId: OrganiserId, EntityId: EventId, UserDetails }, "Accepted", true);
     await CreateMembers(Member);
     return res.json(EventId);
 }
@@ -184,6 +170,22 @@ const DeleteEvents = async (req, res) => {
     return res.json(true);
 }
 
+/**
+ * 
+ * @param {EventData} Event 
+ * @param {string} UserId 
+ * @returns 
+ */
+const SetEventDataForGet = async (Event, UserId) => {
+    const Member = await ReadMembers({ MemberId: UserId, EntityId: Event.DocId }, undefined, 1, undefined);
+    if (Member.length > 0) {
+        //@ts-ignore
+        Event = GetPermissionOfMember(Member[0], Event);
+    }
+    return Event;
+}
+
+
 const EventInit = (Event) => {
     return {
         ...Event,
@@ -201,5 +203,5 @@ const EventInit = (Event) => {
 
 export {
     GetOneFromEvents, GetEvents, PostEvents, PatchEvents, DeleteEvents,
-    GetUserEvents,GetInvitedEvents
+    GetUserEvents, GetInvitedEvents, SetEventDataForGet
 }
