@@ -19,7 +19,7 @@ const DocumentTab = () => {
 	const [pageDisabled, setPageDisabled] = useState(true)
 	const [filters, setFilters] = useState({
 		OrderBy: 'Index',
-		Limit: 1,
+		Limit: 10,
 		Keyword: '',
 		Type: 'document',
 	})
@@ -96,8 +96,9 @@ const DocumentTab = () => {
 							<>
 								{documents.length > 0 ? (
 									<>
-										{documents.map((document) => {
-											return <Document key={document.DocId} document={document} />
+										{documents.map((document, index) => {
+											let lastItem = documents.length - 1 === index
+											return <Document key={document.DocId} document={document} lastItem={lastItem} />
 										})}
 									</>
 								) : (
@@ -131,15 +132,15 @@ const DocumentTab = () => {
 	)
 }
 
-const Document = ({document}) => {
-  	// Regular expression to find the file name ending in .pdf
-    const regex = /([^/]+\.pdf)/
-    const match = document.FileUrl.match(regex)
+const Document = ({ document, lastItem }) => {
+	// Regular expression to find the file name ending in .pdf
+	const regex = /([^/]+\.pdf)/
+	const match = document.FileUrl.match(regex)
 
-    // Extract the file name if there's a match
-    const fileName = match ? match[1] : 'No file name found'
+	// Extract the file name if there's a match
+	const fileName = match ? match[1] : 'No file name found'
 	return (
-		<div className='border-b border-system-file-border pb-6'>
+		<div className={`${!lastItem && 'border-b'} border-system-file-border pb-6`}>
 			<div className='flex items-center gap-4'>
 				<div className='w-12 h-12 overflow-hidden rounded-lg'>
 					<img className='w-full h-full object-contain' src={doc} alt='Rounded avatar' />
@@ -148,7 +149,13 @@ const Document = ({document}) => {
 				<div className='flex-1'>
 					<div className='flex items-start justify-between gap-10'>
 						<div>
-							<a href={document.FileUrl} target="_blank" className='font-semibold text-system-primary-text text-md' onClick={()=>{}}>{fileName}</a>
+							<a
+								href={document.FileUrl}
+								target='_blank'
+								className='font-semibold text-system-primary-text text-md'
+								onClick={() => {}}>
+								{fileName}
+							</a>
 						</div>
 					</div>
 				</div>
