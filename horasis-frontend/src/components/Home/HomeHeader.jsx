@@ -3,7 +3,7 @@ import { AuthContext } from '../../utils/AuthProvider'
 import { useNavigate } from 'react-router-dom'
 import menu from '../../assets/icons/menu.svg'
 
-const HomeHeader = () => {
+const HomeHeader = ({ moveToDiscussions }) => {
 	const [menuOpen, setMenuOpen] = useState(false)
 	const { currentUserData } = useContext(AuthContext)
 	const navigate = useNavigate()
@@ -20,7 +20,7 @@ const HomeHeader = () => {
 				<div className='hidden md:flex gap-10 items-center justify-between'>
 					<nav className='flex text-system-secondary-bg gap-10'>
 						<p className='text-md font-medium cursor-pointer'>Events</p>
-						<p className='text-md font-medium cursor-pointer' onClick={handleNavigateDiscussions}>
+						<p className='text-md font-medium cursor-pointer' onClick={moveToDiscussions}>
 							Discussions
 						</p>
 						{/* <p className='text-md font-medium cursor-pointer'>Insight</p> */}

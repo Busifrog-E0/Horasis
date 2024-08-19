@@ -6,16 +6,20 @@ import HomeMidSection from '../components/Home/HomeMidSection'
 import HomeUpcomingEvents from '../components/Home/HomeUpcomingEvents'
 import HomeDiscussionsSection from '../components/Home/HomeDiscussionsSection'
 import HomeFooter from '../components/Home/HomeFooter'
+import { useEffect, useRef } from 'react'
 const Home = () => {
+	const discussionRef = useRef()
+	const moveToDiscussions = () => discussionRef.current.scrollIntoView({ behavior: 'smooth' })
+
 	return (
 		<div>
 			<div style={{ backgroundImage: `url(${HeroCoverImage})` }} className='bg-cover bg-no-repeat'>
-				<HomeHeader />
+				<HomeHeader moveToDiscussions={moveToDiscussions} />
 				<HeroSection />
 			</div>
 			<HomeMidSection />
 			<HomeUpcomingEvents />
-			<HomeDiscussionsSection />
+			<HomeDiscussionsSection ref={discussionRef} />
 			<HomeFooter />
 		</div>
 	)

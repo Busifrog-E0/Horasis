@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react'
+import { forwardRef, useContext, useEffect, useState } from 'react'
 import people from '../../assets/tempimages/people.jpg'
 import { getNextId } from '../../utils/URLParams'
 import { jsonToQuery } from '../../utils/searchParams/extractSearchParams'
@@ -8,7 +8,7 @@ import { useToast } from '../Toast/ToastService'
 import { relativeTime } from '../../utils/date'
 import { useNavigate } from 'react-router-dom'
 
-const HomeDiscussionsSection = () => {
+const HomeDiscussionSec = (props, ref) => {
 	const navigate = useNavigate()
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
 	const toast = useToast()
@@ -87,7 +87,7 @@ const HomeDiscussionsSection = () => {
 	}, [filters])
 
 	return (
-		<div className='bg-sky-200 h-max flex flex-col items-center '>
+		<div className='bg-sky-200 h-max flex flex-col items-center ' ref={ref}>
 			<div className='flex items-center justify-center my-20 max-w-screen-2xl w-full'>
 				<div className='w-11/12  md:w-8/12 flex flex-col gap-10'>
 					<div className='flex flex-col items-center justify-between gap-1'>
@@ -138,5 +138,7 @@ const HomeDiscussionItem = ({ discussion }) => {
 		</div>
 	)
 }
+
+const HomeDiscussionsSection = forwardRef(HomeDiscussionSec)
 
 export default HomeDiscussionsSection
