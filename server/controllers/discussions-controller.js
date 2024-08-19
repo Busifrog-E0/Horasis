@@ -205,7 +205,7 @@ const DiscussionInit = (Discussion) => {
         ...Discussion,
         NoOfMembers: 1,
         MemberPermissions: {
-            isAdmin: false,
+            IsAdmin: false,
             CanPostActivity: false,
             CanInviteOthers: false,
             CanUploadPhoto: false,
@@ -223,10 +223,8 @@ const DiscussionInit = (Discussion) => {
  */
 const SetDiscussionDataForGet = async (Discussion, UserId) => {
     const Member = await ReadMembers({ MemberId: UserId, EntityId: Discussion.DocId }, undefined, 1, undefined);
-    if (Member.length > 0) {
-        //@ts-ignore
-        Discussion = GetPermissionOfMember(Member[0], Discussion);
-    }
+    //@ts-ignore
+    Discussion = GetPermissionOfMember(Member[0], Discussion);
     const Save = await ReadSaves({ EntityId: Discussion.DocId, UserId }, undefined, 1, undefined);
     const HasSaved = Save.length > 0;
     return { ...Discussion, HasSaved }

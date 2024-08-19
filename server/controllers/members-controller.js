@@ -393,21 +393,23 @@ const DeleteMembersOfEntity = async (EntityId) => {
 
 /**
  * 
- * @param {MemberData} Member 
+ * @param {MemberData | undefined} Member 
  * @param {DiscussionData|EventData} Entity 
  */
 const GetPermissionOfMember = (Member, Entity) => {
     const MembershipObject = { IsMember: false, Permissions: {} };
-    for (const PermissionField in Entity.MemberPermissions) {
-        if (Entity.MemberPermissions[PermissionField] === true) {
-            MembershipObject.Permissions[PermissionField] = true;
+    if (Member) {
+        for (const PermissionField in Entity.MemberPermissions) {
+            if (Entity.MemberPermissions[PermissionField] === true) {
+                MembershipObject.Permissions[PermissionField] = true;
+            }
+            else {
+                MembershipObject.Permissions[PermissionField] = Member.Permissions[PermissionField];
+            }
         }
-        else {
-            MembershipObject.Permissions[PermissionField] = Member.Permissions[PermissionField];
-        }
+        MembershipObject.IsMember = (Member.MembershipStatus === "Accepted");
+        MembershipObject.MembershipStatus = Member.MembershipStatus;
     }
-    MembershipObject.IsMember = (Member.MembershipStatus === "Accepted");
-    MembershipObject.MembershipStatus = Member.MembershipStatus;
     return { ...Entity, ...MembershipObject };
 }
 
