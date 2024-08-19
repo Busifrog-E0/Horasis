@@ -5,12 +5,21 @@ import dataHandling from './functions.js'
  */
 
 /**
+ * @typedef {import('./users-databaseController.js').UserData} UserData
+ */
+/**
  * @typedef {object} AgendaData
  * @property {string} Name
  * @property {string} Description
  * @property {string} Date
  * @property {string} StartTime
  * @property {string} EndTime
+ */
+
+/**
+ * @typedef {object} SpeakerData
+ * @property {string} SpeakerId
+ * @property {UserData} UserDetails
  */
 
 /**
@@ -28,6 +37,8 @@ import dataHandling from './functions.js'
  * @property {number} NoOfMembers
  * @property {string} DisplayPicture
  * @property {string} CoverPicture
+ * @property {boolean} HasDiscussion
+ * @property {SpeakerData[]} Speakers
  * @property {string} DocId
  * @property {number} CreatedIndex
  * @property {Omit<PermissionData, 'IsAdmin'>} MemberPermissions

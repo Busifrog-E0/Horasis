@@ -406,7 +406,6 @@ const GetPermissionOfMember = (Member, Entity) => {
             MembershipObject.Permissions[PermissionField] = Member.Permissions[PermissionField];
         }
     }
-
     MembershipObject.IsMember = (Member.MembershipStatus === "Accepted");
     MembershipObject.MembershipStatus = Member.MembershipStatus;
     return { ...Entity, ...MembershipObject };

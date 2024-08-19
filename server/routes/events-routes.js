@@ -123,7 +123,7 @@ router.patch('/events/:EntityId/member/permissions/everyone', decodeIDToken, ens
     //@ts-ignore
     asyncHandler(PatchEvents));
 
-/*********************************************************************FILTERED DISCUSSIONS********************************************************************* */
+/*********************************************************************FILTERED EVENTS********************************************************************* */
 
 router.get('/user/:UserId/events', decodeIDToken, ensureAuthorized("User"), ValidateGetEntity, QueryParameterFormatting,
     SwaggerDocs.get_User_UserId_Events,
