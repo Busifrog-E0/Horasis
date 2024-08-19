@@ -387,6 +387,17 @@ const ForgotPassword = () => {
 							</div>
 						</>
 					)}
+					<div className='mt-1'>
+						<div className='text-base font-medium text-center'>
+							<span
+								onClick={() => {
+									navigate('/login')
+								}}
+								className='cursor-pointer text-system-primary-accent text-lg font-medium underline'>
+								Back to login
+							</span>
+						</div>
+					</div>
 				</div>
 			</div>
 		</>
