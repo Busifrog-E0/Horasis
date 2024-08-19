@@ -4,9 +4,11 @@ import { useAuth } from '../../utils/AuthProvider'
 import { useEffect, useState } from 'react'
 import { jsonToQuery } from '../../utils/searchParams/extractSearchParams'
 import { getNextId } from '../../utils/URLParams'
-import { getItem } from '../../constants/operations'
+import { deleteItem, getItem, postItem } from '../../constants/operations'
 import Spinner from '../ui/Spinner'
 import EmptyMembers from '../Common/EmptyMembers'
+import saveFill from '../../assets/icons/graysavefill.svg'
+import saveOutline from '../../assets/icons/graysave.svg'
 
 const SavedArticlesTab = ({ bordered = false }) => {
 	const { updateCurrentUser, currentUserData } = useAuth()
@@ -98,6 +100,61 @@ const SavedArticlesTab = ({ bordered = false }) => {
 		fetch()
 	}, [filters])
 
+	const getSingleArticle = (id) => {
+		setSaving(id)
+		getItem(
+			`articles/${id}`,
+			(result) => {
+				setSaving(null)
+				setArticles(articles.filter((article) => article.DocId !== result.DocId))
+			},
+			(err) => {
+				setSaving(null)
+			},
+			updateCurrentUser,
+			currentUserData,
+			toast
+		)
+	}
+
+	const [saving, setSaving] = useState(null)
+	const saveArticle = (id) => {
+		setSaving(id)
+		postItem(
+			`saves`,
+			{ EntityId: id, Type: 'Article' },
+			(result) => {
+				if (result === true) {
+					getSingleArticle(id)
+				}
+			},
+			(err) => {
+				setSaving(null)
+			},
+			updateCurrentUser,
+			currentUserData,
+			toast
+		)
+	}
+
+	const removeSaveArticle = (id) => {
+		setSaving(id)
+		deleteItem(
+			`saves/${id}`,
+			(result) => {
+				if (result === true) {
+					getSingleArticle(id)
+				}
+			},
+			(err) => {
+				setSaving(null)
+			},
+			updateCurrentUser,
+			currentUserData,
+			toast
+		)
+	}
+
 	return (
 		<div className='p-5 bg-system-secondary-bg rounded-lg'>
 			<div className='flex items-center justify-between gap-2 mb-1'>
@@ -117,6 +174,9 @@ const SavedArticlesTab = ({ bordered = false }) => {
 									lastItem={lastItem}
 									navigateToArticle={navigateToArticle}
 									key={article.DocId}
+									removeSaveArticle={removeSaveArticle}
+									saveArticle={saveArticle}
+									saving={saving}
 								/>
 							)
 						})}
@@ -129,7 +189,7 @@ const SavedArticlesTab = ({ bordered = false }) => {
 	)
 }
 
-const SavedArticleItem = ({ article, lastItem, navigateToArticle }) => {
+const SavedArticleItem = ({ article, lastItem, navigateToArticle, saving, removeSaveArticle, saveArticle }) => {
 	return (
 		<>
 			<div
@@ -146,7 +206,7 @@ const SavedArticleItem = ({ article, lastItem, navigateToArticle }) => {
 						<p className='text-xs text-brand-gray-dim mt-1 line-clamp-1'>{article.Description}</p>
 					</div>
 				</div>
-				{/* {saving === article.DocId ? (
+				{saving === article.DocId ? (
 					<div className=' self-end'>
 						<Spinner />
 					</div>
@@ -158,7 +218,10 @@ const SavedArticleItem = ({ article, lastItem, navigateToArticle }) => {
 									src={saveFill}
 									alt=''
 									className='h-6 cursor-pointer self-end'
-									onClick={() => removeSaveArticle(article.DocId)}
+									onClick={(e) => {
+										e.stopPropagation()
+										removeSaveArticle(article.DocId)
+									}}
 								/>
 							</>
 						) : (
@@ -167,12 +230,15 @@ const SavedArticleItem = ({ article, lastItem, navigateToArticle }) => {
 									src={saveOutline}
 									alt=''
 									className='h-6 cursor-pointer self-end'
-									onClick={() => saveArticle(article.DocId)}
+									onClick={(e) => {
+										e.stopPropagation()
+										saveArticle(article.DocId)
+									}}
 								/>
 							</>
 						)}
 					</>
-				)} */}
+				)}
 			</div>
 		</>
 	)
