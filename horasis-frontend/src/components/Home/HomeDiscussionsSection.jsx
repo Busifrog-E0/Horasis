@@ -129,7 +129,7 @@ const HomeDiscussionItem = ({ discussion }) => {
 			{discussion.DiscussionName && (
 				<p className='font-bold text-lg text-system-primary-accent'>{discussion.DiscussionName}</p>
 			)}
-			{discussion.Description && <p className='text-sm '>{discussion.Description}</p>}
+			{discussion.Description && <p className='text-sm line-clamp-3 flex-1'>{discussion.Description}</p>}
 			{discussion.UserDetails && (
 				<p className='text-system-secondary-text text-sm'>
 					{relativeTime(discussion.CreatedIndex)}- {discussion.UserDetails.FullName}
