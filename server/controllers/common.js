@@ -75,31 +75,6 @@ const GetFileFromURI = async (URI) => {
     return File;
 }
 
-const debounceWithMaxWait = (func, wait, maxWait) => {
-    let timeout;
-    let startTime = moment().valueOf();
-
-    return function (...args) {
-        const context = this;
-        const currentTime = moment().valueOf();
-        const elapsedTime = currentTime - startTime;
-
-        clearTimeout(timeout);
-
-        timeout = setTimeout(() => {
-            func.apply(context, args);
-            startTime = moment().valueOf();
-        }, wait);
-
-        if (elapsedTime >= maxWait) {
-            clearTimeout(timeout);
-            func.apply(context, args);
-            startTime = moment().valueOf();
-        }
-    };
-};
-
-
 /**
  * 
  * @param {string} Message 
@@ -119,5 +94,4 @@ export {
     GetUserNonEmptyFieldsPercentage,
     GetFileFromURI,
     SocketError,
-    debounceWithMaxWait
 }

@@ -5,7 +5,7 @@ import { ReadOneFromUsers, ReadUsers, UpdateUsers, CreateUsers, RemoveUsers, } f
 import { AccountVerificationEmail, SendOTPEmail } from './emails-controller.js';
 import { CreateEmailVerifications, ReadOneFromEmailVerifications, UpdateEmailVerifications } from '../databaseControllers/emailVerification-databaseController.js';
 import { GenerateToken, ReadOneFromOTP, SendPasswordOTP, SendRegisterOTP, TokenData, VerifyOTP } from './auth-controller.js';
-import { AlertBoxObject, debounceWithMaxWait, getOTP, GetUserNonEmptyFieldsPercentage } from './common.js';
+import { AlertBoxObject, getOTP, GetUserNonEmptyFieldsPercentage } from './common.js';
 import { ReadConnections } from '../databaseControllers/connections-databaseController.js';
 import { ReadFollows } from '../databaseControllers/follow-databaseController.js';
 import { ConnectionStatus } from './connections-controller.js';
@@ -258,16 +258,7 @@ const PatchPassword = async (req, res) => {
     return res.json(true);
 }
 
-/**
- * 
- * @param {string} UserId 
- */
-const PatchUserLastActive = debounceWithMaxWait(
-    async (UserId) => {
-        await UpdateUsers({ LastActive: moment().valueOf() }, UserId);
-        console.log("HI")
-    }, 60000, 1800000
-)
+
 
 
 /**
@@ -316,5 +307,5 @@ export {
     GetOneFromUsers, GetUsers, PostUsersRegister, PatchUsers,
     UserLogin, VerifyRegistrationOTP, CheckUsernameAvailability,
     ViewOtherUserRelations, ViewOtherUserData, SendForgotPasswordOTP,
-    PatchPassword, PatchUserLastActive
+    PatchPassword, 
 }
