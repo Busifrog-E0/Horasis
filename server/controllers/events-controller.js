@@ -178,10 +178,8 @@ const DeleteEvents = async (req, res) => {
  */
 const SetEventDataForGet = async (Event, UserId) => {
     const Member = await ReadMembers({ MemberId: UserId, EntityId: Event.DocId }, undefined, 1, undefined);
-    if (Member.length > 0) {
-        //@ts-ignore
-        Event = GetPermissionOfMember(Member[0], Event);
-    }
+    //@ts-ignore
+    Event = GetPermissionOfMember(Member[0], Event);
     return Event;
 }
 
