@@ -68,8 +68,10 @@ const PostArticles = async (req, res) => {
  */
 const PatchArticles = async (req, res) => {
     const { ArticleId } = req.params;
-    req.body.OriginalLanguage = await DetectLanguage(req.body.Description);
-    req.body.Languages = {}
+    if (req.body.Description) {
+        req.body.OriginalLanguage = await DetectLanguage(req.body.Description);
+        req.body.Languages = {}
+    }
     await UpdateArticles(req.body, ArticleId);
     return res.json(true);
 }

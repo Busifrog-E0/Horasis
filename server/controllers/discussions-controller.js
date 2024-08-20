@@ -183,8 +183,10 @@ const PatchDiscussions = async (req, res) => {
     if (!Member.Permissions.IsAdmin) {
         return res.status(444).json(AlertBoxObject("Cannot Edit", "You are not an admin of this discussion"))
     }
-    req.body.OriginalLanguage = await DetectLanguage(req.body.Description);
-    req.body.Languages = {};
+    if (req.body.Description) {
+        req.body.OriginalLanguage = await DetectLanguage(req.body.Description);
+        req.body.Languages = {};
+    }
     await UpdateDiscussions(req.body, DiscussionId);
     return res.json(true);
 }
