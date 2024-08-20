@@ -20,6 +20,7 @@ import dataHandling from './functions.js'
  * @property {string} CoverPicture
  * @property {number} NoOfMembers
  * @property {PermissionData} MemberPermissions
+ * @property {object[]} Languages
  */
 
 

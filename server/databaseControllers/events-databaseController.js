@@ -41,7 +41,8 @@ import dataHandling from './functions.js'
  * @property {SpeakerData[]} Speakers
  * @property {string} DocId
  * @property {number} CreatedIndex
- * @property {Omit<PermissionData, 'IsAdmin'>} MemberPermissions
+ * @property {PermissionData} MemberPermissions
+ * @property {object[]} Languages
  */
 
 
