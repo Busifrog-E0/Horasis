@@ -504,6 +504,11 @@ const RemoveNotificationForMember = async (EntityId, UserId) => {
     return Promise.all([...Notifications, ...NotificationsForAdmin].map(Notification => RemoveNotifications(Notification.DocId)));
 }
 
+const RemoveNotificationForEntity = async (EntityId) => {
+    const Notifications = await ReadNotifications({ EntityId }, undefined, -1, undefined);
+    return Promise.all(Notifications.map(Notification => RemoveNotifications(Notification.DocId)));
+}
+
 /**
  * 
  * @param {e.Request} req 
@@ -523,6 +528,6 @@ export {
     SendNotificationsForFollow, SendNotificationForMemberRequest, SendNotificationForMemberRequestStatus, SendNotificationForMemberInvitation,
     SendNotificationToUser, SendNotificationForMemberJoin, SendNotificationsForConnectionAccept, SendNotificationsForConnectionRequest,
     RemoveNotificationsAfterActivityMentionPatch, RemoveNotificationsForConnectionRequest, GetOneFromNotifications,
-    RemoveNotificationsForFollow, RemoveNotificationForMember, SendNotificationToUserOnCommentPost
+    RemoveNotificationsForFollow, RemoveNotificationForMember, SendNotificationToUserOnCommentPost,RemoveNotificationForEntity
 
 }

@@ -9,7 +9,7 @@ import { ObjectId } from 'mongodb';
 import { ReadLikes } from '../databaseControllers/likes-databaseController.js';
 import { ReadSaves } from '../databaseControllers/saves-databaseController.js';
 import { PostMediasFromAttachments } from './medias-controller.js';
-import { RemoveNotificationsAfterActivityMentionPatch, SendNotificationstoActivityMentions } from './notifications-controller.js';
+import { RemoveNotificationForEntity, RemoveNotificationsAfterActivityMentionPatch, SendNotificationstoActivityMentions } from './notifications-controller.js';
 import { DetectLanguage } from './translations-controller.js';
 
 /**
@@ -218,6 +218,7 @@ const DeleteActivities = async (req, res) => {
         return res.status(444).json(AlertBoxObject("Cannot Delete", "Cannot delete other User's Activity"))
     }
     await RemoveActivities(ActivityId);
+    await RemoveNotificationForEntity(ActivityId);
     return res.json(true);
 }
 

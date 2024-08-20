@@ -9,6 +9,7 @@ import { ReadSaves } from '../databaseControllers/saves-databaseController.js';
 import { MemberInit } from './members-controller.js';
 import { AlertBoxObject } from './common.js';
 import { DetectLanguage } from './translations-controller.js';
+import { RemoveNotificationForEntity } from './notifications-controller.js';
 /**
  * @typedef {import('./../databaseControllers/discussions-databaseController.js').DiscussionData} DiscussionData 
  */
@@ -201,7 +202,8 @@ const DeleteDiscussions = async (req, res) => {
     const { DiscussionId } = req.params;
     await Promise.all([
         RemoveDiscussions(DiscussionId),
-        DeleteMembersOfEntity(DiscussionId)
+        DeleteMembersOfEntity(DiscussionId),
+        RemoveNotificationForEntity(DiscussionId)
     ])
     return res.json(true);
 }
