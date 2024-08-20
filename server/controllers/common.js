@@ -1,4 +1,5 @@
 import axios from "axios";
+import moment from "moment";
 
 const UserFields = [
     "FullName",
@@ -48,7 +49,7 @@ const getOTP = (TestUser = false) => {
         OTP += digits[Math.floor(Math.random() * 10)];
     }
     //return OTP;
-     return "123456";
+    return "123456";
 }
 
 /**
@@ -62,13 +63,13 @@ const GetUserNonEmptyFieldsPercentage = (Data) => {
             return Num + 1;
         }
         return Num;
-    },0)
-    return Math.round((NoOfFilledFields / NoOfFields)*100);
+    }, 0)
+    return Math.round((NoOfFilledFields / NoOfFields) * 100);
 }
 
 const GetFileFromURI = async (URI) => {
     const FileResponse = await axios.get(URI, {
-        responseType : "arraybuffer"
+        responseType: "arraybuffer"
     });
     const File = Buffer.from(FileResponse.data, 'binary');
     return File;

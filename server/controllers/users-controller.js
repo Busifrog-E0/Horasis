@@ -247,7 +247,7 @@ const SendForgotPasswordOTP = async (req, res) => {
  * @param {e.Response} res 
  * @returns 
  */
-const PatchPassword = async (req, res) => { 
+const PatchPassword = async (req, res) => {
     const { OTPId, Password } = req.body;
     const OTPData = await ReadOneFromOTP(OTPId);
     if (OTPData.EmailVerified === false) {
@@ -257,6 +257,10 @@ const PatchPassword = async (req, res) => {
     await UpdateUsers({ Password: Password }, User.DocId);
     return res.json(true);
 }
+
+
+
+
 /**
  * 
  * @param {UserData} User 
@@ -303,5 +307,5 @@ export {
     GetOneFromUsers, GetUsers, PostUsersRegister, PatchUsers,
     UserLogin, VerifyRegistrationOTP, CheckUsernameAvailability,
     ViewOtherUserRelations, ViewOtherUserData, SendForgotPasswordOTP,
-    PatchPassword
+    PatchPassword, 
 }
