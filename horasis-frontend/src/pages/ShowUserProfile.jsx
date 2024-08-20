@@ -27,7 +27,6 @@ import job from '../assets/icons/job.svg'
 import company from '../assets/icons/company.svg'
 import arrowback from '../assets/icons/arrowback.svg'
 
-
 const UserProfileConnectComponent = ({ profile, connectCallback = () => {}, setIsLoading }) => {
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
 	const toast = useToast()
@@ -260,7 +259,7 @@ const ShowUserProfile = () => {
 		navigate(-1)
 	}
 
-	const { currentUserData, updateCurrentUser,scrollToTop } = useContext(AuthContext)
+	const { currentUserData, updateCurrentUser, scrollToTop } = useContext(AuthContext)
 	const toast = useToast()
 	const [user, setUser] = useState()
 
@@ -386,6 +385,7 @@ const ShowUserProfile = () => {
 			},
 			(err) => {
 				setIsLoading(false)
+				navigate('/NotFound', { replace: true })
 				// console.log(err)
 			},
 			updateCurrentUser,
@@ -430,7 +430,7 @@ const ShowUserProfile = () => {
           /> */}
 					<div className='absolute z-20 top-0 right-0 left-0 bottom-0 flex flex-col justify-between items-start p-4 lg:px-10 lg:py-6 h-100 overflow-hidden rounded-lg'>
 						<div className='flex w-full items-start justify-between'>
-						<div
+							<div
 								className={`inline-flex items-center justify-center w-12 h-12 p-3 overflow-hidden rounded-full border border-white bg-white cursor-pointer`}
 								onClick={handleGoBack}>
 								<img src={arrowback} alt='' className='h-6 cursor-pointer' />
@@ -509,7 +509,7 @@ const ShowUserProfile = () => {
 								<div className='mt-4 flex  flex-col gap-4'>
 									<div className='flex items-center gap-2'>
 										<div className='justify-end text-system-primary-accent'>
-										<img src={altmail} alt='' className='h-6 cursor-pointer' />
+											<img src={altmail} alt='' className='h-6 cursor-pointer' />
 
 											{/* <svg
 												className='w-4 h-4 cursor-pointer'
@@ -530,7 +530,7 @@ const ShowUserProfile = () => {
 									</div>
 									<div className='flex items-center gap-2'>
 										<div className='justify-end text-system-primary-accent'>
-										<img src={globe} alt='' className='h-6 cursor-pointer' />
+											<img src={globe} alt='' className='h-6 cursor-pointer' />
 
 											{/* <svg
 												className='w-4 h-4 cursor-pointer'
@@ -551,7 +551,7 @@ const ShowUserProfile = () => {
 									</div>
 									<div className='flex items-center gap-2'>
 										<div className='justify-end text-system-primary-accent'>
-										<img src={job} alt='' className='h-6 cursor-pointer' />
+											<img src={job} alt='' className='h-6 cursor-pointer' />
 
 											{/* <svg
 												className='w-4 h-4 cursor-pointer'
@@ -572,7 +572,7 @@ const ShowUserProfile = () => {
 									</div>
 									<div className='flex items-center gap-2'>
 										<div className='justify-end text-system-primary-accent'>
-										<img src={company} alt='' className='h-6 cursor-pointer' />
+											<img src={company} alt='' className='h-6 cursor-pointer' />
 
 											{/* <svg
 												className='w-4 h-4 cursor-pointer'

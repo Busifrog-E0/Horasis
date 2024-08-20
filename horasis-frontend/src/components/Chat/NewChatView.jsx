@@ -13,14 +13,15 @@ import io from 'socket.io-client'
 import { jsonToQuery } from '../../utils/searchParams/extractSearchParams'
 import { getNextId } from '../../utils/URLParams'
 import { useSocket } from '../../context/Socket/SocketService'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { useChatPopup } from '../../context/ChatPopup/ChatPopupService'
 
-const NewChatView = ({ userId,setChatToRemove }) => {
+const NewChatView = ({ userId, setChatToRemove }) => {
+	const navigate = useNavigate()
 	// context
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
 	const toast = useToast()
-	const {addConversation} = useChatPopup()
+	const { addConversation } = useChatPopup()
 	const { socket } = useSocket()
 	const location = useLocation()
 
@@ -115,6 +116,7 @@ const NewChatView = ({ userId,setChatToRemove }) => {
 				setIsUserLoading(false)
 			},
 			(err) => {
+				navigate('/NotFound', { replace: true })
 				setIsUserLoading(false)
 			},
 			updateCurrentUser,
@@ -128,7 +130,8 @@ const NewChatView = ({ userId,setChatToRemove }) => {
 
 	const seeAllMessages = () => {
 		patchItem(
-			`chats/${conversationId}/seeAllMessages`,{},
+			`chats/${conversationId}/seeAllMessages`,
+			{},
 			(result) => {},
 			(err) => {},
 			updateCurrentUser,
