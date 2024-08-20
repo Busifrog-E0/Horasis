@@ -39,7 +39,7 @@ const ChatList = () => {
 	const [connectionsForChat, setConnectionsForChat] = useState([])
 	const [pageDisabled, setPageDisabled] = useState(true)
 	const [filters, setFilters] = useState({
-		OrderBy: 'Index',
+		OrderBy: 'LatestMessage.CreatedIndex',
 		Limit: 3,
 		Keyword: '',
 	})
