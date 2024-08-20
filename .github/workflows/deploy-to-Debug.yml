@@ -26,7 +26,7 @@ jobs:
       run: |
         ssh root@139.59.46.32 << 'EOF'
           cd Horissa
-          git pull origin DebugServer
+          git pull debug DebugServer
           cd server
           npm install 
           pm2 restart Horasis
