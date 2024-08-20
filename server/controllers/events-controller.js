@@ -4,6 +4,7 @@ import { ReadOneFromEvents, ReadEvents, UpdateEvents, CreateEvents, RemoveEvents
 import { ReadOneFromUsers } from '../databaseControllers/users-databaseController.js';
 import { MemberInit } from './members-controller.js';
 import { CreateMembers, ReadMembers } from '../databaseControllers/members-databaseController.js';
+import { RemoveNotificationForEntity } from './notifications-controller.js';
 
 /**
  * @typedef {import('./../databaseControllers/events-databaseController.js').EventData} EventData 
@@ -167,6 +168,7 @@ const PatchEvents = async (req, res) => {
 const DeleteEvents = async (req, res) => {
     const { EventId } = req.params;
     await RemoveEvents(EventId);
+    await RemoveNotificationForEntity(EventId);
     return res.json(true);
 }
 
