@@ -190,11 +190,11 @@ const PatchActivities = async (req, res) => {
     if (Activity.UserId !== UserId) {
         return res.status(444).json(AlertBoxObject("Cannot Edit", "Cannot edit other User's Activity"))
     }
-    [req.body.Mentions, req.body.OriginalLanguage] = await Promise.all([
-        ExtractMentionedUsersFromContent(req.body.Content),
-        DetectLanguage(req.body.Content),
-    ])
-    req.body.Languages = {};
+    if (req.body.Content) {
+        req.body.Mentions = await ExtractMentionedUsersFromContent(req.body.Content);
+        req.body.OriginalLanguage = await DetectLanguage(req.body.Content)
+        req.body.Languages = {};
+    }
     await Promise.all([
         UpdateActivities(req.body, ActivityId),
         RemoveNotificationsAfterActivityMentionPatch(req.body.Mentions, Activity.Mentions, UserId, ActivityId),
