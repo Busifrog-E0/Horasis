@@ -4,6 +4,7 @@ import { ReadOneFromArticles, ReadArticles, UpdateArticles, CreateArticles, Remo
 import { ReadOneFromUsers } from '../databaseControllers/users-databaseController.js';
 import { ReadLikes } from '../databaseControllers/likes-databaseController.js';
 import { ReadSaves } from '../databaseControllers/saves-databaseController.js';
+import { DetectLanguage } from './translations-controller.js';
 /**
  * @typedef {import('./../databaseControllers/articles-databaseController.js').ArticleData} ArticleData 
  */
@@ -54,6 +55,7 @@ const PostArticles = async (req, res) => {
     const { AuthorId } = req.body;
     const UserDetails = await ReadOneFromUsers(AuthorId);
     req.body = ArticleInit(req.body);
+    req.body.OriginalLanguage = await DetectLanguage(req.body.Description);
     const ArticleId = await CreateArticles({ ...req.body, UserDetails });
     return res.json(ArticleId);
 }
@@ -66,6 +68,8 @@ const PostArticles = async (req, res) => {
  */
 const PatchArticles = async (req, res) => {
     const { ArticleId } = req.params;
+    req.body.OriginalLanguage = await DetectLanguage(req.body.Description);
+    req.body.Languages = {}
     await UpdateArticles(req.body, ArticleId);
     return res.json(true);
 }
