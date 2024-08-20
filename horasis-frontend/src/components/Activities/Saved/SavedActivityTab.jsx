@@ -111,7 +111,7 @@ const SavedActivityTab = () => {
 							onSaveRemoveCallback={fetch}
 							ShowImage={false}
 							className={`p-4 bg-system-secondary-bg rounded-lg border border-system-file-border relative`}
-							avatarSize='w-10 h-10'
+							avatarSize='w-8 h-8'
 							titleSize='text-sm'
 							descriptionSize='text-xs'
 							onDelete={onDelete}

@@ -348,7 +348,7 @@ const AboutProfile = ({ user, getUserDetails, isCurrentUser }) => {
 						<h4 className='font-medium text-brand-gray-dim'>Bio</h4>
 					</div>
 					<div className='lg:col-span-3'>
-						<h4 className='font-medium text-system-primary-text'>{user && user.About}</h4>
+						<h4 className='font-medium text-system-primary-text whitespace-pre-line'>{user && user.About}</h4>
 					</div>
 				</div>
 			</div>

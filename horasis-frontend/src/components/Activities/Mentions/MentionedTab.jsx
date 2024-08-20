@@ -112,7 +112,7 @@ const MentionedTab = ({ bordered = false }) => {
 					<>
 						<ActivityListComponent
 							ShowImage={false}
-							className={`relative`}
+							className={`p-4 bg-system-secondary-bg rounded-lg border border-system-file-border relative`}
 							avatarSize='w-8 h-8'
 							onDelete={onDelete}
 							gapBnTabs={'gap-3'}

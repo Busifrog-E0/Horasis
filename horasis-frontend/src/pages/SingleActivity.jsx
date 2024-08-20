@@ -42,7 +42,7 @@ const SingleActivity = () => {
                             className={`p-5 bg-system-secondary-bg rounded-lg relative`} openComment={true}
                         />
                     </div>
-                    <div>
+                    <div className='flex flex-col gap-4'>
                         <div className='p-5 bg-system-secondary-bg rounded-lg'>
                             <div className='flex items-center justify-between gap-2 mb-5'>
                                 <h4 className='font-medium text-2xl text-system-primary-text'>Events</h4>

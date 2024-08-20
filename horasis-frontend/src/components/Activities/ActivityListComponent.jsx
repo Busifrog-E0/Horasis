@@ -25,7 +25,7 @@ const ActivityListComponent = ({
 					onDelete={onDelete}
 					descriptionSize={descriptionSize}
 					avatarSize={avatarSize}
-					className={`${className} ${border === true ? (index !== activitiesData.length - 1 ? 'border-b pb-4' : '') : ''}`}
+					className={`${className} ${border === true ? (index !== activitiesData.length - 1 ? '' : '') : ''}`}
 					bordered={bordered}
 					key={activity.DocId}
 					activity={activity}
