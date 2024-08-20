@@ -8,6 +8,7 @@ import { DeleteMembersOfEntity, GetPermissionOfMember, PermissionObjectInit } fr
 import { ReadSaves } from '../databaseControllers/saves-databaseController.js';
 import { MemberInit } from './members-controller.js';
 import { AlertBoxObject } from './common.js';
+import { DetectLanguage } from './translations-controller.js';
 /**
  * @typedef {import('./../databaseControllers/discussions-databaseController.js').DiscussionData} DiscussionData 
  */
@@ -161,6 +162,7 @@ const PostDiscussions = async (req, res) => {
     const { OrganiserId } = req.body;
     const UserDetails = await ReadOneFromUsers(OrganiserId);
     req.body = DiscussionInit(req.body);
+    req.body.OriginalLanguage = await DetectLanguage(req.body.Description);
     const DiscussionId = await CreateDiscussions({ ...req.body, UserDetails });
     const Member = MemberInit({ MemberId: OrganiserId, EntityId: DiscussionId, UserDetails }, "Accepted", true);
     await CreateMembers(Member);
@@ -181,6 +183,8 @@ const PatchDiscussions = async (req, res) => {
     if (!Member.Permissions.IsAdmin) {
         return res.status(444).json(AlertBoxObject("Cannot Edit", "You are not an admin of this discussion"))
     }
+    req.body.OriginalLanguage = await DetectLanguage(req.body.Description);
+    req.body.Languages = {};
     await UpdateDiscussions(req.body, DiscussionId);
     return res.json(true);
 }

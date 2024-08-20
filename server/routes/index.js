@@ -16,6 +16,8 @@ import discussionRoutes from './discussions-routes.js'
 import eventsRoutes from './events-routes.js'
 import articlesRoutes from './articles-routes.js'
 import savesRoutes from './saves-routes.js'
+import translationsRoutes from './translations-routes.js'
+
 
 router.use("/api", authRoutes);
 // router.use("/api", adminRoutes);
@@ -31,7 +33,7 @@ router.use("/api", discussionRoutes);
 router.use("/api", eventsRoutes);
 router.use("/api", articlesRoutes);
 router.use("/api", savesRoutes);
-
+router.use("/api", translationsRoutes);
 
 
 

@@ -6,6 +6,7 @@ import { ReadOneFromUsers } from '../databaseControllers/users-databaseControlle
 import { ExtractMentionedUsersFromContent } from './activities-controller.js';
 import { SendNotificationstoCommentMentions, SendNotificationToUserOnCommentPost } from './notifications-controller.js';
 import { IncrementArticles } from '../databaseControllers/articles-databaseController.js';
+import { DetectLanguage } from './translations-controller.js';
 /**
  * @typedef {import('./../databaseControllers/comments-databaseController.js').CommentData} CommentData 
  */
@@ -52,7 +53,7 @@ const PostComments = async (req, res) => {
     const { ActivityId } = req.params;
     req.body.Type = "Comment";
     const Mentions = await ExtractMentionedUsersFromContent(req.body.Content);
-
+    req.body.OriginalLanguage = await DetectLanguage(req.body.Content);
     if (req.body.ParentType === "Activity") {
         await IncrementActivities({ NoOfComments: 1 }, ActivityId,);
         await SendNotificationToUserOnCommentPost(ActivityId, req.body.UserId);
@@ -79,6 +80,8 @@ const PostComments = async (req, res) => {
  */
 const PatchComments = async (req, res) => {
     const { CommentId } = req.params;
+    req.body.OriginalLanguage = await DetectLanguage(req.body.Content);
+    req.body.Languages = {};
     await UpdateComments(req.body, CommentId);
     return res.json(true);
 }

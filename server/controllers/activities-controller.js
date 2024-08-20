@@ -10,6 +10,7 @@ import { ReadLikes } from '../databaseControllers/likes-databaseController.js';
 import { ReadSaves } from '../databaseControllers/saves-databaseController.js';
 import { PostMediasFromAttachments } from './medias-controller.js';
 import { RemoveNotificationsAfterActivityMentionPatch, SendNotificationstoActivityMentions } from './notifications-controller.js';
+import { DetectLanguage } from './translations-controller.js';
 
 /**
  * @typedef {import('../databaseControllers/activities-databaseController.js').ActivityData} ActivityData 
@@ -161,10 +162,17 @@ const PostActivities = async (req, res) => {
     const Mentions = await ExtractMentionedUsersFromContent(Content);
     req.body = ActivityInit(req.body);
     //@ts-ignore
-    const data = { ...req.body, Documents: Attachments.DocumentsLinks, MediaFiles: Attachments.MediaFilesLinks, Mentions };
-    await CreateActivities(data, ActivityId);
-    await PostMediasFromAttachments(Attachments, ActivityId, UserId);
-    await SendNotificationstoActivityMentions(Mentions, UserId, ActivityId);
+    const data = {
+        ...req.body, Documents: Attachments.DocumentsLinks,
+        MediaFiles: Attachments.MediaFilesLinks, Mentions,
+        OriginalLanguage: await DetectLanguage(Content)
+    };
+
+    await Promise.all([
+        CreateActivities(data, ActivityId),
+        PostMediasFromAttachments(Attachments, ActivityId, UserId),
+        SendNotificationstoActivityMentions(Mentions, UserId, ActivityId)
+    ])
     return res.json(true);
 }
 
@@ -176,15 +184,22 @@ const PostActivities = async (req, res) => {
  */
 const PatchActivities = async (req, res) => {
     const { ActivityId } = req.params;
-    const Activity = await ReadOneFromActivities(ActivityId);
     //@ts-ignore
-    if (Activity.UserId !== req.user.UserId) {
+    const { UserId } = req.user;
+    const Activity = await ReadOneFromActivities(ActivityId);
+    if (Activity.UserId !== UserId) {
         return res.status(444).json(AlertBoxObject("Cannot Edit", "Cannot edit other User's Activity"))
     }
-    req.body.Mentions = await ExtractMentionedUsersFromContent(req.body.Content);
-    await UpdateActivities(req.body, ActivityId);
-    //@ts-ignore
-    await RemoveNotificationsAfterActivityMentionPatch(req.body.Mentions, Activity.Mentions, req.user.UserId, ActivityId);
+    [req.body.Mentions, req.body.OriginalLanguage] = await Promise.all([
+        ExtractMentionedUsersFromContent(req.body.Content),
+        DetectLanguage(req.body.Content),
+    ])
+    req.body.Languages = {};
+    await Promise.all([
+        UpdateActivities(req.body, ActivityId),
+        RemoveNotificationsAfterActivityMentionPatch(req.body.Mentions, Activity.Mentions, UserId, ActivityId),
+    ])
+
     return res.json(true);
 }
 

@@ -21,6 +21,8 @@ import dataHandling from "./functions.js";
  * @property {string} DocId
  * @property {'Feed'|'Event'|'Discussion'} Type
  * @property {string} EntityId
+ * @property {object} Languages
+ * @property {string} OriginalLanguage
  */
 
 /**
@@ -73,19 +75,19 @@ const RemoveActivities = async (DocId) => {
   return dataHandling.Delete("Activities", DocId);
 };
 
-const IncrementActivities = async (data,DocId) => {
-  return dataHandling.Update("Activities", data, DocId, ["$inc"],false);
+const IncrementActivities = async (data, DocId) => {
+  return dataHandling.Update("Activities", data, DocId, ["$inc"], false);
 }
 
 const UpdateAndIncrementActivities = async (UpdateData, IncrementData, DocId) => {
-  return dataHandling.Update("Activities", UpdateData, DocId, ["$set","$inc"], true,IncrementData);
+  return dataHandling.Update("Activities", UpdateData, DocId, ["$set", "$inc"], true, IncrementData);
 }
 
-const AggregateActivities = async (AggregateArray,NextIndex,Limit,OrderBy) => {
+const AggregateActivities = async (AggregateArray, NextIndex, Limit, OrderBy) => {
   return dataHandling.Aggregate("Activities", AggregateArray, NextIndex, Limit, OrderBy);
 }
 
 export {
   ReadActivities, ReadOneFromActivities, UpdateActivities, CreateActivities, RemoveActivities,
-  IncrementActivities,UpdateAndIncrementActivities,AggregateActivities
- };
+  IncrementActivities, UpdateAndIncrementActivities, AggregateActivities
+};

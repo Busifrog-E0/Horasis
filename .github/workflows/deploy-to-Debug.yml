@@ -1,5 +1,3 @@
-
-
 name: Pull to DigitalOcean Droplet
 
 on:
@@ -22,12 +20,13 @@ jobs:
         chmod 600 ~/.ssh/id_rsa
         ssh-keyscan -H 139.59.46.32 >> ~/.ssh/known_hosts
 
-    - name: Pull latest changes to DigitalOcean Droplet
+    - name: Pull latest changes and update dependencies on DigitalOcean Droplet
       env:
         GITHUB_TOKEN: ${{ secrets.Haris_Token }}
       run: |
         ssh root@139.59.46.32 << 'EOF'
           cd Horissa
-          git pull debug DebugServer
+          git pull origin DebugServer
+          npm install 
           pm2 restart Horasis
         EOF
