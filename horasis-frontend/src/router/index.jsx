@@ -35,34 +35,37 @@ import NotFoundPage from '../pages/NotFoundPage'
 import SingleArticles from '../pages/SingleArticles'
 import ForgotPassword from '../pages/ForgotPassword'
 import SavedArticlesPage from '../pages/SavedArticlesPage'
+import ProfileTabLayout from '../layouts/ProfileTabLayout'
 
 export const router = createBrowserRouter(
 	createRoutesFromElements(
 		<Route path='/' element={<RootLayout />}>
 			<Route path='/' element={<AuthLayout />}>
 				<Route path='/' element={<DashboardLayout />}>
-					<Route path='/' element={<Activities />} />
-					<Route path='/Activities' element={<Activities />} />
-					<Route path='/Mentions' element={<Mentions />} />
-					<Route path='/Saved' element={<Saved />} />
-					<Route path='/Suggestions' element={<SuggestionsPage />} />
-					<Route path='/SavedArticles' element={<SavedArticlesPage />} />
-					<Route path='/Activities/:activityid' element={<SingleActivity />} />
+					<Route path='/' element={<ProfileTabLayout />}>
+						<Route path='/' element={<Activities />} />
+						<Route path='/Activities' element={<Activities />} />
+						<Route path='/Mentions' element={<Mentions />} />
+						<Route path='/Saved' element={<Saved />} />
+						<Route path='/Suggestions' element={<SuggestionsPage />} />
+						<Route path='/SavedArticles' element={<SavedArticlesPage />} />
+						<Route path='/Connections' element={<Connections />} />
+						<Route path='/Activities/:activityid' element={<SingleActivity />} />
+						<Route path='/Discussions' element={<Discussions />} />
+						<Route path='/Discussions/Create/New' element={<CreateDiscussion />} />
+						<Route path='/Articles' element={<Articles />} />
+						<Route path='/Articles/Create/New' element={<CreateArticle />} />
+					</Route>
 
-					<Route path='/Connections' element={<Connections />} />
 					<Route path='/MyProfile' element={<MyProfile />} />
 					<Route path='/ViewProfile/:userid' element={<ShowUserProfile />} />
-					<Route path='/Discussions' element={<Discussions />} />
-					<Route path='/Discussions/Create/New' element={<CreateDiscussion />} />
 					<Route path='/Discussions/:discussionid' element={<SingleDiscussion />} />
-					<Route path='/Articles' element={<Articles />} />
-					<Route path='/Articles/Create/New' element={<CreateArticle />} />
 					<Route path='/Articles/:articleid' element={<SingleArticles />} />
 
-					<Route path='/universalsearchdetails' element={<UniversalSearchDetails />} />
+					{/* <Route path='/universalsearchdetails' element={<UniversalSearchDetails />} /> */}
 
-					<Route path='/Events' element={<Events />} />
-					<Route path='/Events/create/new' element={<CreateEvent />} />
+					{/* <Route path='/Events' element={<Events />} />
+					<Route path='/Events/create/new' element={<CreateEvent />} /> */}
 
 					<Route path='/Chat/:userid' element={<ChatPage />} />
 				</Route>

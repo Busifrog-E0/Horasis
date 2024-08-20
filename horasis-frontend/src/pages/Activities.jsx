@@ -9,7 +9,7 @@ import SavedActivityTab from '../components/Activities/Saved/SavedActivityTab'
 const Activities = () => {
 	return (
 		<>
-			<div className='p-2 lg:px-10 lg:py-6'>
+			{/* <div className='p-2 lg:px-10 lg:py-6'>
 				<div className='grid lg:grid-cols-4 gap-3 lg:gap-12'>
 					<div>
 						<CurrentProfileTab />
@@ -20,11 +20,14 @@ const Activities = () => {
 							<RecentlyActiveMemebrsTab />
 						</div>
 					</div>
-					<div className='lg:col-span-2'>
-						<TimeLineTab api={'activities'} gapBnTabs='gap-3' classNameForPost='p-5 ' header='All Updates' />
-					</div>
-					<div className='flex flex-col gap-4'>
-						{/* <div className='p-5 bg-system-secondary-bg rounded-lg'>
+			
+				</div>
+			</div> */}
+			<div className='lg:col-span-2'>
+				<TimeLineTab api={'activities'} gapBnTabs='gap-3' classNameForPost='p-5 ' header='All Updates' />
+			</div>
+			<div className='flex flex-col gap-4'>
+				{/* <div className='p-5 bg-system-secondary-bg rounded-lg'>
 							<div className='flex items-center justify-between gap-2 mb-5'>
 								<h4 className='font-medium text-2xl text-system-primary-text'>Events</h4>
 								
@@ -90,10 +93,8 @@ const Activities = () => {
 								</div>
 							</div>
 						</div> */}
-						<MentionedTab />
-						<SavedActivityTab bordered={true} />
-					</div>
-				</div>
+				<MentionedTab />
+				<SavedActivityTab bordered={true} />
 			</div>
 		</>
 	)

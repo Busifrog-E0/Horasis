@@ -8,7 +8,8 @@ import CurrentProfileTab from '../components/Profile/CurrentProfileTab'
 
 const SavedArticlesPage = () => {
 	return (
-		<div className='p-2 lg:px-10 lg:py-6'>
+		<>
+		{/* <div className='p-2 lg:px-10 lg:py-6'>
 			<div className='grid lg:grid-cols-4 gap-3 lg:gap-12'>
 				<div>
 					<CurrentProfileTab />
@@ -19,7 +20,10 @@ const SavedArticlesPage = () => {
 						<RecentlyActiveMemebrsTab />
 					</div>
 				</div>
-				<div className='lg:col-span-2'>
+		
+			</div>
+		</div> */}
+		<div className='lg:col-span-2'>
 					<SavedArticlesTab loadMoreEnabled={true} iconPresent={false} />
 					{/* <SuggestionsSection loadMoreEnabled={true} limit={8} iconPresent={false} /> */}
 					{/* <SavedActivities gapBnTabs="gap-3" classNameForPost='p-5 pr-10 ' header="All Updates" /> */}
@@ -34,8 +38,7 @@ const SavedArticlesPage = () => {
 					<SavedActivityTab />
 					<MentionedTab />
 				</div>
-			</div>
-		</div>
+		</>
 	)
 }
 

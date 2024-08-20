@@ -26,7 +26,7 @@ const Articles = () => {
 					<img src={addIcon} alt='' />
 				</div>
 			</div>
-			<div className='p-2 lg:px-10 lg:py-6'>
+			{/* <div className='p-2 lg:px-10 lg:py-6'>
 				<div className='grid lg:grid-cols-4 gap-3 lg:gap-12'>
 					<div className='hidden lg:block'>
 						<CurrentProfileTab />
@@ -37,13 +37,14 @@ const Articles = () => {
 							<RecentlyActiveMemebrsTab />
 						</div>
 					</div>
-					<div className='lg:col-span-2'>
-						<ArticlesSection />
-					</div>
-					<div>
-						<SavedArticlesTab />
-					</div>
+				
 				</div>
+			</div> */}
+			<div className='lg:col-span-2'>
+				<ArticlesSection />
+			</div>
+			<div>
+				<SavedArticlesTab />
 			</div>
 		</>
 	)

@@ -7,7 +7,7 @@ import CurrentProfileTab from '../components/Profile/CurrentProfileTab'
 const Connections = () => {
 	return (
 		<>
-			<div className='p-2 lg:px-10 lg:py-6'>
+			{/* <div className='p-2 lg:px-10 lg:py-6'>
 				<div className='grid lg:grid-cols-4 gap-3 lg:gap-12'>
 					<div className='hidden lg:block'>
 						<CurrentProfileTab />
@@ -18,14 +18,15 @@ const Connections = () => {
 							<RecentlyActiveMemebrsTab />
 						</div>
 					</div>
+			
+				</div>
+			</div> */}
 					<div className='lg:col-span-2'>
 						<ConnectionSection />
 					</div>
 					<div>
 						<SuggestionsSection />
 					</div>
-				</div>
-			</div>
 		</>
 	)
 }

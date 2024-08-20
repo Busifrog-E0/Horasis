@@ -160,7 +160,7 @@ const CreateArticle = () => {
 					</div>
 				</Modal.Body>
 			</Modal>
-			<div className='p-2 lg:px-10 lg:py-6'>
+			{/* <div className='p-2 lg:px-10 lg:py-6'>
 				<div className='grid lg:grid-cols-4 gap-3 lg:gap-12'>
 					<div className='hidden lg:block'>
 						<CurrentProfileTab />
@@ -172,7 +172,10 @@ const CreateArticle = () => {
 							<RecentlyActiveMemebrsTab />
 						</div>
 					</div>
-					<div className='lg:col-span-2'>
+				
+				</div>
+			</div> */}
+				<div className='lg:col-span-2'>
 						<Steps changeStep={changeStep} activeStep={activeStep} steps={steps} />
 						<h4 className='font-medium text-2xl text-system-primary-accent mt-5 mb-4'>Create an Article</h4>
 						<div className='p-6 bg-system-secondary-bg rounded-lg'>
@@ -221,8 +224,6 @@ const CreateArticle = () => {
 					<div>
 						<ArticleMiniSection />
 					</div>
-				</div>
-			</div>
 		</>
 	)
 }

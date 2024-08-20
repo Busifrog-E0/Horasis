@@ -15,17 +15,14 @@ import { useParams } from 'react-router-dom'
 import ActivityComponent from '../components/Activities/ActivityComponent'
 import MentionedTab from '../components/Activities/Mentions/MentionedTab'
 
-
-
 const SingleActivity = () => {
-    const { updateCurrentUser, currentUserData } = useContext(AuthContext)
-    const { activityid } = useParams()
-    const toast = useToast()
+	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
+	const { activityid } = useParams()
+	const toast = useToast()
 
-
-    return (
-        <>
-            <div className='p-2 lg:px-10 lg:py-6'>
+	return (
+		<>
+			{/* <div className='p-2 lg:px-10 lg:py-6'>
                 <div className='grid lg:grid-cols-4 gap-3 lg:gap-12'>
                     <div>
                         <CurrentProfileTab />
@@ -36,26 +33,33 @@ const SingleActivity = () => {
                             <RecentlyActiveMemebrsTab />
                         </div>
                     </div>
-                    <div className='lg:col-span-2'>
-                        <ActivityComponent titleSize="text-xl" descriptionSize='text-lg font-medium'
-                            onDelete={(DocId) => { }} activityId={activityid} bordered={false} avatarSize={'w-16 h-16'}
-                            className={`p-5 bg-system-secondary-bg rounded-lg relative`} openComment={true}
-                        />
-                    </div>
-                    <div className='flex flex-col gap-4'>
-                        <div className='p-5 bg-system-secondary-bg rounded-lg'>
-                            <div className='flex items-center justify-between gap-2 mb-5'>
-                                <h4 className='font-medium text-2xl text-system-primary-text'>Events</h4>
-                                {/* arrow cursor-pointer */}
-                            </div>
-                            <EmptyMembers emptyText={'No events'} />
-                        </div>
-                        <MentionedTab />
-                    </div>
+                   
                 </div>
-            </div>
-        </>
-    )
+            </div> */}
+			<div className='lg:col-span-2'>
+				<ActivityComponent
+					titleSize='text-xl'
+					descriptionSize='text-lg font-medium'
+					onDelete={(DocId) => {}}
+					activityId={activityid}
+					bordered={false}
+					avatarSize={'w-16 h-16'}
+					className={`p-5 bg-system-secondary-bg rounded-lg relative`}
+					openComment={true}
+				/>
+			</div>
+			<div className='flex flex-col gap-4'>
+				<div className='p-5 bg-system-secondary-bg rounded-lg'>
+					<div className='flex items-center justify-between gap-2 mb-5'>
+						<h4 className='font-medium text-2xl text-system-primary-text'>Events</h4>
+						{/* arrow cursor-pointer */}
+					</div>
+					<EmptyMembers emptyText={'No events'} />
+				</div>
+				<MentionedTab />
+			</div>
+		</>
+	)
 }
 
 export default SingleActivity

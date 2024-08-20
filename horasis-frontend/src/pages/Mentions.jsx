@@ -9,7 +9,7 @@ import CurrentProfileTab from '../components/Profile/CurrentProfileTab'
 const Mentions = () => {
 	return (
 		<>
-			<div className='p-2 lg:px-10 lg:py-6'>
+			{/* <div className='p-2 lg:px-10 lg:py-6'>
 				<div className='grid lg:grid-cols-4 gap-3 lg:gap-12'>
 					<div>
 						<CurrentProfileTab />
@@ -20,7 +20,10 @@ const Mentions = () => {
 							<RecentlyActiveMemebrsTab />
 						</div>
 					</div>
-					<div className='lg:col-span-2'>
+				
+				</div>
+			</div> */}
+				<div className='lg:col-span-2'>
 						<MentionedActivities gapBnTabs='gap-3' classNameForPost='p-5 pr-10 ' header='All Updates' />
 					</div>
 					<div className='flex flex-col  gap-4'>
@@ -33,8 +36,6 @@ const Mentions = () => {
 						<SuggestionsSection />
 						<SavedActivityTab />
 					</div>
-				</div>
-			</div>
 		</>
 	)
 }

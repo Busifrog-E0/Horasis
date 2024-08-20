@@ -10,7 +10,7 @@ import SugesstionsSection from '../components/Connections/SuggestionsSection'
 const Saved = () => {
 	return (
 		<>
-			<div className='p-2 lg:px-10 lg:py-6'>
+			{/* <div className='p-2 lg:px-10 lg:py-6'>
 				<div className='grid lg:grid-cols-4 gap-3 lg:gap-12'>
 					<div>
 						<CurrentProfileTab />
@@ -21,20 +21,21 @@ const Saved = () => {
 							<RecentlyActiveMemebrsTab />
 						</div>
 					</div>
-					<div className='lg:col-span-2'>
-						<SavedActivities gapBnTabs='gap-3' classNameForPost='p-5 pr-10 ' header='All Updates' />
-					</div>
-					<div className='flex flex-col gap-4'>
-						{/* <div className='p-5 bg-system-secondary-bg rounded-lg'>
+			
+				</div>
+			</div> */}
+			<div className='lg:col-span-2'>
+				<SavedActivities gapBnTabs='gap-3' classNameForPost='p-5 pr-10 ' header='All Updates' />
+			</div>
+			<div className='flex flex-col gap-4'>
+				{/* <div className='p-5 bg-system-secondary-bg rounded-lg'>
                             <div className='flex items-center justify-between gap-2 mb-5'>
                                 <h4 className='font-medium text-2xl text-system-primary-text'>Events</h4>
                             </div>
                             <EmptyMembers emptyText={'No events'} />
                         </div> */}
-						<SugesstionsSection />
-						<MentionedTab />
-					</div>
-				</div>
+				<SugesstionsSection />
+				<MentionedTab />
 			</div>
 		</>
 	)
