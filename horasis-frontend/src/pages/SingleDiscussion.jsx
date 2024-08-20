@@ -52,6 +52,7 @@ const SingleDiscussion = () => {
 			},
 			(err) => {
 				console.log(err)
+				navigate('/NotFound', { replace: true })
 				setIsLoading(false)
 			},
 			updateCurrentUser,

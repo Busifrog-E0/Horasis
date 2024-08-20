@@ -16,6 +16,7 @@ import ViewLikedMembers from './Likes/ViewLikedMembers'
 import ActivityDropdown from './ActivityDropdown'
 import MentionTextLink from './Mentions/MentionTextLink'
 import ActivityDocuments from './ActivityDocuments'
+import { useNavigate } from 'react-router-dom'
 const ActivityComponent = ({
 	titleSize,
 	bordered,
@@ -31,6 +32,7 @@ const ActivityComponent = ({
 	openComment = false,
 	onSaveRemoveCallback = () => {},
 }) => {
+	const navigate = useNavigate()
 	const [showComment, setShowComment] = useState(openComment)
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
 	const toast = useToast()
@@ -180,6 +182,7 @@ const ActivityComponent = ({
 				setIsLoadingActivity(false)
 			},
 			(err) => {
+				navigate('/NotFound', { replace: true })
 				setIsLoadingActivity(false)
 				// console.log(err)
 			},

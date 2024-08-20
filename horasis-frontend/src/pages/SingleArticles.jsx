@@ -35,6 +35,7 @@ const SingleArticles = () => {
 				setSaving(null)
 			},
 			(err) => {
+				navigate('/NotFound', { replace: true })
 				console.log(err)
 				setIsLoading(false)
 			},

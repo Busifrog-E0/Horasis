@@ -80,6 +80,7 @@ export const router = createBrowserRouter(
 			<Route path='welcome' element={<UnAuthLayout />}>
 				<Route index element={<WelcomePage />} />
 			</Route>
+			<Route path='NotFound' element={<NotFoundPage />} />
 			<Route path='*' element={<NotFoundPage />} />
 		</Route>
 	)
