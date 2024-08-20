@@ -53,6 +53,11 @@ const DO_SPACES_SECRET = process.env.DO_SPACES_SECRET;
  */
 // @ts-ignore
 const DO_SPACES_NAME = process.env.DO_SPACES_NAME;
+/**
+ * @type {string}
+ */
+// @ts-ignore
+const GOOGLE_TRANSLATE_KEY = process.env.GOOGLE_TRANSLATE_KEY
 
 /**
  * @type {string}
@@ -70,5 +75,6 @@ export default {
     DO_SPACES_KEY,
     DO_SPACES_SECRET,
     DO_SPACES_NAME,
-    ZeptoMailToken
+    ZeptoMailToken,
+    GOOGLE_TRANSLATE_KEY
 }

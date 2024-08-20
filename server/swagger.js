@@ -70,6 +70,10 @@ const doc = {
         {
             "name": "Saves",
             "description": "",
+        },
+        {
+            "name": "Translations",
+            "description": "",
         }
     ],
     securityDefinitions: {
