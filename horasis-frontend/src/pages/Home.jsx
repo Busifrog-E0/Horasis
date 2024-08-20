@@ -9,18 +9,22 @@ import HomeFooter from '../components/Home/HomeFooter'
 import { useEffect, useRef } from 'react'
 const Home = () => {
 	const discussionRef = useRef()
+	const eventsRef = useRef()
+	const contactRef = useRef()
 	const moveToDiscussions = () => discussionRef.current.scrollIntoView({ behavior: 'smooth' })
+	const moveToEvents = () => eventsRef.current.scrollIntoView({ behavior: 'smooth' })
+	const moveToContacts = () => contactRef.current.scrollIntoView({ behavior: 'smooth' })
 
 	return (
 		<div>
 			<div style={{ backgroundImage: `url(${HeroCoverImage})` }} className='bg-cover bg-no-repeat'>
-				<HomeHeader moveToDiscussions={moveToDiscussions} />
+				<HomeHeader moveToDiscussions={moveToDiscussions} moveToEvents={moveToEvents} moveToContacts={moveToContacts} />
 				<HeroSection />
 			</div>
 			<HomeMidSection />
-			<HomeUpcomingEvents />
+			<HomeUpcomingEvents ref={eventsRef} />
 			<HomeDiscussionsSection ref={discussionRef} />
-			<HomeFooter />
+			<HomeFooter ref={contactRef} />
 		</div>
 	)
 }

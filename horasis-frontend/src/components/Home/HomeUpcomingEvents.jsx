@@ -1,8 +1,9 @@
+import { forwardRef } from 'react'
 import people from '../../assets/tempimages/people.jpg'
 
-const HomeUpcomingEvents = () => {
+const HomeUpcomingEvent = (props, ref) => {
 	return (
-		<div className='h-max flex flex-col items-center bg-system-secondary-bg'>
+		<div className='h-max flex flex-col items-center bg-system-secondary-bg' ref={ref}>
 			<div className='flex items-center justify-center my-20 max-w-screen-2xl w-full '>
 				<div className='w-11/12  md:w-8/12 flex flex-col gap-6'>
 					<div className='flex flex-col lg:flex-row justify-between gap-6 '>
@@ -85,4 +86,7 @@ const HomeEventItem = ({ date, month, title, description }) => {
 		</div>
 	)
 }
+
+const HomeUpcomingEvents = forwardRef(HomeUpcomingEvent)
+
 export default HomeUpcomingEvents

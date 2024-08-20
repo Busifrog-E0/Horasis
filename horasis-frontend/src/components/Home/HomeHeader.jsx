@@ -3,7 +3,7 @@ import { AuthContext } from '../../utils/AuthProvider'
 import { useNavigate } from 'react-router-dom'
 import menu from '../../assets/icons/menu.svg'
 
-const HomeHeader = ({ moveToDiscussions }) => {
+const HomeHeader = ({ moveToDiscussions, moveToEvents, moveToContacts }) => {
 	const [menuOpen, setMenuOpen] = useState(false)
 	const { currentUserData } = useContext(AuthContext)
 	const navigate = useNavigate()
@@ -19,12 +19,16 @@ const HomeHeader = ({ moveToDiscussions }) => {
 				</div>
 				<div className='hidden md:flex gap-10 items-center justify-between'>
 					<nav className='flex text-system-secondary-bg gap-10'>
-						<p className='text-md font-medium cursor-pointer'>Events</p>
+						<p className='text-md font-medium cursor-pointer' onClick={moveToEvents}>
+							Events
+						</p>
 						<p className='text-md font-medium cursor-pointer' onClick={moveToDiscussions}>
 							Discussions
 						</p>
 						{/* <p className='text-md font-medium cursor-pointer'>Insight</p> */}
-						<p className='text-md font-medium cursor-pointer'>Contact</p>
+						<p className='text-md font-medium cursor-pointer' onClick={moveToContacts}>
+							Contact
+						</p>
 					</nav>
 					{currentUserData ? (
 						<>
@@ -80,10 +84,31 @@ const HomeHeader = ({ moveToDiscussions }) => {
 							className={`flex absolute h-max w-max bg-white top-16  right-0  px-10  py-6  flex-col items-end gap-10 rounded-lg`}>
 							<div>
 								<nav className='flex flex-col text-system-primary-accent gap-10'>
-									<p className='text-lg'>Events</p>
-									<p className='text-lg'>Discussions</p>
-									<p className='text-lg'>Insight</p>
-									<p className='text-lg'>Contact</p>
+									<p
+										className='text-lg'
+										onClick={() => {
+											setMenuOpen(false)
+											moveToEvents()
+										}}>
+										Events
+									</p>
+									<p
+										className='text-lg'
+										onClick={() => {
+											setMenuOpen(false)
+											moveToDiscussions()
+										}}>
+										Discussions
+									</p>
+									{/* <p className='text-lg'>Insight</p> */}
+									<p
+										className='text-lg'
+										onClick={() => {
+											setMenuOpen(false)
+											moveToContacts()
+										}}>
+										Contact
+									</p>
 								</nav>
 							</div>
 						</div>
