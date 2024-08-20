@@ -8205,29 +8205,81 @@
     "PostEventsData": {
       "type": "object",
       "properties": {
+        "OrganiserId": {
+          "type": "string",
+          "example": "organiser_12345"
+        },
         "EventName": {
           "type": "string",
-          "example": "John Doe"
-        },
-        "Brief": {
-          "type": "string",
-          "example": "This is a brief"
-        },
-        "Organiserīd": {
-          "type": "string",
-          "example": "user1234"
+          "example": "Tech Innovations 2024"
         },
         "Description": {
           "type": "string",
-          "example": "This is a description"
+          "example": "A premier event showcasing the latest in technology and innovation."
+        },
+        "Date": {
+          "type": "string",
+          "example": "2024-09-01"
+        },
+        "StartTime": {
+          "type": "string",
+          "example": "09:00 AM"
+        },
+        "EndTime": {
+          "type": "string",
+          "example": "04:00 PM"
+        },
+        "Agenda": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "Name": {
+                "type": "string",
+                "example": "Opening Ceremony"
+              },
+              "Description": {
+                "type": "string",
+                "example": "The event will kick off with a grand opening ceremony."
+              },
+              "Date": {
+                "type": "number",
+                "example": 1724214719066
+              },
+              "StartTime": {
+                "type": "number",
+                "example": 1724214719066
+              },
+              "EndTime": {
+                "type": "number",
+                "example": 1724214719066
+              }
+            }
+          }
         },
         "Privacy": {
           "type": "string",
           "example": "Public"
         },
+        "Type": {
+          "type": "string",
+          "example": "Offline"
+        },
+        "Country": {
+          "type": "string",
+          "example": "USA"
+        },
+        "DisplayPicture": {
+          "type": "string",
+          "example": "https://example.com/event_display_pic.jpg"
+        },
         "CoverPicture": {
           "type": "string",
-          "example": "https://example.com/images/cover.jpg"
+          "example": "https://example.com/event_cover_pic.jpg"
+        },
+        "HasDiscussion": {
+          "type": "boolean",
+          "example": true
         }
       }
     },
