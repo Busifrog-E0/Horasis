@@ -11,9 +11,8 @@ import dataHandling from './functions.js'
  * @typedef {object} AgendaData
  * @property {string} Name
  * @property {string} Description
- * @property {string} Date
- * @property {string} StartTime
- * @property {string} EndTime
+ * @property {number} StartTime
+ * @property {number} EndTime
  */
 
 /**
@@ -27,9 +26,9 @@ import dataHandling from './functions.js'
  * @property {string} OrganiserId
  * @property {string} EventName
  * @property {string} Description
- * @property {string} Date
- * @property {string} StartTime
- * @property {string} EndTime
+ * @property {number} Date
+ * @property {number} StartTime
+ * @property {number} EndTime
  * @property {AgendaData[]} Agenda
  * @property {"Public"|"Private"} Privacy
  * @property {"Virtual"|"Physical"} Type
