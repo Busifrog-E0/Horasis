@@ -1,12 +1,28 @@
 import usersDefinitions from "./usersDefinitions.js"
 
+
+const AgendaData = {
+    "Name": "Opening Ceremony",
+    "Description": "The event will kick off with a grand opening ceremony.",
+    "Date": 1724214719066,
+    "StartTime": 1724214719066,
+    "EndTime": 1724214719066
+}
+
 const PostEventsData = {
-    EventName: 'John Doe',
-    Brief: 'This is a brief',
-    Organiserīd: 'user1234',
-    Description: 'This is a description',
-    Privacy: 'Public',
-    CoverPicture: "https://example.com/images/cover.jpg"
+    "OrganiserId": "organiser_12345",
+    "EventName": "Tech Innovations 2024",
+    "Description": "A premier event showcasing the latest in technology and innovation.",
+    "Date": "2024-09-01",
+    "StartTime": "09:00 AM",
+    "EndTime": "04:00 PM",
+    "Agenda": [AgendaData],
+    "Privacy": "Public",
+    "Type": "Offline",
+    "Country": "USA",
+    "DisplayPicture": "https://example.com/event_display_pic.jpg",
+    "CoverPicture": "https://example.com/event_cover_pic.jpg",
+    "HasDiscussion": true
 }
 
 const PatchEventsCoverData = {
@@ -36,5 +52,5 @@ export default {
     PostEventsData,
     PatchEventsCoverData,
     EventsData, EventDataArray,
-    
+
 }
