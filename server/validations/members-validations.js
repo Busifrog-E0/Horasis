@@ -8,7 +8,7 @@ const MembersGetSchema = QueryParametersSchema.keys({
     'Permissions.CanCreateAlbum': Joi.boolean(),
     'Permissions.CanUploadVideo': Joi.boolean(),
     'Permissions.IsAdmin': Joi.boolean(),
-    'MembershipStatus' : Joi.string().valid("Accepted", "Invited", "Requested")
+    'MembershipStatus': Joi.string().valid("Accepted", "Invited", "Requested")
 });
 
 
@@ -24,7 +24,21 @@ const ValidateGetMembers = async (req, res, next) => {
     }
 };
 
+const ValidateInviteMembers = async (req, res, next) => {
+    const Result = Joi.object({
+        IsSpeaker: Joi.boolean(),
+    }).validate(req.body, { stripUnknown: true, convert: true });
+    if (Result.error) {
+        const message = Result.error.details.map((detail) => detail.message).join(', ');
+        return res.status(400).json(message);
+    }
+    else {
+        req.body = Result.value;
+        return next();
+    }
+}
+
 export {
-    
-    ValidateGetMembers
+    ValidateGetMembers,
+    ValidateInviteMembers
 }

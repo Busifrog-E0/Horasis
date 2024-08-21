@@ -3830,8 +3830,9 @@
             "schema": {
               "type": "object",
               "properties": {
-                "Type": {
-                  "example": "any"
+                "IsSpeaker": {
+                  "type": "boolean",
+                  "example": false
                 }
               }
             }
@@ -3840,6 +3841,9 @@
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
           },
           "401": {
             "description": "Unauthorized"
@@ -5293,8 +5297,9 @@
             "schema": {
               "type": "object",
               "properties": {
-                "Type": {
-                  "example": "any"
+                "IsSpeaker": {
+                  "type": "boolean",
+                  "example": false
                 }
               }
             }
@@ -5303,6 +5308,9 @@
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
           },
           "401": {
             "description": "Unauthorized"
