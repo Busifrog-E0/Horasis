@@ -3,7 +3,6 @@ import Joi from 'joi';
 const AgendaDataSchema = Joi.object({
     Name: Joi.string().required(),
     Description: Joi.string(),
-    Date: Joi.number().required(),
     StartTime: Joi.number().required(),
     EndTime: Joi.number().required()
 });
