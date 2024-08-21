@@ -1,6 +1,6 @@
 import usersDefinitions from "./usersDefinitions.js";
 
-const MemberData =  {
+const MemberData = {
     EntityId: "discussion123",  // Unique identifier for the discussion
     MemberId: "user456",        // Unique identifier for the member (user ID)
     UserDetails: usersDefinitions.UserData,
@@ -23,7 +23,17 @@ const UpdatePermissionData = {
     UserIds: ["user123", "user124"]
 }
 
+const PermissionData = {
+    IsAdmin: false,
+    CanInviteOthers: false,
+    CanPostActivity: true,
+    CanUploadPhoto: true,
+    CanCreateAlbum: true,
+    CanUploadVideo: false
+}
+
 export default {
     MemberData,
-    UpdatePermissionData
+    UpdatePermissionData,
+    PermissionData
 }

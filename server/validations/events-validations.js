@@ -3,18 +3,18 @@ import Joi from 'joi';
 const AgendaDataSchema = Joi.object({
     Name: Joi.string().required(),
     Description: Joi.string(),
-    Date: Joi.string().required(),
-    StartTime: Joi.string().required(),
-    EndTime: Joi.string().required()
+    Date: Joi.number().required(),
+    StartTime: Joi.number().required(),
+    EndTime: Joi.number().required()
 });
 
 const EventDataSchema = Joi.object({
     OrganiserId : Joi.string().required(),
     EventName: Joi.string().required(),
     Description: Joi.string().required(),
-    Date: Joi.string().required(),
-    StartTime: Joi.string().required(),
-    EndTime: Joi.string().required(),
+    Date: Joi.number().required(),
+    StartTime: Joi.number().required(),
+    EndTime: Joi.number().required(),
     Agenda: Joi.array().items(AgendaDataSchema).required(),
     Privacy: Joi.string().valid('Public', 'Private').required(),
     Type: Joi.string().valid('Virtual', 'Offline').required(),
