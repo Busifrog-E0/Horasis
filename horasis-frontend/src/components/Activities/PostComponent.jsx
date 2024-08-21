@@ -416,7 +416,7 @@ const PostComponent = ({
 						className={`flex-1 mt-2 rounded-lg p-2 px-3 border ${
 							Object.values(errorOj).some((error) => error) ? 'border-system-error' : 'border-system-secondary-accent'
 						} bg-system-secondary-bg flex flex-col gap-4`}>
-						<div className='flex items-center justify-between gap-2'>
+						<div className='flex items-start justify-between gap-2'>
 							<MentionTextarea
 								errorOj={errorOj}
 								user={user}

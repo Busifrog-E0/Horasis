@@ -89,7 +89,7 @@ const MentionTextarea = ({ user, newPost, handleContentChange, from = 'activity'
 		const lastAtSymbol = value.lastIndexOf('@', cursorPosition - 1)
 		const isFirstChar = lastAtSymbol === 0
 		const prevChar = value.charAt(lastAtSymbol - 1)
-		const isPrevCharSpace = prevChar === ' '
+		const isPrevCharSpace = prevChar === ' ' || prevChar === '\n'
 
 		if (lastAtSymbol !== -1 && (isFirstChar || isPrevCharSpace)) {
 			const mentionText = value.slice(lastAtSymbol + 1, cursorPosition)
@@ -135,6 +135,8 @@ const MentionTextarea = ({ user, newPost, handleContentChange, from = 'activity'
 					value={newPost.Content}
 					className='p-0 border-none rounded-none hover:shadow-none'
 					placeholder={`Leave a reply`}
+					rows={1}
+					resizable={false}
 				/>
 			)}
 			{from === 'comment' && (
@@ -144,9 +146,22 @@ const MentionTextarea = ({ user, newPost, handleContentChange, from = 'activity'
 					value={newPost.Content}
 					className='p-0 border-none rounded-none hover:shadow-none'
 					placeholder={`Leave a comment`}
+					rows={2}
+					resizable={false}
 				/>
 			)}
 			{from === 'activity' && (
+				<TextArea
+					setValue={handleInputChange}
+					width={'full'}
+					value={newPost.Content}
+					className='p-0 border-none rounded-none hover:shadow-none'
+					placeholder={`Share what's on your mind, ${user && user?.FullName ? user.FullName : ''}`}
+					rows={1}
+					resizable={false}
+				/>
+			)}
+			{/* {from === 'activity' && (
 				<Input
 					setValue={handleInputChange}
 					width={'full'}
@@ -154,7 +169,7 @@ const MentionTextarea = ({ user, newPost, handleContentChange, from = 'activity'
 					className='p-0 border-none rounded-none hover:shadow-none'
 					placeholder={`Share what's on your mind, ${user && user?.FullName ? user.FullName : ''}`}
 				/>
-			)}
+			)} */}
 			<div className='absolute z-40'>
 				{/* {isLoading ? (
 					<Spinner />

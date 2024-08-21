@@ -1,5 +1,6 @@
 import { twMerge } from 'tailwind-merge'
 import { inputVariants } from '../../utils/app/FormElements'
+import { useEffect, useRef } from 'react'
 
 const TextArea = ({
 	variant,
@@ -18,8 +19,16 @@ const TextArea = ({
 	error,
 	required,
 	rows,
+	resizable=true,
 	...props
 }) => {
+	const textareaRef = useRef()
+	useEffect(() => {
+		if (textareaRef.current) {
+			textareaRef.current.style.height = 'auto' // Reset height to auto to shrink if needed
+			textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px` // Set height based on scroll height
+		}
+	}, [value])
 	return (
 		<div className={`flex flex-col my-1 ${width === 'full' ? 'w-[100%]' : 'w-max'}`}>
 			<div className='flex flex-row items-start justify-between flex-wrap'>
@@ -45,9 +54,10 @@ const TextArea = ({
 						placeholder={placeholder}
 						className={
 							twMerge(inputVariants({ variant, size, width, withIcon, className })) +
-							' focus:bg-system-secondary-bg outline-none'
+							`focus:bg-system-secondary-bg outline-none ${!resizable && 'resize-none'}`
 						}
 						required={required}
+						ref={textareaRef}
 						{...props}
 					/>
 				</div>
@@ -58,9 +68,12 @@ const TextArea = ({
 					name={name}
 					value={value}
 					placeholder={placeholder}
+					ref={textareaRef}
 					className={
 						twMerge(inputVariants({ variant, size, width, withIcon, className })) +
-						` hover:shadow-inner focus:bg-system-secondary-bg focus:border focus:border-system-primary-accent`
+						` hover:shadow-inner focus:bg-system-secondary-bg focus:border focus:border-system-primary-accent ${
+							!resizable && 'resize-none'
+						}`
 					}
 					required={required}
 					{...props}
