@@ -22,6 +22,7 @@
     "file-type": "^19.1.1",
     "google-auth-library": "^9.10.0",
     "harislogger": "^1.0.0",
+    "ioredis": "^5.4.1",
     "joi": "^17.9.2",
     "jsonwebtoken": "^9.0.0",
     "moment": "^2.29.4",

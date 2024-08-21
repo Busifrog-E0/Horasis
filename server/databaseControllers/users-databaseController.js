@@ -1,3 +1,4 @@
+import { DeleteCache, GetCache, SetCache } from '../controllers/redis-controller.js';
 import dataHandling from './functions.js'
 
 
@@ -59,12 +60,18 @@ const ReadUsers = async (Where, NextIndex, Limit, orderBy, RemovePassword = true
  * @returns {Promise<UserData>}
  */
 const ReadOneFromUsers = async (DocId, RemovePassword = true) => {
+    const cachekey = `users:${DocId}`;
+    const cachedData = await GetCache(cachekey);
+    if (cachedData) {
+        return cachedData;
+    }
     /**@type {UserData} */
     const UserData = await dataHandling.Read('Users', DocId);
     if (RemovePassword) {
         // @ts-ignore
         delete UserData.Password;
     }
+    SetCache(cachekey, UserData);
     return UserData;
 }
 
@@ -75,6 +82,9 @@ const ReadOneFromUsers = async (DocId, RemovePassword = true) => {
  * @returns {Promise<boolean>}
  */
 const UpdateUsers = async (data, DocId) => {
+    
+    const cachekey = `users:${DocId}`;
+    DeleteCache(cachekey);
     return dataHandling.Update('Users', data, DocId);
 }
 
@@ -95,6 +105,8 @@ const CreateUsers = async (data, DocId = undefined) => {
  * @returns {Promise<boolean>}
  */
 const RemoveUsers = async (DocId) => {
+    const cachekey = `users:${DocId}`;
+    DeleteCache(cachekey);
     return dataHandling.Delete('Users', DocId);
 }
 
