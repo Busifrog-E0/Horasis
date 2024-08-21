@@ -38,16 +38,17 @@ const VersionUpdate = async (ReadFn, UpdateFn, where = {}) => {
     return count;
 }
 
-const TypeFeedInActivities = async () => {
-    const update = async (follow) => {
-        await UpdateActivities({ EntityId : "Feed" }, follow.DocId);
+const OriginalLanguageInActivities = async () => {
+    const update = async (activity) => {
+        await UpdateActivities({ OriginalLanguage: "English" }, activity.DocId);
     }
-    await VersionUpdate(ReadActivities, update, { Type: "Feed" });
+    await VersionUpdate(ReadActivities, update, { OriginalLanguage: { '$exists': false } });
 }
 
+//await OriginalLanguageInActivities();
 
 //UserDetailsinFollow()
-await TypeFeedInActivities()
+//TypeFeedInActivities()
 
 function Shuffle(array) {
     let m = array.length, t, i;
