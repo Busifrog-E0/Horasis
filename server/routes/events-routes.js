@@ -18,6 +18,7 @@ import { ValidatePostActivities } from '../validations/activities-validations.js
 import { MemberPostActivityMiddleware } from '../middleware/members-middleware.js';
 import { ValidateAddPermissionForEveryone, ValidatePatchMemberPermission, ValidatePatchRemovePermission } from '../validations/discussions-validations.js';
 import { GetFilteredActivities, PostActivities } from '../controllers/activities-controller.js';
+import { ValidateInviteMembers } from '../validations/members-validations.js';
 const router = e.Router();
 
 router.get('/events', decodeIDToken, ensureAuthorized("User"), ValidateGetEntity, QueryParameterFormatting,
@@ -77,7 +78,7 @@ router.get('/events/:EntityId/members/invite', decodeIDToken, ensureAuthorized("
     //@ts-ignore
     asyncHandler(GetMembersToInvite));
 
-router.post('/events/:EntityId/invite/:InviteeId', decodeIDToken, ensureAuthorized("User"), InsertEventTypeMiddleware,
+router.post('/events/:EntityId/invite/:InviteeId', decodeIDToken, ensureAuthorized("User"), ValidateInviteMembers, InsertEventTypeMiddleware,
     SwaggerDocs.post_Events_EntityId_Invite_InviteeId,
     //@ts-ignore
     asyncHandler(InviteMembers));

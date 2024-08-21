@@ -21,7 +21,7 @@ import { GetActivities, GetFilteredActivities, PostActivities } from '../control
 import { ValidatePostActivities } from '../validations/activities-validations.js';
 import { MemberPostActivityMiddleware } from '../middleware/members-middleware.js';
 import { DeleteSaves, GetSaves, PostSaves } from '../controllers/saves-controller.js';
-import { ValidateGetMembers } from '../validations/members-validations.js';
+import { ValidateGetMembers, ValidateInviteMembers } from '../validations/members-validations.js';
 const router = e.Router();
 
 
@@ -83,7 +83,7 @@ router.get('/discussions/:EntityId/members/invite', decodeIDToken, ensureAuthori
     //@ts-ignore
     asyncHandler(GetMembersToInvite));
 
-router.post('/discussions/:EntityId/invite/:InviteeId', decodeIDToken, ensureAuthorized("User"), InsertDiscussionTypeMiddleware,
+router.post('/discussions/:EntityId/invite/:InviteeId', decodeIDToken, ensureAuthorized("User"), ValidateInviteMembers, InsertDiscussionTypeMiddleware,
     SwaggerDocs.post_Discussions_EntityId_Invite_InviteeId,
     //@ts-ignore
     asyncHandler(InviteMembers));

@@ -6,7 +6,7 @@ const post_Discussion = async (req, res, next) => {
                schema: {  $ref: '#/definitions/PostDiscussionsData' }
    } 
 */
-     next();
+    next();
 }
 
 const patch_Discussion_DiscussionId_CoverPicture = async (req, res, next) => {
@@ -51,6 +51,11 @@ const post_Discussions_EntityId_Join = async (req, res, next) => {
 const post_Discussions_EntityId_Invite_InviteeId = async (req, res, next) => {
     // #swagger.tags = ['Discussions']
     /* #swagger.security = [{ "BearerAuth": [] }] */
+    /* #swagger.parameters['body'] = {
+              in: 'body',
+              schema: {  IsSpeaker : false }
+  } 
+*/
     next();
 }
 
@@ -184,7 +189,7 @@ const delete_Discussions_DiscussionId_Save = async (req, res, next) => {
     next();
 }
 
-const delete_Discussions_DiscussionId_Join_Reject= async (req, res, next) => {
+const delete_Discussions_DiscussionId_Join_Reject = async (req, res, next) => {
     // #swagger.tags = ['Discussions']
     /* #swagger.security = [{ "BearerAuth": [] }] */
     next();
@@ -225,13 +230,13 @@ const patch_Discussions_EntityId_Member_Permissions_Everyone = async (req, res, 
 
 
 export default {
-    post_Discussion,get_User_UserId_Discussions,get_Discussions_DiscussionId_Members_Requested,
-    patch_Discussion_DiscussionId_CoverPicture,post_Discussions_DiscussionId_Save,
+    post_Discussion, get_User_UserId_Discussions, get_Discussions_DiscussionId_Members_Requested,
+    patch_Discussion_DiscussionId_CoverPicture, post_Discussions_DiscussionId_Save,
     get_Discussions, delete_Discussion_DiscussionId_Join_Cancel, get_Discussions_DiscussionId_Save,
-    delete_Discussions_DiscussionId_Save,delete_Discussions_DiscussionId_Join_Reject,
-    post_Discussions_EntityId_Join,get_Discussions_Invited,patch_Discussions_DiscussionId_Join_Accept,
-    post_Discussions_EntityId_Invite_InviteeId,get_Discussions_DiscussionId_Members_Invited,
-    patch_Discussions_EntityId_Invite_Accept,patch_Discussions_EntityId_Member_Permissions_Remove,
+    delete_Discussions_DiscussionId_Save, delete_Discussions_DiscussionId_Join_Reject,
+    post_Discussions_EntityId_Join, get_Discussions_Invited, patch_Discussions_DiscussionId_Join_Accept,
+    post_Discussions_EntityId_Invite_InviteeId, get_Discussions_DiscussionId_Members_Invited,
+    patch_Discussions_EntityId_Invite_Accept, patch_Discussions_EntityId_Member_Permissions_Remove,
     patch_Discussions_EntityId_Member_Permissions,
     get_Discussions_DiscussionId_Activities,
     post_Discussions_DiscussionId_Activities,

@@ -147,7 +147,7 @@ const LanguageCodes = {
 
 const translate = new v2.Translate({
     projectId: "test-horissa",
-    key: Env.GOOGLE_TRANSLATE_KEY 
+    key: Env.GOOGLE_TRANSLATE_KEY
 });
 
 /**
@@ -199,7 +199,7 @@ const TranslateData = async (req, res) => {
             }
             else {
                 const TranslatedData = await TranslateFieldsToLanguage({ Content: Activity.Content }, TargetLanguage);
-                await UpdateActivities({ Languages: { [TargetLanguage]: TranslatedData } }, Activity.DocId);
+                await UpdateActivities({ [`Languages.${TargetLanguage}`]: TranslatedData }, Activity.DocId);
                 Content = TranslatedData;
             }
             break;
@@ -210,7 +210,7 @@ const TranslateData = async (req, res) => {
             }
             else {
                 const TranslatedData = await TranslateFieldsToLanguage({ Content: Comment.Content }, TargetLanguage);
-                await UpdateComments({ Languages: { [TargetLanguage]: TranslatedData } }, Comment.DocId);
+                await UpdateComments({ [`Languages.${TargetLanguage}`]: TranslatedData }, Comment.DocId);
                 Content = TranslatedData;
             }
             break;
@@ -221,7 +221,7 @@ const TranslateData = async (req, res) => {
             }
             else {
                 const TranslatedData = await TranslateFieldsToLanguage({ Description: Discussion.Description, Brief: Discussion.Brief }, TargetLanguage);
-                await UpdateDiscussions({ Languages: { [TargetLanguage]: TranslatedData } }, Discussion.DocId);
+                await UpdateDiscussions({ [`Languages.${TargetLanguage}`]: TranslatedData }, Discussion.DocId);
                 Content = TranslatedData;
             }
             break;
@@ -232,7 +232,7 @@ const TranslateData = async (req, res) => {
             }
             else {
                 const TranslatedData = await TranslateFieldsToLanguage({ Description: Event.Description }, TargetLanguage);
-                await UpdateEvents({ Languages: { [TargetLanguage]: TranslatedData } }, Event.DocId);
+                await UpdateEvents({ [`Languages.${TargetLanguage}`]: TranslatedData }, Event.DocId);
                 Content = TranslatedData;
             }
             break;
@@ -243,7 +243,7 @@ const TranslateData = async (req, res) => {
             }
             else {
                 const TranslatedData = await TranslateFieldsToLanguage({ Description: Article.Description }, TargetLanguage);
-                await UpdateArticles({ Languages: { [TargetLanguage]: TranslatedData } }, Article.DocId);
+                await UpdateArticles({ [`Languages.${TargetLanguage}`]: TranslatedData }, Article.DocId);
                 Content = TranslatedData;
             }
             break;

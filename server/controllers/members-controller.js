@@ -135,6 +135,7 @@ const InviteMembers = async (req, res) => {
     //@ts-ignore
     const { UserId } = req.user;
     const { EntityId, InviteeId } = req.params;
+    const IsSpeaker = req.body.IsSpeaker ? req.body.IsSpeaker : false;
     const Member = await ReadMembers({ MemberId: UserId, EntityId }, undefined, 1, undefined);
 
     if (!Member[0].Permissions.CanInviteOthers) {
@@ -145,7 +146,7 @@ const InviteMembers = async (req, res) => {
 
     if (Invitee[0]) {
         if (Invitee[0].MembershipStatus === "Requested") {
-            await UpdateMembers({ MembershipStatus: "Accepted" }, Invitee[0].DocId);
+            await UpdateMembers({ MembershipStatus: "Accepted", IsSpeaker }, Invitee[0].DocId);
             req.body.Type === "Discussion" ?
                 await IncrementDiscussions({ NoOfMembers: 1 }, EntityId)
                 :
@@ -159,7 +160,7 @@ const InviteMembers = async (req, res) => {
     }
 
     const UserDetails = await ReadOneFromUsers(InviteeId);
-    req.body = { ...MemberInit(req.body, "Invited"), MemberId: InviteeId, EntityId, UserDetails };
+    req.body = { ...MemberInit(req.body, "Invited"), MemberId: InviteeId, EntityId, UserDetails, IsSpeaker };
     await CreateMembers(req.body);
     await SendNotificationForMemberInvitation(req.body.Type, EntityId, InviteeId, UserId);
     return res.json(true);

@@ -51,6 +51,11 @@ const post_Events_EntityId_Join = async (req, res, next) => {
 const post_Events_EntityId_Invite_InviteeId = async (req, res, next) => {
     // #swagger.tags = ['Events']
     /* #swagger.security = [{ "BearerAuth": [] }] */
+    /* #swagger.parameters['body'] = {
+          in: 'body',
+          schema: {  IsSpeaker : false }
+} 
+*/
     next();
 }
 
