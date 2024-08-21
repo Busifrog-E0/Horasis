@@ -1,4 +1,5 @@
 import usersDefinitions from "./usersDefinitions.js"
+import membersDefinitions from "./membersDefinitions.js"
 
 
 const AgendaData = {
@@ -30,18 +31,43 @@ const PatchEventsCoverData = {
 }
 
 const EventsData = {
-    EventName: "Example Event",
-    Brief: "This is a brief description of the discussion",
-    OrganiserId: "1234567890",
-    UserDetails: usersDefinitions.UserData,
-    Description: "This is a detailed description of the discussion",
-    DocId: "abcdef1234567890",
-    Privacy: "Public",
-    CreatedIndex: 1234567890,
-    CoverPicture: "https://example.com/images/cover.jpg",
-    NoOfMembers: 10,
-    isMember: true,
-    MembershipStatus: "Accepted",
+    "OrganiserId": "org123",
+    "EventName": "Tech Innovations 2024",
+    "Description": "A conference showcasing the latest in technology and innovation.",
+    "Date": "2024-09-15",
+    "StartTime": "09:00",
+    "EndTime": "18:00",
+    "Agenda": [
+        {
+            "Name": "Opening Keynote",
+            "Description": "An overview of the latest trends in technology.",
+            "Date": "2024-09-15",
+            "StartTime": "09:00",
+            "EndTime": "10:00"
+        }
+    ],
+    "Privacy": "Public",
+    "Type": "Physical",
+    "Country": "United States",
+    "NoOfMembers": 250,
+    "DisplayPicture": "https://example.com/display-pic.jpg",
+    "CoverPicture": "https://example.com/cover-pic.jpg",
+    "HasDiscussion": true,
+    "Speakers": [
+        {
+            "SpeakerId": "spk001",
+            "UserDetails": usersDefinitions.UserData
+        },
+    ],
+    "DocId": "evt12345",
+    "CreatedIndex": 1,
+    "MemberPermissions": membersDefinitions.PermissionData,
+    "Languages": {
+        "English": {
+            "Description": "description"
+        }
+    },
+    "Permissions": membersDefinitions.PermissionData
 };
 
 const EventDataArray = [EventsData];
