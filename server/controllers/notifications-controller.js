@@ -8,6 +8,7 @@ import { Type } from '@aws-sdk/client-s3';
 import { ReadOneFromDiscussions } from '../databaseControllers/discussions-databaseController.js';
 import { ConnectionStatus } from './connections-controller.js';
 import { ReadMembers } from '../databaseControllers/members-databaseController.js';
+import { ReadOneFromEvents } from '../databaseControllers/events-databaseController.js';
 /**
  * @typedef {import('./../databaseControllers/notifications-databaseController.js').NotificationData} NotificationData 
  */
@@ -367,9 +368,10 @@ const SendNotificationForMemberJoin = async (Type, EntityId, UserId) => {
         SendToUserId = Discussion.OrganiserId;
     }
     if (Type === "Event") {
-        EntityName = ''
+        const Event = await ReadOneFromEvents(EntityId);
+        EntityName = Event.EventName;
         Link = `/events/${EntityId}`
-        SendToUserId = ''
+        SendToUserId = Event.OrganiserId;
     }
     const NotificationObject = {
         NotifierId: UserId,
@@ -403,9 +405,10 @@ const SendNotificationForMemberRequest = async (Type, EntityId, UserId) => {
         SendToUserId = Discussion.OrganiserId;
     }
     if (Type === "Event") {
-        EntityName = ''
+        const Event = await ReadOneFromEvents(EntityId);
+        EntityName = Event.EventName;
         Link = `/events/${EntityId}`
-        SendToUserId = ''
+        SendToUserId = Event.OrganiserId;
     }
     const NotificationObject = {
         NotifierId: UserId,
@@ -444,7 +447,8 @@ const SendNotificationForMemberRequestStatus = async (Type, EntityId, UserId, St
         Link = `/discussions/${EntityId}`
     }
     if (Type === "Event") {
-        EntityName = ''
+        const Event = await ReadOneFromEvents(EntityId);
+        EntityName = Event.EventName;
         Link = `/events/${EntityId}`
     }
     const NotificationObject = {
@@ -481,7 +485,8 @@ const SendNotificationForMemberInvitation = async (Type, EntityId, UserId, Sende
         Link = `/discussions/${EntityId}`
     }
     if (Type === "Event") {
-        EntityName = ''
+        const Event = await ReadOneFromEvents(EntityId);
+        EntityName = Event.EventName;
         Link = `/events/${EntityId}`
     }
     const NotificationObject = {
