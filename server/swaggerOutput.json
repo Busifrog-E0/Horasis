@@ -5650,7 +5650,7 @@
         ]
       }
     },
-    "/api/events/{EntityId}/member/permissions/remove": {
+    "/api/events/{EntityId}/member/{MemberId}/permissions/remove": {
       "patch": {
         "tags": [
           "Events"
@@ -5659,6 +5659,12 @@
         "parameters": [
           {
             "name": "EntityId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "MemberId",
             "in": "path",
             "required": true,
             "type": "string"
@@ -8247,16 +8253,16 @@
           "example": "A premier event showcasing the latest in technology and innovation."
         },
         "Date": {
-          "type": "string",
-          "example": "2024-09-01"
+          "type": "number",
+          "example": 1724214719066
         },
         "StartTime": {
-          "type": "string",
-          "example": "09:00 AM"
+          "type": "number",
+          "example": 1724214719066
         },
         "EndTime": {
-          "type": "string",
-          "example": "04:00 PM"
+          "type": "number",
+          "example": 1724214719066
         },
         "Agenda": {
           "type": "array",

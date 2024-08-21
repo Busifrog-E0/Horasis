@@ -82,7 +82,7 @@ router.post('/events/:EntityId/invite/:InviteeId', decodeIDToken, ensureAuthoriz
     //@ts-ignore
     asyncHandler(InviteMembers));
 
-router.patch('/events/:EntityId/invite/accept', decodeIDToken, ensureAuthorized("User"),InsertEventTypeMiddleware,
+router.patch('/events/:EntityId/invite/accept', decodeIDToken, ensureAuthorized("User"), InsertEventTypeMiddleware,
     SwaggerDocs.patch_Events_EntityId_Invite_Accept,
     //@ts-ignore
     asyncHandler(AcceptMemberInvitation));
@@ -113,7 +113,7 @@ router.patch('/events/:EntityId/member/permissions', decodeIDToken, ensureAuthor
     //@ts-ignore
     asyncHandler(UpdateMemberPermissions));
 
-router.patch('/events/:EntityId/member/permissions/remove', decodeIDToken, ensureAuthorized("User"), ValidatePatchRemovePermission,
+router.patch('/events/:EntityId/member/:MemberId/permissions/remove', decodeIDToken, ensureAuthorized("User"), ValidatePatchRemovePermission,
     SwaggerDocs.patch_Events_EntityId_Member_Permissions_Remove,
     //@ts-ignore
     asyncHandler(RemoveMemberPermissions));
