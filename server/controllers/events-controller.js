@@ -2,7 +2,7 @@ import e from 'express';
 
 import { ReadOneFromEvents, ReadEvents, UpdateEvents, CreateEvents, RemoveEvents, AggregateEvents, } from './../databaseControllers/events-databaseController.js';
 import { ReadOneFromUsers } from '../databaseControllers/users-databaseController.js';
-import { MemberInit } from './members-controller.js';
+import { GetPermissionOfMember, MemberInit } from './members-controller.js';
 import { CreateMembers, ReadMembers } from '../databaseControllers/members-databaseController.js';
 import { RemoveNotificationForEntity } from './notifications-controller.js';
 
@@ -37,7 +37,9 @@ const GetEvents = async (req, res) => {
         Filter["EventName"] = { $regex: Keyword, $options: 'i' };
     }
     // @ts-ignore
-    const data = await ReadEvents(Filter, NextId, Limit, OrderBy);
+    const Events = await ReadEvents(Filter, NextId, Limit, OrderBy);
+    // @ts-ignore
+    const data = await Promise.all(Events.map(async Event => await SetEventDataForGet(Event, req.user.UserId)));
     return res.json(data);
 }
 
@@ -47,7 +49,8 @@ const GetEvents = async (req, res) => {
  * @returns
  */
 const GetUserEvents = async (req, res) => {
-    const { UserId } = req.params;
+    //@ts-ignore
+    const { UserId } = req.user;
     const { Filter, NextId, Keyword, Limit, OrderBy } = req.query;
     if (Keyword) {
         // @ts-ignore
@@ -90,7 +93,8 @@ const GetUserEvents = async (req, res) => {
 }
 
 const GetInvitedEvents = async (req, res) => {
-    const { UserId } = req.params;
+    //@ts-ignore
+    const { UserId } = req.user;
     const { Filter, NextId, Keyword, Limit, OrderBy } = req.query;
     if (Keyword) {
         // @ts-ignore
@@ -138,10 +142,11 @@ const GetInvitedEvents = async (req, res) => {
  * @returns {Promise<e.Response<true>>}
  */
 const PostEvents = async (req, res) => {
-    const { OrganiserId } = req.body;
+    // @ts-ignore
+    const { UserId: OrganiserId } = req.user;
     const UserDetails = await ReadOneFromUsers(OrganiserId);
     req.body = EventInit(req.body);
-    const EventId = await CreateEvents({ ...req.body, UserDetails });
+    const EventId = await CreateEvents({ ...req.body, UserDetails, OrganiserId });
     const Member = MemberInit({ MemberId: OrganiserId, EntityId: EventId, UserDetails }, "Accepted", true);
     await CreateMembers(Member);
     return res.json(EventId);
