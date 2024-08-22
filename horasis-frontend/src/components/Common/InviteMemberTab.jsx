@@ -5,14 +5,14 @@ import { AuthContext } from '../../utils/AuthProvider'
 import { useToast } from '../Toast/ToastService'
 import avatar from '../../assets/icons/avatar.svg'
 
-const InviteMemberTab = ({ connection, discussionId }) => {
+const InviteMemberTab = ({ connection, discussionId,from='discussions' }) => {
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
 	const toast = useToast()
 	const [inviteSent, setInviteSent] = useState(false)
 
 	const sentInvite = () => {
 		postItem(
-			`discussions/${discussionId}/invite/${connection.DocId}`,
+			`${from}/${discussionId}/invite/${connection.DocId}`,
 			{},
 			(result) => {
 				setInviteSent(result)

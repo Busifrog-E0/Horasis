@@ -337,7 +337,7 @@ const CreateEvent = () => {
 							fileFieldName='CoverPicture'
 						/>
 					)}
-					{activeStep === 5 && <CreateEventStep5 changeStep={changeStep} activeStep={activeStep} />}
+					{activeStep === 5 && <CreateEventStep5 changeStep={changeStep} activeStep={activeStep} eventId={eventId} />}
 					{activeStep === 6 && <EventSettings from='create' eventId={eventId} event={event} />}
 					{/* {activeStep !== 6 && */}
 					<div className='grid grid-cols-2 lg:grid-cols-3 gap-4 py-8'>

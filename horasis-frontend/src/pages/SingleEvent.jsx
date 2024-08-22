@@ -19,6 +19,7 @@ import edit from '../assets/icons/edit.svg'
 import Tab from '../components/ui/Tab'
 import EventParticipantsTab from '../components/Events/EventsTabs/EventParticipantsTab'
 import EventSettings from '../components/Events/EventsTabs/EventSettings'
+import EventsAgenda from '../components/Events/EventsAgenda'
 
 const SingleEvent = () => {
 	const [activeTab, setActiveTab] = useState(0)
@@ -253,7 +254,7 @@ const SingleEvent = () => {
 		OnModalClose()
 		navigate('/events')
 	}
-	const miniEventTabs = () => [
+	const miniEventTabs = (event) => [
 		{
 			title: "Speakers' Profile",
 			render: () => (
@@ -265,7 +266,11 @@ const SingleEvent = () => {
 		},
 		{
 			title: 'Event Agenda',
-			render: () => <div className='py-3 pt-6'></div>,
+			render: () => (
+				<div className='py-3 pt-6'>
+					<EventsAgenda event={event} />
+				</div>
+			),
 		},
 	]
 
@@ -517,7 +522,12 @@ const SingleEvent = () => {
 					<div>
 						<div className='p-5 bg-system-secondary-bg rounded-lg'>
 							<div className='lg:mt-1'>
-								<MiniTab gap='gap-8' fontSize='text-md xl:text-xl' alignment='justify-center' tabs={miniEventTabs()} />
+								<MiniTab
+									gap='gap-8'
+									fontSize='text-md xl:text-xl'
+									alignment='justify-center'
+									tabs={miniEventTabs(event)}
+								/>
 							</div>
 						</div>
 					</div>
