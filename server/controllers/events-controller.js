@@ -196,6 +196,7 @@ const EventInit = (Event) => {
         ...Event,
         NoOfMembers: 1,
         MemberPermissions: {
+            IsAdmin: false,
             CanPostActivity: false,
             CanInviteOthers: false,
             CanUploadPhoto: false,
