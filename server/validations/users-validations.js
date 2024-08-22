@@ -4,7 +4,7 @@ import { QueryParametersSchema } from './common.js';
 const UserSchema = Joi.object({
     FullName: Joi.string().required(),
     Username: Joi.string().min(3).required(),
-    Email: Joi.string().email().required(),
+    Email: Joi.string().email().lowercase().required(),
     Password: Joi.string().min(8).required(),
     Country: Joi.string().required(),
     City: Joi.string().required(),
@@ -31,7 +31,7 @@ const ValidateUserRegister = async (req, res, next) => {
 
 const ValidateUserLogin = async (req, res, next) => {
     const Result = Joi.object({
-        Email: Joi.string().email().required(),
+        Email: Joi.string().email().lowercase().required(),
         Password: Joi.string().min(8).required(),
     }).validate(req.body, { stripUnknown: true });
     if (Result.error) {
@@ -142,7 +142,7 @@ const ValidatePostForgotPassword = async (req, res, next) => {
 const ValidatePasswordReset = async (req, res, next) => {
     const Result = Joi.object({
         Password: Joi.string().min(8).required(),
-        OTPId : Joi.string().required(),
+        OTPId: Joi.string().required(),
     }).validate(req.body, { stripUnknown: true });
     if (Result.error) {
         const message = Result.error.details.map((detail) => detail.message).join(', ');
@@ -161,5 +161,5 @@ export {
     ValidatePatchUsers, ValidatePatchUserPictures,
     ValidateGetUserMedia, ValidatePostForgotPassword,
     ValidatePasswordReset
-    
+
 }
