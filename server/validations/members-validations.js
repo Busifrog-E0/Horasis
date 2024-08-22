@@ -12,6 +12,21 @@ const MembersGetSchema = QueryParametersSchema.keys({
 });
 
 
+const ValidatePostMembers = async (req, res, next) => {
+    const Result = Joi.object({
+        Type: Joi.string().valid("Discussion", "Event"),
+    }).validate(req.body, { stripUnknown: true, convert: true });
+    if (Result.error) {
+        const message = Result.error.details.map((detail) => detail.message).join(', ');
+        return res.status(400).json(message);
+    }
+    else {
+        req.body = Result.value;
+        return next();
+    }
+}
+
+
 const ValidateGetMembers = async (req, res, next) => {
     const Result = MembersGetSchema.validate(req.query, { stripUnknown: true, convert: true });
     if (Result.error) {
@@ -26,6 +41,7 @@ const ValidateGetMembers = async (req, res, next) => {
 
 const ValidateInviteMembers = async (req, res, next) => {
     const Result = Joi.object({
+        Type : Joi.string().valid("Discussion","Event").required(),
         IsSpeaker: Joi.boolean(),
     }).validate(req.body, { stripUnknown: true, convert: true });
     if (Result.error) {
@@ -40,5 +56,6 @@ const ValidateInviteMembers = async (req, res, next) => {
 
 export {
     ValidateGetMembers,
-    ValidateInviteMembers
+    ValidateInviteMembers,
+    ValidatePostMembers
 }
