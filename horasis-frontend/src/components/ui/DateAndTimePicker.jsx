@@ -32,6 +32,7 @@ const DateAndTimePicker = ({
                 wrapperClassName="w-full"
                 className={twMerge(inputVariants({ variant, size, width, withIcon, className }))}
                 onChange={setValue}
+                {...props}
             />
         </div>
     );

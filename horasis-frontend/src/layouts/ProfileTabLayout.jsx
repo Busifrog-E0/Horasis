@@ -7,7 +7,7 @@ import { useEffect } from 'react'
 const ProfileTabLayout = () => {
 	const location = useLocation()
 	const checkHiddenInMobile = () => {
-		const arr = ['Connections', 'Articles', 'Discussions']
+		const arr = ['Connections', 'Articles', 'Discussions','Events']
 		let hide = arr.some((item) => location.pathname.includes(item))
 		return hide
 	}

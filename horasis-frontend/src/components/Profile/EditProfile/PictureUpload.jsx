@@ -19,6 +19,7 @@ const PictureUpload = ({
 	isUploading = false,
 	altTitle,
 	fileFieldName,
+	rounded=true
 }) => {
 	const fileInputRef = useRef(null)
 	const toast = useToast()
@@ -105,24 +106,24 @@ const PictureUpload = ({
 						) : (
 							<>
 								{isUploading ? (
-									<div className='w-52 lg:w-60 h-52 lg:h-60 rounded-full flex items-center justify-center relative'>
+									<div className={`w-52 lg:w-60 h-52 lg:h-60 ${rounded?'rounded-full':'rounded-md'} flex items-center justify-center relative`}>
 										<Spinner />
-										<div className='w-full h-full rounded-full flex items-center justify-center bg-black absolute top-0 bottom-0 left-0 right-0 opacity-20'>
+										<div className={`w-full h-full ${rounded?'rounded-full':'rounded-md'} flex items-center justify-center bg-black absolute top-0 bottom-0 left-0 right-0 opacity-20`}>
 											<img
 												src={selectedImage}
 												alt={altTitle}
-												// className='h-32 w-32 rounded-full object-cover'
-												className='w-52 lg:w-60 h-52 lg:h-60 rounded-full object-cover cursor-pointer'
+												// className='h-32 w-32 ${rounded?'rounded-full':'rounded-md'} object-cover'
+												className={`w-52 lg:w-60 h-52 lg:h-60 ${rounded?'rounded-full':'rounded-md'} object-cover cursor-pointer`}
 											/>
 										</div>
 									</div>
 								) : (
-									<div className='w-52 lg:w-60 h-52 lg:h-60 rounded-full flex items-center justify-center bg-black'>
+									<div className={`w-52 lg:w-60 h-52 lg:h-60 ${rounded?'rounded-full':'rounded-md'} flex items-center justify-center bg-black`}>
 										<img
 											src={selectedImage}
 											alt={altTitle}
-											// className='h-32 w-32 rounded-full object-cover'
-											className='w-52 lg:w-60 h-52 lg:h-60 rounded-full object-cover cursor-pointer'
+											// className='h-32 w-32 ${rounded?'rounded-full':'rounded-md'} object-cover'
+											className={`w-52 lg:w-60 h-52 lg:h-60 ${rounded?'rounded-full':'rounded-md'} object-cover cursor-pointer`}
 											onClick={handleClick}
 										/>
 									</div>
@@ -149,14 +150,14 @@ const PictureUpload = ({
 								)}
 							</div>
 						) : (
-							<div className='w-24 lg:w-60 h-24 lg:h-60 rounded-full flex items-center justify-center border-2 border-dashed bg-brand-light-gray'>
+							<div className={`w-24 lg:w-60 h-24 lg:h-60 ${rounded?'rounded-full':'rounded-md'} flex items-center justify-center border-2 border-dashed bg-brand-light-gray`}>
 								{isUploading ? (
 									<Spinner />
 								) : (
 									// <UserPlus2 className='text-border h-12 w-12' />
 									<>
 										<img
-											className='w-full h-full rounded-full cursor-pointer object-cover'
+											className={`w-full h-full ${rounded?'rounded-full':'rounded-md'} cursor-pointer object-cover`}
 											src={avatar}
 											alt='Rounded avatar'
 											onClick={handleClick}

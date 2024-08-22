@@ -65,19 +65,19 @@ const DashboardHeader = () => {
 										: 'bg-transparent'
 								}`}></div>
 						</div>
-						{/* <div className='w-max flex flex-col items-center'>
-						<a
-							className={`cursor-pointer  font-medium text-xl  ${
-								location.pathname === '/Events' ? 'text-system-primary-accent' : 'text-system-primary-text'
-							}`}
-							onClick={() => OnClickItem('/Events')}>
-							Events
-						</a>
-						<div
-							className={`h-1 w-10 rounded-full ${
-								location.pathname === '/Events' ? 'bg-system-primary-accent' : 'bg-transparent'
-							}`}></div>
-					</div> */}
+						<div className='w-max flex flex-col items-center'>
+							<a
+								className={`cursor-pointer  font-medium text-xl  ${
+									location.pathname === '/Events' ? 'text-system-primary-accent' : 'text-system-primary-text'
+								}`}
+								onClick={() => OnClickItem('/Events')}>
+								Events
+							</a>
+							<div
+								className={`h-1 w-10 rounded-full ${
+									location.pathname === '/Events' ? 'bg-system-primary-accent' : 'bg-transparent'
+								}`}></div>
+						</div>
 						<div className='w-max flex flex-col items-center'>
 							<a
 								className={`cursor-pointer  font-medium text-xl  ${
