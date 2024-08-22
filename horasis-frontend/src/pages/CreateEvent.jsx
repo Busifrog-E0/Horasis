@@ -15,8 +15,9 @@ import CreateEventStep4 from '../components/Events/CreateEvent/CreateEventSteps/
 import CreateEventStep5 from '../components/Events/CreateEvent/CreateEventSteps/CreateEventStep5'
 import CreateEventStep6 from '../components/Events/CreateEvent/CreateEventSteps/CreateEventStep6'
 import Modal from '../components/ui/Modal'
-import { postItem } from '../constants/operations'
+import { getItem, postItem } from '../constants/operations'
 import { useToast } from '../components/Toast/ToastService'
+import EventSettings from '../components/Events/EventsTabs/EventSettings'
 
 const CreateEvent = () => {
 	const { currentUserData, updateCurrentUser } = useAuth()
@@ -75,6 +76,23 @@ const CreateEvent = () => {
 	useEffect(() => {
 		console.log(postEventData)
 	}, [postEventData])
+
+	const [event, setEvent] = useState('')
+	const getEvent = () => {
+		getItem(
+			`events/${eventId}`,
+			(result) => {
+				setEvent(result)
+			},
+			(err) => {},
+			updateCurrentUser,
+			currentUserData,
+			toast
+		)
+	}
+	useEffect(() => {
+		getEvent()
+	}, [eventId])
 
 	const [isImageUploading, setIsImageUploading] = useState(false)
 	const [selectedDisplayImage, setSelectedDisplayImage] = useState(null)
@@ -320,7 +338,7 @@ const CreateEvent = () => {
 						/>
 					)}
 					{activeStep === 5 && <CreateEventStep5 changeStep={changeStep} activeStep={activeStep} />}
-					{activeStep === 6 && <CreateEventStep6 />}
+					{activeStep === 6 && <EventSettings from='create' eventId={eventId} event={event} />}
 					{/* {activeStep !== 6 && */}
 					<div className='grid grid-cols-2 lg:grid-cols-3 gap-4 py-8'>
 						<div className='hidden lg:block'></div>

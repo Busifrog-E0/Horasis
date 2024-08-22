@@ -17,6 +17,8 @@ import clock from '../assets/icons/clock.svg'
 import close from '../assets/icons/close.svg'
 import edit from '../assets/icons/edit.svg'
 import Tab from '../components/ui/Tab'
+import EventParticipantsTab from '../components/Events/EventsTabs/EventParticipantsTab'
+import EventSettings from '../components/Events/EventsTabs/EventSettings'
 
 const SingleEvent = () => {
 	const [activeTab, setActiveTab] = useState(0)
@@ -81,7 +83,7 @@ const SingleEvent = () => {
 						title: 'Participants',
 						render: () => (
 							<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
-								Participants
+								<EventParticipantsTab eventId={event.DocId} />
 							</div>
 						),
 					},
@@ -98,7 +100,9 @@ const SingleEvent = () => {
 						key: 3,
 						title: 'Settings',
 						render: () => (
-							<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>Settings</div>
+							<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
+								<EventSettings eventId={event.DocId} event={event} />
+							</div>
 						),
 					},
 				]
@@ -109,7 +113,7 @@ const SingleEvent = () => {
 						title: 'Participants',
 						render: () => (
 							<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
-								Participants
+								<EventParticipantsTab eventId={event.DocId} />
 							</div>
 						),
 					},
@@ -126,7 +130,9 @@ const SingleEvent = () => {
 						key: 2,
 						title: 'Settings',
 						render: () => (
-							<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>Settings</div>
+							<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
+								<EventSettings eventId={event.DocId} event={event} />
+							</div>
 						),
 					},
 				]
@@ -148,7 +154,7 @@ const SingleEvent = () => {
 						title: 'Participants',
 						render: () => (
 							<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
-								Participants
+								<EventParticipantsTab eventId={event.DocId} />
 							</div>
 						),
 					},
@@ -157,7 +163,9 @@ const SingleEvent = () => {
 						key: 2,
 						title: 'Settings',
 						render: () => (
-							<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>Settings</div>
+							<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
+								<EventSettings eventId={event.DocId} event={event} />
+							</div>
 						),
 					},
 				]
@@ -168,7 +176,7 @@ const SingleEvent = () => {
 						title: 'Participants',
 						render: () => (
 							<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
-								Participants
+								<EventParticipantsTab eventId={event.DocId} />
 							</div>
 						),
 					},
@@ -177,7 +185,9 @@ const SingleEvent = () => {
 						key: 1,
 						title: 'Settings',
 						render: () => (
-							<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>Settings</div>
+							<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
+								<EventSettings eventId={event.DocId} event={event} />
+							</div>
 						),
 					},
 				]
@@ -199,7 +209,7 @@ const SingleEvent = () => {
 						title: 'Participants',
 						render: () => (
 							<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
-								Participants
+								<EventParticipantsTab eventId={event.DocId} />
 							</div>
 						),
 					},
@@ -211,7 +221,7 @@ const SingleEvent = () => {
 						title: 'Participants',
 						render: () => (
 							<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
-								Participants
+								<EventParticipantsTab eventId={event.DocId} />
 							</div>
 						),
 					},
@@ -224,7 +234,7 @@ const SingleEvent = () => {
 					title: 'Join the event',
 					render: () => (
 						<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
-							Join  the  event
+							Join the event
 						</div>
 					),
 				},
