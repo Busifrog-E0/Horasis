@@ -5,6 +5,8 @@ import { ReadOneFromUsers } from '../databaseControllers/users-databaseControlle
 import { GetPermissionOfMember, MemberInit } from './members-controller.js';
 import { CreateMembers, ReadMembers } from '../databaseControllers/members-databaseController.js';
 import { RemoveNotificationForEntity } from './notifications-controller.js';
+import { AlertBoxObject } from './common.js';
+import { DetectLanguage } from './translations-controller.js';
 
 /**
  * @typedef {import('./../databaseControllers/events-databaseController.js').EventData} EventData 
@@ -159,7 +161,17 @@ const PostEvents = async (req, res) => {
  * @returns {Promise<e.Response<true>>}
  */
 const PatchEvents = async (req, res) => {
+    //@ts-ignore
+    const { UserId } = req.user
     const { EventId } = req.params;
+    const [Member] = await ReadMembers({ EntityId: EventId, MemberId: UserId }, undefined, 1, undefined);
+    if (!Member.Permissions.IsAdmin) {
+        return res.status(444).json(AlertBoxObject("Cannot Edit", "You are not an admin of this discussion"))
+    }
+    if (req.body.Description) {
+        req.body.OriginalLanguage = await DetectLanguage(req.body.Description);
+        req.body.Languages = {};
+    }
     await UpdateEvents(req.body, EventId);
     return res.json(true);
 }

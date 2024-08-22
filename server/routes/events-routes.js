@@ -119,7 +119,7 @@ router.patch('/events/:EntityId/member/:MemberId/permissions/remove', decodeIDTo
     //@ts-ignore
     asyncHandler(RemoveMemberPermissions));
 
-router.patch('/events/:EntityId/member/permissions/everyone', decodeIDToken, ensureAuthorized("User"), ValidateAddPermissionForEveryone,
+router.patch('/events/:EventId/member/permissions/everyone', decodeIDToken, ensureAuthorized("User"), ValidateAddPermissionForEveryone,
     SwaggerDocs.patch_Events_EntityId_Member_Permissions_Everyone,
     //@ts-ignore
     asyncHandler(PatchEvents));
