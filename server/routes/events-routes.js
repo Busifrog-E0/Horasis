@@ -18,7 +18,7 @@ import { ValidatePostActivities } from '../validations/activities-validations.js
 import { MemberPostActivityMiddleware } from '../middleware/members-middleware.js';
 import { ValidateAddPermissionForEveryone, ValidatePatchMemberPermission, ValidatePatchRemovePermission } from '../validations/discussions-validations.js';
 import { GetFilteredActivities, PostActivities } from '../controllers/activities-controller.js';
-import { ValidateInviteMembers } from '../validations/members-validations.js';
+import { ValidateGetMembers, ValidateInviteMembers } from '../validations/members-validations.js';
 const router = e.Router();
 
 router.get('/events', decodeIDToken, ensureAuthorized("User"), ValidateGetEntity, QueryParameterFormatting,
@@ -105,7 +105,7 @@ router.delete('/events/:EntityId/leave', decodeIDToken, ensureAuthorized("User")
 
 /*****************************************************MEMBERS************************************************************************************* */
 router.get('/events/:EntityId/members', decodeIDToken, ensureAuthorized("User"),
-    ValidateGetEntity, QueryParameterFormatting, SwaggerDocs.get_Events_EventId_Members,
+    ValidateGetMembers, QueryParameterFormatting, SwaggerDocs.get_Events_EventId_Members,
     //@ts-ignore
     asyncHandler(GetMembers));
 
