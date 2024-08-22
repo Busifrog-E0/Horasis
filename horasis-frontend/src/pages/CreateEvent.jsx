@@ -21,16 +21,15 @@ import { useToast } from '../components/Toast/ToastService'
 const CreateEvent = () => {
 	const { currentUserData, updateCurrentUser } = useAuth()
 	const toast = useToast()
-	const [activeStep, setActiveStep] = useState(5)
+	const [activeStep, setActiveStep] = useState(1)
 	const navigate = useNavigate()
 
 	const changeStep = (step) => {
-		console.log(step)
 		if (step >= 1 && step <= 6) {
 			setActiveStep(step)
 		}
 		if (step === 7) {
-			navigate(`/events/${123}`)
+			navigate(`/events/${eventId}`)
 		}
 	}
 
@@ -51,6 +50,7 @@ const CreateEvent = () => {
 	const isSixthStep = activeStep === 6
 
 	const [errorObj, setErrorObj] = useState({})
+	const [eventId, setEventId] = useState('')
 	const [postEventData, setPostEventData] = useState({
 		OrganiserId: currentUserData.CurrentUser.UserId,
 		EventName: '',
@@ -207,6 +207,7 @@ const CreateEvent = () => {
 				if (result) {
 					setIsModalOpen(false)
 					changeStep(activeStep + 1)
+					setEventId(result)
 				}
 				setIsImageUploading(false)
 			},

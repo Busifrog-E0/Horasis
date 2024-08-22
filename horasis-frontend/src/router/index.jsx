@@ -63,6 +63,7 @@ export const router = createBrowserRouter(
 					<Route path='/ViewProfile/:userid' element={<ShowUserProfile />} />
 					<Route path='/Discussions/:discussionid' element={<SingleDiscussion />} />
 					<Route path='/Articles/:articleid' element={<SingleArticles />} />
+					<Route path="/Events/:eventid" element={<SingleEvent />} />
 
 					{/* <Route path='/universalsearchdetails' element={<UniversalSearchDetails />} /> */}
 
