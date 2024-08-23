@@ -10,6 +10,7 @@ import { ReadConnections } from '../databaseControllers/connections-databaseCont
 import { ReadFollows } from '../databaseControllers/follow-databaseController.js';
 import { ConnectionStatus } from './connections-controller.js';
 import { PostActivityForProfilePatch } from './activities-controller.js';
+import { AddUserDetailsAfterInvited } from './invitations-controller.js';
 
 
 
@@ -101,6 +102,8 @@ const VerifyRegistrationOTP = async (req, res) => {
     const OTPData = await VerifyOTP(OTPId, OTP, res);
     //@ts-ignore
     const UserId = await CreateUsers(OTPData.Data);
+    //@ts-ignore
+    AddUserDetailsAfterInvited(OTPData.Data, UserId)
     const CurrentUser = {
         Role: "User",
         UserId
@@ -258,6 +261,10 @@ const PatchPassword = async (req, res) => {
     return res.json(true);
 }
 
+const CheckIfUserWithMailExists = async (Email) => {
+    const [User] = await ReadUsers({ Email }, undefined, 1, undefined);
+    return User ? true : false;
+}
 
 
 
@@ -307,5 +314,5 @@ export {
     GetOneFromUsers, GetUsers, PostUsersRegister, PatchUsers,
     UserLogin, VerifyRegistrationOTP, CheckUsernameAvailability,
     ViewOtherUserRelations, ViewOtherUserData, SendForgotPasswordOTP,
-    PatchPassword, 
+    PatchPassword, CheckIfUserWithMailExists
 }

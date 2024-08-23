@@ -167,7 +167,10 @@ const TranslateText = async (Text, TargetLanguage) => {
  */
 const DetectLanguage = async (Text) => {
     const [DetectedLanguage] = await translate.detect(Text);
-    return Object.keys(LanguageCodes).find(key => LanguageCodes[key] === DetectedLanguage.language);
+    return Object.keys(LanguageCodes).find(key => {
+        const code = LanguageCodes[key];
+        return DetectedLanguage.language === code || DetectedLanguage.language.startsWith(code.split('-')[0]);
+    })
 }
 
 /**

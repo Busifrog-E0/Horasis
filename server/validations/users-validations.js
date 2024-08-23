@@ -17,7 +17,7 @@ const UserSchema = Joi.object({
 
 
 const ValidateUserRegister = async (req, res, next) => {
-    const Result = UserSchema.validate(req.body, { stripUnknown: true });
+    const Result = UserSchema.validate(req.body, { stripUnknown: true, convert: true });
     if (Result.error) {
         const message = Result.error.details.map((detail) => detail.message).join(', ');
         return res.status(400).json(message);
@@ -33,7 +33,7 @@ const ValidateUserLogin = async (req, res, next) => {
     const Result = Joi.object({
         Email: Joi.string().email().lowercase().required(),
         Password: Joi.string().min(8).required(),
-    }).validate(req.body, { stripUnknown: true });
+    }).validate(req.body, { stripUnknown: true, convert: true });
     if (Result.error) {
         const message = Result.error.details.map((detail) => detail.message).join(', ');
         return res.status(400).json(message);
@@ -154,12 +154,44 @@ const ValidatePasswordReset = async (req, res, next) => {
     }
 }
 
+const ValidatePostUsersInvite = (req, res, next) => {
+    const Result = Joi.object({
+        ActionType: Joi.string().valid("Discussion-Invite-Member", "Event-Invite-Member", "Event-Invite-Speaker").required(),
+        EmailIds: Joi.array().items(Joi.string().email().lowercase()).min(1).required(),
+        EntityId: Joi.string().required()
+    }).validate(req.body, { stripUnknown: true, convert: true });
+    if (Result.error) {
+        const message = Result.error.details.map((detail) => detail.message).join(', ');
+        return res.status(400).json(message);
+    }
+    else {
+        req.body = Result.value;
+        return next();
+    }
+}
+
+const ValidateMailCheck = (req, res, next) => {
+    const Result = Joi.object({
+        UserRole: Joi.string().valid("Member", "Speaker").required(),
+        Email: Joi.string().email().lowercase().required(),
+        EntityType: Joi.string().valid("Discussion", "Event").required()
+    }).validate(req.body, { stripUnknown: true, convert: true });
+    if (Result.error) {
+        const message = Result.error.details.map((detail) => detail.message).join(', ');
+        return res.status(400).json(message);
+    }
+    else {
+        req.body = Result.value;
+        return next();
+    }
+}
 
 export {
     ValidateUserRegister, ValidateUserLogin,
     ValidateVerifyOTP, ValidateCheckUsername,
     ValidatePatchUsers, ValidatePatchUserPictures,
     ValidateGetUserMedia, ValidatePostForgotPassword,
-    ValidatePasswordReset
+    ValidatePasswordReset, ValidatePostUsersInvite,
+    ValidateMailCheck
 
 }

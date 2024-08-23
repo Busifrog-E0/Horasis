@@ -109,6 +109,12 @@ const PushArrayEvents = async (data, DocId) => {
     return dataHandling.Update("Events", data, DocId, ["$push"], false);
 }
 
+const PullArrayEvents = async (data, DocId) => {
+    return dataHandling.Update("Events", data, DocId, ["$pull"], false);
+}
+
+
+
 
 export {
     ReadEvents,
@@ -118,5 +124,6 @@ export {
     RemoveEvents,
     IncrementEvents,
     AggregateEvents,
-    PushArrayEvents
+    PushArrayEvents,
+    PullArrayEvents
 }

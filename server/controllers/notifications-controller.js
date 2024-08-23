@@ -9,6 +9,7 @@ import { ReadOneFromDiscussions } from '../databaseControllers/discussions-datab
 import { ConnectionStatus } from './connections-controller.js';
 import { ReadMembers } from '../databaseControllers/members-databaseController.js';
 import { ReadOneFromEvents } from '../databaseControllers/events-databaseController.js';
+import { ReadSpeakers } from '../databaseControllers/speakers-databaseController.js';
 /**
  * @typedef {import('./../databaseControllers/notifications-databaseController.js').NotificationData} NotificationData 
  */
@@ -97,8 +98,18 @@ const AddContentAndStatusToNotification = async (Notification) => {
                 break;
         }
         Notification.Status = Member[0].MembershipStatus;
-        if (Member[0].IsSpeaker) {
-            Notification.Content = Notification.Content + ` as an Speaker`
+    }
+    if (Notification.Type === "Invitation-Speaker") {
+        const Speaker = await ReadSpeakers({ SpeakerId: Notification.RecipientId, EventId: Notification.EntityId }, undefined, 1, undefined);
+        switch (Speaker[0].MembershipStatus) {
+            case "Invited":
+                Notification.Content = `@${Notification.UserDetails.FullName}@ has send you an invitation to ${Notification.EntityType} : @${Notification.EntityName}@ as an Speaker`;
+                break;
+            case "Accepted":
+                Notification.Content = `You have accepted the invitation to ${Notification.EntityType} : @${Notification.EntityName}@`;
+                break;
+            default:
+                break;
         }
     }
     return Notification;
@@ -512,6 +523,36 @@ const RemoveNotificationForMember = async (EntityId, UserId) => {
     return Promise.all([...Notifications, ...NotificationsForAdmin].map(Notification => RemoveNotifications(Notification.DocId)));
 }
 
+/**************************************************SPEAKERS*************************************************************************************************************** */
+
+const SendNotificationForSpeaker = async (EntityId, UserId, SendUserId) => {
+    const UserDetails = await ReadOneFromUsers(SendUserId);
+    const Event = await ReadOneFromEvents(EntityId);
+    const EntityName = Event.EventName;
+    const Link = `/events/${EntityId}`;
+    const NotificationObject = {
+        NotifierId: SendUserId,
+        EntityId: EntityId,
+        EntityType: "Event",
+        Content: ``,
+        Link: Link,
+        Type: "Invitation-Speaker",
+        ContentLinks: [
+            { Text: EntityName, Link: Link },
+            { Text: UserDetails.FullName, Link: `/ViewProfile/${SendUserId}` }],
+        UserDetails,
+        EntityName,
+
+    }
+    return await SendNotificationToUser(NotificationObject, UserId);
+}
+
+const RemoveNotificationForSpeaker = async (EventId, UserId) => {
+    const [Notifications] = await ReadNotifications({ EntityId: EventId, RecipientId: UserId, Type: "Invitation-Speaker" }, undefined, -1, undefined);
+    return RemoveNotifications(Notifications.DocId);
+}
+
+
 const RemoveNotificationForEntity = async (EntityId) => {
     const Notifications = await ReadNotifications({ EntityId }, undefined, -1, undefined);
     return Promise.all(Notifications.map(Notification => RemoveNotifications(Notification.DocId)));
@@ -536,6 +577,7 @@ export {
     SendNotificationsForFollow, SendNotificationForMemberRequest, SendNotificationForMemberRequestStatus, SendNotificationForMemberInvitation,
     SendNotificationToUser, SendNotificationForMemberJoin, SendNotificationsForConnectionAccept, SendNotificationsForConnectionRequest,
     RemoveNotificationsAfterActivityMentionPatch, RemoveNotificationsForConnectionRequest, GetOneFromNotifications,
-    RemoveNotificationsForFollow, RemoveNotificationForMember, SendNotificationToUserOnCommentPost, RemoveNotificationForEntity
+    RemoveNotificationsForFollow, RemoveNotificationForMember, SendNotificationToUserOnCommentPost, RemoveNotificationForEntity,
+    SendNotificationForSpeaker,RemoveNotificationForSpeaker
 
 }

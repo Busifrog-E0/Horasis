@@ -7,6 +7,8 @@ import { CreateMembers, ReadMembers } from '../databaseControllers/members-datab
 import { RemoveNotificationForEntity } from './notifications-controller.js';
 import { AlertBoxObject } from './common.js';
 import { DetectLanguage } from './translations-controller.js';
+import { CheckIfUserWithMailExists } from './users-controller.js';
+import { ReadInvitations } from '../databaseControllers/invitations-databaseController.js';
 
 /**
  * @typedef {import('./../databaseControllers/events-databaseController.js').EventData} EventData 
@@ -202,6 +204,31 @@ const SetEventDataForGet = async (Event, UserId) => {
     return Event;
 }
 
+/**
+ * 
+ * @param {string} Email 
+ * @param {"Speaker"|"Member"} Type 
+ * @returns 
+ */
+const CheckIfMailAvailableToInviteInEvent = async (Email, Type) => {
+    switch (Type) {
+        case "Speaker":
+            const [SpeakerInvitation] = await ReadInvitations({ Email }, undefined, 1, undefined);
+            if (SpeakerInvitation && SpeakerInvitation.OnCreate.some(object => object.ActionType === "Event-Invite-Speaker")) {
+                return AlertBoxObject("Already Invited", "User with this email has already been invited")
+            }
+            break;
+        case "Member":
+            const [MemberInvitation] = await ReadInvitations({ Email }, undefined, 1, undefined);
+            if (MemberInvitation && MemberInvitation.OnCreate.some(object => object.ActionType === "Event-Invite-Member")) {
+                return AlertBoxObject("Already Invited", "User with this email has already been invited")
+            }
+            break;
+        default:
+            break;
+    }
+    return true;
+}
 
 const EventInit = (Event) => {
     return {
@@ -221,5 +248,5 @@ const EventInit = (Event) => {
 
 export {
     GetOneFromEvents, GetEvents, PostEvents, PatchEvents, DeleteEvents,
-    GetUserEvents, GetInvitedEvents, SetEventDataForGet
+    GetUserEvents, GetInvitedEvents, SetEventDataForGet, CheckIfMailAvailableToInviteInEvent
 }

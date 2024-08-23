@@ -42,7 +42,6 @@ const ValidateGetMembers = async (req, res, next) => {
 const ValidateInviteMembers = async (req, res, next) => {
     const Result = Joi.object({
         Type : Joi.string().valid("Discussion","Event").required(),
-        IsSpeaker: Joi.boolean(),
     }).validate(req.body, { stripUnknown: true, convert: true });
     if (Result.error) {
         const message = Result.error.details.map((detail) => detail.message).join(', ');
