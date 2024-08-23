@@ -10,7 +10,7 @@ import { useEffect, useState } from 'react'
 import Spinner from '../../../ui/Spinner'
 import SearchComponent from '../../../Search/SearchBox/SearchComponent'
 
-const CreateEventStep5 = ({ changeStep, activeStep, eventId, from = 'create' }) => {
+const CreateEventStep5 = ({ changeStep, activeStep, eventId, from = 'create', IsAdmin = false }) => {
 	const { updateCurrentUser, currentUserData } = useAuth()
 	const toast = useToast()
 	const [isLoading, setIsLoading] = useState(true)
@@ -87,12 +87,30 @@ const CreateEventStep5 = ({ changeStep, activeStep, eventId, from = 'create' }) 
 
 	return (
 		<div className='flex flex-col gap-0'>
-			<div className='mb-4'>
-				<div className='flex-1'>
-					<h1 className='text-system-primary-text font-medium text-lg'>Register Speakers</h1>
-					<p className='text-brand-gray mt-1 mb-2 text-base'>Add speakers for your event</p>
-				</div>
-			</div>
+			{from === 'create' && (
+				<>
+					<div className='mb-4'>
+						<div className='flex-1'>
+							<h1 className='text-system-primary-text font-medium text-lg'>Register Speakers</h1>
+							<p className='text-brand-gray mt-1 mb-2 text-base'>Add speakers for your event</p>
+						</div>
+					</div>
+				</>
+			)}
+			{from === 'tab' && (
+				<>
+					{IsAdmin && (
+						<>
+							<div className='mb-4'>
+								<div className='flex-1'>
+									<h1 className='text-system-primary-text font-medium text-lg'>Register Speakers</h1>
+									<p className='text-brand-gray mt-1 mb-2 text-base'>Add speakers for your event</p>
+								</div>
+							</div>
+						</>
+					)}
+				</>
+			)}
 			<div className='mb-2'>
 				<div className='flex-1'>
 					<h1 className='text-system-primary-text font-medium text-lg'>Invite Members</h1>
@@ -144,7 +162,9 @@ const CreateEventStep5 = ({ changeStep, activeStep, eventId, from = 'create' }) 
 									) : (
 										<>
 											{connections.map((item) => {
-												return <InviteMemberTab from='events' connection={item} key={item.DocId} discussionId={eventId} />
+												return (
+													<InviteMemberTab from='events' connection={item} key={item.DocId} discussionId={eventId} />
+												)
 											})}
 										</>
 									)}

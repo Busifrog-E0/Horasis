@@ -99,7 +99,7 @@ const EventsSection = () => {
 			/>
 			<h4 className='font-bold text-2xl text-system-primary-accent mt-4 mb-2'>Events</h4>
 			<h4 className=' text-base text-system-primary-text mb-2'>
-				Find answers, ask questions, and connect with our community aroundthe world.
+				Find answers, ask questions, and connect with our community around the world.
 			</h4>
 			<div className='flex gap-6 flex-wrap mt-4 mb-3'>
 				<TabItem variant='active'>All Events</TabItem>

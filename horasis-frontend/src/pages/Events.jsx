@@ -8,6 +8,7 @@ import { AuthContext } from '../utils/AuthProvider'
 import { useNavigate } from 'react-router-dom'
 import EventsList from '../components/Events/EventsList'
 import EventsSection from '../components/Events/EventsSection'
+import UpcomingEvents from '../components/Events/UpcomingEvents'
 
 const Events = () => {
 	const { currentUserData, scrollToTop } = useContext(AuthContext)
@@ -156,42 +157,7 @@ const Events = () => {
 				<Button onClick={() => OnClickCreateNew('/Events/Create/New')} width='full' variant='black'>
 					Create an Event
 				</Button>
-				<div className='p-5 bg-system-secondary-bg rounded-lg mt-4 lg:mt-8'>
-					<div className='flex items-center justify-between gap-2 mb-1'>
-						<h4 className='font-semibold text-2xl text-system-primary-text'>Upcoming Event</h4>
-						{/* arrow cursor-pointer */}
-					</div>
-					<div className='bg-system-secondary-bg rounded-lg mt-3 border border-system-file-border'>
-						<div className='h-44 overflow-hidden rounded-lg'>
-							<img
-								src='https://th.bing.com/th/id/OIP.SgzRjfgw5p1_0XYONbExogHaE8?rs=1&pid=ImgDetMain'
-								className='object-cover h-full w-full'
-							/>
-						</div>
-						<div className='p-2 pt-5'>
-							<h4 className='text-base font-semibold text-system-primary-text mb-2 leading-6'>Horasis Meeting </h4>
-							<div className='flex flex-wrap items-center gap-x-2'>
-								<h4 className='text-xs text-brand-gray-dim'>Virtual Event</h4>
-								<h4 className='tetx-xs text-brand-gray-dim'>•</h4>
-								<h4 className='text-xs text-brand-gray-dim'>104 Participants</h4>
-							</div>
-						</div>
-						<div className='p-2 pt-4'>
-							<h4 className='text-xs text-brand-gray-dim'>When</h4>
-							<h4 className='text-base text-system-primary-text mb-2 leading-6'>29 January 2024 19:30</h4>
-						</div>
-						<div className='p-2 pt-0'>
-							<h4 className='text-base text-brand-gray-dim'>About the event</h4>
-							<h4 className='text-sm text-system-primary-text mb-2 mt-3'>
-								Horasis Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-								labore et dolore magna aliqua. Ut enim ad minim veniam.
-							</h4>
-						</div>
-						<div className='flex items-center justify-center pb-4'>
-							<Button variant='outline'>Register</Button>
-						</div>
-					</div>
-				</div>
+				<UpcomingEvents />
 			</div>
 		</>
 	)

@@ -8,7 +8,7 @@ import { getDateInWordsFormat, gettimenow, relativeTime } from '../utils/date'
 import Button from '../components/ui/Button'
 import Modal from '../components/ui/Modal'
 import { useToast } from '../components/Toast/ToastService'
-import { getItem } from '../constants/operations'
+import { deleteItem, getItem, patchItem, postItem } from '../constants/operations'
 import cover from '../assets/icons/cover.svg'
 import arrowback from '../assets/icons/arrowback.svg'
 import camera from '../assets/icons/camera.svg'
@@ -18,8 +18,11 @@ import close from '../assets/icons/close.svg'
 import edit from '../assets/icons/edit.svg'
 import Tab from '../components/ui/Tab'
 import EventParticipantsTab from '../components/Events/EventsTabs/EventParticipantsTab'
+import CreateEventStep5 from '../components/Events/CreateEvent/CreateEventSteps/CreateEventStep5'
 import EventSettings from '../components/Events/EventsTabs/EventSettings'
 import EventsAgenda from '../components/Events/EventsAgenda'
+import TimeLineTab from '../components/Activities/TimeLineTab'
+import EventJoinRequest from '../components/Events/EventsTabs/EventJoinRequest'
 
 const SingleEvent = () => {
 	const [activeTab, setActiveTab] = useState(0)
@@ -75,7 +78,13 @@ const SingleEvent = () => {
 						title: 'Activities',
 						render: () => (
 							<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
-								Activities
+								<TimeLineTab
+									api={`events/${event.DocId}/activities`}
+									gapBnTabs='gap-7'
+									classNameForPost='py-5'
+									bordered={true}
+									permissions={event.Permissions}
+								/>
 							</div>
 						),
 					},
@@ -84,16 +93,24 @@ const SingleEvent = () => {
 						title: 'Participants',
 						render: () => (
 							<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
-								<EventParticipantsTab eventId={event.DocId} />
+								{event?.Permissions?.CanInviteOthers && (
+									<div>
+										<CreateEventStep5 eventId={event.DocId} from='tab' IsAdmin={event?.Permissions?.IsAdmin} />
+									</div>
+								)}
+								<div className='my-4 flex flex-col gap-2'>
+									<h1 className='text-system-primary-text font-medium text-lg'>Current Participants</h1>
+									<EventParticipantsTab eventId={event.DocId} />
+								</div>
 							</div>
 						),
 					},
 					{
 						key: 2,
-						title: 'Join Requests',
+						title: 'Registration Requests',
 						render: () => (
 							<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
-								Join Requests
+								<EventJoinRequest eventId={event.DocId} />
 							</div>
 						),
 					},
@@ -114,16 +131,24 @@ const SingleEvent = () => {
 						title: 'Participants',
 						render: () => (
 							<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
-								<EventParticipantsTab eventId={event.DocId} />
+								{event?.Permissions?.CanInviteOthers && (
+									<div>
+										<CreateEventStep5 eventId={event.DocId} from='tab' IsAdmin={event?.Permissions?.IsAdmin} />
+									</div>
+								)}
+								<div className='my-4 flex flex-col gap-2'>
+									<h1 className='text-system-primary-text font-medium text-lg'>Current Participants</h1>
+									<EventParticipantsTab eventId={event.DocId} />
+								</div>
 							</div>
 						),
 					},
 					{
 						key: 1,
-						title: 'Join Requests',
+						title: 'Registration Requests',
 						render: () => (
 							<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
-								Join Requests
+								<EventJoinRequest eventId={event.DocId} />
 							</div>
 						),
 					},
@@ -146,7 +171,13 @@ const SingleEvent = () => {
 						title: 'Activities',
 						render: () => (
 							<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
-								Activities
+								<TimeLineTab
+									api={`events/${event.DocId}/activities`}
+									gapBnTabs='gap-7'
+									classNameForPost='py-5'
+									bordered={true}
+									permissions={event.Permissions}
+								/>
 							</div>
 						),
 					},
@@ -155,7 +186,15 @@ const SingleEvent = () => {
 						title: 'Participants',
 						render: () => (
 							<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
-								<EventParticipantsTab eventId={event.DocId} />
+								{event?.Permissions?.CanInviteOthers && (
+									<div>
+										<CreateEventStep5 eventId={event.DocId} from='tab' IsAdmin={event?.Permissions?.IsAdmin} />
+									</div>
+								)}
+								<div className='my-4 flex flex-col gap-2'>
+									<h1 className='text-system-primary-text font-medium text-lg'>Current Participants</h1>
+									<EventParticipantsTab eventId={event.DocId} />
+								</div>
 							</div>
 						),
 					},
@@ -177,7 +216,15 @@ const SingleEvent = () => {
 						title: 'Participants',
 						render: () => (
 							<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
-								<EventParticipantsTab eventId={event.DocId} />
+								{event?.Permissions?.CanInviteOthers && (
+									<div>
+										<CreateEventStep5 eventId={event.DocId} from='tab' IsAdmin={event?.Permissions?.IsAdmin} />
+									</div>
+								)}
+								<div className='my-4 flex flex-col gap-2'>
+									<h1 className='text-system-primary-text font-medium text-lg'>Current Participants</h1>
+									<EventParticipantsTab eventId={event.DocId} />
+								</div>
 							</div>
 						),
 					},
@@ -201,7 +248,13 @@ const SingleEvent = () => {
 						title: 'Activities',
 						render: () => (
 							<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
-								Activities
+								<TimeLineTab
+									api={`events/${event.DocId}/activities`}
+									gapBnTabs='gap-7'
+									classNameForPost='py-5'
+									bordered={true}
+									permissions={event.Permissions}
+								/>
 							</div>
 						),
 					},
@@ -210,7 +263,15 @@ const SingleEvent = () => {
 						title: 'Participants',
 						render: () => (
 							<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
-								<EventParticipantsTab eventId={event.DocId} />
+								{event?.Permissions?.CanInviteOthers && (
+									<div>
+										<CreateEventStep5 eventId={event.DocId} from='tab' IsAdmin={event?.Permissions?.IsAdmin} />
+									</div>
+								)}
+								<div className='my-4 flex flex-col gap-2'>
+									<h1 className='text-system-primary-text font-medium text-lg'>Current Participants</h1>
+									<EventParticipantsTab eventId={event.DocId} />
+								</div>
 							</div>
 						),
 					},
@@ -222,7 +283,15 @@ const SingleEvent = () => {
 						title: 'Participants',
 						render: () => (
 							<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
-								<EventParticipantsTab eventId={event.DocId} />
+								{event?.Permissions?.CanInviteOthers && (
+									<div>
+										<CreateEventStep5 eventId={event.DocId} from='tab' IsAdmin={event?.Permissions?.IsAdmin} />
+									</div>
+								)}
+								<div className='my-4 flex flex-col gap-2'>
+									<h1 className='text-system-primary-text font-medium text-lg'>Current Participants</h1>
+									<EventParticipantsTab eventId={event.DocId} />
+								</div>
 							</div>
 						),
 					},
@@ -234,9 +303,7 @@ const SingleEvent = () => {
 					key: 0,
 					title: 'Join the event',
 					render: () => (
-						<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
-							Join the event
-						</div>
+						<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'></div>
 					),
 				},
 			]
@@ -286,6 +353,89 @@ const SingleEvent = () => {
 		setIsRegistered(false)
 		setIsModalOpen(true)
 	}
+
+	const acceptInvite = () => {
+		patchItem(
+			`events/${event.DocId}/invite/accept`,
+			{},
+			(result) => {
+				if (result === true) {
+					getEvent()
+					onTabChange(tabs(event)[0])
+				}
+			},
+			(err) => {},
+			updateCurrentUser,
+			currentUserData,
+			toast
+		)
+	}
+	const joinEvent = () => {
+		postItem(
+			`events/${event.DocId}/join`,
+			{},
+			(result) => {
+				if (result === true) {
+					getEvent()
+					onTabChange(tabs(event)[0])
+				} else if (typeof result === 'object') {
+					getEvent()
+					onTabChange(tabs(event)[0])
+				}
+			},
+			(err) => console.log(err),
+			updateCurrentUser,
+			currentUserData,
+			toast
+		)
+	}
+	const unRegisterEvent = () => {
+		deleteItem(
+			`events/${event.DocId}/leave`,
+			(result) => {
+				if (result === true) {
+					getEvent()
+					onTabChange(tabs(event)[0])
+				}
+			},
+			(err) => {},
+			updateCurrentUser,
+			currentUserData,
+			toast
+		)
+	}
+	const rejectInvite = () => {
+		deleteItem(
+			`events/${event.DocId}/invite/${currentUserData.CurrentUser.UserId}/reject`,
+			(result) => {
+				if (result === true) {
+					getEvent()
+					onTabChange(tabs(event)[0])
+				}
+			},
+			(err) => {},
+			updateCurrentUser,
+			currentUserData,
+			toast
+		)
+	}
+
+	const cancelRegistrationRequest = () => {
+		deleteItem(
+			`events/${event.DocId}/join/${currentUserData.CurrentUser.UserId}/cancel`,
+			(result) => {
+				if (result === true) {
+					getEvent()
+					onTabChange(tabs(event)[0])
+				}
+			},
+			(err) => {},
+			updateCurrentUser,
+			currentUserData,
+			toast
+		)
+	}
+
 	return (
 		<>
 			<Modal isOpen={isModalOpen}>
@@ -341,7 +491,9 @@ const SingleEvent = () => {
 
 				<div className='absolute top-0 right-0 left-0 bottom-0 flex flex-col justify-between items-start p-4 lg:px-10 lg:py-6 bg-black/30 h-100 overflow-hidden overflow-y-auto'>
 					<div className='flex w-full items-start justify-between'>
-						<div className='flex items-center cursor-pointer' onClick={handleGoBack}>
+						<div
+							className={`inline-flex items-center justify-center w-12 h-12 p-3 overflow-hidden rounded-full border border-white bg-white cursor-pointer`}
+							onClick={handleGoBack}>
 							{/* back arrow */}
 							<img src={arrowback} alt='' className='h-6 cursor-pointer' />
 
@@ -416,13 +568,44 @@ const SingleEvent = () => {
 								</div>
 							</div>
 						</div>
-						<Button onClick={() => OnClickRegister()} width='full' variant='black'>
+						{/* <Button onClick={() => OnClickRegister()} width='full' variant='black'>
 							Register
-						</Button>
+						</Button> */}
+						<div className='flex gap-2'>
+							{event.IsMember ? (
+								<>
+									{currentUserData.CurrentUser.UserId !== event.OrganiserId && (
+										<Button width='full' variant='outline' onClick={() => unRegisterEvent()}>
+											Leave Event
+										</Button>
+									)}
+								</>
+							) : event.MembershipStatus === undefined ? (
+								<Button width='full' variant='black' onClick={() => joinEvent()}>
+									Register
+								</Button>
+							) : event.MembershipStatus === 'Requested' ? (
+								<Button width='full' variant='outline' onClick={() => cancelRegistrationRequest()}>
+									Cancel Registration
+								</Button>
+							) : event.MembershipStatus === 'Invited' ? (
+								<div className='flex flex-col items-start gap-2'>
+									<p className='text-system-secondary-text'>You have been invited to this event</p>
+									<div className='flex gap-2'>
+										<Button width='full' variant='outline' onClick={() => rejectInvite()}>
+											Reject
+										</Button>
+										<Button width='full' variant='black' onClick={() => acceptInvite()}>
+											Accept
+										</Button>
+									</div>
+								</div>
+							) : null}
+						</div>
 					</div>
 
 					<div className='lg:col-span-2'>
-						{event && (
+						{event && event.IsMember && (
 							<Tab
 								onTabChange={onTabChange}
 								activeTab={activeTab}
@@ -431,94 +614,109 @@ const SingleEvent = () => {
 								alignment='justify-start'
 							/>
 						)}
-						{/* <div className={`rounded-lg ${!joined && 'max-h-96 overflow-hidden relative '}`}>
-							{!event.IsMember && (
-								<div className='absolute top-0 right-0 left-0 bottom-0 p-4 lg:px-10 lg:py-6 bg-system-primary-accent-light h-100 overflow-hidden overflow-y-auto z-10'>
-									<div className='flex w-full items-start justify-end'>
-										<img src={edit} alt='' className='h-8 cursor-pointer' />
-									</div>
-									<div className='flex flex-col justify-center items-center mt-6'>
-										<h4 className='font-bold text-center text-3xl text-system-primary-accent mb-3'>
-											Join the Event Discussions
-										</h4>
-										<h4 className='text-md text-center text-system-primary-accent'>
-											Get ready for insightful conversations! Our discussions platform will be active 10 days before,during and 10 days after the event. Check in closer to the date to connect with peers, share perspectives and share most of your event experience.
-										</h4>
-										<h4 className='text-md text-center text-system-primary-accent mt-4 mb-6'>
-											Let the anticipation build - meaningful discussions await!
-										</h4>
-										<Button onClick={() => setJoined(true)} variant='success'>
-											Join
-										</Button>
-									</div>
-								</div>
-							)}
-							<div className={`flex flex-col gap-2 ${!event.IsMember && 'blur-lg'}`}>
-								<div className='p-5 bg-system-secondary-bg rounded-lg shadow-md'>
-									<div className='flex items-start gap-2'>
-										<img
-											className='w-12 h-12 rounded-full'
-											src='https://flowbite.com/docs/images/people/profile-picture-2.jpg'
-											alt='Rounded avatar'
-										/>
+						{event && !event.IsMember && (
+							<>
+								<div className={`rounded-lg ${!joined && 'max-h-96 overflow-hidden relative '}`}>
+									{!event.IsMember && (
+										<div className='absolute top-0 right-0 left-0 bottom-0 p-4 lg:px-10 lg:py-6 bg-system-primary-accent-light h-100 overflow-hidden overflow-y-auto z-10'>
+											{/* <div className='flex w-full items-start justify-end'>
+											<img src={edit} alt='' className='h-8 cursor-pointer' />
+										</div> */}
+											<div className='flex flex-col justify-center items-center mt-6'>
+												<h4 className='font-bold text-center text-3xl text-system-primary-accent mb-3'>
+													Join the Event
+												</h4>
+												<h4 className='text-md text-center text-system-primary-accent'>
+													Get ready for insightful conversations! Our discussions platform will be active 10 days
+													before,during and 10 days after the event. Check in closer to the date to connect with peers,
+													share perspectives and share most of your event experience.
+												</h4>
+												<h4 className='text-md text-center text-system-primary-accent mt-4 mb-6'>
+													Let the anticipation build - meaningful discussions await!
+												</h4>
+												{event.MembershipStatus === undefined && (
+													<Button width='full' variant='black' onClick={() => joinEvent()}>
+														Register
+													</Button>
+												)}
+												{event.MembershipStatus === 'Requested' && (
+													<p className='text-system-secondary-text'>Registration request has been sent</p>
+												)}
+											</div>
+										</div>
+									)}
+									<div className={`flex flex-col gap-2 ${!event.IsMember && 'blur-lg'}`}>
+										<div className='p-5 bg-system-secondary-bg rounded-lg shadow-md'>
+											<div className='flex items-start gap-2'>
+												<img
+													className='w-12 h-12 rounded-full'
+													src='https://flowbite.com/docs/images/people/profile-picture-2.jpg'
+													alt='Rounded avatar'
+												/>
 
-										<div className='flex-1'>
-											<div className='flex items-start justify-between gap-10'>
-												<h4 className='font-semibold text-md text-system-primary-accent mt-1'>Tejeswara Rao Pedada</h4>
-												<h4 className='font-medium text-xs text-brand-gray-dim'>
-													{relativeTime(new Date().getTime())}
+												<div className='flex-1'>
+													<div className='flex items-start justify-between gap-10'>
+														<h4 className='font-semibold text-md text-system-primary-accent mt-1'>
+															Tejeswara Rao Pedada
+														</h4>
+														<h4 className='font-medium text-xs text-brand-gray-dim'>
+															{relativeTime(new Date().getTime())}
+														</h4>
+													</div>
+												</div>
+											</div>
+											<div className='mt-5'>
+												<h4 className='text-system-primary-text font-medium text-md'>Have a great day!</h4>
+											</div>
+											<div className='flex items-center justify-between gap-10 mt-4'>
+												<div className='flex flex-wrap items-start justify-between gap-10'>
+													<div className='flex items-start gap-1 cursor-pointer'>
+														<p className='text-brand-gray-dim text-base mt-1'>likes</p>
+													</div>
+													<div className='flex items-start gap-1 cursor-pointer'>
+														<p className='text-brand-gray-dim text-base mt-1'>replies</p>
+													</div>
+												</div>
+												<DropdownMenu />
+											</div>
+										</div>
+										<div className='p-5 bg-system-secondary-bg rounded-lg shadow-md'>
+											<div className='flex items-start gap-2'>
+												<img
+													className='w-12 h-12 rounded-full'
+													src='https://flowbite.com/docs/images/people/profile-picture-3.jpg'
+													alt='Rounded avatar'
+												/>
+
+												<div className='flex-1'>
+													<div className='flex items-start justify-between gap-10'>
+														<h4 className='font-semibold text-md text-system-primary-accent mt-1'>Lee Wen De</h4>
+														<h4 className='font-medium text-xs text-brand-gray-dim'>{relativeTime(1706194651000)}</h4>
+													</div>
+												</div>
+											</div>
+											<div className='mt-5'>
+												<h4 className='text-system-primary-text font-medium text-md'>
+													Any interesting events coming up?
 												</h4>
 											</div>
-										</div>
-									</div>
-									<div className='mt-5'>
-										<h4 className='text-system-primary-text font-medium text-md'>Have a great day!</h4>
-									</div>
-									<div className='flex items-center justify-between gap-10 mt-4'>
-										<div className='flex flex-wrap items-start justify-between gap-10'>
-											<div className='flex items-start gap-1 cursor-pointer'>
-												<p className='text-brand-gray-dim text-base mt-1'>likes</p>
-											</div>
-											<div className='flex items-start gap-1 cursor-pointer'>
-												<p className='text-brand-gray-dim text-base mt-1'>replies</p>
+											<div className='flex items-center justify-between gap-10 mt-8'>
+												<div className='flex flex-wrap items-start justify-between gap-10'>
+													<div className='flex items-start gap-1 cursor-pointer'>
+														<p className='text-brand-gray-dim text-base mt-1'>likes</p>
+													</div>
+													<div className='flex items-start gap-1 cursor-pointer'>
+														<p className='text-brand-gray-dim text-base mt-1'>replies</p>
+													</div>
+												</div>
 											</div>
 										</div>
-										<DropdownMenu />
 									</div>
 								</div>
-								<div className='p-5 bg-system-secondary-bg rounded-lg shadow-md'>
-									<div className='flex items-start gap-2'>
-										<img
-											className='w-12 h-12 rounded-full'
-											src='https://flowbite.com/docs/images/people/profile-picture-3.jpg'
-											alt='Rounded avatar'
-										/>
-
-										<div className='flex-1'>
-											<div className='flex items-start justify-between gap-10'>
-												<h4 className='font-semibold text-md text-system-primary-accent mt-1'>Lee Wen De</h4>
-												<h4 className='font-medium text-xs text-brand-gray-dim'>{relativeTime(1706194651000)}</h4>
-											</div>
-										</div>
-									</div>
-									<div className='mt-5'>
-										<h4 className='text-system-primary-text font-medium text-md'>Any interesting events coming up?</h4>
-									</div>
-									<div className='flex items-center justify-between gap-10 mt-8'>
-										<div className='flex flex-wrap items-start justify-between gap-10'>
-											<div className='flex items-start gap-1 cursor-pointer'>
-												<p className='text-brand-gray-dim text-base mt-1'>likes</p>
-											</div>
-											<div className='flex items-start gap-1 cursor-pointer'>
-												<p className='text-brand-gray-dim text-base mt-1'>replies</p>
-											</div>
-										</div>
-										<DropdownMenu />
-									</div>
-								</div>
-							</div>
-						</div> */}
+							</>
+						)}
 					</div>
+
 					<div>
 						<div className='p-5 bg-system-secondary-bg rounded-lg'>
 							<div className='lg:mt-1'>

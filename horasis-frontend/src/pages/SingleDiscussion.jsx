@@ -154,6 +154,7 @@ const SingleDiscussion = () => {
 								gapBnTabs='gap-7'
 								classNameForPost='py-5'
 								bordered={true}
+								permissions={discussion.Permissions}
 							/>
 						</div>
 					),
@@ -218,6 +219,7 @@ const SingleDiscussion = () => {
 								gapBnTabs='gap-7'
 								classNameForPost='py-5'
 								bordered={true}
+								permissions={discussion.Permissions}
 							/>
 						</div>
 					),
