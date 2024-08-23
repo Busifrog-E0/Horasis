@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import ENV from "./../Env.js";
 import { decodeSocketIdToken } from "../middleware/auth-middleware.js";
 import { ReadOneFromConversations } from "../databaseControllers/conversations-databaseController.js";
+import moment from "moment";
 
 
 const ConnectSocket = (expressServer) => {
@@ -19,6 +20,8 @@ const ConnectSocket = (expressServer) => {
 
     io.on('connection', socket => {
         // @ts-ignore
+        await UpdateUsers({ Online: true }, socket.user.UserId);
+        //@ts-ignore
         socket.join(socket.user.UserId);
 
 
@@ -58,6 +61,8 @@ const ConnectSocket = (expressServer) => {
         // When user disconnects - to all others 
         socket.on('disconnect', () => {
             // @ts-ignore
+            await UpdateUsers({ Online: true, LastActive: moment().valueOf() }, socket.user.UserId);
+            //@ts-ignore
             socket.leave(socket.user.UserId);
         })
 
