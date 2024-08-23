@@ -19,6 +19,7 @@ import { MemberPostActivityMiddleware } from '../middleware/members-middleware.j
 import { ValidateAddPermissionForEveryone, ValidatePatchMemberPermission, ValidatePatchRemovePermission } from '../validations/discussions-validations.js';
 import { GetFilteredActivities, PostActivities } from '../controllers/activities-controller.js';
 import { ValidateGetMembers, ValidateInviteMembers } from '../validations/members-validations.js';
+import { DeleteSpeakers, PatchSpeakers, PostSpeakers } from '../controllers/speakers-controller.js';
 const router = e.Router();
 
 router.get('/events', decodeIDToken, ensureAuthorized("User"), ValidateGetEntity, QueryParameterFormatting,
@@ -151,5 +152,25 @@ router.get('/events/:EntityId/activities', decodeIDToken, ensureAuthorized("User
 router.delete('/events/:EventId', decodeIDToken, ensureAuthorized("User"),
     // @ts-ignore
     asyncHandler(DeleteEvents));
+
+/******************************************************************************SPEAKERS**************************************************************************************** */    
+
+router.post('/events/:EventId/speakers', decodeIDToken, ensureAuthorized("User"),
+    SwaggerDocs.post_Events_EventId_Speakers,
+    //@ts-ignore
+    asyncHandler(PostSpeakers));
+
+router.patch('/events/:EventId/speakers', decodeIDToken, ensureAuthorized("User"),
+    SwaggerDocs.patch_Events_EventId_Speakers,
+    //@ts-ignore
+    asyncHandler(PatchSpeakers));
+
+router.delete('/events/:EventId/speakers/:SpeakerId', decodeIDToken, ensureAuthorized("User"),
+    SwaggerDocs.delete_Events_EventId_Speakers_SpeakerId,
+    //@ts-ignore
+    asyncHandler(DeleteSpeakers));    
+ 
+    
+
 
 export default router;

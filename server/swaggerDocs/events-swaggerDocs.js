@@ -228,6 +228,23 @@ const patch_Events_EntityId_Member_Permissions_Everyone = async (req, res, next)
     next();
 }
 
+const post_Events_EventId_Speakers = async (req, res, next) => {
+    // #swagger.tags = ['Events']
+    /* #swagger.security = [{ "BearerAuth": [] }] */
+    next();
+}
+
+const patch_Events_EventId_Speakers = async (req, res, next) => {
+    // #swagger.tags = ['Events']
+    /* #swagger.security = [{ "BearerAuth": [] }] */
+    next();
+}
+
+const delete_Events_EventId_Speakers_SpeakerId = async (req, res, next) => {
+    // #swagger.tags = ['Events']
+    /* #swagger.security = [{ "BearerAuth": [] }] */
+    next();
+}
 
 export default {
     post_Events, get_User_UserId_Events, get_Events_EventId_Members_Requested,
@@ -245,5 +262,8 @@ export default {
     delete_Events_EventId_Invite_Reject,
     delete_Events_EventId_Leave,
     patch_Events_EntityId_Member_Permissions_Everyone,
-    get_Events_EventsId
+    get_Events_EventsId,
+    post_Events_EventId_Speakers,
+    patch_Events_EventId_Speakers,
+    delete_Events_EventId_Speakers_SpeakerId
 }
