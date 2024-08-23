@@ -204,12 +204,12 @@ const AcceptMemberInvitation = async (req, res) => {
         return res.status(444).json(AlertBoxObject("Cannot Accept", "You have already joined this discussion"));
     }
     await Promise.all([
-        UpdateMembers({ MembershipStatus: "Accepted" }, Member[0].DocId),
+        UpdateMembers({ MembershipStatus: "Accepted" }, Member.DocId),
         req.body.Type === "Discussion" ?
             IncrementDiscussions({ NoOfMembers: 1 }, EntityId)
             :
             IncrementEvents({ NoOfMembers: 1 }, EntityId),
-        Member.IsSpeaker ? PushArrayEvents({ Speakers: { SpeakerId: Member.MemberId, UserDetails: Member.UserDetails } }) : Promise.resolve(),
+        Member.IsSpeaker ? PushArrayEvents({ Speakers: { SpeakerId: Member.MemberId, UserDetails: Member.UserDetails }, }, EntityId) : Promise.resolve(),
     ])
     return res.json(true);
 }
