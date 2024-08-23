@@ -106,7 +106,7 @@ const UpcomingEvents = () => {
 							{events.map((item) => {
 								return (
 									<div className='bg-system-secondary-bg rounded-lg mt-3 ' key={item.DocId}>
-										<div className='w-full aspect-square overflow-hidden rounded-lg relative'>
+										<div className='w-full h-72 aspect-square overflow-hidden rounded-lg relative'>
 											<div className='absolute bg-black/40 h-full w-full flex items-start justify-end p-4'>
 												<div className='text-system-secondary-bg font-medium text-right w-1/2 text-lg flex justify-end items-end gap-4'>
 													{item.EventName}
