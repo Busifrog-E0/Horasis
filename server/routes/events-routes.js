@@ -155,7 +155,7 @@ router.delete('/events/:EventId', decodeIDToken, ensureAuthorized("User"),
 
 /******************************************************************************SPEAKERS**************************************************************************************** */    
 
-router.post('/events/:EventId/speakers', decodeIDToken, ensureAuthorized("User"),
+router.post('/events/:EventId/speakers/:SpeakerId', decodeIDToken, ensureAuthorized("User"),
     SwaggerDocs.post_Events_EventId_Speakers,
     //@ts-ignore
     asyncHandler(PostSpeakers));

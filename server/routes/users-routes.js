@@ -13,10 +13,11 @@ import { decodeIDToken, ensureAuthorized } from '../middleware/auth-middleware.j
 import SwaggerDocs from '../swaggerDocs/users-swaggerDocs.js'
 import e from 'express';
 import { CheckSameUser, QueryParameterFormatting, ValidateGetEntity } from '../middleware/common.js';
-import { ValidateCheckUsername, ValidatePatchUsers, ValidateUserLogin, ValidatePatchUserPictures, ValidateUserRegister, ValidateVerifyOTP, ValidateGetUserMedia, ValidatePostForgotPassword, ValidatePasswordReset } from '../validations/users-validations.js';
+import { ValidateCheckUsername, ValidatePatchUsers, ValidateUserLogin, ValidatePatchUserPictures, ValidateUserRegister, ValidateVerifyOTP, ValidateGetUserMedia, ValidatePostForgotPassword, ValidatePasswordReset, ValidatePostUsersInvite, ValidateMailCheck } from '../validations/users-validations.js';
 import { GetMedias } from '../controllers/medias-controller.js';
 import { CheckOTP } from '../controllers/auth-controller.js';
 import { GetNotifications, GetOneFromNotifications } from '../controllers/notifications-controller.js';
+import { CheckIfMailAvailableToInvite, InviteUserToCreateAccount } from '../controllers/invitations-controller.js';
 const router = e.Router();
 router.route
 
@@ -79,7 +80,7 @@ router.post('/users/forgotPassword/verify', ValidateVerifyOTP, SwaggerDocs.post_
     //@ts-ignore
     asyncHandler(CheckOTP));
 
-router.post('/users/forgotPassword/reset', ValidatePasswordReset,SwaggerDocs.post_Users_ForgotPassword_Reset,
+router.post('/users/forgotPassword/reset', ValidatePasswordReset, SwaggerDocs.post_Users_ForgotPassword_Reset,
     //@ts-ignore
     asyncHandler(PatchPassword));
 
@@ -88,8 +89,17 @@ router.get('/users/:RecipientId/notifications', decodeIDToken, ensureAuthorized(
     //@ts-ignore
     asyncHandler(GetNotifications));
 
-router.get('/users/:RecipientId/notifications/:NotificationId', decodeIDToken, ensureAuthorized("User"), 
+router.get('/users/:RecipientId/notifications/:NotificationId', decodeIDToken, ensureAuthorized("User"),
     SwaggerDocs.get_Users_UserId_Notifications_NotificationId,
     //@ts-ignore
-    asyncHandler(GetOneFromNotifications));    
+    asyncHandler(GetOneFromNotifications));
+
+router.post('/users/invite', decodeIDToken, ensureAuthorized("User"), ValidatePostUsersInvite, SwaggerDocs.post_Users_Invite,
+    //@ts-ignore
+    asyncHandler(InviteUserToCreateAccount));
+
+router.post('/users/invite/mailCheck', decodeIDToken, ensureAuthorized("User"), ValidateMailCheck, SwaggerDocs.post_Users_Invite_MailCheck,
+    //@ts-ignore
+    asyncHandler(CheckIfMailAvailableToInvite))
+
 export default router;

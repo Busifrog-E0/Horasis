@@ -177,14 +177,37 @@ const get_Users_UserId_Notifications_NotificationId = async (req, res, next) => 
     next();
 }
 
+const post_Users_Invite = async (req, res, next) => {
+    // #swagger.tags = ['Users']
+    /* #swagger.parameters['body'] = {
+                    in: 'body',
+                    schema: { EntityId : "string" , ActionType : "Event-Invite-Speaker" , EmailIds : ["wXU8I@example.com"] }
+        } 
+    */
+    next();
+}
+
+const post_Users_Invite_MailCheck = async (req, res, next) => {
+    // #swagger.tags = ['Users']
+    /* #swagger.parameters['body'] = {
+                    in: 'body',
+                    schema: { Email : "wXU8I@example.com" , EntityType : "Discussion" , UserRole : "Member" }
+        } 
+    */
+    next();
+}
+
+
+
 export default {
-    post_Users_Register,post_Users_CheckUsername,
-    post_Users_Login,patch_Users_UserId,
+    post_Users_Register, post_Users_CheckUsername,
+    post_Users_Login, patch_Users_UserId,
     get_Users_UserId, patch_Users_UserId_Picture,
     post_Users_Verify, get_Users, get_Users_Suggested,
     get_Users_UserId_Media, post_Users_ForgotPassword,
     post_Users_ForgotPassword_Verify,
     post_Users_ForgotPassword_Reset,
     get_Users_UserId_Notifications,
-    get_Users_UserId_Notifications_NotificationId
+    get_Users_UserId_Notifications_NotificationId,
+    post_Users_Invite, post_Users_Invite_MailCheck
 }
