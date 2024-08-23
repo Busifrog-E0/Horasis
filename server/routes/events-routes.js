@@ -78,7 +78,7 @@ router.get('/events/:EntityId/members/invite', decodeIDToken, ensureAuthorized("
     //@ts-ignore
     asyncHandler(GetMembersToInvite));
 
-router.post('/events/:EntityId/invite/:InviteeId', decodeIDToken, ensureAuthorized("User"), ValidateInviteMembers, InsertEventTypeMiddleware,
+router.post('/events/:EntityId/invite/:InviteeId', decodeIDToken, ensureAuthorized("User"), InsertEventTypeMiddleware, ValidateInviteMembers,
     SwaggerDocs.post_Events_EntityId_Invite_InviteeId,
     //@ts-ignore
     asyncHandler(InviteMembers));
