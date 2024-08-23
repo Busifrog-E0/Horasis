@@ -13,6 +13,7 @@ import SearchComponent from '../Search/SearchBox/SearchComponent'
 const EventsSection = () => {
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
 	const toast = useToast()
+	const [activeTab, setActiveTab] = useState('all')
 	const [isLoading, setIsLoading] = useState(true)
 	const [isLoadingMore, setIsLoadingMore] = useState(false)
 	const [events, setEvents] = useState([])
@@ -86,6 +87,14 @@ const EventsSection = () => {
 		fetch()
 	}, [filters])
 
+	useEffect(() => {
+		if (activeTab === 'all') {
+			setFilters({ ...filters, OrderBy: 'Index' })
+		} else if (activeTab === 'popular') {
+			setFilters({ ...filters, OrderBy: 'NoOfMembers' })
+		}
+	}, [activeTab])
+
 	return (
 		<>
 			{/* <div className="flex-1 rounded-md p-2 px-4 border border-system-file-border flex items-center justify-between bg-system-secondary-bg">
@@ -102,31 +111,52 @@ const EventsSection = () => {
 				Find answers, ask questions, and connect with our community around the world.
 			</h4>
 			<div className='flex gap-6 flex-wrap mt-4 mb-3'>
-				<TabItem variant='active'>All Events</TabItem>
-				{/* <TabItem variant='inactive'>Popular Events</TabItem> */}
+				<TabItem
+					className='rounded-full'
+					variant={`${activeTab === 'all' ? 'active' : 'inactive'}`}
+					onClick={() => {
+						setActiveTab('all')
+					}}>
+					All Events
+				</TabItem>
+				<TabItem
+					className='rounded-full'
+					variant={`${activeTab === 'popular' ? 'active' : 'inactive'}`}
+					onClick={() => {
+						setActiveTab('popular')
+					}}>
+					Popular Events
+				</TabItem>
 			</div>
-			{isLoading ? (
-				<Spinner />
-			) : events.length > 0 ? (
-				<>
-					<EventsList data={events} emptyText={'No events'} gap={'gap-1 lg:gap-4'} cols={3} />
+			<div className='mb-4'>
+				{isLoading ? (
+					<Spinner />
+				) : events.length > 0 ? (
+					<>
+						<EventsList
+							data={events}
+							emptyText={'No events'}
+							gap={'gap-2 lg:gap-4'}
+							cols={'grid-cols-2 md:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3'}
+						/>
 
-					{isLoadingMore && (
-						<div className='bg-system-secondary-bg p-4 rounded-b-lg '>
-							<Spinner />
-						</div>
-					)}
-					{!pageDisabled && (
-						<div onClick={fetchMore} className='flex flex-row justify-end mt-4 mb-2'>
-							<div className='cursor-pointer flex items-center gap-2'>
-								<h4 className='font-semibold text-xl text-system-primary-accent'>Load More</h4>
+						{isLoadingMore && (
+							<div className='bg-system-secondary-bg p-4 rounded-b-lg '>
+								<Spinner />
 							</div>
-						</div>
-					)}
-				</>
-			) : (
-				<EmptyMembers emptyText={"You don't have any updates."} />
-			)}
+						)}
+						{!pageDisabled && (
+							<div onClick={fetchMore} className='flex flex-row justify-end mt-4 mb-2'>
+								<div className='cursor-pointer flex items-center gap-2'>
+									<h4 className='font-semibold text-xl text-system-primary-accent'>Load More</h4>
+								</div>
+							</div>
+						)}
+					</>
+				) : (
+					<EmptyMembers emptyText={"You don't have any updates."} />
+				)}
+			</div>
 		</>
 	)
 }

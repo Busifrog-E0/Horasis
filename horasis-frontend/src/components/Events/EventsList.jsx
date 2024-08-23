@@ -19,7 +19,7 @@ const EventsList = ({ cols = 3, gap = 'gap-1 lg:gap-4', data = [], emptyText }) 
 				<>
 					{data.length > 0 ? (
 						<>
-							<div className={`grid lg:grid-cols-${cols} ${gap}`}>
+							<div className={`grid ${cols} ${gap}`}>
 								{data.map((item, index) => {
 									return <EventTab event={item} key={index} onClick={GoToSingleEvent} />
 								})}

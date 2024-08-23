@@ -478,7 +478,7 @@ const SingleEvent = () => {
 					</div>
 				</Modal.Body>
 			</Modal>
-			<div className='overflow-hidden bg-red-400 h-80 lg:h-96 relative'>
+			<div className='overflow-hidden bg-system-primary-bg h-80 lg:h-96 relative'>
 				{event.CoverPicture ? (
 					<>
 						<img src={event.CoverPicture} className='object-cover h-full w-full' />
@@ -531,7 +531,7 @@ const SingleEvent = () => {
 					<div>
 						<div className='p-5 bg-system-secondary-bg rounded-lg mb-3 lg:mb-8'>
 							<h4 className='font-semibold text-xl text-system-primary-text mt-1 lg:mt-3'>About</h4>
-							<h4 className='font-semibold text-md text-system-primary-text mt-2.5 lg:mt-5 leading-8'>
+							<h4 className='font-medium text-md  text-system-secondary-text my-2 lg:my-2 leading-relaxed'>
 								{event.Description}
 							</h4>
 							<div className='flex items-start gap-4 mt-3'>

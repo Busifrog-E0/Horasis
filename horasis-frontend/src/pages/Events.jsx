@@ -154,7 +154,11 @@ const Events = () => {
                     </div> */}
 			</div>
 			<div>
-				<Button onClick={() => OnClickCreateNew('/Events/Create/New')} width='full' variant='black'>
+				<Button
+					onClick={() => OnClickCreateNew('/Events/Create/New')}
+					width='full'
+					variant='black'
+					className=' mb-4 lg:mb-8'>
 					Create an Event
 				</Button>
 				<UpcomingEvents />

@@ -87,7 +87,7 @@ const CreateEventStep5 = ({ changeStep, activeStep, eventId, from = 'create', Is
 
 	return (
 		<div className='flex flex-col gap-0'>
-			{from === 'create' && (
+			{/* {from === 'create' && (
 				<>
 					<div className='mb-4'>
 						<div className='flex-1'>
@@ -110,7 +110,7 @@ const CreateEventStep5 = ({ changeStep, activeStep, eventId, from = 'create', Is
 						</>
 					)}
 				</>
-			)}
+			)} */}
 			<div className='mb-2'>
 				<div className='flex-1'>
 					<h1 className='text-system-primary-text font-medium text-lg'>Invite Members</h1>

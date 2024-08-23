@@ -5,11 +5,12 @@ import Button from '../ui/Button'
 import { getItem } from '../../constants/operations'
 import { jsonToQuery } from '../../utils/searchParams/extractSearchParams'
 import { getNextId } from '../../utils/URLParams'
-import { getDateInWordsFormat, gettimenow } from '../../utils/date'
+import { getDateInWordsFormat, gettimenow, relativeTime } from '../../utils/date'
 import Spinner from '../ui/Spinner'
 import EmptyMembers from '../Common/EmptyMembers'
 import arrowforwhite from '../../assets/icons/arrowforwhite.svg'
 import { useNavigate } from 'react-router-dom'
+import avatar from '../../assets/icons/avatar.svg'
 
 const UpcomingEvents = () => {
 	const { updateCurrentUser, currentUserData } = useAuth()
@@ -89,9 +90,9 @@ const UpcomingEvents = () => {
 		fetch()
 	}, [filters])
 	return (
-		<div className='p-5 bg-system-secondary-bg rounded-lg mt-4 lg:mt-8'>
-			<div className='flex items-center justify-between gap-2 mb-1'>
-				<h4 className='font-semibold text-2xl text-system-primary-text'>Upcoming Event</h4>
+		<div className='bg-system-secondary-bg rounded-lg'>
+			<div className='flex items-center justify-between gap-2 my-1 px-5 py-2'>
+				<h4 className='font-semibold text-xl text-system-primary-text'>Upcoming Event</h4>
 				{/* arrow cursor-pointer */}
 			</div>
 			{isLoading ? (
@@ -104,10 +105,8 @@ const UpcomingEvents = () => {
 						<>
 							{events.map((item) => {
 								return (
-									<div
-										className='bg-system-secondary-bg rounded-lg mt-3 '
-										key={item.DocId}>
-										<div className='h-44 overflow-hidden rounded-lg relative'>
+									<div className='bg-system-secondary-bg rounded-lg mt-3 ' key={item.DocId}>
+										<div className='w-full aspect-square overflow-hidden rounded-lg relative'>
 											<div className='absolute bg-black/40 h-full w-full flex items-start justify-end p-4'>
 												<div className='text-system-secondary-bg font-medium text-right w-1/2 text-lg flex justify-end items-end gap-4'>
 													{item.EventName}
@@ -121,6 +120,36 @@ const UpcomingEvents = () => {
 												</div>
 											</div>
 											<img src={item.CoverPicture} className='object-cover h-full w-full' />
+										</div>
+										<div className='px-8 py-4'>
+											<div className='flex items-start gap-2'>
+												{item.UserDetails?.ProfilePicture ? (
+													<>
+														<img
+															className={` rounded-full h-10 w-10 object-cover`}
+															src={item.UserDetails?.ProfilePicture}
+															alt='Rounded avatar'
+														/>
+													</>
+												) : (
+													<>
+														<img className={` rounded-full h-10 w-10 object-cover`} src={avatar} alt='Rounded avatar' />
+													</>
+												)}
+
+												<div className='flex-1'>
+													<div className='flex items-start justify-between gap-10'>
+														<div className='flex  flex-col gap-1'>
+															<h1 className={`font-semibold text-system-primary-accent mt-1`}>
+																{item.UserDetails?.FullName}
+															</h1>
+															{/* <h4 className='text-system-primary-text text-md'>Updated their photo</h4> */}
+														</div>
+														<h4 className={`font-medium text-sm text-brand-gray-dim`}>{relativeTime(item.CreatedIndex)}</h4>
+													</div>
+												</div>
+											</div>
+											<p className='text-system-secondary-text whitespace-pre-line mt-4'>{item.Description}</p>
 										</div>
 										{/* <div className='p-1 px-4'>
 											<h4 className='text-base font-semibold text-system-primary-text mb-2 leading-6'>{item.Name}</h4>
