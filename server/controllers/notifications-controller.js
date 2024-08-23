@@ -98,7 +98,7 @@ const AddContentAndStatusToNotification = async (Notification) => {
         }
         Notification.Status = Member[0].MembershipStatus;
         if (Member[0].IsSpeaker) {
-            Notification.Content = Notification.Content + ` as an speaker`
+            Notification.Content = Notification.Content + ` as an Speaker`
         }
     }
     return Notification;
