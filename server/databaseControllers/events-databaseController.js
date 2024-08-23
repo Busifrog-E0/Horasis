@@ -105,6 +105,10 @@ const IncrementEvents = async (data, DocId) => {
     return dataHandling.Update("Events", data, DocId, ["$inc"], false);
 }
 
+const PushArrayEvents = async (data, DocId) => {
+    return dataHandling.Update("Events", data, DocId, ["$push"], false);
+}
+
 
 export {
     ReadEvents,
@@ -113,5 +117,6 @@ export {
     CreateEvents,
     RemoveEvents,
     IncrementEvents,
-    AggregateEvents
+    AggregateEvents,
+    PushArrayEvents
 }

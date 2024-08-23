@@ -3,11 +3,11 @@ import e from 'express';
 import { ReadOneFromMembers, ReadMembers, UpdateMembers, CreateMembers, RemoveMembers, UpdateManyMembers, } from './../databaseControllers/members-databaseController.js';
 import { IncrementDiscussions, ReadOneFromDiscussions } from '../databaseControllers/discussions-databaseController.js';
 import { AlertBoxObject } from './common.js';
-import { ReadOneFromUsers } from '../databaseControllers/users-databaseController.js';
+import { ReadOneFromUsers, ReadUsers } from '../databaseControllers/users-databaseController.js';
 import { ObjectId } from 'mongodb';
 import { AggregateConnections } from '../databaseControllers/connections-databaseController.js';
 import { RemoveNotificationForMember, SendNotificationForMemberInvitation, SendNotificationForMemberJoin, SendNotificationForMemberRequest, SendNotificationForMemberRequestStatus } from './notifications-controller.js';
-import { IncrementEvents, ReadOneFromEvents } from '../databaseControllers/events-databaseController.js';
+import { IncrementEvents, PushArrayEvents, ReadOneFromEvents, UpdateEvents } from '../databaseControllers/events-databaseController.js';
 /**
  * @typedef {import('./../databaseControllers/members-databaseController.js').MemberData} MemberData 
  */
@@ -136,35 +136,59 @@ const InviteMembers = async (req, res) => {
     const { UserId } = req.user;
     const { EntityId, InviteeId } = req.params;
     const IsSpeaker = req.body.IsSpeaker ? req.body.IsSpeaker : false;
-    const Member = await ReadMembers({ MemberId: UserId, EntityId }, undefined, 1, undefined);
+    const [Member] = await ReadMembers({ MemberId: UserId, EntityId }, undefined, 1, undefined);
 
-    if (!Member[0].Permissions.CanInviteOthers) {
+    if (!Member.Permissions.CanInviteOthers) {
         return res.status(444).json(AlertBoxObject("Cannot Invite", "You cannot invite others to this discussion"));
     }
 
-    const Invitee = await ReadMembers({ MemberId: InviteeId, EntityId }, undefined, 1, undefined);
+    const [Invitee] = await ReadMembers({ MemberId: InviteeId, EntityId }, undefined, 1, undefined);
 
-    if (Invitee[0]) {
-        if (Invitee[0].MembershipStatus === "Requested") {
-            await UpdateMembers({ MembershipStatus: "Accepted", IsSpeaker }, Invitee[0].DocId);
-            req.body.Type === "Discussion" ?
-                await IncrementDiscussions({ NoOfMembers: 1 }, EntityId)
-                :
-                await IncrementEvents({ NoOfMembers: 1 }, EntityId);
-            return res.json(true);
+    if (Invitee) {
+        switch (Invitee.MembershipStatus) {
+            case "Requested":
+                await UpdateMembers({ MembershipStatus: "Accepted", IsSpeaker }, Invitee[0].DocId);
+                req.body.Type === "Discussion" ?
+                    await IncrementDiscussions({ NoOfMembers: 1 }, EntityId)
+                    :
+                    await IncrementEvents({ NoOfMembers: 1 }, EntityId);
+                return res.json(true);
+
+            case "Invited":
+                return res.status(444).json(AlertBoxObject("Cannot Invite", "User has already been invited to this discussion"));
+
+            case "Accepted":
+
+                if (IsSpeaker && !Invitee.IsSpeaker) {
+                    await UpdateMembers({ IsSpeaker }, Invitee[0].DocId);
+                    return res.json(true);
+                }
+
+                return res.status(444).json(AlertBoxObject("Cannot Invite", "User is already a member of this discussion"));
+
+            default:
+                break;
         }
-        else if (Invitee[0].MembershipStatus === "Invited") {
-            return res.status(444).json(AlertBoxObject("Cannot Invite", "User has already been invited to this discussion"));
-        }
-        return res.status(444).json(AlertBoxObject("Cannot Invite", "User is already a member of this discussion"));
     }
 
     const UserDetails = await ReadOneFromUsers(InviteeId);
     req.body = { ...MemberInit(req.body, "Invited"), MemberId: InviteeId, EntityId, UserDetails, IsSpeaker };
-    await CreateMembers(req.body);
-    await SendNotificationForMemberInvitation(req.body.Type, EntityId, InviteeId, UserId);
+
+    await Promise.all([
+        CreateMembers(req.body),
+        SendNotificationForMemberInvitation(req.body.Type, EntityId, InviteeId, UserId),
+    ])
+
     return res.json(true);
 }
+
+
+const InviteUsingMail = async (req, res) => {
+    const { Email } = req.body;
+    const User = await ReadUsers({ Email }, undefined, 1, undefined);
+
+}
+
 /**
  * 
  * @param {e.Request} req 
@@ -175,15 +199,18 @@ const AcceptMemberInvitation = async (req, res) => {
     const { EntityId } = req.params;
     //@ts-ignore
     const { UserId } = req.user;
-    const Member = await ReadMembers({ MemberId: UserId, EntityId }, undefined, 1, undefined);
-    if (Member[0].MembershipStatus === "Accepted") {
+    const [Member] = await ReadMembers({ MemberId: UserId, EntityId }, undefined, 1, undefined);
+    if (Member.MembershipStatus === "Accepted") {
         return res.status(444).json(AlertBoxObject("Cannot Accept", "You have already joined this discussion"));
     }
-    await UpdateMembers({ MembershipStatus: "Accepted" }, Member[0].DocId);
-    req.body.Type === "Discussion" ?
-        await IncrementDiscussions({ NoOfMembers: 1 }, EntityId)
-        :
-        await IncrementEvents({ NoOfMembers: 1 }, EntityId);
+    await Promise.all([
+        UpdateMembers({ MembershipStatus: "Accepted" }, Member[0].DocId),
+        req.body.Type === "Discussion" ?
+            IncrementDiscussions({ NoOfMembers: 1 }, EntityId)
+            :
+            IncrementEvents({ NoOfMembers: 1 }, EntityId),
+        Member.IsSpeaker ? PushArrayEvents({ Speakers: { SpeakerId: Member.MemberId, UserDetails: Member.UserDetails } }) : Promise.resolve(),
+    ])
     return res.json(true);
 }
 
