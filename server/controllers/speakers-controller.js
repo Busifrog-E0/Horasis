@@ -6,8 +6,14 @@ import { ReadOneFromUsers } from '../databaseControllers/users-databaseControlle
 import { MemberInit } from './members-controller.js';
 import { CreateMembers } from '../databaseControllers/members-databaseController.js';
 import { IncrementEvents, PullArrayEvents } from '../databaseControllers/events-databaseController.js';
+import { RemoveNotificationForSpeaker, SendNotificationForSpeaker } from './notifications-controller.js';
+import { RemoveNotifications } from '../databaseControllers/notifications-databaseController.js';
 /**
  * @typedef {import('./../databaseControllers/speakers-databaseController.js').SpeakerData} SpeakerData 
+ */
+
+/**
+ * @typedef {import('./../databaseControllers/users-databaseController.js').UserData} UserData
  */
 
 /**
@@ -42,10 +48,16 @@ const GetSpeakers = async (req, res) => {
  * @returns {Promise<e.Response<true>>}
  */
 const PostSpeakers = async (req, res) => {
+    //@ts-ignore
+    const { UserId } = req.user
     const { EventId, SpeakerId } = req.params;
     const MembershipStatus = "Invited";
     const UserDetails = await ReadOneFromUsers(SpeakerId);
-    await CreateSpeakers({ EventId, SpeakerId, MembershipStatus, UserDetails });
+    await Promise.all([
+        await CreateSpeakers({ EventId, SpeakerId, MembershipStatus, UserDetails }),
+        SendNotificationForSpeaker(EventId, SpeakerId, UserId)
+    ])
+
     return res.json(true);
 }
 
@@ -58,7 +70,7 @@ const PostSpeakers = async (req, res) => {
 const PatchSpeakers = async (req, res) => {
     const { EventId } = req.params;
     //@ts-ignore
-    const { UserId : SpeakerId} = req.user;
+    const { UserId: SpeakerId } = req.user;
     const [Speaker] = await ReadSpeakers({ SpeakerId, EventId }, undefined, 1, undefined);
     if (Speaker?.MembershipStatus === "Accepted") {
         return res.status(444).json(AlertBoxObject("Already Accepted", "You have already accepted the invitaion."));
@@ -84,12 +96,28 @@ const DeleteSpeakers = async (req, res) => {
     const [Speaker] = await ReadSpeakers({ SpeakerId, EventId }, undefined, 1, undefined);
     await Promise.all([
         RemoveSpeakers(Speaker.DocId),
-        PullArrayEvents({ Speakers: { SpeakerId } }, EventId)
+        PullArrayEvents({ Speakers: { SpeakerId } }, EventId),
+        RemoveNotificationForSpeaker(EventId, SpeakerId),
     ])
     return res.json(true);
 }
 
+/**
+ * 
+ * @param {object} Data
+ * @param {string} Data.SpeakerId
+ * @param {string} Data.EventId
+ * @param {"Invited"|"Accepted"} Data.MembershipStatus
+ * @param {UserData} Data.UserDetails
+ * @returns 
+ */
+const SpeakerInit = (Data) => {
+    return {
+        Data
+    }
+}
 
 export {
-    GetOneFromSpeakers, GetSpeakers, PostSpeakers, PatchSpeakers, DeleteSpeakers
+    GetOneFromSpeakers, GetSpeakers, PostSpeakers, PatchSpeakers, DeleteSpeakers,
+    SpeakerInit
 }
