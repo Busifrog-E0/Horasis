@@ -462,7 +462,8 @@ const SingleDiscussion = () => {
 	const [translated, setTranslated] = useState(false)
 	const [translating, setTranslating] = useState(false)
 
-	const homeLanguage = 'Japanese'
+	const storedLanguage = _retrieveData('currentLanguage')
+	const homeLanguage = storedLanguage ? storedLanguage : 'English'
 
 	const translateDiscussion = () => {
 		setTranslating(true)

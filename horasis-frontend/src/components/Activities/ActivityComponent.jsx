@@ -17,6 +17,7 @@ import ActivityDropdown from './ActivityDropdown'
 import MentionTextLink from './Mentions/MentionTextLink'
 import ActivityDocuments from './ActivityDocuments'
 import { useNavigate } from 'react-router-dom'
+import { _retrieveData } from '../../utils/LocalStorage'
 const ActivityComponent = ({
 	titleSize,
 	bordered,
@@ -268,8 +269,8 @@ const ActivityComponent = ({
 
 	const [translated, setTranslated] = useState(false)
 	const [translating, setTranslating] = useState(false)
-
-	const homeLanguage = 'English'
+	const storedLanguage = _retrieveData('currentLanguage')
+	const homeLanguage = storedLanguage ? storedLanguage : 'English'
 	const translateThisPost = () => {
 		setTranslating(true)
 		const targetLanguage = translated ? singleActivity.OriginalLanguage : homeLanguage
@@ -361,7 +362,7 @@ const ActivityComponent = ({
 				{singleActivity.OriginalLanguage !== homeLanguage && (
 					<div className='mt-6 mb-2 select-none'>
 						<p className='text-sm text-system-secondary-text cursor-pointer' onClick={translateThisPost}>
-							{translated?'Show  Original':'Translate this post'}
+							{translated ? 'Show  Original' : 'Translate this post'}
 						</p>
 					</div>
 				)}

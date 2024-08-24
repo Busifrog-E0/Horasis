@@ -24,6 +24,7 @@ import EventsAgenda from '../components/Events/EventsAgenda'
 import TimeLineTab from '../components/Activities/TimeLineTab'
 import EventJoinRequest from '../components/Events/EventsTabs/EventJoinRequest'
 import InviteSpeakers from '../components/Events/InviteSpeakers'
+import { _retrieveData } from '../utils/LocalStorage'
 
 const SingleEvent = () => {
 	const [activeTab, setActiveTab] = useState(0)
@@ -472,7 +473,8 @@ const SingleEvent = () => {
 	const [translated, setTranslated] = useState(false)
 	const [translating, setTranslating] = useState(false)
 
-	const homeLanguage = 'Japanese'
+	const storedLanguage = _retrieveData('currentLanguage')
+	const homeLanguage = storedLanguage ? storedLanguage : 'English'
 
 	const translateEvent = () => {
 		setTranslating(true)
