@@ -23,6 +23,7 @@ import EventSettings from '../components/Events/EventsTabs/EventSettings'
 import EventsAgenda from '../components/Events/EventsAgenda'
 import TimeLineTab from '../components/Activities/TimeLineTab'
 import EventJoinRequest from '../components/Events/EventsTabs/EventJoinRequest'
+import InviteSpeakers from '../components/Events/InviteSpeakers'
 
 const SingleEvent = () => {
 	const [activeTab, setActiveTab] = useState(0)
@@ -116,6 +117,15 @@ const SingleEvent = () => {
 					},
 					{
 						key: 3,
+						title: 'Invite Speakers',
+						render: () => (
+							<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
+								<InviteSpeakers eventId={event.DocId} />
+							</div>
+						),
+					},
+					{
+						key: 4,
 						title: 'Settings',
 						render: () => (
 							<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
@@ -154,6 +164,15 @@ const SingleEvent = () => {
 					},
 					{
 						key: 2,
+						title: 'Invite Speakers',
+						render: () => (
+							<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
+								<InviteSpeakers eventId={event.DocId} />
+							</div>
+						),
+					},
+					{
+						key: 3,
 						title: 'Settings',
 						render: () => (
 							<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
@@ -198,9 +217,17 @@ const SingleEvent = () => {
 							</div>
 						),
 					},
-
 					{
 						key: 2,
+						title: 'Invite Speakers',
+						render: () => (
+							<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
+								<InviteSpeakers eventId={event.DocId} />
+							</div>
+						),
+					},
+					{
+						key: 3,
 						title: 'Settings',
 						render: () => (
 							<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
@@ -228,9 +255,17 @@ const SingleEvent = () => {
 							</div>
 						),
 					},
-
 					{
 						key: 1,
+						title: 'Invite Speakers',
+						render: () => (
+							<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
+								<InviteSpeakers eventId={event.DocId} />
+							</div>
+						),
+					},
+					{
+						key: 2,
 						title: 'Settings',
 						render: () => (
 							<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>

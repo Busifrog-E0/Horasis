@@ -79,7 +79,7 @@ const CreateDiscussionStep3 = ({ discussionId, from = 'create' }) => {
 	const fetchMore = () => fetchData(false)
 
 	useEffect(() => {
-		if (connections.length > 0) hasAnyLeft(`users/${currentUserData.CurrentUser.UserId}/connections`, connections)
+		if (connections.length > 0) hasAnyLeft(`discussions/${discussionId}/members/invite`, connections)
 	}, [connections])
 
 	useEffect(() => {

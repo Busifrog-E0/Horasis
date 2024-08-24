@@ -54,6 +54,7 @@ const AlertList = () => {
 		getItem(
 			`${api}/${notification.DocId}`,
 			(result) => {
+				
 				if (actionType === 'REMOVE') {
 					setNotifications(
 						notifications.filter((singleNotification) => singleNotification.DocId !== notification.DocId)
