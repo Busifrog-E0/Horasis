@@ -62,7 +62,7 @@ const ConnectSocket = (expressServer) => {
         // When user disconnects - to all others 
         socket.on('disconnect', () => {
             // @ts-ignore
-            UpdateUsers({ Online: true, LastActive: moment().valueOf() }, socket.user.UserId);
+            UpdateUsers({ Online: false, LastActive: moment().valueOf() }, socket.user.UserId);
             //@ts-ignore
             socket.leave(socket.user.UserId);
         })
