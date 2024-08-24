@@ -265,6 +265,34 @@ const ActivityComponent = ({
 	// 	return <div className={`p-5 bg-system-secondary-bg rounded-lg ${bordered && 'border border-system-file-border'}`}>
 	// 	</div>
 	// }
+
+	const [translated, setTranslated] = useState(false)
+	const [translating, setTranslating] = useState(false)
+
+	const homeLanguage = 'English'
+	const translateThisPost = () => {
+		setTranslating(true)
+		const targetLanguage = translated ? singleActivity.OriginalLanguage : homeLanguage
+		postItem(
+			`translate`,
+			{
+				EntityId: singleActivity.DocId,
+				Type: 'Activity',
+				TargetLanguage: targetLanguage,
+			},
+			(result) => {
+				setTranslating(false)
+				setTranslated((prev) => !prev)
+				setSingleActivity({ ...singleActivity, ...result })
+			},
+			(err) => {
+				setTranslating(false)
+			},
+			updateCurrentUser,
+			currentUserData,
+			toast
+		)
+	}
 	if (singleActivity)
 		return (
 			<div className={className}>
@@ -306,7 +334,11 @@ const ActivityComponent = ({
 					</div>
 				</div>
 				<div className='mt-5'>
-					<MentionTextLink descriptionSize={descriptionSize} singleActivity={singleActivity} />
+					{translating ? (
+						<p className='text-sm text-system-secondary-text'>Translating... </p>
+					) : (
+						<MentionTextLink descriptionSize={descriptionSize} singleActivity={singleActivity} />
+					)}
 				</div>
 				{/* {
 					singleActivity.Mentions?.length > 0 &&
@@ -324,6 +356,13 @@ const ActivityComponent = ({
 				{ShowImage && singleActivity?.Documents && singleActivity.Documents.length > 0 && (
 					<div>
 						<ActivityDocuments documents={singleActivity.Documents} />
+					</div>
+				)}
+				{singleActivity.OriginalLanguage !== homeLanguage && (
+					<div className='mt-6 mb-2 select-none'>
+						<p className='text-sm text-system-secondary-text cursor-pointer' onClick={translateThisPost}>
+							{translated?'Show  Original':'Translate this post'}
+						</p>
 					</div>
 				)}
 				<div className='flex items-center justify-between gap-10 mt-2'>

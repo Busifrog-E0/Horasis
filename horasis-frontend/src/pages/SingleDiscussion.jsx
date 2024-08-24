@@ -459,6 +459,30 @@ const SingleDiscussion = () => {
 			onCoverImageSet('')
 		}
 	}
+	const [translated, setTranslated] = useState(false)
+	const [translating, setTranslating] = useState(false)
+
+	const homeLanguage = 'Japanese'
+
+	const translateDiscussion = () => {
+		setTranslating(true)
+		const targetLanguage = translated ? discussion.OriginalLanguage : homeLanguage
+		postItem(
+			'translate',
+			{ EntityId: discussion.DocId, Type: 'Discussion', TargetLanguage: targetLanguage },
+			(result) => {
+				setTranslated((prev) => !prev)
+				setTranslating(false)
+				setDiscussion({ ...discussion, ...result })
+			},
+			(err) => {
+				setTranslating(false)
+			},
+			updateCurrentUser,
+			currentUserData,
+			toast
+		)
+	}
 
 	return (
 		<>
@@ -537,6 +561,18 @@ const SingleDiscussion = () => {
 							<h4 className='text-2xl text-white'>{discussion.NoOfMembers} Participants</h4>
 							<h4 className='text-2xl text-white'>•</h4>
 							<h4 className='text-2xl text-white'>{discussion.Privacy}</h4>
+							<h4 className='text-2xl text-white'>•</h4>
+							{translating ? (
+								<>
+									<h4 className='text-2xl text-white  cursor-pointer'>Translating...</h4>
+								</>
+							) : (
+								<>
+									<h4 className='text-2xl text-white  cursor-pointer' onClick={translateDiscussion}>
+										{translated ? 'Show original' : 'Translate this discussion'}
+									</h4>
+								</>
+							)}
 						</div>
 					</div>
 				</div>

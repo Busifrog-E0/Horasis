@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react'
+import { memo, useContext, useEffect, useState } from 'react'
 import { AuthContext, useAuth } from '../utils/AuthProvider'
 import { useNavigate, useParams } from 'react-router-dom'
 import MiniTab from '../components/ui/MiniTab'
@@ -46,12 +46,10 @@ const SingleEvent = () => {
 		getItem(
 			`events/${eventid}`,
 			(result) => {
-				console.log(result)
 				setEvent(result)
 				setIsLoading(false)
 			},
 			(err) => {
-				console.log(err)
 				navigate('/NotFound', { replace: true })
 				setIsLoading(false)
 			},
@@ -471,6 +469,32 @@ const SingleEvent = () => {
 		)
 	}
 
+	const [translated, setTranslated] = useState(false)
+	const [translating, setTranslating] = useState(false)
+
+	const homeLanguage = 'Japanese'
+
+	const translateEvent = () => {
+		setTranslating(true)
+		const targetLanguage = translated ? event.OriginalLanguage : homeLanguage
+		postItem(
+			'translate',
+			{ EntityId: event.DocId, Type: 'Event', TargetLanguage: targetLanguage },
+			(result) => {
+				console.log(result)
+				setTranslated((prev) => !prev)
+				setTranslating(false)
+				setEvent({ ...event, ...result })
+			},
+			(err) => {
+				setTranslating(false)
+			},
+			updateCurrentUser,
+			currentUserData,
+			toast
+		)
+	}
+
 	return (
 		<>
 			<Modal isOpen={isModalOpen}>
@@ -569,6 +593,9 @@ const SingleEvent = () => {
 							<h4 className='font-medium text-md  text-system-secondary-text my-2 lg:my-2 leading-relaxed'>
 								{event.Description}
 							</h4>
+							<p className='text-sm mt-4 text-system-secondary-text cursor-pointer' onClick={translateEvent}>
+								{translated ? 'Show Original' : 'Translate Event Details'}
+							</p>
 							<div className='flex items-start gap-4 mt-3'>
 								<img className='w-14 h-14 rounded-full' src={event?.UserDetails?.ProfilePicture} alt='Rounded avatar' />
 								<div className='flex-1'>

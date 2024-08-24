@@ -117,6 +117,11 @@ const CreateDiscussionStep3 = ({ discussionId, from = 'create' }) => {
                 Next
             </Button>
         </div> */}
+			<SearchComponent
+				searchKey={filters.Keyword}
+				setSearchKey={(value) => setFilters((prev) => ({ ...prev, Keyword: value }))}
+				placeholder='Search Members'
+			/>
 			{isLoading ? (
 				<>
 					<div className='bg-system-secondary-bg p-4 rounded-b-lg '>
@@ -125,11 +130,6 @@ const CreateDiscussionStep3 = ({ discussionId, from = 'create' }) => {
 				</>
 			) : (
 				<>
-					<SearchComponent
-						searchKey={filters.Keyword}
-						setSearchKey={(value) => setFilters((prev) => ({ ...prev, Keyword: value }))}
-						placeholder='Search Members'
-					/>
 					{connections ? (
 						<>
 							{connections.length > 0 ? (

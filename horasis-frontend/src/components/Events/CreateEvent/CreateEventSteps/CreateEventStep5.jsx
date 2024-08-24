@@ -138,6 +138,11 @@ const CreateEventStep5 = ({ changeStep, activeStep, eventId, from = 'create', Is
                 Next
             </Button>
         </div> */}
+			<SearchComponent
+				searchKey={filters.Keyword}
+				setSearchKey={(value) => setFilters((prev) => ({ ...prev, Keyword: value }))}
+				placeholder='Search Members'
+			/>
 			{isLoading ? (
 				<>
 					<div className='bg-system-secondary-bg p-4 rounded-b-lg '>
@@ -146,11 +151,6 @@ const CreateEventStep5 = ({ changeStep, activeStep, eventId, from = 'create', Is
 				</>
 			) : (
 				<>
-					<SearchComponent
-						searchKey={filters.Keyword}
-						setSearchKey={(value) => setFilters((prev) => ({ ...prev, Keyword: value }))}
-						placeholder='Search Members'
-					/>
 					{connections ? (
 						<>
 							{connections.length > 0 ? (
