@@ -111,6 +111,7 @@ const AddContentAndStatusToNotification = async (Notification) => {
             default:
                 break;
         }
+        Notification.Status = Speaker[0].MembershipStatus
     }
     return Notification;
 }
@@ -578,6 +579,6 @@ export {
     SendNotificationToUser, SendNotificationForMemberJoin, SendNotificationsForConnectionAccept, SendNotificationsForConnectionRequest,
     RemoveNotificationsAfterActivityMentionPatch, RemoveNotificationsForConnectionRequest, GetOneFromNotifications,
     RemoveNotificationsForFollow, RemoveNotificationForMember, SendNotificationToUserOnCommentPost, RemoveNotificationForEntity,
-    SendNotificationForSpeaker,RemoveNotificationForSpeaker
+    SendNotificationForSpeaker, RemoveNotificationForSpeaker
 
 }
