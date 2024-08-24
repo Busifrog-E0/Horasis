@@ -64,8 +64,9 @@ export const router = createBrowserRouter(
 					<Route path='/Discussions/:discussionid' element={<SingleDiscussion />} />
 					<Route path='/Articles/:articleid' element={<SingleArticles />} />
 					<Route path="/Events/:eventid" element={<SingleEvent />} />
+					<Route path="/analytics" element={<Analytics />} />
 
-					{/* <Route path='/universalsearchdetails' element={<UniversalSearchDetails />} /> */}
+					<Route path='/Search' element={<UniversalSearchDetails />} />
 
 					<Route path='/Chat/:userid' element={<ChatPage />} />
 				</Route>

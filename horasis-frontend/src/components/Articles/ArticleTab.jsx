@@ -4,10 +4,10 @@ import save from '../../assets/icons/graysave.svg'
 import saved from '../../assets/icons/graysavefill.svg'
 import Spinner from '../ui/Spinner'
 
-const ArticleTab = ({ article, navigateToArticle, saveArticle, removeSaveArticle, saving }) => {
+const ArticleTab = ({ article, navigateToArticle, saveArticle, removeSaveArticle, saving, from = 'article' }) => {
 	return (
 		<div
-			className='p-0 bg-system-secondary-bg rounded-lg cursor-pointer'
+			className='p-0 bg-system-secondary-bg rounded-lg cursor-pointer shadow-lg'
 			onClick={() => navigateToArticle(article.DocId)}>
 			<div className='h-52 overflow-hidden rounded-t-lg'>
 				<img src={article.CoverPicture} className='object-cover h-full w-full' />
@@ -18,7 +18,7 @@ const ArticleTab = ({ article, navigateToArticle, saveArticle, removeSaveArticle
 					<h4 className='text-xs text-system-primary-accent'>by {article.UserDetails.FullName}</h4>
 					<h4 className='text-sm text-brand-gray-dim mt-2'>{relativeTime(article.CreatedIndex)}</h4>
 				</div>
-				<div>
+				<div className={`${from === 'article' ? 'block' : 'hidden'}`}>
 					{saving === article.DocId ? (
 						<>
 							<Spinner />

@@ -8,6 +8,7 @@ const PostsSearchSection = ({
 	updateList,
 	whichTime,
 	tabName,
+	bordered =true
 }) => {
 	const [updatingId, setUpdatingId] = useState(null)
 
@@ -27,8 +28,8 @@ const PostsSearchSection = ({
 											onDelete={() => { }}
 											descriptionSize={'text-lg font-medium'}
 											avatarSize={'w-16 h-16'}
-											className={`p-5 bg-system-secondary-bg rounded-lg relative`}
-											bordered={false}
+											className={`p-5 bg-system-secondary-bg ${bordered && 'border border-system-file-border'}  rounded-lg relative`}
+											bordered={true}
 											key={item.DocId}
 										/>
 									)

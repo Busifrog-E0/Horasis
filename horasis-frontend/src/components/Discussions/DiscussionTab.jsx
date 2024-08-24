@@ -129,7 +129,7 @@ const DiscussionTab = ({ discussion, onClick, fetch, updateList, data }) => {
 	}
 
 	return (
-		<div className='rounded-lg mt-3 pb-2 overflow-hidden h-full bg-system-secondary-bg flex flex-col justify-between '>
+		<div className='rounded-lg mt-3 pb-2 overflow-hidden h-full bg-system-secondary-bg flex flex-col justify-between shadow-lg'>
 			<div>
 				<div className='h-28 overflow-hidden rounded-t-lg cursor-pointer' onClick={() => onClick(discussion.DocId)}>
 					<img src={discussion.CoverPicture} className='object-cover h-full w-full' />

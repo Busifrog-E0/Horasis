@@ -12,7 +12,7 @@ const InsightsSearchTab = ({ isLoading, setIsLoading, data, setData, getAllData,
     return (
         <>
             <div className='bg-system-secondary-bg p-4 rounded-b-lg '>
-                <h4 className="font-semibold text-md text-brand-gray">Insights</h4>
+                <h4 className="font-semibold text-md text-brand-gray mb-4">Insights</h4>
                 <InsightsList data={data} emptyText={"No insights"} />
             </div>
             {isLoadingMore && (

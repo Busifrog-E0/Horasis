@@ -17,7 +17,7 @@ const AllMembersSearchTab = ({ isLoading, setIsLoading, data, setData, getAllDat
     return (
 
         <div className='bg-system-secondary-bg p-4 rounded-b-lg '>
-            <h4 className="font-semibold text-md text-brand-gray mb-3">Members</h4>
+            <h4 className="font-semibold text-md text-brand-gray mb-4">Members</h4>
 
             <MembersSearchSection
                 members={data}

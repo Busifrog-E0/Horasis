@@ -49,9 +49,9 @@ const ArticleAnalyticsSection = () => {
             </div>
             <div className="my-6">
                 <div className="grid lg:grid-cols-2 gap-8">
+                    {/* <ArticleTab />
                     <ArticleTab />
-                    <ArticleTab />
-                    <ArticleTab />
+                    <ArticleTab /> */}
                 </div>
             </div>
         </div>

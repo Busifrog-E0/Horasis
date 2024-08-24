@@ -7,6 +7,7 @@ import AlertList from './Alert/AlertList'
 import logoutIcon from '../assets/icons/logout.svg'
 import Modal from './ui/Modal'
 import close from '../assets/icons/close.svg'
+import searchIcon from '../assets/icons/search-icon.svg'
 import Button from './ui/Button'
 
 const DashboardHeader = () => {
@@ -130,13 +131,16 @@ const DashboardHeader = () => {
 					</div> */}
 					</div>
 					<div className='flex flex-row flex-wrap items-center gap-4 md:gap-4'>
-						{/* <button
-            type="button"
-            className="inline-flex justify-center rounded-md border-none bg-system-secondary-bg text-md px-0 font-medium text-brand-gray-dim"
-            onClick={() => OnClickItem("/universal/search")}
-          >
-            Search
-          </button> */}
+						<div className='relative inline-block text-left'>
+							<div className='relative flex'>
+								<button
+									type='button'
+									className='inline-flex justify-center rounded-md border-none bg-system-secondary-bg text-md px-0 font-medium text-brand-gray-dim'
+									onClick={() => OnClickItem('/Search')}>
+									<img src={searchIcon} alt="" className='h-7' />
+								</button>
+							</div>
+						</div>
 						<ChatList />
 						<AlertList />
 						<button

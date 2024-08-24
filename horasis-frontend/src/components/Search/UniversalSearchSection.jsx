@@ -31,13 +31,12 @@ const UniversalSearchSection = () => {
 
 	const [filters, setFilters] = useState({
 		OrderBy: 'Index',
-		Limit: 10,
+		Limit: 3,
 		Keyword: '',
 	})
-	// const [activeTab, setActiveTab] = useState(
-	//     _retrieveData(MAINTAB) && _retrieveData(MAINTAB)['universalsearch'] ? Number(_retrieveData(MAINTAB)['universalsearch']) : 0
-	// )
+
 	const [activeTab, setActiveTab] = useState(0)
+	const [eventTab, setEventTab] = useState('all')
 
 	const setLoadingCom = (tempArr, value) => {
 		if (tempArr.length > 0) {
@@ -50,7 +49,6 @@ const UniversalSearchSection = () => {
 	const onTabChange = (item) => {
 		setPageDisabled(true)
 		setActiveTab(item.key)
-		// _storeData(MAINTAB, { universalsearch: item.key })
 	}
 
 	const tabs = () => [
@@ -58,26 +56,65 @@ const UniversalSearchSection = () => {
 			key: 0,
 			title: 'All',
 			render: () => (
-				<div>
-					<div className='bg-system-secondary-bg p-3 lg:p-6 rounded-b-lg '>
-						<h4 className='font-semibold text-lg text-brand-gray mb-4'>Posts</h4>
-						<PostsSearchSection
-							posts={posts}
-							emptyText={'No posts '}
-							updateList={setPosts}
-							whichTime='member'
-							tabName='posts'
-						/>
-						<div className='border-b border-system-file-border '></div>
-						<h4 className='font-semibold text-lg text-brand-gray mt-4 mb-2'>Events</h4>
-						<div className='flex gap-6 flex-wrap my-2'>
-							<TabItem variant='active'>All Events</TabItem>
-							<TabItem variant='inactive'>My Upcoming Events</TabItem>
-						</div>
-						<div className='lg:pr-32'>
-							<EventsList cols={4} gap='gap-3 lg:gap-10' data={[]} emptyText={'No events'} />
-						</div>
-					</div>
+				<div className='bg-system-secondary-bg px-2'>
+					<AllMembersSearchTab
+						getConnectionCount={() => {}}
+						data={members}
+						getAllData={getAllMembers}
+						isLoading={isLoading}
+						setData={setMembers}
+						setIsLoading={setIsLoading}
+						fetchMore={fetchMore}
+						isLoadingMore={isLoadingMore}
+						pageDisabled={pageDisabled}
+					/>
+					<div className='border-b border-system-file-border m-4'></div>
+					<PostsSearchTab
+						data={posts}
+						getAllData={getPosts}
+						isLoading={isLoading}
+						setData={setPosts}
+						setIsLoading={setIsLoading}
+						fetchMore={fetchMore}
+						isLoadingMore={isLoadingMore}
+						pageDisabled={pageDisabled}
+					/>
+					<div className='border-b border-system-file-border m-4'></div>
+					<EventsSearchTab
+						data={events}
+						getAllData={getEvents}
+						isLoading={isLoading}
+						setData={setEvents}
+						setIsLoading={setIsLoading}
+						fetchMore={fetchMore}
+						isLoadingMore={isLoadingMore}
+						pageDisabled={pageDisabled}
+						eventTab={eventTab}
+						setEventTab={setEventTab}
+					/>
+					<div className='border-b border-system-file-border m-4'></div>
+
+					<DiscussionsSearchTab
+						data={discussions}
+						getAllData={getDiscussions}
+						isLoading={isLoading}
+						setData={setEvents}
+						setIsLoading={getDiscussions}
+						fetchMore={fetchMore}
+						isLoadingMore={isLoadingMore}
+						pageDisabled={pageDisabled}
+					/>
+					<div className='border-b border-system-file-border m-4'></div>
+					<InsightsSearchTab
+						data={insights}
+						getAllData={getInsights}
+						isLoading={isLoading}
+						setData={setInsights}
+						setIsLoading={getDiscussions}
+						fetchMore={fetchMore}
+						isLoadingMore={isLoadingMore}
+						pageDisabled={pageDisabled}
+					/>
 				</div>
 			),
 		},
@@ -127,6 +164,8 @@ const UniversalSearchSection = () => {
 					fetchMore={fetchMore}
 					isLoadingMore={isLoadingMore}
 					pageDisabled={pageDisabled}
+					eventTab={eventTab}
+					setEventTab={setEventTab}
 				/>
 			),
 		},
@@ -168,20 +207,20 @@ const UniversalSearchSection = () => {
 		setFilters({ ...filters, Keyword: value })
 	}
 
-	const getAllMembers = (tempMembers) => {
-		getData(`users?&${jsonToQuery(filters)}`, tempMembers, setMembers)
+	const getAllMembers = (tempMembers, limit) => {
+		getData(`users?&${jsonToQuery({ ...filters, Limit: limit })}`, tempMembers, setMembers)
 	}
-	const getPosts = (tempPosts) => {
-		getData(`${'activities'}?${jsonToQuery(filters)}`, tempPosts, setPosts)
+	const getPosts = (tempPosts, limit) => {
+		getData(`${'activities'}?${jsonToQuery({ ...filters, Limit: limit })}`, tempPosts, setPosts)
 	}
-	const getDiscussions = (tempDiscussions) => {
-		getData(`discussions?${jsonToQuery(filters)}`, tempDiscussions, setDiscussions)
+	const getDiscussions = (tempDiscussions, limit) => {
+		getData(`discussions?${jsonToQuery({ ...filters, Limit: limit })}`, tempDiscussions, setDiscussions)
 	}
-	const getEvents = (tempEvents) => {
-		getData(`events?${jsonToQuery(filters)}`, tempEvents, setEvents)
+	const getEvents = (tempEvents, limit, orderby = 'Index') => {
+		getData(`events?${jsonToQuery({ ...filters, Limit: limit, OrderBy: orderby })}`, tempEvents, setEvents)
 	}
-	const getInsights = (tempInsights) => {
-		getData(`insights?${jsonToQuery(filters)}`, tempInsights, setInsights)
+	const getInsights = (tempInsights, limit) => {
+		getData(`articles?${jsonToQuery({ ...filters, Limit: limit })}`, tempInsights, setInsights)
 	}
 
 	const getData = (endpoint, tempData, setData) => {
@@ -223,21 +262,26 @@ const UniversalSearchSection = () => {
 	const fetchData = (initialRender = false) => {
 		switch (activeTab) {
 			case 0:
+				getAllMembers(initialRender ? [] : members, 2)
+				getPosts(initialRender ? [] : posts, 2)
+				getEvents(initialRender ? [] : events, 2)
+				getDiscussions(initialRender ? [] : discussions, 2)
+				getInsights(initialRender ? [] : insights, 2)
 				break
 			case 1:
-				getAllMembers(initialRender ? [] : members)
+				getAllMembers(initialRender ? [] : members, 10)
 				break
 			case 2:
-				getPosts(initialRender ? [] : posts)
+				getPosts(initialRender ? [] : posts, 10)
 				break
 			case 3:
-				getEvents(initialRender ? [] : events)
+				getEvents(initialRender ? [] : events, 10)
 				break
 			case 4:
-				getDiscussions(initialRender ? [] : discussions)
+				getDiscussions(initialRender ? [] : discussions, 10)
 				break
 			case 5:
-				getInsights(initialRender ? [] : insights)
+				getInsights(initialRender ? [] : insights, 10)
 				break
 			default:
 				break
@@ -246,6 +290,13 @@ const UniversalSearchSection = () => {
 
 	const fetch = () => fetchData(true)
 	const fetchMore = () => fetchData(false)
+
+	useEffect(() => {
+		const limit = activeTab === 0 ? 2 : 10
+		const sortBy = eventTab === 'all' ? 'Index' : 'NoOfMembers'
+
+		getEvents([], limit, sortBy)
+	}, [eventTab])
 
 	useEffect(() => {
 		switch (activeTab) {
@@ -264,7 +315,7 @@ const UniversalSearchSection = () => {
 				if (discussions.length > 0) hasAnyLeft(`discussions`, discussions)
 				break
 			case 5:
-				if (insights.length > 0) hasAnyLeft(`insights`, insights)
+				if (insights.length > 0) hasAnyLeft(`articles`, insights)
 				break
 			default:
 				break
@@ -280,6 +331,7 @@ const UniversalSearchSection = () => {
 			<div className='mb-3 lg:mb-5 lg:pr-64'>
 				<SearchBar value={filters.Keyword} onChange={onKeyChanged} onClickSearch={fetch} />
 			</div>
+
 			<Tab name='connections' activeTab={activeTab} onTabChange={onTabChange} tabs={tabs()} />
 		</>
 	)
