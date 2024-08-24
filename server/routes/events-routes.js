@@ -19,7 +19,7 @@ import { MemberPostActivityMiddleware } from '../middleware/members-middleware.j
 import { ValidateAddPermissionForEveryone, ValidatePatchMemberPermission, ValidatePatchRemovePermission } from '../validations/discussions-validations.js';
 import { GetFilteredActivities, PostActivities } from '../controllers/activities-controller.js';
 import { ValidateGetMembers, ValidateInviteMembers } from '../validations/members-validations.js';
-import { DeleteSpeakers, PatchSpeakers, PostSpeakers } from '../controllers/speakers-controller.js';
+import { DeleteSpeakers, GetSpeakerstoInvite, PatchSpeakers, PostSpeakers } from '../controllers/speakers-controller.js';
 const router = e.Router();
 
 router.get('/events', decodeIDToken, ensureAuthorized("User"), ValidateGetEntity, QueryParameterFormatting,
@@ -153,7 +153,7 @@ router.delete('/events/:EventId', decodeIDToken, ensureAuthorized("User"),
     // @ts-ignore
     asyncHandler(DeleteEvents));
 
-/******************************************************************************SPEAKERS**************************************************************************************** */    
+/******************************************************************************SPEAKERS**************************************************************************************** */
 
 router.post('/events/:EventId/speakers/:SpeakerId', decodeIDToken, ensureAuthorized("User"),
     SwaggerDocs.post_Events_EventId_Speakers,
@@ -165,12 +165,17 @@ router.patch('/events/:EventId/speakers', decodeIDToken, ensureAuthorized("User"
     //@ts-ignore
     asyncHandler(PatchSpeakers));
 
+router.get('/events/:EventId/speakers/invite', decodeIDToken, ensureAuthorized("User"), ValidateGetEntity, QueryParameterFormatting,
+    SwaggerDocs.get_Events_EventId_Speakers_Invited,
+    //@ts-ignore
+    asyncHandler(GetSpeakerstoInvite));
+
 router.delete('/events/:EventId/speakers/:SpeakerId', decodeIDToken, ensureAuthorized("User"),
     SwaggerDocs.delete_Events_EventId_Speakers_SpeakerId,
     //@ts-ignore
-    asyncHandler(DeleteSpeakers));    
- 
-    
+    asyncHandler(DeleteSpeakers));
+
+
 
 
 export default router;
