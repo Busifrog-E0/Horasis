@@ -228,7 +228,7 @@ const TranslateData = async (req, res) => {
                 Content = TranslatedData;
             }
             break;
-        case "Events":
+        case "Event":
             const Event = await ReadOneFromEvents(EntityId);
             if (Event.Languages && Event.Languages[TargetLanguage]) {
                 Content = Event.Languages[TargetLanguage];
