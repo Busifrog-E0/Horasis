@@ -40,7 +40,11 @@ const GetOneFromActivities = async (req, res) => {
 const GetActivities = async (req, res) => {
     //@ts-ignore
     const { UserId } = req.user;
-    const { NextId, Limit, Filter, OrderBy } = req.query;
+    const { NextId, Limit, Filter, OrderBy, Keyword } = req.query;
+    if (Keyword) {
+        //@ts-ignore
+        Filter["Content"] = { $regex: Keyword, $options: 'i' };
+    }
     //@ts-ignore
     const FilterConditions = Object.entries(Filter).map(([key, value]) => ({ [key]: value }));
     const AggregateArray = [
