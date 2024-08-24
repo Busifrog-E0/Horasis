@@ -1,5 +1,6 @@
 import { Socket, Server } from "socket.io";
 import { PostMessages, CheckUserInConversation } from "./chats-controller.js";
+import { UpdateUsers } from "../databaseControllers/users-databaseController.js"
 import jwt from "jsonwebtoken";
 import ENV from "./../Env.js";
 import { decodeSocketIdToken } from "../middleware/auth-middleware.js";
@@ -20,7 +21,7 @@ const ConnectSocket = (expressServer) => {
 
     io.on('connection', socket => {
         // @ts-ignore
-         UpdateUsers({ Online: true }, socket.user.UserId);
+        UpdateUsers({ Online: true }, socket.user.UserId);
         //@ts-ignore
         socket.join(socket.user.UserId);
 
@@ -61,7 +62,7 @@ const ConnectSocket = (expressServer) => {
         // When user disconnects - to all others 
         socket.on('disconnect', () => {
             // @ts-ignore
-             UpdateUsers({ Online: true, LastActive: moment().valueOf() }, socket.user.UserId);
+            UpdateUsers({ Online: true, LastActive: moment().valueOf() }, socket.user.UserId);
             //@ts-ignore
             socket.leave(socket.user.UserId);
         })
