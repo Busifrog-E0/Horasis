@@ -228,15 +228,26 @@ const GetMembersToInvite = async (req, res) => {
     const { EntityId } = req.params;
     //@ts-ignore
     const { UserId } = req.user;
-    const { Filter, NextId, Limit, OrderBy } = req.query;
-
+    const { Filter, NextId, Limit, OrderBy, Keyword } = req.query;
+    if (Keyword) {
+        //@ts-ignore
+        Filter.$or = [
+            { "UserDetails.FullName": { $regex: Keyword, $options: 'i' } },
+            { "UserDetails.Username": { $regex: Keyword, $options: 'i' } },
+        ];
+    }
     const AggregateArray = [
         {
             $match: {
-                $or: [
-                    { "UserIds.0": UserId },
-                    { "UserIds.1": UserId }
-                ]
+                $and: [
+                    {
+                        $or: [
+                            { "UserIds.0": UserId },
+                            { "UserIds.1": UserId }
+                        ]
+                    },
+                    //@ts-ignore
+                    Filter ? Filter : {},]
             }
         },
         { $unwind: "$UserIds" },
