@@ -34,8 +34,24 @@ const GetOneFromSpeakers = async (req, res) => {
  * @param {e.Response} res 
  * @returns {Promise<e.Response<Array<SpeakerData>>>}
  */
-const GetSpeakers = async (req, res) => {
-    const { Filter, NextId, Limit, OrderBy } = req.query;
+const GetSpeakerstoInvite = async (req, res) => {
+    const { EventId } = req.params;
+    const { Filter, NextId, Limit, OrderBy, Keyword } = req.query;
+    if (Keyword) {
+        // @ts-ignore
+        Filter[$or] = [
+            { "UserDetails.FullName": { $regex: Keyword, $options: 'i' } },
+            { "UserDetails.Username": { $regex: Keyword, $options: 'i' } },
+        ]
+    }
+    const AggregateArray = [
+        {
+            $lookup: {
+                from: "Speakers",
+                
+            }
+        }
+    ]
     // @ts-ignore
     const data = await ReadSpeakers(Filter, NextId, Limit, OrderBy);
     return res.json(data);
@@ -78,7 +94,7 @@ const PatchSpeakers = async (req, res) => {
 
     const Member = MemberInit({ EntityId: EventId, MemberId: SpeakerId, UserDetails: Speaker.UserDetails });
     await Promise.all([
-        UpdateSpeakers({ MembershipStatus: "Accepted" }, SpeakerId),
+        UpdateSpeakers({ MembershipStatus: "Accepted" }, Speaker.DocId),
         CreateMembers(Member),
         IncrementEvents({ NoOfMembers: 1 }, EventId)
     ])
@@ -118,6 +134,6 @@ const SpeakerInit = (Data) => {
 }
 
 export {
-    GetOneFromSpeakers, GetSpeakers, PostSpeakers, PatchSpeakers, DeleteSpeakers,
+    GetOneFromSpeakers, GetSpeakerstoInvite, PostSpeakers, PatchSpeakers, DeleteSpeakers,
     SpeakerInit
 }
