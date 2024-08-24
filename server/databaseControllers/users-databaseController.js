@@ -98,11 +98,29 @@ const RemoveUsers = async (DocId) => {
     return dataHandling.Delete('Users', DocId);
 }
 
+const CountUsers = async (where) => {
+    return dataHandling.ReadCount('Users', where);
+}
+
+/**
+ * 
+ * @param {object} AggregateArray 
+ * @param {string} NextId 
+ * @param {number} Limit 
+ * @param {object} OrderBy 
+ * @returns 
+ */
+const AggregateUsers = async (AggregateArray, NextId, Limit, OrderBy) => {
+    return dataHandling.Aggregate('Users', AggregateArray, NextId, Limit, OrderBy);
+}
+
 
 export {
     ReadUsers,
     ReadOneFromUsers,
     UpdateUsers,
     CreateUsers,
-    RemoveUsers
+    RemoveUsers,
+    CountUsers,
+    AggregateUsers
 }

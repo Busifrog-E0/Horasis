@@ -2,7 +2,7 @@ import e from 'express';
 
 import { ReadOneFromSpeakers, ReadSpeakers, UpdateSpeakers, CreateSpeakers, RemoveSpeakers, } from './../databaseControllers/speakers-databaseController.js';
 import { AlertBoxObject } from './common.js';
-import { ReadOneFromUsers } from '../databaseControllers/users-databaseController.js';
+import { AggregateUsers, ReadOneFromUsers } from '../databaseControllers/users-databaseController.js';
 import { MemberInit } from './members-controller.js';
 import { CreateMembers } from '../databaseControllers/members-databaseController.js';
 import { IncrementEvents, PullArrayEvents } from '../databaseControllers/events-databaseController.js';
@@ -39,21 +39,31 @@ const GetSpeakerstoInvite = async (req, res) => {
     const { Filter, NextId, Limit, OrderBy, Keyword } = req.query;
     if (Keyword) {
         // @ts-ignore
-        Filter[$or] = [
-            { "UserDetails.FullName": { $regex: Keyword, $options: 'i' } },
-            { "UserDetails.Username": { $regex: Keyword, $options: 'i' } },
+        Filter.$or = [
+            { "FullName": { $regex: Keyword, $options: 'i' } },
+            { "Username": { $regex: Keyword, $options: 'i' } },
         ]
     }
     const AggregateArray = [
+        {// @ts-ignore
+            $match: { ...Filter }
+        },
         {
             $lookup: {
                 from: "Speakers",
-                
+                let: { userId: { $toString: "$_id" } },
+                pipeline: [
+                    { $match: { $expr: { $and: [{ $eq: ["$EventId", EventId] }, { $eq: ["$SpeakerId", "$$userId"] }] } } }
+                ],
+                as: "Speakers"
             }
-        }
+        },
+        {
+            $match: { Speakers: { $eq: [] } }
+        },
     ]
     // @ts-ignore
-    const data = await ReadSpeakers(Filter, NextId, Limit, OrderBy);
+    const data = await AggregateUsers(AggregateArray, NextId, Limit, OrderBy);
     return res.json(data);
 }
 
@@ -67,10 +77,14 @@ const PostSpeakers = async (req, res) => {
     //@ts-ignore
     const { UserId } = req.user
     const { EventId, SpeakerId } = req.params;
+    const [Speaker] = await ReadSpeakers({ SpeakerId, EventId }, undefined, 1, undefined);
+    if (Speaker) {
+        return res.status(444).json(AlertBoxObject("Already Invited", "You have already invited this user."));
+    }
     const MembershipStatus = "Invited";
     const UserDetails = await ReadOneFromUsers(SpeakerId);
     await Promise.all([
-        await CreateSpeakers({ EventId, SpeakerId, MembershipStatus, UserDetails }),
+        CreateSpeakers({ EventId, SpeakerId, MembershipStatus, UserDetails }),
         SendNotificationForSpeaker(EventId, SpeakerId, UserId)
     ])
 

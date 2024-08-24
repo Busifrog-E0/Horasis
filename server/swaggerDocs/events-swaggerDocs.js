@@ -246,6 +246,12 @@ const delete_Events_EventId_Speakers_SpeakerId = async (req, res, next) => {
     next();
 }
 
+const get_Events_EventId_Speakers_Invited = async (req, res, next) => {
+    // #swagger.tags = ['Events']
+    /* #swagger.security = [{ "BearerAuth": [] }] */
+    next();
+}
+
 export default {
     post_Events, get_User_UserId_Events, get_Events_EventId_Members_Requested,
     patch_Events_EventId_CoverPicture, post_Events_EventId_Save,
@@ -265,5 +271,6 @@ export default {
     get_Events_EventsId,
     post_Events_EventId_Speakers,
     patch_Events_EventId_Speakers,
-    delete_Events_EventId_Speakers_SpeakerId
+    delete_Events_EventId_Speakers_SpeakerId,
+    get_Events_EventId_Speakers_Invited
 }
