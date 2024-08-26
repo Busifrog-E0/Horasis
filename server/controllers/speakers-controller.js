@@ -5,7 +5,7 @@ import { AlertBoxObject } from './common.js';
 import { AggregateUsers, ReadOneFromUsers } from '../databaseControllers/users-databaseController.js';
 import { MemberInit } from './members-controller.js';
 import { CreateMembers } from '../databaseControllers/members-databaseController.js';
-import { IncrementEvents, PullArrayEvents } from '../databaseControllers/events-databaseController.js';
+import { IncrementEvents, PullArrayEvents, PushArrayEvents } from '../databaseControllers/events-databaseController.js';
 import { RemoveNotificationForSpeaker, SendNotificationForSpeaker } from './notifications-controller.js';
 import { RemoveNotifications } from '../databaseControllers/notifications-databaseController.js';
 /**
@@ -110,7 +110,8 @@ const PatchSpeakers = async (req, res) => {
     await Promise.all([
         UpdateSpeakers({ MembershipStatus: "Accepted" }, Speaker.DocId),
         CreateMembers(Member),
-        IncrementEvents({ NoOfMembers: 1 }, EventId)
+        IncrementEvents({ NoOfMembers: 1 }, EventId),
+        PushArrayEvents({ Speakers: { SpeakerId, UserDetails: Speaker.UserDetails } }, EventId),
     ])
     return res.json(true);
 }
