@@ -360,8 +360,11 @@ const SingleEvent = () => {
 			title: "Speakers' Profile",
 			render: () => (
 				<div className='py-3 pt-6 flex flex-col gap-8'>
-					<SpeakerProfileTab />
-					<SpeakerProfileTab />
+					{event &&
+						event.Speakers &&
+						event.Speakers.map((speaker) => {
+							return <SpeakerProfileTab profile={speaker.UserDetails} />
+						})}
 				</div>
 			),
 		},

@@ -241,9 +241,9 @@ const UniversalSearchSection = () => {
 		)
 	}
 
-	const hasAnyLeft = (endpoint, tempData) => {
+	const hasAnyLeft = (endpoint, tempData, extraFilter) => {
 		getItem(
-			`${endpoint}?NextId=${getNextId(tempData)}&${jsonToQuery({ ...filters, Limit: 1 })}`,
+			`${endpoint}?NextId=${getNextId(tempData)}&${jsonToQuery({ ...filters, ...extraFilter, Limit: 1 })}`,
 			(data) => {
 				if (data?.length > 0) {
 					setPageDisabled(false)
@@ -309,7 +309,7 @@ const UniversalSearchSection = () => {
 				if (posts.length > 0) hasAnyLeft(`${'activities'}`, posts)
 				break
 			case 3:
-				if (events.length > 0) hasAnyLeft(`events`, events)
+				if (events.length > 0) hasAnyLeft(`events`, events, { OrderBy: eventTab === 'all' ? 'Index' : 'NoOfMembers' })
 				break
 			case 4:
 				if (discussions.length > 0) hasAnyLeft(`discussions`, discussions)
