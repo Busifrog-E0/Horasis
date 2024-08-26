@@ -87,7 +87,11 @@ const AggregateActivities = async (AggregateArray, NextIndex, Limit, OrderBy) =>
   return dataHandling.Aggregate("Activities", AggregateArray, NextIndex, Limit, OrderBy);
 }
 
+const CountActivities = async (where) => {
+  return dataHandling.ReadCountCount("Activities", where);
+}
+
 export {
   ReadActivities, ReadOneFromActivities, UpdateActivities, CreateActivities, RemoveActivities,
-  IncrementActivities, UpdateAndIncrementActivities, AggregateActivities
+  IncrementActivities, UpdateAndIncrementActivities, AggregateActivities, CountActivities
 };

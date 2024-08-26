@@ -105,9 +105,9 @@ const CountUsers = async (where) => {
 /**
  * 
  * @param {object} AggregateArray 
- * @param {string} NextId 
+ * @param {string|undefined} NextId 
  * @param {number} Limit 
- * @param {object} OrderBy 
+ * @param {object|undefined} OrderBy 
  * @returns 
  */
 const AggregateUsers = async (AggregateArray, NextId, Limit, OrderBy) => {

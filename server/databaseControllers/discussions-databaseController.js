@@ -84,6 +84,10 @@ const IncrementDiscussions = async (data, DocId) => {
     return dataHandling.Update("Discussions", data, DocId, ["$inc"], false);
 }
 
+const CountDiscussions = async (where) => {
+    return dataHandling.ReadCount('Discussions', where);
+}
+
 export {
     ReadDiscussions,
     ReadOneFromDiscussions,
