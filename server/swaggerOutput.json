@@ -923,9 +923,6 @@
           },
           "403": {
             "description": "Forbidden"
-          },
-          "444": {
-            "description": "Connection Closed Without Response"
           }
         }
       }
@@ -6292,6 +6289,9 @@
     },
     "/api/events/{EventId}/speakers/invite": {
       "get": {
+        "tags": [
+          "Events"
+        ],
         "description": "",
         "parameters": [
           {
@@ -6306,11 +6306,6 @@
             "type": "string"
           },
           {
-            "name": "Filter",
-            "in": "query",
-            "type": "string"
-          },
-          {
             "name": "NextId",
             "in": "query",
             "type": "string"
@@ -6321,12 +6316,17 @@
             "type": "string"
           },
           {
+            "name": "Keyword",
+            "in": "query",
+            "type": "string"
+          },
+          {
             "name": "OrderBy",
             "in": "query",
             "type": "string"
           },
           {
-            "name": "Keyword",
+            "name": "Filter",
             "in": "query",
             "type": "string"
           }
@@ -6334,6 +6334,9 @@
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
           },
           "401": {
             "description": "Unauthorized"
@@ -6344,7 +6347,12 @@
           "403": {
             "description": "Forbidden"
           }
-        }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
       }
     },
     "/api/articles": {
@@ -7789,6 +7797,79 @@
             "BearerAuth": []
           }
         ]
+      }
+    },
+    "/api/analytics/userInsights": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized"
+          },
+          "402": {
+            "description": "Payment Required"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      }
+    },
+    "/api/analytics/userBreakdown": {
+      "get": {
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/analytics/userStatistics": {
+      "get": {
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/analytics/articles": {
+      "get": {
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/analytics/discussions": {
+      "get": {
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/analytics/engagements": {
+      "get": {
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
       }
     }
   },

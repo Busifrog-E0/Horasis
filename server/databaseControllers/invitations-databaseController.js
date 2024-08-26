@@ -4,6 +4,7 @@ import dataHandling from './functions.js'
  * @typedef {object} InvitationData
  * @property {string} Email
  * @property {object[]} OnCreate
+ * @property {string} SentUserId
  * @property {string} DocId
  */
 

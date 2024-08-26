@@ -10,6 +10,7 @@ import { MemberInit } from './members-controller.js';
 import { CheckIfUserWithMailExists } from './users-controller.js';
 import { CheckIfMailAvailableToInviteInEvent } from './events-controller.js';
 import moment from 'moment';
+import { SendNotificationForMemberInvitation, SendNotificationForSpeaker } from './notifications-controller.js';
 
 /**
  * @typedef {import('./../databaseControllers/users-databaseController.js').UserData} UserData
@@ -87,14 +88,16 @@ const DeleteInvitations = async (req, res) => {
  */
 const InviteUserToCreateAccount = async (req, res) => {
     const { EmailIds, ActionType, EntityId } = req.body;
+    //@ts-ignore
+    const { UserId } = req.user;
     await Promise.all(EmailIds.map(async Email => {
         const [checkUser] = await ReadUsers({ Email }, undefined, 1, undefined);
         if (checkUser) {
-            await CreateEntitiesBasedOnActionType(ActionType, EntityId, checkUser, checkUser.DocId);
+            await CreateEntitiesBasedOnActionType(ActionType, EntityId, checkUser, checkUser.DocId, UserId);
             return;
         }
         const InvitedUser = await ReadInvitations({ Email }, undefined, 1, undefined);
-        const OnCreateObject = { EntityId, ActionType };
+        const OnCreateObject = { EntityId, ActionType, SentUserId: UserId };
         if (InvitedUser.length > 0) {
             if (InvitedUser[0].OnCreate.includes(ActionType)) {
                 //Send Invite Email
@@ -119,7 +122,7 @@ const AddUserDetailsAfterInvited = async (UserData, UserId) => {
     }
     const [InvitedUser] = checkInvitedUser;
     await Promise.all(InvitedUser.OnCreate.map(async OnCreateObject =>
-        await CreateEntitiesBasedOnActionType(OnCreateObject.ActionType, OnCreateObject.EntityId, UserData, UserId)))
+        await CreateEntitiesBasedOnActionType(OnCreateObject.ActionType, OnCreateObject.EntityId, UserData, UserId, OnCreateObject.SentUserId)))
     RemoveInvitations(InvitedUser.DocId);
 }
 
@@ -129,8 +132,9 @@ const AddUserDetailsAfterInvited = async (UserData, UserId) => {
  * @param {string} EntityId 
  * @param {UserData} UserData 
  * @param {string} UserId
+ * @param {string} SendUserId
  */
-const CreateEntitiesBasedOnActionType = async (ActionType, EntityId, UserData, UserId) => {
+const CreateEntitiesBasedOnActionType = async (ActionType, EntityId, UserData, UserId, SendUserId) => {
     switch (ActionType) {
         case "Event-Invite-Speaker":
             const MembershipStatus = "Invited";
@@ -139,6 +143,7 @@ const CreateEntitiesBasedOnActionType = async (ActionType, EntityId, UserData, U
                 break;
             }
             await CreateSpeakers(SpeakerInit({ EventId: EntityId, SpeakerId: UserId, MembershipStatus, UserDetails: UserData }));
+            await SendNotificationForSpeaker(EntityId, UserId, SendUserId)
             break;
         case "Discussion-Invite-Member":
         case "Event-Invite-Member":
@@ -147,12 +152,15 @@ const CreateEntitiesBasedOnActionType = async (ActionType, EntityId, UserData, U
                 break;
             }
             await CreateMembers(MemberInit({ EntityId, MemberId: UserId, UserDetails: UserData }), "Invited");
+            //@ts-ignore
+            await SendNotificationForMemberInvitation(ActionType.split("-")[0], EntityId, UserId, SendUserId)
             break;
         default:
             break;
     }
     return;
 }
+
 
 
 /**

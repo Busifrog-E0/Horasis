@@ -4,7 +4,7 @@ import { ReadOneFromSpeakers, ReadSpeakers, UpdateSpeakers, CreateSpeakers, Remo
 import { AlertBoxObject } from './common.js';
 import { AggregateUsers, ReadOneFromUsers } from '../databaseControllers/users-databaseController.js';
 import { MemberInit } from './members-controller.js';
-import { CreateMembers } from '../databaseControllers/members-databaseController.js';
+import { CreateMembers, ReadMembers } from '../databaseControllers/members-databaseController.js';
 import { IncrementEvents, PullArrayEvents, PushArrayEvents } from '../databaseControllers/events-databaseController.js';
 import { RemoveNotificationForSpeaker, SendNotificationForSpeaker } from './notifications-controller.js';
 import { RemoveNotifications } from '../databaseControllers/notifications-databaseController.js';
@@ -105,11 +105,11 @@ const PatchSpeakers = async (req, res) => {
     if (Speaker?.MembershipStatus === "Accepted") {
         return res.status(444).json(AlertBoxObject("Already Accepted", "You have already accepted the invitaion."));
     }
-
-    const Member = MemberInit({ EntityId: EventId, MemberId: SpeakerId, UserDetails: Speaker.UserDetails });
+    const [Member] = await ReadMembers({ MemberId: SpeakerId, EntityId: EventId }, undefined, 1, undefined);
+    const MemberData = MemberInit({ EntityId: EventId, MemberId: SpeakerId, UserDetails: Speaker.UserDetails });
     await Promise.all([
         UpdateSpeakers({ MembershipStatus: "Accepted" }, Speaker.DocId),
-        CreateMembers(Member),
+        Member ? Promise.resolve() : CreateMembers(MemberData),
         IncrementEvents({ NoOfMembers: 1 }, EventId),
         PushArrayEvents({ Speakers: { SpeakerId, UserDetails: Speaker.UserDetails } }, EventId),
     ])
