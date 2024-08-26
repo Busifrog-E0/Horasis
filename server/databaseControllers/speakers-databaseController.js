@@ -67,6 +67,8 @@ const RemoveSpeakers = async (DocId) => {
 }
 
 
+
+
 export {
     ReadSpeakers,
     ReadOneFromSpeakers,

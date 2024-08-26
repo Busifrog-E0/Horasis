@@ -97,7 +97,7 @@ const InviteUserToCreateAccount = async (req, res) => {
             return;
         }
         const InvitedUser = await ReadInvitations({ Email }, undefined, 1, undefined);
-        const OnCreateObject = { EntityId, ActionType };
+        const OnCreateObject = { EntityId, ActionType, SentUserId: UserId };
         if (InvitedUser.length > 0) {
             if (InvitedUser[0].OnCreate.includes(ActionType)) {
                 //Send Invite Email
@@ -122,7 +122,7 @@ const AddUserDetailsAfterInvited = async (UserData, UserId) => {
     }
     const [InvitedUser] = checkInvitedUser;
     await Promise.all(InvitedUser.OnCreate.map(async OnCreateObject =>
-        await CreateEntitiesBasedOnActionType(OnCreateObject.ActionType, OnCreateObject.EntityId, UserData, UserId)))
+        await CreateEntitiesBasedOnActionType(OnCreateObject.ActionType, OnCreateObject.EntityId, UserData, UserId, OnCreateObject.SentUserId)))
     RemoveInvitations(InvitedUser.DocId);
 }
 
@@ -160,6 +160,7 @@ const CreateEntitiesBasedOnActionType = async (ActionType, EntityId, UserData, U
     }
     return;
 }
+
 
 
 /**
