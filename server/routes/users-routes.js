@@ -17,7 +17,7 @@ import { ValidateCheckUsername, ValidatePatchUsers, ValidateUserLogin, ValidateP
 import { GetMedias } from '../controllers/medias-controller.js';
 import { CheckOTP } from '../controllers/auth-controller.js';
 import { GetNotifications, GetOneFromNotifications } from '../controllers/notifications-controller.js';
-import { CheckIfMailAvailableToInvite, InviteUserToCreateAccount } from '../controllers/invitations-controller.js';
+import {  InviteUserToCreateAccount } from '../controllers/invitations-controller.js';
 const router = e.Router();
 router.route
 
@@ -98,8 +98,6 @@ router.post('/users/invite', decodeIDToken, ensureAuthorized("User"), ValidatePo
     //@ts-ignore
     asyncHandler(InviteUserToCreateAccount));
 
-router.post('/users/invite/mailCheck', decodeIDToken, ensureAuthorized("User"), ValidateMailCheck, SwaggerDocs.post_Users_Invite_MailCheck,
-    //@ts-ignore
-    asyncHandler(CheckIfMailAvailableToInvite))
+
 
 export default router;

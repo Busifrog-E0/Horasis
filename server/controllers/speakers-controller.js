@@ -144,7 +144,7 @@ const DeleteSpeakers = async (req, res) => {
  */
 const SpeakerInit = (Data) => {
     return {
-        Data
+        ...Data
     }
 }
 
