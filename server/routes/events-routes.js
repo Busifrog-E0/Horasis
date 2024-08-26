@@ -2,6 +2,7 @@ import {
     GetOneFromEvents, GetEvents, PostEvents, PatchEvents, DeleteEvents,
     GetUserEvents,
     GetInvitedEvents,
+    GetPublicEvents,
 } from '../controllers/events-controller.js';
 import asyncHandler from 'express-async-handler';
 import {
@@ -40,6 +41,10 @@ router.post('/events', decodeIDToken, ensureAuthorized("User"), ValidatePostEven
 router.patch('/events/:EventId',
     // @ts-ignore
     asyncHandler(PatchEvents));
+
+router.get('/guest/events/', ValidateGetEntity, QueryParameterFormatting, SwaggerDocs.get_Guest_Events,
+    //@ts-ignore
+    asyncHandler(GetPublicEvents));    
 
 
 /**************************************************************************JOIN******************************************************************* */

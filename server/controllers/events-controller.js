@@ -139,6 +139,14 @@ const GetInvitedEvents = async (req, res) => {
     return res.json(data);
 }
 
+const GetPublicEvents = (req, res) => {
+    const { Filter, NextId, Keyword, Limit, OrderBy } = req.query;
+    Filter.Privacy = "Public";
+    // @ts-ignore
+    const data = ReadEvents(Filter, NextId, Limit, OrderBy);
+    return res.json(data);
+}
+
 /**
  * 
  * @param {e.Request} req 
@@ -248,5 +256,6 @@ const EventInit = (Event) => {
 
 export {
     GetOneFromEvents, GetEvents, PostEvents, PatchEvents, DeleteEvents,
-    GetUserEvents, GetInvitedEvents, SetEventDataForGet, CheckIfMailAvailableToInviteInEvent
+    GetUserEvents, GetInvitedEvents, SetEventDataForGet, CheckIfMailAvailableToInviteInEvent,
+    GetPublicEvents
 }

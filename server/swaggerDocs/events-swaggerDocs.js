@@ -252,6 +252,17 @@ const get_Events_EventId_Speakers_Invited = async (req, res, next) => {
     next();
 }
 
+const get_Guest_Events = async (req, res, next) => {
+    // #swagger.tags = ['Guests']
+    /* #swagger.security = [{ "BearerAuth": [] }] */
+    /* #swagger.responses[200] = {
+               description: 'Event Data',
+               schema: { $ref: '#/definitions/EventDataArray' }
+       } 
+   */
+    next();
+}
+
 export default {
     post_Events, get_User_UserId_Events, get_Events_EventId_Members_Requested,
     patch_Events_EventId_CoverPicture, post_Events_EventId_Save,
@@ -272,5 +283,6 @@ export default {
     post_Events_EventId_Speakers,
     patch_Events_EventId_Speakers,
     delete_Events_EventId_Speakers_SpeakerId,
-    get_Events_EventId_Speakers_Invited
+    get_Events_EventId_Speakers_Invited,
+    get_Guest_Events
 }
