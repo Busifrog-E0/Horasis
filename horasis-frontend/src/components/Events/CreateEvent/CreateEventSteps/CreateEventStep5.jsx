@@ -142,9 +142,11 @@ const CreateEventStep5 = ({ changeStep, activeStep, eventId, from = 'create', Is
 								Invite by clicking the 'Invite'. Once done, click 'Done'
 							</p>
 						</div>
-						<Button onClick={() => setShowSpeakers(true)} variant='black' className='px-16'>
-							Next
-						</Button>
+						{from === 'create' && (
+							<Button onClick={() => setShowSpeakers(true)} variant='black' className='px-16'>
+								Next
+							</Button>
+						)}
 					</div>
 					<SearchComponent
 						searchKey={filters.Keyword}
