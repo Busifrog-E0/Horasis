@@ -18,6 +18,7 @@ import articlesRoutes from './articles-routes.js'
 import savesRoutes from './saves-routes.js'
 import translationsRoutes from './translations-routes.js'
 import membersRoutes from './members-routes.js'
+import analyticsRoutes from './analytics-routes.js'
 
 
 router.use("/api", authRoutes);
@@ -36,6 +37,7 @@ router.use("/api", articlesRoutes);
 router.use("/api", savesRoutes);
 router.use("/api", translationsRoutes);
 router.use("/api", membersRoutes);
+router.use("/api", analyticsRoutes);
 
 
 
