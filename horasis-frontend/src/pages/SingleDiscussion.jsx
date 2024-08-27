@@ -464,25 +464,41 @@ const SingleDiscussion = () => {
 
 	const storedLanguage = _retrieveData('currentLanguage')
 	const homeLanguage = storedLanguage ? storedLanguage : 'English'
+	const [translationData, setTranslationData] = useState(null)
 
 	const translateDiscussion = () => {
-		setTranslating(true)
-		const targetLanguage = translated ? discussion.OriginalLanguage : homeLanguage
-		postItem(
-			'translate',
-			{ EntityId: discussion.DocId, Type: 'Discussion', TargetLanguage: targetLanguage },
-			(result) => {
-				setTranslated((prev) => !prev)
-				setTranslating(false)
-				setDiscussion({ ...discussion, ...result })
-			},
-			(err) => {
-				setTranslating(false)
-			},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
+		if (translationData) {
+			setTranslated((prev) => !prev)
+			setDiscussion({ ...discussion, ...translationData.TranslatedContent })
+		} else {
+			const targetLanguage = homeLanguage
+			if (discussion.OriginalLanguage !== targetLanguage) {
+				setTranslating(true)
+				postItem(
+					'translate',
+					{ EntityId: discussion.DocId, Type: 'Discussion', TargetLanguage: targetLanguage },
+					(result) => {
+						setTranslated((prev) => !prev)
+						setTranslating(false)
+						setTranslationData(result)
+						setDiscussion({ ...discussion, ...result.TranslatedContent })
+					},
+					(err) => {
+						setTranslating(false)
+					},
+					updateCurrentUser,
+					currentUserData,
+					toast
+				)
+			}
+		}
+	}
+
+	const showOriginal = () => {
+		if (translationData) {
+			setTranslated((prev) => !prev)
+			setDiscussion({ ...discussion, ...translationData.OriginalContent })
+		}
 	}
 
 	return (
@@ -562,16 +578,30 @@ const SingleDiscussion = () => {
 							<h4 className='text-2xl text-white'>{discussion.NoOfMembers} Participants</h4>
 							<h4 className='text-2xl text-white'>•</h4>
 							<h4 className='text-2xl text-white'>{discussion.Privacy}</h4>
-							<h4 className='text-2xl text-white'>•</h4>
-							{translating ? (
+							{discussion.OriginalLanguage !== homeLanguage && (
 								<>
-									<h4 className='text-2xl text-white  cursor-pointer'>Translating...</h4>
-								</>
-							) : (
-								<>
-									<h4 className='text-2xl text-white  cursor-pointer' onClick={translateDiscussion}>
-										{translated ? 'Show original' : 'Translate this discussion'}
-									</h4>
+									<h4 className='text-2xl text-white'>•</h4>
+									{translating ? (
+										<>
+											<h4 className='text-2xl text-white  cursor-pointer'>Translating...</h4>
+										</>
+									) : (
+										<>
+											{translated ? (
+												<>
+													<h4 className='text-2xl text-white  cursor-pointer' onClick={showOriginal}>
+														Show Original
+													</h4>
+												</>
+											) : (
+												<>
+													<h4 className='text-2xl text-white  cursor-pointer' onClick={translateDiscussion}>
+														Translate this discussion
+													</h4>
+												</>
+											)}
+										</>
+									)}
 								</>
 							)}
 						</div>

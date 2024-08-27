@@ -371,7 +371,7 @@ const SingleEvent = () => {
 								</>
 							) : (
 								<>
-									<EmptyMembers emptyText='No speakers registered yet.'/>
+									<EmptyMembers emptyText='No speakers registered yet.' />
 								</>
 							)}
 						</>
@@ -489,26 +489,41 @@ const SingleEvent = () => {
 
 	const storedLanguage = _retrieveData('currentLanguage')
 	const homeLanguage = storedLanguage ? storedLanguage : 'English'
+	const [translationData, setTranslationData] = useState(null)
 
 	const translateEvent = () => {
-		setTranslating(true)
-		const targetLanguage = translated ? event.OriginalLanguage : homeLanguage
-		postItem(
-			'translate',
-			{ EntityId: event.DocId, Type: 'Event', TargetLanguage: targetLanguage },
-			(result) => {
-				console.log(result)
-				setTranslated((prev) => !prev)
-				setTranslating(false)
-				setEvent({ ...event, ...result })
-			},
-			(err) => {
-				setTranslating(false)
-			},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
+		if (translationData) {
+			setTranslated((prev) => !prev)
+			setEvent({ ...event, ...translationData.TranslatedContent })
+		} else {
+			const targetLanguage = homeLanguage
+			if (event.OriginalLanguage !== targetLanguage) {
+				setTranslating(true)
+				postItem(
+					'translate',
+					{ EntityId: event.DocId, Type: 'Event', TargetLanguage: targetLanguage },
+					(result) => {
+						setTranslated((prev) => !prev)
+						setTranslating(false)
+						setTranslationData(result)
+						setEvent({ ...event, ...result.TranslatedContent })
+					},
+					(err) => {
+						setTranslating(false)
+					},
+					updateCurrentUser,
+					currentUserData,
+					toast
+				)
+			}
+		}
+	}
+
+	const showOriginal = () => {
+		if (translationData) {
+			setTranslated((prev) => !prev)
+			setEvent({ ...event, ...translationData.OriginalContent })
+		}
 	}
 
 	return (
@@ -609,11 +624,29 @@ const SingleEvent = () => {
 							<h4 className='font-medium text-md  text-system-secondary-text my-2 lg:my-2 leading-relaxed'>
 								{event.Description}
 							</h4>
-							<p className='text-sm mt-4 text-system-secondary-text cursor-pointer' onClick={translateEvent}>
-								{translated ? 'Show Original' : 'Translate Event Details'}
-							</p>
+							{event.OriginalLanguage !== homeLanguage && (
+								<>
+									{translated ? (
+										<>
+											<p className='text-sm mt-4 text-system-secondary-text cursor-pointer' onClick={showOriginal}>
+												Show Original
+											</p>
+										</>
+									) : (
+										<>
+											<p className='text-sm mt-4 text-system-secondary-text cursor-pointer' onClick={translateEvent}>
+												Translate Event Details
+											</p>
+										</>
+									)}
+								</>
+							)}
 							<div className='flex items-start gap-4 mt-3'>
-								<img className='w-14 h-14 rounded-full object-cover' src={event?.UserDetails?.ProfilePicture} alt='Rounded avatar' />
+								<img
+									className='w-14 h-14 rounded-full object-cover'
+									src={event?.UserDetails?.ProfilePicture}
+									alt='Rounded avatar'
+								/>
 								<div className='flex-1'>
 									<h4 className='text-xs text-brand-gray-dim mt-1'>Organizer</h4>
 									<h4 className='font-semibold text-lg text-system-primary-accent mt-1'>

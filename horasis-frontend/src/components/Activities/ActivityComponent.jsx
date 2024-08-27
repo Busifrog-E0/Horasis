@@ -271,29 +271,46 @@ const ActivityComponent = ({
 	const [translating, setTranslating] = useState(false)
 	const storedLanguage = _retrieveData('currentLanguage')
 	const homeLanguage = storedLanguage ? storedLanguage : 'English'
+	const [translationData, setTranslationData] = useState(null)
 	const translateThisPost = () => {
-		setTranslating(true)
-		const targetLanguage = translated ? singleActivity.OriginalLanguage : homeLanguage
-		postItem(
-			`translate`,
-			{
-				EntityId: singleActivity.DocId,
-				Type: 'Activity',
-				TargetLanguage: targetLanguage,
-			},
-			(result) => {
-				setTranslating(false)
-				setTranslated((prev) => !prev)
-				setSingleActivity({ ...singleActivity, ...result })
-			},
-			(err) => {
-				setTranslating(false)
-			},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
+		if (translationData) {
+			setTranslated((prev) => !prev)
+			setSingleActivity({ ...singleActivity, ...translationData.TranslatedContent })
+		} else {
+			const targetLanguage = homeLanguage
+			if (singleActivity.OriginalLanguage !== targetLanguage) {
+				setTranslating(true)
+				postItem(
+					`translate`,
+					{
+						EntityId: singleActivity.DocId,
+						Type: 'Activity',
+						TargetLanguage: targetLanguage,
+					},
+					(result) => {
+						setTranslating(false)
+						setTranslated((prev) => !prev)
+						setTranslationData(result)
+						setSingleActivity({ ...singleActivity, ...result.TranslatedContent })
+					},
+					(err) => {
+						setTranslating(false)
+					},
+					updateCurrentUser,
+					currentUserData,
+					toast
+				)
+			}
+		}
 	}
+
+	const showOriginal = () => {
+		if (translationData) {
+			setTranslated((prev) => !prev)
+			setSingleActivity({ ...singleActivity, ...translationData.OriginalContent })
+		}
+	}
+
 	if (singleActivity)
 		return (
 			<div className={className}>
@@ -361,9 +378,19 @@ const ActivityComponent = ({
 				)}
 				{singleActivity.OriginalLanguage !== homeLanguage && (
 					<div className='mt-6 mb-2 select-none'>
-						<p className='text-sm text-system-secondary-text cursor-pointer' onClick={translateThisPost}>
-							{translated ? 'Show  Original' : 'Translate this post'}
-						</p>
+						{translated ? (
+							<>
+								<p className='text-sm text-system-secondary-text cursor-pointer' onClick={showOriginal}>
+									Show Original
+								</p>
+							</>
+						) : (
+							<>
+								<p className='text-sm text-system-secondary-text cursor-pointer' onClick={translateThisPost}>
+									Translate this post
+								</p>
+							</>
+						)}
 					</div>
 				)}
 				<div className='flex items-center justify-between gap-10 mt-2'>
