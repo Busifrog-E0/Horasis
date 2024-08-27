@@ -91,7 +91,7 @@ const TodaysEventTab = () => {
 				<>
 					{events.map((item) => {
 						return (
-							<div className='bg-system-secondary-bg rounded-lg mt-3 overflow-hidden'>
+							<div className='bg-system-secondary-bg rounded-lg mt-3 overflow-hidden' key={item.DocId}>
 								<div className='h-24 bg-system-secondary-bg relative overflow-hidden'>
 									<img src={item.CoverPicture} className='object-cover h-full w-full' />
 									<div className='absolute top-0 right-0 p-2'>
@@ -114,12 +114,8 @@ const TodaysEventTab = () => {
 										</h4>
 									</div>
 									<div className='col-span-4 p-3 px-5 bg-system-secondary-bg rounded-lg shadow-lg h-full'>
-										<h4 className='text-base text-system-primary-text m-0 leading-5'>
-											{item.EventName}
-										</h4>
-										<h4 className=' text-xs text-brand-gray-dim line-clamp-2'>
-											{item.Description}
-										</h4>
+										<h4 className='text-base text-system-primary-text m-0 leading-5'>{item.EventName}</h4>
+										<h4 className=' text-xs text-brand-gray-dim line-clamp-2'>{item.Description}</h4>
 									</div>
 								</div>
 							</div>

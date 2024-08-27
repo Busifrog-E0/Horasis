@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { AuthContext } from '../utils/AuthProvider'
 import Logo from './Common/Logo'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
@@ -9,9 +9,13 @@ import Modal from './ui/Modal'
 import close from '../assets/icons/close.svg'
 import searchIcon from '../assets/icons/search-icon.svg'
 import Button from './ui/Button'
+import { getItem } from '../constants/operations'
+import { useToast } from './Toast/ToastService'
 
 const DashboardHeader = () => {
-	const { logout, currentUserData, scrollToTop } = useContext(AuthContext)
+	const { logout, updateCurrentUser, currentUserData, scrollToTop } = useContext(AuthContext)
+	const toast = useToast()
+	const [user, setUser] = useState({})
 	const location = useLocation()
 	const navigate = useNavigate()
 	const OnClickItem = (path) => {
@@ -24,6 +28,25 @@ const DashboardHeader = () => {
 	const openLogoutModal = () => setIsModalOpen(true)
 
 	const closeLogoutModal = () => setIsModalOpen(false)
+
+	const getUser = () => {
+		getItem(
+			`users/${currentUserData.CurrentUser.UserId}`,
+			(result) => {
+				setUser(result)
+			},
+			(err) => {},
+			updateCurrentUser,
+			currentUserData,
+			toast
+		)
+	}
+
+	useEffect(() => {
+		getUser()
+	}, [])
+
+	const navigateToProfile = () => navigate(`/MyProfile`)
 
 	return (
 		<>
@@ -43,11 +66,13 @@ const DashboardHeader = () => {
 					</div>
 				</Modal.Body>
 			</Modal>
-			<div className='bg-system-secondary-bg py-3 px-5 lg:px-10 shadow border-b border-system-file-border'>
+			<div className='bg-system-secondary-bg py-2 md:py-3 px-1 lg:px-10 shadow border-b border-system-file-border'>
 				<div className='flex flex-row justify-between items-center'>
-					<h1 className='text-4xl font-bold text-brand-violet' onClick={() => OnClickItem('/home')}>
+					<div
+						className='text-4xl font-bold text-brand-violet scale-75 md:scale-90'
+						onClick={() => OnClickItem('/home')}>
 						<Logo />
-					</h1>
+					</div>
 					<div className='px-10 hidden lg:flex flex-row flex-wrap gap-8 flex-1'>
 						<div className='w-max flex flex-col items-center'>
 							<a
@@ -137,19 +162,27 @@ const DashboardHeader = () => {
 									type='button'
 									className='inline-flex justify-center rounded-md border-none bg-system-secondary-bg text-md px-0 font-medium text-brand-gray-dim'
 									onClick={() => OnClickItem('/Search')}>
-									<img src={searchIcon} alt="" className='h-7' />
+									<img src={searchIcon} alt='' className='h-7' />
 								</button>
 							</div>
 						</div>
 						<ChatList />
 						<AlertList />
+
 						<button
 							type='button'
-							className='inline-flex justify-center rounded-full border-2 border-system-error bg-system-secondary-bg text-md px-6 py-1 font-medium text-brand-red'
+							className='hidden md:inline-flex justify-center rounded-full border-2 border-system-error bg-system-secondary-bg text-md px-6 py-1 font-medium text-brand-red'
 							onClick={openLogoutModal}>
 							Logout
-							{/* <img src={logoutIcon} alt='' className='h-7' /> */}
 						</button>
+						<button className='inline-flex md:hidden' onClick={openLogoutModal}>
+							<img src={logoutIcon} alt='' className='h-7' />
+						</button>
+						{user?.ProfilePicture && (
+							<div className='rounded-full overflow-hidden cursor-pointer' onClick={navigateToProfile}>
+								<img src={user?.ProfilePicture} alt='' className='object-cover h-10 w-10 ' />
+							</div>
+						)}
 					</div>
 				</div>
 			</div>

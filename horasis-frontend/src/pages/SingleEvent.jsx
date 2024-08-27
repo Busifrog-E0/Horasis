@@ -25,6 +25,7 @@ import TimeLineTab from '../components/Activities/TimeLineTab'
 import EventJoinRequest from '../components/Events/EventsTabs/EventJoinRequest'
 import InviteSpeakers from '../components/Events/InviteSpeakers'
 import { _retrieveData } from '../utils/LocalStorage'
+import EmptyMembers from '../components/Common/EmptyMembers'
 
 const SingleEvent = () => {
 	const [activeTab, setActiveTab] = useState(0)
@@ -360,11 +361,21 @@ const SingleEvent = () => {
 			title: "Speakers' Profile",
 			render: () => (
 				<div className='py-3 pt-6 flex flex-col gap-8'>
-					{event &&
-						event.Speakers &&
-						event.Speakers.map((speaker) => {
-							return <SpeakerProfileTab profile={speaker.UserDetails} />
-						})}
+					{event && (
+						<>
+							{event.Speakers && event.Speakers.length > 0 ? (
+								<>
+									{event.Speakers.map((speaker) => {
+										return <SpeakerProfileTab profile={speaker.UserDetails} />
+									})}
+								</>
+							) : (
+								<>
+									<EmptyMembers emptyText='No speakers registered yet.'/>
+								</>
+							)}
+						</>
+					)}
 				</div>
 			),
 		},

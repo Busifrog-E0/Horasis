@@ -50,7 +50,7 @@ const ToastProvider = ({ children }) => {
 										<img src={closeIcon} className='h-6  cursor-pointer' alt='' />
 									</button>
 									<div
-										className={`flex min-w-[400px] gap-2 bg-blue-100 text-blue-500 border border-blue-500 p-4 rounded-lg shadow-lg`}>
+										className={`flex w-full max-w-[400px] gap-2 bg-blue-100 text-blue-500 border border-blue-500 p-4 rounded-lg shadow-lg`}>
 										<div>
 											<h3 className='font-bold'>{title}</h3>
 											<p className='text-md'>{message}</p>
@@ -66,7 +66,7 @@ const ToastProvider = ({ children }) => {
 										<img src={closeIcon} className='h-6  cursor-pointer' alt='' />
 									</button>
 									<div
-										className={`flex min-w-[400px] gap-2 bg-green-100 text-green-700 border border-green-500 p-4 rounded-lg shadow-lg`}>
+										className={`flex w-full max-w-[400px] gap-2 bg-green-100 text-green-700 border border-green-500 p-4 rounded-lg shadow-lg`}>
 										<div>
 											<h3 className='font-bold'>{title}</h3>
 											<p className='text-md'>{message}</p>

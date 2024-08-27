@@ -6,9 +6,9 @@ const SpeakerProfileTab = ({ profile }) => {
 		<div className='px-4'>
 			<div className='flex items-start gap-3'>
 				{profile.ProfilePicture ? (
-					<img className='w-12 h-12 rounded-full' src={profile.ProfilePicture} alt='Rounded avatar' />
+					<img className='w-12 h-12 rounded-full object-cover' src={profile.ProfilePicture} alt='Rounded avatar' />
 				) : (
-					<img className='w-12 h-12 rounded-full' src={avatar} alt='Rounded avatar' />
+					<img className='w-12 h-12 rounded-full object-cover' src={avatar} alt='Rounded avatar' />
 				)}
 				<div className='flex-1'>
 					<h4 className='font-semibold text-base text-system-primary-accent mt-3'>{profile.FullName}</h4>
