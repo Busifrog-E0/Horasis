@@ -169,12 +169,6 @@ const DashboardHeader = () => {
 						<ChatList />
 						<AlertList />
 
-						<button
-							type='button'
-							className='hidden md:inline-flex justify-center rounded-full border-2 border-system-error bg-system-secondary-bg text-md px-6 py-1 font-medium text-brand-red'
-							onClick={openLogoutModal}>
-							Logout
-						</button>
 						<button className='inline-flex md:hidden' onClick={openLogoutModal}>
 							<img src={logoutIcon} alt='' className='h-7' />
 						</button>
@@ -183,6 +177,12 @@ const DashboardHeader = () => {
 								<img src={user?.ProfilePicture} alt='' className='object-cover h-10 w-10 ' />
 							</div>
 						)}
+						<button
+							type='button'
+							className='hidden md:inline-flex justify-center rounded-full border-2 border-system-error bg-system-secondary-bg text-md px-6 py-1 font-medium text-brand-red'
+							onClick={openLogoutModal}>
+							Logout
+						</button>
 					</div>
 				</div>
 			</div>
