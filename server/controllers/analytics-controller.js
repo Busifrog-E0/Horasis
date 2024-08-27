@@ -5,11 +5,12 @@ import { CountActivities, ReadActivities } from '../databaseControllers/activiti
 import { CommentCount } from '../databaseControllers/comments-databaseController.js';
 import { CountLikes } from '../databaseControllers/likes-databaseController.js';
 import { CountEvents } from '../databaseControllers/events-databaseController.js';
+import { CountActiveUsers, ReadActiveUsers } from '../databaseControllers/activeUsers-databaseController.js';
 
 const GetUserInsightsAnalytics = async (req, res) => {
     const [Users, ActiveUsers, Posts] = await Promise.all([
         GetAnalyticsWithinAnInterval("Users"),
-        GetAnalyticsWithinAnInterval("Users"),
+        GetActiveUsersWithinAnInterval(),
         GetAnalyticsWithinAnInterval("Activities", { Type: "Feed" })
     ])
     return res.json({ Users, ActiveUsers, Posts })
@@ -26,11 +27,12 @@ const GetUserBreakdown = (async (req, res) => {
 })
 
 const GetUserStatistics = async (req, res) => {
-    const [EventLocations, UsersCount, ActiveUsersCount] = await Promise.all([
+    const [EventLocations, UsersCount, ActiveUsers] = await Promise.all([
         GetDocumentCountByFields("Events", "Country", {}, -1),
         CountUsers({}),
-        CountUsers({})
+        GetActiveUsersWithinAnInterval()
     ])
+    const ActiveUsersCount = ActiveUsers.TotalCount;
     const NonActiveUsersPercentage = ((ActiveUsersCount - UsersCount) / UsersCount) * 100;
     const ActiveUsersPercentage = (ActiveUsersCount / UsersCount) * 100;
     return res.json({ EventLocations, NonActiveUsersPercentage, ActiveUsersPercentage })
@@ -96,6 +98,37 @@ const GetDocumentCountByFields = async (collectionName, fieldName, where = {}, L
     return data;
 }
 
+
+const GetActiveUsersWithinAnInterval = async (
+    startDate = moment().subtract(1, 'month').startOf('day').valueOf(),
+    endDate = moment().startOf('day').valueOf(),
+    noOfIntervals = 6
+) => {
+    const intervalSize = (endDate - startDate) / (noOfIntervals - 1);
+    const intervals = [];
+    for (let i = 0; i < noOfIntervals; i++) {
+        intervals.push({
+            Date: {
+                $gte: startDate + i * intervalSize,
+                $lt: startDate + (i + 1) * intervalSize
+            }
+        });
+    }
+    intervals.unshift({
+        Date: {
+            $gte: startDate - 1 * intervalSize,
+            $lt: startDate
+        }
+    })
+    const data = await Promise.all(intervals.map(async interval => {
+        const UserIds = await CountActiveUsers({ interval });
+        return { Date: interval.Date.$lt, Count: UserIds.length }
+    }));
+    const TotalCount = data[data.length - 1].Count;
+    const PercentageChange = Number((((TotalCount - data[0].Count) / data[0].Count) * 100).toFixed(2));
+    return { CountWithDate: data, TotalCount, PercentageChange };
+}
+
 /**
  * 
  * @param {"Discussion"|"Event"|"Article"} EntityType 
@@ -119,7 +152,8 @@ export {
     GetUserInsightsAnalytics,
     GetAnalyticsWithinAnInterval,
     GetUserBreakdown,
-    GetUserStatistics
+    GetUserStatistics,
+    GetArticleAnalytics
 }
 
 
