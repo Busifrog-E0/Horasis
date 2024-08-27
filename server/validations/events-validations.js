@@ -36,13 +36,21 @@ const ValidatePostEvents = async (req, res, next) => {
     }
 };
 
-const ValidateGetEvents = async (req, res, next) => { 
+const ValidateGetEvents = async (req, res, next) => {
     const Result = QueryParametersSchema.keys({
         StartTime: Joi.number(),
         Privacy: Joi.string().valid('Public', 'Private'),
         Type: Joi.string().valid('Virtual', 'Offline'),
         Country: Joi.string(),
-    })
+    }).validate(req.query, { stripUnknown: true, convert: true });
+    if (Result.error) {
+        const message = Result.error.details.map((detail) => detail.message).join(', ');
+        return res.status(400).json(message);
+    }
+    else {
+        req.body = Result.value;
+        return next();
+    }
 }
 
 export {
