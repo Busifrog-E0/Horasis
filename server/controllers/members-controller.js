@@ -70,6 +70,7 @@ const PostMembers = async (req, res) => {
     //@ts-ignore
     const { UserId } = req.user;
     const { EntityId } = req.params;
+    const { Type } = req.body;
 
     const MemberCheck = await ReadMembers({ MemberId: UserId, EntityId, MembershipStatus: "Accepted" }, undefined, 1, undefined);
     if (MemberCheck.length > 0) {
@@ -77,12 +78,12 @@ const PostMembers = async (req, res) => {
     }
 
     const UserDetails = await ReadOneFromUsers(UserId);;
-    const Entity = req.body.Type === "Discussion" ? await ReadOneFromDiscussions(EntityId) : await ReadOneFromEvents(EntityId);
+    const Entity = Type === "Discussion" ? await ReadOneFromDiscussions(EntityId) : await ReadOneFromEvents(EntityId);
 
     if (Entity.Privacy === "Private") {
         req.body = MemberInit({ MemberId: UserId, EntityId, UserDetails }, "Requested")
         await Promise.all([
-            SendNotificationForMemberRequest(req.body.Type, EntityId, UserId),
+            SendNotificationForMemberRequest(Type, EntityId, UserId),
             CreateMembers(req.body)
         ])
         return res.status(244).json(AlertBoxObject("Request Sent", "Request has been sent"));
@@ -92,8 +93,8 @@ const PostMembers = async (req, res) => {
         await Promise.all([
             SendNotificationForMemberJoin(req.body.Type, EntityId, UserId),
             CreateMembers({ ...req.body, MemberId: UserId, EntityId, UserDetails }),
-            req.body.Type === "Discussion" ? await IncrementDiscussions({ NoOfMembers: 1 }, EntityId) :
-                await IncrementEvents({ NoOfMembers: 1 }, EntityId)
+            Type === "Discussion" ? IncrementDiscussions({ NoOfMembers: 1 }, EntityId) :
+                IncrementEvents({ NoOfMembers: 1 }, EntityId)
         ])
         return res.json(true);
     }
