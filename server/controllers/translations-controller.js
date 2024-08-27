@@ -198,7 +198,7 @@ const TranslateData = async (req, res) => {
     switch (Type) {
         case "Activity":
             const Activity = await ReadOneFromActivities(EntityId);
-            OriginalContent = Activity.Content;
+            OriginalContent = { Content: Activity.Content };
             if (Activity.Languages && Activity.Languages[TargetLanguage]) {
                 TranslatedContent = Activity.Languages[TargetLanguage];
             }
@@ -210,7 +210,7 @@ const TranslateData = async (req, res) => {
             break;
         case "Comment":
             const Comment = await ReadOneFromComments(EntityId);
-            OriginalContent = Comment.Content;
+            OriginalContent = {Content : Comment.Content};
             if (Comment.Languages && Comment.Languages[TargetLanguage]) {
                 TranslatedContent = Comment.Languages[TargetLanguage];
             }
