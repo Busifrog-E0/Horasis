@@ -163,33 +163,9 @@ const CreateEntitiesBasedOnActionType = async (ActionType, EntityId, UserData, U
 
 
 
-/**
- * 
- * @param {e.Request} req 
- * @param {e.Response} res 
- */
-const CheckIfMailAvailableToInvite = async (req, res) => {
-    const { Email, EntityType, UserRole } = req.body;
-    const Type = UserRole ? UserRole : "Speaker";
-    if ((await CheckIfUserWithMailExists(Email))) {
-        return res.status(444).json(AlertBoxObject("Already an User", "User with this email already exists"))
-    }
-    switch (EntityType) {
-        case "Event":
-            const checkEvent = await CheckIfMailAvailableToInviteInEvent(Email, Type);
-            if (checkEvent !== true) {
-                return res.status(444).json(checkEvent)
-            }
-            break;
-        case "Discussion":
-            break;
-        default:
-            break;
-    }
-    return res.json(true)
-}
+
 
 export {
     GetOneFromInvitations, GetInvitations, PostInvitations, PatchInvitations, DeleteInvitations,
-    InviteUserToCreateAccount, AddUserDetailsAfterInvited, CheckIfMailAvailableToInvite
+    InviteUserToCreateAccount, AddUserDetailsAfterInvited, 
 }
