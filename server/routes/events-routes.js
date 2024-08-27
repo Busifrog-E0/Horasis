@@ -175,6 +175,12 @@ router.get('/events/:EventId/speakers/invite', decodeIDToken, ensureAuthorized("
     //@ts-ignore
     asyncHandler(GetSpeakerstoInvite));
 
+router.delete('/events/:EventId/speakers/:SpeakerId/reject', decodeIDToken, ensureAuthorized("User"),
+    SwaggerDocs.delete_Events_EventId_Speakers_SpeakerId,
+    //@ts-ignore
+    asyncHandler(DeleteSpeakers));
+   
+
 router.delete('/events/:EventId/speakers/:SpeakerId', decodeIDToken, ensureAuthorized("User"),
     SwaggerDocs.delete_Events_EventId_Speakers_SpeakerId,
     //@ts-ignore
