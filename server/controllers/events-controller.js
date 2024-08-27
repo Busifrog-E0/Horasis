@@ -9,6 +9,7 @@ import { AlertBoxObject } from './common.js';
 import { DetectLanguage } from './translations-controller.js';
 import { CheckIfUserWithMailExists } from './users-controller.js';
 import { ReadInvitations } from '../databaseControllers/invitations-databaseController.js';
+import { ReadSpeakers } from '../databaseControllers/speakers-databaseController.js';
 
 /**
  * @typedef {import('./../databaseControllers/events-databaseController.js').EventData} EventData 
@@ -206,9 +207,15 @@ const DeleteEvents = async (req, res) => {
  * @returns 
  */
 const SetEventDataForGet = async (Event, UserId) => {
-    const Member = await ReadMembers({ MemberId: UserId, EntityId: Event.DocId }, undefined, 1, undefined);
+    const [Member, [Speaker]] = await Promise.all([
+        ReadMembers({ MemberId: UserId, EntityId: Event.DocId }, undefined, 1, undefined),
+        ReadSpeakers({ SpeakerId: UserId, EventId: Event.DocId }, undefined, 1, undefined)
+    ]);
+    //@ts-ignore
+    Event.SpeakerStatus = Speaker ? Speaker.MembershipStatus : "None";
     //@ts-ignore
     Event = GetPermissionOfMember(Member[0], Event);
+
     return Event;
 }
 
