@@ -140,11 +140,11 @@ const GetInvitedEvents = async (req, res) => {
     return res.json(data);
 }
 
-const GetPublicEvents = (req, res) => {
+const GetPublicEvents = async (req, res) => {
     const { Filter, NextId, Keyword, Limit, OrderBy } = req.query;
     Filter.Privacy = "Public";
     // @ts-ignore
-    const data = ReadEvents(Filter, NextId, Limit, OrderBy);
+    const data = await ReadEvents(Filter, NextId, Limit, OrderBy);
     return res.json(data);
 }
 
