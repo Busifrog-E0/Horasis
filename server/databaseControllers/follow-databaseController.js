@@ -68,6 +68,9 @@ const GetFollowCount = async (Where = {}) => {
     return dataHandling.ReadCount('Follows', Where);
 }
 
+const UpdateManyFollows = async (data, where = {}, updateOptions = {}) => {
+    return dataHandling.UpdateMany('Follows', data, where, ["$set"], updateOptions);
+}
 
 export {
     ReadFollows,
@@ -75,5 +78,6 @@ export {
     UpdateFollows,
     CreateFollows,
     RemoveFollows,
-    GetFollowCount
+    GetFollowCount,
+    UpdateManyFollows
 }

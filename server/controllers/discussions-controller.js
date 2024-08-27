@@ -161,10 +161,13 @@ const GetPublicDiscussions = async (req, res) => {
  */
 const PostDiscussions = async (req, res) => {
     const { OrganiserId } = req.body;
-    const UserDetails = await ReadOneFromUsers(OrganiserId);
+    const [UserDetails, OriginalLanguage] = await Promise.all([
+        ReadOneFromUsers(OrganiserId),
+        DetectLanguage(req.body.Description)
+    ])
     req.body = DiscussionInit(req.body);
-    req.body.OriginalLanguage = await DetectLanguage(req.body.Description);
-    const DiscussionId = await CreateDiscussions({ ...req.body, UserDetails });
+    req.body.OriginalLanguage = OriginalLanguage;
+    const DiscussionId = await CreateDiscussions({ ...req.body });
     const Member = MemberInit({ MemberId: OrganiserId, EntityId: DiscussionId, UserDetails }, "Accepted", true);
     await CreateMembers(Member);
     return res.json(DiscussionId);
@@ -230,12 +233,15 @@ const DiscussionInit = (Discussion) => {
  * @returns 
  */
 const SetDiscussionDataForGet = async (Discussion, UserId) => {
-    const Member = await ReadMembers({ MemberId: UserId, EntityId: Discussion.DocId }, undefined, 1, undefined);
+    const [Member, UserDetails, Save] = await Promise.all([
+        ReadMembers({ MemberId: UserId, EntityId: Discussion.DocId }, undefined, 1, undefined),
+        ReadOneFromUsers(Discussion.OrganiserId),
+        ReadSaves({ EntityId: Discussion.DocId, UserId }, undefined, 1, undefined)
+    ])
     //@ts-ignore
     Discussion = GetPermissionOfMember(Member[0], Discussion);
-    const Save = await ReadSaves({ EntityId: Discussion.DocId, UserId }, undefined, 1, undefined);
     const HasSaved = Save.length > 0;
-    return { ...Discussion, HasSaved }
+    return { ...Discussion, HasSaved, UserDetails }
 }
 
 export {
