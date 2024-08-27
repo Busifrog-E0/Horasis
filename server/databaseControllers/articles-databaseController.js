@@ -75,6 +75,10 @@ const IncrementArticles = async (data, DocId) => {
     return dataHandling.Update("Articles", data, DocId, ["$inc"], false);
 }
 
+const CountArticles = async (where) => {
+    return dataHandling.ReadCount('Articles', where);
+}
+
 export {
     ReadArticles,
     ReadOneFromArticles,

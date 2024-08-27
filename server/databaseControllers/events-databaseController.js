@@ -113,7 +113,9 @@ const PullArrayEvents = async (data, DocId) => {
     return dataHandling.Update("Events", data, DocId, ["$pull"], false);
 }
 
-
+const CountEvents = async (where) => {
+    return dataHandling.ReadCount('Events', where);
+}
 
 
 export {
@@ -125,5 +127,6 @@ export {
     IncrementEvents,
     AggregateEvents,
     PushArrayEvents,
-    PullArrayEvents
+    PullArrayEvents,
+    CountEvents
 }
