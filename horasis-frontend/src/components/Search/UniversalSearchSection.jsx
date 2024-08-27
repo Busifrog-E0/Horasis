@@ -22,6 +22,16 @@ const UniversalSearchSection = () => {
 	const toast = useToast()
 	const [isLoading, setIsLoading] = useState(true)
 	const [isLoadingMore, setIsLoadingMore] = useState(false)
+	const [isLoadingMembers, setIsLoadingMembers] = useState(true)
+	const [isLoadingMoreMembers, setIsLoadingMoreMembers] = useState(false)
+	const [isLoadingPosts, setIsLoadingPosts] = useState(true)
+	const [isLoadingMorePosts, setIsLoadingMorePosts] = useState(false)
+	const [isLoadingEvents, setIsLoadingEvents] = useState(true)
+	const [isLoadingMoreEvents, setIsLoadingMoreEvents] = useState(false)
+	const [isLoadingDiscussions, setIsLoadingDiscussions] = useState(true)
+	const [isLoadingMoreDiscussions, setIsLoadingMoreDiscussions] = useState(false)
+	const [isLoadingArticles, setIsLoadingArticles] = useState(true)
+	const [isLoadingMoreArticles, setIsLoadingMoreArticles] = useState(false)
 	const [pageDisabled, setPageDisabled] = useState(true)
 	const [members, setMembers] = useState([])
 	const [posts, setPosts] = useState([])
@@ -37,12 +47,13 @@ const UniversalSearchSection = () => {
 
 	const [activeTab, setActiveTab] = useState(0)
 	const [eventTab, setEventTab] = useState('all')
+	const [discussionTab, setDiscussionTab] = useState('all')
 
-	const setLoadingCom = (tempArr, value) => {
+	const setLoadingCom = (tempArr, value, setLoading, setLoadingMore) => {
 		if (tempArr.length > 0) {
-			setIsLoadingMore(value)
+			setLoadingMore(value)
 		} else {
-			setIsLoading(value)
+			setLoading(value)
 		}
 	}
 
@@ -61,33 +72,33 @@ const UniversalSearchSection = () => {
 						getConnectionCount={() => {}}
 						data={members}
 						getAllData={getAllMembers}
-						isLoading={isLoading}
+						isLoading={isLoadingMembers}
 						setData={setMembers}
-						setIsLoading={setIsLoading}
+						setIsLoading={setIsLoadingMembers}
 						fetchMore={fetchMore}
-						isLoadingMore={isLoadingMore}
+						isLoadingMore={isLoadingMoreMembers}
 						pageDisabled={pageDisabled}
 					/>
 					<div className='border-b border-system-file-border m-4'></div>
 					<PostsSearchTab
 						data={posts}
 						getAllData={getPosts}
-						isLoading={isLoading}
+						isLoading={isLoadingPosts}
 						setData={setPosts}
-						setIsLoading={setIsLoading}
+						setIsLoading={setIsLoadingPosts}
 						fetchMore={fetchMore}
-						isLoadingMore={isLoadingMore}
+						isLoadingMore={isLoadingMorePosts}
 						pageDisabled={pageDisabled}
 					/>
 					<div className='border-b border-system-file-border m-4'></div>
 					<EventsSearchTab
 						data={events}
 						getAllData={getEvents}
-						isLoading={isLoading}
+						isLoading={isLoadingEvents}
 						setData={setEvents}
-						setIsLoading={setIsLoading}
+						setIsLoading={setIsLoadingEvents}
 						fetchMore={fetchMore}
-						isLoadingMore={isLoadingMore}
+						isLoadingMore={isLoadingMoreEvents}
 						pageDisabled={pageDisabled}
 						eventTab={eventTab}
 						setEventTab={setEventTab}
@@ -97,22 +108,24 @@ const UniversalSearchSection = () => {
 					<DiscussionsSearchTab
 						data={discussions}
 						getAllData={getDiscussions}
-						isLoading={isLoading}
+						isLoading={isLoadingDiscussions}
 						setData={setEvents}
-						setIsLoading={getDiscussions}
+						setIsLoading={setIsLoadingDiscussions}
 						fetchMore={fetchMore}
-						isLoadingMore={isLoadingMore}
+						isLoadingMore={isLoadingMoreDiscussions}
 						pageDisabled={pageDisabled}
+						discussionTab={discussionTab}
+						setDiscussionTab={setDiscussionTab}
 					/>
 					<div className='border-b border-system-file-border m-4'></div>
 					<InsightsSearchTab
 						data={insights}
 						getAllData={getInsights}
-						isLoading={isLoading}
+						isLoading={isLoadingArticles}
 						setData={setInsights}
-						setIsLoading={getDiscussions}
+						setIsLoading={setIsLoadingArticles}
 						fetchMore={fetchMore}
-						isLoadingMore={isLoadingMore}
+						isLoadingMore={isLoadingMoreArticles}
 						pageDisabled={pageDisabled}
 					/>
 				</div>
@@ -126,11 +139,11 @@ const UniversalSearchSection = () => {
 					getConnectionCount={() => {}}
 					data={members}
 					getAllData={getAllMembers}
-					isLoading={isLoading}
+					isLoading={isLoadingMembers}
 					setData={setMembers}
-					setIsLoading={setIsLoading}
+					setIsLoading={setIsLoadingMembers}
 					fetchMore={fetchMore}
-					isLoadingMore={isLoadingMore}
+					isLoadingMore={isLoadingMoreMembers}
 					pageDisabled={pageDisabled}
 				/>
 			),
@@ -142,11 +155,11 @@ const UniversalSearchSection = () => {
 				<PostsSearchTab
 					data={posts}
 					getAllData={getPosts}
-					isLoading={isLoading}
+					isLoading={isLoadingPosts}
 					setData={setPosts}
-					setIsLoading={setIsLoading}
+					setIsLoading={setIsLoadingPosts}
 					fetchMore={fetchMore}
-					isLoadingMore={isLoadingMore}
+					isLoadingMore={isLoadingMorePosts}
 					pageDisabled={pageDisabled}
 				/>
 			),
@@ -158,11 +171,11 @@ const UniversalSearchSection = () => {
 				<EventsSearchTab
 					data={events}
 					getAllData={getEvents}
-					isLoading={isLoading}
+					isLoading={isLoadingPosts}
 					setData={setEvents}
-					setIsLoading={setIsLoading}
+					setIsLoading={setIsLoadingPosts}
 					fetchMore={fetchMore}
-					isLoadingMore={isLoadingMore}
+					isLoadingMore={isLoadingMorePosts}
 					pageDisabled={pageDisabled}
 					eventTab={eventTab}
 					setEventTab={setEventTab}
@@ -176,12 +189,14 @@ const UniversalSearchSection = () => {
 				<DiscussionsSearchTab
 					data={discussions}
 					getAllData={getDiscussions}
-					isLoading={isLoading}
+					isLoading={isLoadingDiscussions}
 					setData={setEvents}
-					setIsLoading={getDiscussions}
+					setIsLoading={setIsLoadingDiscussions}
 					fetchMore={fetchMore}
-					isLoadingMore={isLoadingMore}
+					isLoadingMore={isLoadingMoreDiscussions}
 					pageDisabled={pageDisabled}
+					discussionTab={discussionTab}
+					setDiscussionTab={setDiscussionTab}
 				/>
 			),
 		},
@@ -192,11 +207,11 @@ const UniversalSearchSection = () => {
 				<InsightsSearchTab
 					data={insights}
 					getAllData={getInsights}
-					isLoading={isLoading}
+					isLoading={isLoadingArticles}
 					setData={setInsights}
-					setIsLoading={getDiscussions}
+					setIsLoading={setIsLoadingArticles}
 					fetchMore={fetchMore}
-					isLoadingMore={isLoadingMore}
+					isLoadingMore={isLoadingMoreArticles}
 					pageDisabled={pageDisabled}
 				/>
 			),
@@ -208,31 +223,64 @@ const UniversalSearchSection = () => {
 	}
 
 	const getAllMembers = (tempMembers, limit) => {
-		getData(`users?&${jsonToQuery({ ...filters, Limit: limit })}`, tempMembers, setMembers)
+		getData(
+			`users?&${jsonToQuery({ ...filters, Limit: limit })}`,
+			tempMembers,
+			setMembers,
+			setIsLoadingMembers,
+			setIsLoadingMoreMembers
+		)
 	}
 	const getPosts = (tempPosts, limit) => {
-		getData(`${'activities'}?${jsonToQuery({ ...filters, Limit: limit })}`, tempPosts, setPosts)
+		getData(
+			`${'activities'}?${jsonToQuery({ ...filters, Limit: limit })}`,
+			tempPosts,
+			setPosts,
+			setIsLoadingPosts,
+			setIsLoadingMorePosts
+		)
 	}
 	const getDiscussions = (tempDiscussions, limit) => {
-		getData(`discussions?${jsonToQuery({ ...filters, Limit: limit })}`, tempDiscussions, setDiscussions)
+		const allApi = 'discussions'
+		const followingApi = `user/${currentUserData.CurrentUser.UserId}/discussions`
+		const api = discussionTab === 'all' ? allApi : followingApi
+		getData(
+			`${api}?${jsonToQuery({ ...filters, Limit: limit })}`,
+			tempDiscussions,
+			setDiscussions,
+			setIsLoadingDiscussions,
+			setIsLoadingMoreDiscussions
+		)
 	}
 	const getEvents = (tempEvents, limit, orderby = 'Index') => {
-		getData(`events?${jsonToQuery({ ...filters, Limit: limit, OrderBy: orderby })}`, tempEvents, setEvents)
+		getData(
+			`events?${jsonToQuery({ ...filters, Limit: limit, OrderBy: orderby })}`,
+			tempEvents,
+			setEvents,
+			setIsLoadingEvents,
+			setIsLoadingMoreEvents
+		)
 	}
 	const getInsights = (tempInsights, limit) => {
-		getData(`articles?${jsonToQuery({ ...filters, Limit: limit })}`, tempInsights, setInsights)
+		getData(
+			`articles?${jsonToQuery({ ...filters, Limit: limit })}`,
+			tempInsights,
+			setInsights,
+			setIsLoadingArticles,
+			setIsLoadingMoreArticles
+		)
 	}
 
-	const getData = (endpoint, tempData, setData) => {
-		setLoadingCom(tempData, true)
+	const getData = (endpoint, tempData, setData, setIsLoading, setIsLoadingMore) => {
+		setLoadingCom(tempData, true, setIsLoading, setIsLoadingMore)
 		getItem(
 			`${endpoint}&NextId=${getNextId(tempData)}`,
 			(data) => {
 				setData([...tempData, ...data])
-				setLoadingCom(tempData, false)
+				setLoadingCom(tempData, false, setIsLoading, setIsLoadingMore)
 			},
 			(err) => {
-				setLoadingCom(tempData, false)
+				setLoadingCom(tempData, false, setIsLoading, setIsLoadingMore)
 				// console.log(err)
 			},
 			updateCurrentUser,
@@ -299,6 +347,11 @@ const UniversalSearchSection = () => {
 	}, [eventTab])
 
 	useEffect(() => {
+		const limit = activeTab === 0 ? 2 : 10
+		getDiscussions([], limit)
+	}, [discussionTab])
+
+	useEffect(() => {
 		switch (activeTab) {
 			case 0:
 				break
@@ -312,7 +365,12 @@ const UniversalSearchSection = () => {
 				if (events.length > 0) hasAnyLeft(`events`, events, { OrderBy: eventTab === 'all' ? 'Index' : 'NoOfMembers' })
 				break
 			case 4:
-				if (discussions.length > 0) hasAnyLeft(`discussions`, discussions)
+				if (discussions.length > 0) {
+					const allApi = 'discussions'
+					const followingApi = `user/${currentUserData.CurrentUser.UserId}/discussions`
+					const api = discussionTab === 'all' ? allApi : followingApi
+					hasAnyLeft(`${api}`, discussions)
+				}
 				break
 			case 5:
 				if (insights.length > 0) hasAnyLeft(`articles`, insights)
@@ -328,7 +386,7 @@ const UniversalSearchSection = () => {
 
 	return (
 		<>
-			<div className='mb-3 lg:mb-5 lg:pr-64'>
+			<div className='mb-4 lg:mb-5 w-11/12 md:w-full lg:w-3/4'>
 				<SearchBar value={filters.Keyword} onChange={onKeyChanged} onClickSearch={fetch} />
 			</div>
 

@@ -613,7 +613,7 @@ const SingleEvent = () => {
 								{translated ? 'Show Original' : 'Translate Event Details'}
 							</p>
 							<div className='flex items-start gap-4 mt-3'>
-								<img className='w-14 h-14 rounded-full' src={event?.UserDetails?.ProfilePicture} alt='Rounded avatar' />
+								<img className='w-14 h-14 rounded-full object-cover' src={event?.UserDetails?.ProfilePicture} alt='Rounded avatar' />
 								<div className='flex-1'>
 									<h4 className='text-xs text-brand-gray-dim mt-1'>Organizer</h4>
 									<h4 className='font-semibold text-lg text-system-primary-accent mt-1'>
@@ -712,11 +712,11 @@ const SingleEvent = () => {
 												<h4 className='text-md text-center text-system-primary-accent mt-4 mb-6'>
 													Let the anticipation build - meaningful discussions await!
 												</h4>
-												{event.MembershipStatus === undefined && (
+												{/* {event.MembershipStatus === undefined && (
 													<Button width='full' variant='black' onClick={() => joinEvent()}>
 														Register
 													</Button>
-												)}
+												)} */}
 												{event.MembershipStatus === 'Requested' && (
 													<p className='text-system-secondary-text'>Registration request has been sent</p>
 												)}

@@ -11,6 +11,8 @@ const DiscussionsSearchTab = ({
 	fetchMore,
 	isLoadingMore,
 	pageDisabled,
+	discussionTab,
+	setDiscussionTab,
 }) => {
 	if (isLoading)
 		return (
@@ -23,8 +25,16 @@ const DiscussionsSearchTab = ({
 			<div className='bg-system-secondary-bg p-4 pb-10 rounded-lg '>
 				<h4 className='font-semibold text-md text-brand-gray mb-4'>Discussions</h4>
 				<div className='flex gap-6 flex-wrap mt-3 mb-3'>
-					<TabItem variant='active'>All Discussions</TabItem>
-					<TabItem variant='inactive'>Following</TabItem>
+					<TabItem
+						variant={`${discussionTab === 'all' ? 'active' : 'inactive'}`}
+						onClick={() => setDiscussionTab('all')}>
+						All Discussions
+					</TabItem>
+					<TabItem
+						variant={`${discussionTab === 'following' ? 'active' : 'inactive'}`}
+						onClick={() => setDiscussionTab('following')}>
+						Following
+					</TabItem>
 				</div>
 				<DiscussionsList
 					cols={'grid-cols-2 md:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3'}

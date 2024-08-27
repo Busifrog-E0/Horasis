@@ -134,7 +134,7 @@ const CreateEventStep1 = ({ postEventData, setPostEventData, validateSingle, err
 						{errorObj['StartTime'] != undefined && <p className='text-brand-red m-0'>{errorObj['StartTime']}</p>}
 					</div>
 					<div>
-						<img src={arrowfor} alt='' className='h-8' />
+						<img src={arrowfor} alt='' className='h-8 rotate-90 md:rotate-0' />
 					</div>
 					<div className='flex-1 w-full'>
 						<DateAndTimePicker
@@ -234,7 +234,7 @@ const CreateEventStep1 = ({ postEventData, setPostEventData, validateSingle, err
 										)}
 									</div>
 									<div>
-										<img src={arrowfor} alt='' className='h-8' />
+										<img src={arrowfor} alt='' className='h-8 rotate-90 lg:rotate-0' />
 									</div>
 									<div className='flex-1 w-full'>
 										<DateAndTimePicker
@@ -345,7 +345,7 @@ const CreateEventStep1 = ({ postEventData, setPostEventData, validateSingle, err
 					Country Location<span className='text-brand-red'>*</span>
 				</h1>
 				<Select
-					className='py-4 rounded-xl border-2 border-system-file-border-accent'
+					className='rounded-xl border-2 border-system-file-border-accent'
 					width='full'
 					placeholder='Select a country'
 					setValue={(item) => {

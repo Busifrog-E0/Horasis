@@ -38,7 +38,7 @@ const EventsSearchTab = ({
 					data={data}
 					emptyText={'No events'}
 					gap={'gap-2 lg:gap-4'}
-					cols={'grid-cols-3 md:grid-cols-4 lg:grid-cols-3 xl:grid-cols-4'}
+					cols={'grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-3 xl:grid-cols-4'}
 				/>
 
 				{isLoadingMore && <Spinner />}

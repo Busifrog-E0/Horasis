@@ -7,6 +7,7 @@ import { jsonToQuery } from '../../utils/searchParams/extractSearchParams'
 import { getItem } from '../../constants/operations'
 import { useNavigate } from 'react-router-dom'
 import { getMonthsShort } from '../../utils/date'
+import EmptyMembers from '../Common/EmptyMembers'
 
 const TodaysEventTab = () => {
 	const { updateCurrentUser, currentUserData } = useAuth()
@@ -87,7 +88,7 @@ const TodaysEventTab = () => {
 
 	return (
 		<>
-			{events.length > 0 ? (
+			{events.length < 0 ? (
 				<>
 					{events.map((item) => {
 						return (
@@ -123,7 +124,9 @@ const TodaysEventTab = () => {
 					})}
 				</>
 			) : (
-				<></>
+				<>
+					<EmptyMembers emptyText={'No Events available today.'} />
+				</>
 			)}
 			{/* <div className='bg-system-secondary-bg rounded-lg mt-3 overflow-hidden'>
 				<div className='h-24 bg-brand-green relative overflow-hidden'>

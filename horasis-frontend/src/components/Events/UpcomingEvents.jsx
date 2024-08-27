@@ -106,7 +106,9 @@ const UpcomingEvents = () => {
 							{events.map((item) => {
 								return (
 									<div className='bg-system-secondary-bg rounded-lg mt-3 ' key={item.DocId}>
-										<div className='w-full h-72 aspect-square overflow-hidden rounded-lg relative'>
+										<div
+											className='w-full h-72 aspect-square overflow-hidden rounded-lg relative cursor-pointer'
+											onClick={() => navigate(`/Events/${item.DocId}`)}>
 											<div className='absolute bg-black/40 h-full w-full flex items-start justify-end p-4'>
 												<div className='text-system-secondary-bg font-medium text-right w-1/2 text-lg flex justify-end items-end gap-4'>
 													{item.EventName}
@@ -115,7 +117,7 @@ const UpcomingEvents = () => {
 														src={arrowforwhite}
 														alt=''
 														className='h-7 cursor-pointer'
-														onClick={() => navigate(`/Events/${item.DocId}`)}
+														// onClick={() => navigate(`/Events/${item.DocId}`)}
 													/>
 												</div>
 											</div>
@@ -145,7 +147,9 @@ const UpcomingEvents = () => {
 															</h1>
 															{/* <h4 className='text-system-primary-text text-md'>Updated their photo</h4> */}
 														</div>
-														<h4 className={`font-medium text-sm text-brand-gray-dim`}>{relativeTime(item.CreatedIndex)}</h4>
+														<h4 className={`font-medium text-sm text-brand-gray-dim`}>
+															{relativeTime(item.CreatedIndex)}
+														</h4>
 													</div>
 												</div>
 											</div>

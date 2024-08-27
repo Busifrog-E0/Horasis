@@ -16,8 +16,7 @@ const MembersSearchSection = ({
 	fetchMore,
 	tabName,
 }) => {
-	console.log(pageDisabled)
-	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
+ 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
 	const toast = useToast()
 	const [updatingId, setUpdatingId] = useState(null)
 	const updateSingleData = (profile, actionType) => {

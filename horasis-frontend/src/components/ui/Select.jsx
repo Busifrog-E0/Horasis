@@ -65,11 +65,11 @@ const Select = ({
 						</>
 					)}
 					{showOptions ? (
-						<svg xmlns='http://www.w3.org/2000/svg' height='24px' viewBox='0 -960 960 960' width='24px' fill='#999999'>
+						<svg xmlns='http://www.w3.org/2000/svg' height='24px' viewBox='0 -960 960 960' width='24px' fill='var(--system-primary-accent)'>
 							<path d='M480-554 283-357l-43-43 240-240 240 240-43 43-197-197Z' />
 						</svg>
 					) : (
-						<svg xmlns='http://www.w3.org/2000/svg' height='24px' viewBox='0 -960 960 960' width='24px' fill='#999999'>
+						<svg xmlns='http://www.w3.org/2000/svg' height='24px' viewBox='0 -960 960 960' width='24px' fill='var(--system-primary-accent)'>
 							<path d='M480-344 240-584l43-43 197 197 197-197 43 43-240 240Z' />
 						</svg>
 					)}
@@ -78,7 +78,7 @@ const Select = ({
 				{showOptions && (
 					<div
 						className={
-							'border-2 border-system-primary-bg rounded-lg text-base w-full z-50 bg-white flex flex-col max-h-40 overflow-auto absolute left-0 top-16 mb-10'
+							'border-2 border-system-primary-bg rounded-lg text-base w-full z-50 bg-white flex flex-col max-h-40 overflow-auto absolute left-0 top-12 mb-10'
 						}>
 						{options.map((item) => {
 							return (

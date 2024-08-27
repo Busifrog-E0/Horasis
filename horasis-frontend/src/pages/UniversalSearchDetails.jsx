@@ -1,13 +1,12 @@
-import TodaysEventTab from "../components/Events/TodaysEventTab"
-import RecentlyActiveMemebrsTab from "../components/Members/RecentlyActiveMemebrsTab"
-import CurrentProfileTab from "../components/Profile/CurrentProfileTab"
-import UniversalSearchSection from "../components/Search/UniversalSearchSection"
+import TodaysEventTab from '../components/Events/TodaysEventTab'
+import RecentlyActiveMemebrsTab from '../components/Members/RecentlyActiveMemebrsTab'
+import CurrentProfileTab from '../components/Profile/CurrentProfileTab'
+import UniversalSearchSection from '../components/Search/UniversalSearchSection'
 
 const UniversalSearchDetails = () => {
-
-    return (<>
-
-        <div className="p-2 lg:px-10 lg:py-6">
+	return (
+		<>
+			{/* <div className="p-2 lg:px-10 lg:py-6">
             <div className="grid lg:grid-cols-4 gap-3 lg:gap-12">
                 <div>
                     <CurrentProfileTab />
@@ -19,13 +18,13 @@ const UniversalSearchDetails = () => {
 
                     </div>
                 </div>
-                <div className="lg:col-span-3">
-                    <UniversalSearchSection />
-                </div>
             </div>
-        </div>
-    </>)
+        </div> */}
+			<div className='lg:col-span-3'>
+				<UniversalSearchSection />
+			</div>
+		</>
+	)
 }
-
 
 export default UniversalSearchDetails
