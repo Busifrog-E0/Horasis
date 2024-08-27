@@ -193,65 +193,71 @@ const TranslateFieldsToLanguage = async (Data, TargetLanguage) => {
  */
 const TranslateData = async (req, res) => {
     const { TargetLanguage, Type, EntityId } = req.body;
-    let Content = {};
+    let TranslatedContent = {};
+    let OriginalContent = {};
     switch (Type) {
         case "Activity":
             const Activity = await ReadOneFromActivities(EntityId);
+            OriginalContent = Activity.Content;
             if (Activity.Languages && Activity.Languages[TargetLanguage]) {
-                Content = Activity.Languages[TargetLanguage];
+                TranslatedContent = Activity.Languages[TargetLanguage];
             }
             else {
                 const TranslatedData = await TranslateFieldsToLanguage({ Content: Activity.Content }, TargetLanguage);
                 await UpdateActivities({ [`Languages.${TargetLanguage}`]: TranslatedData }, Activity.DocId);
-                Content = TranslatedData;
+                TranslatedContent = TranslatedData;
             }
             break;
         case "Comment":
             const Comment = await ReadOneFromComments(EntityId);
+            OriginalContent = Comment.Content;
             if (Comment.Languages && Comment.Languages[TargetLanguage]) {
-                Content = Comment.Languages[TargetLanguage];
+                TranslatedContent = Comment.Languages[TargetLanguage];
             }
             else {
                 const TranslatedData = await TranslateFieldsToLanguage({ Content: Comment.Content }, TargetLanguage);
                 await UpdateComments({ [`Languages.${TargetLanguage}`]: TranslatedData }, Comment.DocId);
-                Content = TranslatedData;
+                TranslatedContent = TranslatedData;
             }
             break;
         case "Discussion":
             const Discussion = await ReadOneFromDiscussions(EntityId);
+            OriginalContent = { Description: Discussion.Description, Brief: Discussion.Brief }
             if (Discussion.Languages && Discussion.Languages[TargetLanguage]) {
-                Content = Discussion.Languages[TargetLanguage];
+                TranslatedContent = Discussion.Languages[TargetLanguage];
             }
             else {
                 const TranslatedData = await TranslateFieldsToLanguage({ Description: Discussion.Description, Brief: Discussion.Brief }, TargetLanguage);
                 await UpdateDiscussions({ [`Languages.${TargetLanguage}`]: TranslatedData }, Discussion.DocId);
-                Content = TranslatedData;
+                TranslatedContent = TranslatedData;
             }
             break;
         case "Event":
             const Event = await ReadOneFromEvents(EntityId);
+            OriginalContent = { Description: Event.Description }
             if (Event.Languages && Event.Languages[TargetLanguage]) {
-                Content = Event.Languages[TargetLanguage];
+                TranslatedContent = Event.Languages[TargetLanguage];
             }
             else {
                 const TranslatedData = await TranslateFieldsToLanguage({ Description: Event.Description }, TargetLanguage);
                 await UpdateEvents({ [`Languages.${TargetLanguage}`]: TranslatedData }, Event.DocId);
-                Content = TranslatedData;
+                TranslatedContent = TranslatedData;
             }
             break;
         case "Article":
             const Article = await ReadOneFromArticles(EntityId);
+            OriginalContent = { Description: Article.Description }
             if (Article.Languages && Article.Languages[TargetLanguage]) {
-                Content = Article.Languages[TargetLanguage];
+                TranslatedContent = Article.Languages[TargetLanguage];
             }
             else {
                 const TranslatedData = await TranslateFieldsToLanguage({ Description: Article.Description }, TargetLanguage);
                 await UpdateArticles({ [`Languages.${TargetLanguage}`]: TranslatedData }, Article.DocId);
-                Content = TranslatedData;
+                TranslatedContent = TranslatedData;
             }
             break;
     }
-    return res.json(Content)
+    return res.json({ TranslatedContent, OriginalContent })
 }
 
 export {

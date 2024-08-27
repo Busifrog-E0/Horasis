@@ -1,4 +1,5 @@
 import Joi from 'joi';
+import { QueryParametersSchema } from './common.js';
 
 const AgendaDataSchema = Joi.object({
     Name: Joi.string().required(),
@@ -8,7 +9,7 @@ const AgendaDataSchema = Joi.object({
 });
 
 const EventDataSchema = Joi.object({
-    OrganiserId : Joi.string().required(),
+    OrganiserId: Joi.string().required(),
     EventName: Joi.string().required(),
     Description: Joi.string().required(),
     Date: Joi.number().required(),
@@ -20,10 +21,10 @@ const EventDataSchema = Joi.object({
     Country: Joi.string().required(),
     DisplayPicture: Joi.string().required(),
     CoverPicture: Joi.string().required(),
-    HasDiscussion : Joi.boolean().required()
+    HasDiscussion: Joi.boolean().required()
 });
 
-    const ValidatePostEvents = async (req, res, next) => {
+const ValidatePostEvents = async (req, res, next) => {
     const Result = EventDataSchema.validate(req.body, { stripUnknown: true });
     if (Result.error) {
         const message = Result.error.details.map((detail) => detail.message).join(', ');
@@ -35,7 +36,16 @@ const EventDataSchema = Joi.object({
     }
 };
 
+const ValidateGetEvents = async (req, res, next) => { 
+    const Result = QueryParametersSchema.keys({
+        StartTime: Joi.number(),
+        Privacy: Joi.string().valid('Public', 'Private'),
+        Type: Joi.string().valid('Virtual', 'Offline'),
+        Country: Joi.string(),
+    })
+}
 
 export {
-    ValidatePostEvents
+    ValidatePostEvents,
+    ValidateGetEvents
 }

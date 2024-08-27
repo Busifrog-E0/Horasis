@@ -12,7 +12,7 @@ import {
 import SwaggerDocs from '../swaggerDocs/events-swaggerDocs.js'
 import e from 'express';
 import { decodeIDToken, ensureAuthorized } from '../middleware/auth-middleware.js';
-import { ValidatePostEvents } from '../validations/events-validations.js';
+import { ValidateGetEvents, ValidatePostEvents } from '../validations/events-validations.js';
 import { QueryParameterFormatting, ValidateGetEntity } from '../middleware/common.js';
 import { GetEventsActivitiesMiddleware, InsertEventTypeMiddleware, PostEventActivitiesMiddleware } from '../middleware/events-middleware.js';
 import { ValidatePostActivities } from '../validations/activities-validations.js';
@@ -23,7 +23,7 @@ import { ValidateGetMembers, ValidateInviteMembers } from '../validations/member
 import { DeleteSpeakers, GetSpeakerstoInvite, PatchSpeakers, PostSpeakers } from '../controllers/speakers-controller.js';
 const router = e.Router();
 
-router.get('/events', decodeIDToken, ensureAuthorized("User"), ValidateGetEntity, QueryParameterFormatting,
+router.get('/events', decodeIDToken, ensureAuthorized("User"), ValidateGetEvents, QueryParameterFormatting,
     SwaggerDocs.get_Events,
     // @ts-ignore
     asyncHandler(GetEvents));
@@ -42,7 +42,7 @@ router.patch('/events/:EventId',
     // @ts-ignore
     asyncHandler(PatchEvents));
 
-router.get('/guest/events/', ValidateGetEntity, QueryParameterFormatting, SwaggerDocs.get_Guest_Events,
+router.get('/guest/events/', ValidateGetEvents, QueryParameterFormatting, SwaggerDocs.get_Guest_Events,
     //@ts-ignore
     asyncHandler(GetPublicEvents));    
 
