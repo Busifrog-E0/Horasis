@@ -48,7 +48,7 @@ const ValidateGetEvents = async (req, res, next) => {
         return res.status(400).json(message);
     }
     else {
-        req.body = Result.value;
+        req.query = Result.value;
         return next();
     }
 }
