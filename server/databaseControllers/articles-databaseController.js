@@ -79,11 +79,17 @@ const CountArticles = async (where) => {
     return dataHandling.ReadCount('Articles', where);
 }
 
+const AggregateArticles = async (AggregateArray, NextIndex, Limit, OrderBy) => {
+    return dataHandling.Aggregate('Articles', AggregateArray, NextIndex, Limit, OrderBy);
+}
+
 export {
     ReadArticles,
     ReadOneFromArticles,
     UpdateArticles,
     CreateArticles,
     RemoveArticles,
-    IncrementArticles
+    IncrementArticles,
+    AggregateArticles,
+    CountArticles
 }

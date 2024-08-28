@@ -232,7 +232,7 @@ async function Aggregate(collectionName, AggregateArray, NextIndex = "", limit =
  */
 async function DistinctValues(collectionName, field, where = {}) {
     try {
-        const data = await db.collection(collectionName).distinct(field, where);
+        const data = await db.collection(collectionName).distinct(field,where);
         return data;
     } catch (error) {
         logger.log(error);
