@@ -64,6 +64,10 @@
     {
       "name": "Members",
       "description": ""
+    },
+    {
+      "name": "Analytics",
+      "description": ""
     }
   ],
   "schemes": [
@@ -923,62 +927,6 @@
           },
           "403": {
             "description": "Forbidden"
-          }
-        }
-      }
-    },
-    "/api/users/invite/mailCheck": {
-      "post": {
-        "tags": [
-          "Users"
-        ],
-        "description": "",
-        "parameters": [
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "Email": {
-                  "type": "string",
-                  "example": "wXU8I@example.com"
-                },
-                "EntityType": {
-                  "type": "string",
-                  "example": "Discussion"
-                },
-                "UserRole": {
-                  "type": "string",
-                  "example": "Member"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "402": {
-            "description": "Payment Required"
-          },
-          "403": {
-            "description": "Forbidden"
-          },
-          "444": {
-            "description": "Connection Closed Without Response"
           }
         }
       }
@@ -6401,6 +6349,52 @@
         ]
       }
     },
+    "/api/events/{EventId}/speakers/{SpeakerId}/reject": {
+      "delete": {
+        "tags": [
+          "Events"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "EventId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "SpeakerId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "402": {
+            "description": "Payment Required"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
     "/api/articles": {
       "get": {
         "tags": [
@@ -7847,17 +7841,41 @@
     },
     "/api/analytics/userInsights": {
       "get": {
+        "tags": [
+          "Analytics"
+        ],
         "description": "",
         "parameters": [
           {
             "name": "authorization",
             "in": "header",
             "type": "string"
+          },
+          {
+            "name": "startDate",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "noOfIntervals",
+            "in": "query",
+            "type": "string"
           }
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "Article Data",
+            "schema": {
+              "$ref": "#/definitions/UserInsightsData"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
           },
           "401": {
             "description": "Unauthorized"
@@ -7868,11 +7886,19 @@
           "403": {
             "description": "Forbidden"
           }
-        }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
       }
     },
     "/api/analytics/userBreakdown": {
       "get": {
+        "tags": [
+          "Analytics"
+        ],
         "description": "",
         "parameters": [
           {
@@ -7883,7 +7909,10 @@
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "Article Data",
+            "schema": {
+              "$ref": "#/definitions/UserBreakdownData"
+            }
           },
           "401": {
             "description": "Unauthorized"
@@ -7894,22 +7923,51 @@
           "403": {
             "description": "Forbidden"
           }
-        }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
       }
     },
     "/api/analytics/userStatistics": {
       "get": {
+        "tags": [
+          "Analytics"
+        ],
         "description": "",
         "parameters": [
           {
             "name": "authorization",
             "in": "header",
             "type": "string"
+          },
+          {
+            "name": "startDate",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "noOfIntervals",
+            "in": "query",
+            "type": "string"
           }
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "Article Data",
+            "schema": {
+              "$ref": "#/definitions/UserStatisticsData"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
           },
           "401": {
             "description": "Unauthorized"
@@ -7920,7 +7978,367 @@
           "403": {
             "description": "Forbidden"
           }
-        }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/analytics/articles": {
+      "get": {
+        "tags": [
+          "Analytics"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "startDate",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "noOfIntervals",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Article Data",
+            "schema": {
+              "$ref": "#/definitions/AnalyticsArticlesData"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "402": {
+            "description": "Payment Required"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/analytics/events": {
+      "get": {
+        "tags": [
+          "Analytics"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "startDate",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "noOfIntervals",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Article Data",
+            "schema": {
+              "$ref": "#/definitions/AnalyticsEventsData"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "402": {
+            "description": "Payment Required"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/analytics/discussions": {
+      "get": {
+        "tags": [
+          "Analytics"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "startDate",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "noOfIntervals",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Article Data",
+            "schema": {
+              "$ref": "#/definitions/AnalyticsDiscussionData"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "402": {
+            "description": "Payment Required"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/analytics/topArticles": {
+      "get": {
+        "tags": [
+          "Analytics"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "NextId",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "Limit",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "Keyword",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "OrderBy",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Article Data",
+            "schema": {
+              "$ref": "#/definitions/ArticleDataArray"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "402": {
+            "description": "Payment Required"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/analytics/topEvents": {
+      "get": {
+        "tags": [
+          "Analytics"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "NextId",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "Limit",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "Keyword",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "OrderBy",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "Filter",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Article Data",
+            "schema": {
+              "$ref": "#/definitions/EventDataArray"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "402": {
+            "description": "Payment Required"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/analytics/topDiscussions": {
+      "get": {
+        "tags": [
+          "Analytics"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "NextId",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "Limit",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "Keyword",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "OrderBy",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "Filter",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Article Data",
+            "schema": {
+              "$ref": "#/definitions/DiscussionDataArray"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "402": {
+            "description": "Payment Required"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
       }
     }
   },
@@ -10265,6 +10683,458 @@
         "Description": {
           "type": "string",
           "example": "A comprehensive guide to getting started with Node.js."
+        }
+      }
+    },
+    "AnalyticsArticlesData": {
+      "type": "object",
+      "properties": {
+        "Articles": {
+          "type": "object",
+          "properties": {
+            "TotalCount": {
+              "type": "number",
+              "example": 0
+            },
+            "PercentageChange": {
+              "type": "number",
+              "example": 0
+            },
+            "CountWithDate": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "Date": {
+                    "type": "number",
+                    "example": 1724803200
+                  },
+                  "Count": {
+                    "type": "number",
+                    "example": 0
+                  }
+                }
+              }
+            }
+          }
+        },
+        "Engagements": {
+          "type": "object",
+          "properties": {
+            "TotalCount": {
+              "type": "number",
+              "example": 0
+            },
+            "PercentageChange": {
+              "type": "number",
+              "example": 0
+            }
+          }
+        }
+      }
+    },
+    "AnalyticsDiscussionData": {
+      "type": "object",
+      "properties": {
+        "Discussions": {
+          "type": "object",
+          "properties": {
+            "TotalCount": {
+              "type": "number",
+              "example": 0
+            },
+            "PercentageChange": {
+              "type": "number",
+              "example": 0
+            },
+            "CountWithDate": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "Date": {
+                    "type": "number",
+                    "example": 1724803200
+                  },
+                  "Count": {
+                    "type": "number",
+                    "example": 0
+                  }
+                }
+              }
+            }
+          }
+        },
+        "Activities": {
+          "type": "object",
+          "properties": {
+            "TotalCount": {
+              "type": "number",
+              "example": 0
+            },
+            "PercentageChange": {
+              "type": "number",
+              "example": 0
+            },
+            "CountWithDate": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "Date": {
+                    "type": "number",
+                    "example": 1724803200
+                  },
+                  "Count": {
+                    "type": "number",
+                    "example": 0
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "AnalyticsEventsData": {
+      "type": "object",
+      "properties": {
+        "Events": {
+          "type": "object",
+          "properties": {
+            "TotalCount": {
+              "type": "number",
+              "example": 0
+            },
+            "PercentageChange": {
+              "type": "number",
+              "example": 0
+            },
+            "CountWithDate": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "Date": {
+                    "type": "number",
+                    "example": 1724803200
+                  },
+                  "Count": {
+                    "type": "number",
+                    "example": 0
+                  }
+                }
+              }
+            }
+          }
+        },
+        "VirtualEvents": {
+          "type": "object",
+          "properties": {
+            "TotalCount": {
+              "type": "number",
+              "example": 0
+            },
+            "PercentageChange": {
+              "type": "number",
+              "example": 0
+            },
+            "CountWithDate": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "Date": {
+                    "type": "number",
+                    "example": 1724803200
+                  },
+                  "Count": {
+                    "type": "number",
+                    "example": 0
+                  }
+                }
+              }
+            }
+          }
+        },
+        "PhysicalEvents": {
+          "type": "object",
+          "properties": {
+            "TotalCount": {
+              "type": "number",
+              "example": 0
+            },
+            "PercentageChange": {
+              "type": "number",
+              "example": 0
+            },
+            "CountWithDate": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "Date": {
+                    "type": "number",
+                    "example": 1724803200
+                  },
+                  "Count": {
+                    "type": "number",
+                    "example": 0
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "UserBreakdownData": {
+      "type": "object",
+      "properties": {
+        "Country": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string",
+                "example": "India"
+              },
+              "EntityName": {
+                "type": "string",
+                "example": "India"
+              },
+              "Count": {
+                "type": "number",
+                "example": 7
+              },
+              "DocId": {
+                "type": "string",
+                "example": "India"
+              },
+              "NextId": {
+                "type": "string",
+                "example": "undefined--India"
+              }
+            }
+          }
+        },
+        "City": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string",
+                "example": "Delhi"
+              },
+              "EntityName": {
+                "type": "string",
+                "example": "Delhi"
+              },
+              "Count": {
+                "type": "number",
+                "example": 1
+              },
+              "DocId": {
+                "type": "string",
+                "example": "Delhi"
+              },
+              "NextId": {
+                "type": "string",
+                "example": "undefined--Delhi"
+              }
+            }
+          }
+        },
+        "Industry": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string",
+                "example": "Healthcare"
+              },
+              "EntityName": {
+                "type": "string",
+                "example": "Healthcare"
+              },
+              "Count": {
+                "type": "number",
+                "example": 1
+              },
+              "DocId": {
+                "type": "string",
+                "example": "Healthcare"
+              },
+              "NextId": {
+                "type": "string",
+                "example": "undefined--Healthcare"
+              }
+            }
+          }
+        },
+        "JobTitle": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string",
+                "example": "Developer"
+              },
+              "EntityName": {
+                "type": "string",
+                "example": "Developer"
+              },
+              "Count": {
+                "type": "number",
+                "example": 3
+              },
+              "DocId": {
+                "type": "string",
+                "example": "Developer"
+              },
+              "NextId": {
+                "type": "string",
+                "example": "undefined--Developer"
+              }
+            }
+          }
+        }
+      }
+    },
+    "UserInsightsData": {
+      "type": "object",
+      "properties": {
+        "Users": {
+          "type": "object",
+          "properties": {
+            "TotalCount": {
+              "type": "number",
+              "example": 14
+            },
+            "PercentageChange": {
+              "type": "number",
+              "example": 0
+            },
+            "CountWithDate": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "Date": {
+                    "type": "number",
+                    "example": 1724844981000
+                  },
+                  "Count": {
+                    "type": "number",
+                    "example": 14
+                  }
+                }
+              }
+            }
+          }
+        },
+        "ActiveUsers": {
+          "type": "object",
+          "properties": {
+            "CountWithDate": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "Date": {
+                    "type": "number",
+                    "example": 1724869800000
+                  },
+                  "Count": {
+                    "type": "number",
+                    "example": 3
+                  }
+                }
+              }
+            },
+            "TotalCount": {
+              "type": "number",
+              "example": 3
+            },
+            "PercentageChange": {
+              "type": "number",
+              "example": 0
+            }
+          }
+        },
+        "Activities": {
+          "type": "object",
+          "properties": {
+            "TotalCount": {
+              "type": "number",
+              "example": 82
+            },
+            "PercentageChange": {
+              "type": "number",
+              "example": 0
+            },
+            "CountWithDate": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "Date": {
+                    "type": "number",
+                    "example": 1724844981000
+                  },
+                  "Count": {
+                    "type": "number",
+                    "example": 82
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "UserStatisticsData": {
+      "type": "object",
+      "properties": {
+        "EventLocations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string",
+                "example": "India"
+              },
+              "EntityName": {
+                "type": "string",
+                "example": "India"
+              },
+              "Count": {
+                "type": "number",
+                "example": 1
+              },
+              "DocId": {
+                "type": "string",
+                "example": "India"
+              },
+              "NextId": {
+                "type": "string",
+                "example": "undefined--India"
+              }
+            }
+          }
+        },
+        "NonActiveUsersPercentage": {
+          "type": "number",
+          "example": 100
+        },
+        "ActiveUsersPercentage": {
+          "type": "number",
+          "example": 0
         }
       }
     }

@@ -11,12 +11,12 @@ import { AggregateArticles, CountArticles } from '../databaseControllers/article
 
 const GetUserInsightsAnalytics = async (req, res) => {
     const { startDate, endDate, noOfIntervals } = req.query
-    const [Users, ActiveUsers, Posts] = await Promise.all([
+    const [Users, ActiveUsers, Activities] = await Promise.all([
         GetAnalyticsWithinAnInterval("Users", {}, startDate, endDate, noOfIntervals),
         GetActiveUsersWithinAnInterval(startDate, endDate, noOfIntervals),
         GetAnalyticsWithinAnInterval("Activities", { Type: "Feed" }, startDate, endDate, noOfIntervals),
     ])
-    return res.json({ Users, ActiveUsers, Posts })
+    return res.json({ Users, ActiveUsers, Activities })
 }
 
 const GetUserBreakdown = (async (req, res) => {
