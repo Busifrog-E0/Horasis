@@ -7,7 +7,7 @@ import moment from 'moment';
  */
 
 const PostActiveUsers = async (UserId) => {
-    const CurrentDate = moment().day().valueOf();
+    const CurrentDate = moment().startOf('day').valueOf();
     const [checkActiveUser] = await ReadActiveUsers({ UserId, Data: CurrentDate }, undefined, 1, undefined);
     if (!checkActiveUser) {
         await CreateActiveUsers({ UserId, Date: CurrentDate });
