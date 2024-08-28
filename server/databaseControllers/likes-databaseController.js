@@ -68,7 +68,7 @@ const RemoveLikes = async (DocId) => {
 
 
 const CountLikes = async (where) => {
-    return dataHandling.ReadCount(where)
+    return dataHandling.ReadCount("Likes", where)
 }
 
 export {

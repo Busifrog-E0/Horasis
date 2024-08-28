@@ -215,6 +215,7 @@ const DiscussionInit = (Discussion) => {
     return {
         ...Discussion,
         NoOfMembers: 1,
+        NoOfActivities: 0,
         MemberPermissions: {
             IsAdmin: false,
             CanPostActivity: false,

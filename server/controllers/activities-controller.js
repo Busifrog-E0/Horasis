@@ -11,6 +11,8 @@ import { ReadSaves } from '../databaseControllers/saves-databaseController.js';
 import { PostMediasFromAttachments } from './medias-controller.js';
 import { RemoveNotificationForEntity, RemoveNotificationsAfterActivityMentionPatch, SendNotificationstoActivityMentions } from './notifications-controller.js';
 import { DetectLanguage } from './translations-controller.js';
+import { IncrementDiscussions } from '../databaseControllers/discussions-databaseController.js';
+import { IncrementEvents } from '../databaseControllers/events-databaseController.js';
 
 /**
  * @typedef {import('../databaseControllers/activities-databaseController.js').ActivityData} ActivityData 
@@ -175,7 +177,10 @@ const PostActivities = async (req, res) => {
     await Promise.all([
         CreateActivities(data, ActivityId),
         PostMediasFromAttachments(Attachments, ActivityId, UserId),
-        SendNotificationstoActivityMentions(Mentions, UserId, ActivityId)
+        SendNotificationstoActivityMentions(Mentions, UserId, ActivityId),
+        req.body.Type !== "Feed" ?
+            req.body.Type === "Discussion" ?
+                IncrementDiscussions({ NoOfActivities: 1 }) : IncrementEvents({ NoOfActivities: 1 }) : null
     ])
     return res.json(true);
 }

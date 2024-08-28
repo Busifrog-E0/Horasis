@@ -250,6 +250,7 @@ const EventInit = (Event) => {
     return {
         ...Event,
         NoOfMembers: 1,
+        NoOfActivities: 0,
         MemberPermissions: {
             IsAdmin: false,
             CanPostActivity: false,

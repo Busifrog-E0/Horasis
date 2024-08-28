@@ -4,16 +4,19 @@ import { AggregateUsers, CountUsers } from '../databaseControllers/users-databas
 import { CountActivities, ReadActivities } from '../databaseControllers/activities-databaseController.js';
 import { CommentCount } from '../databaseControllers/comments-databaseController.js';
 import { CountLikes } from '../databaseControllers/likes-databaseController.js';
-import { CountEvents } from '../databaseControllers/events-databaseController.js';
+import { CountEvents, ReadEvents } from '../databaseControllers/events-databaseController.js';
 import { CountActiveUsers, ReadActiveUsers } from '../databaseControllers/activeUsers-databaseController.js';
+import { AggregateDiscussions, ReadDiscussions } from '../databaseControllers/discussions-databaseController.js';
+import { AggregateArticles, CountArticles } from '../databaseControllers/articles-databaseController.js';
 
 const GetUserInsightsAnalytics = async (req, res) => {
-    const [Users, ActiveUsers, Posts] = await Promise.all([
-        GetAnalyticsWithinAnInterval("Users"),
-        GetActiveUsersWithinAnInterval(),
-        GetAnalyticsWithinAnInterval("Activities", { Type: "Feed" })
+    const { startDate, endDate, noOfIntervals } = req.query
+    const [Users, ActiveUsers, Activities] = await Promise.all([
+        GetAnalyticsWithinAnInterval("Users", {}, startDate, endDate, noOfIntervals),
+        GetActiveUsersWithinAnInterval(startDate, endDate, noOfIntervals),
+        GetAnalyticsWithinAnInterval("Activities", { Type: "Feed" }, startDate, endDate, noOfIntervals),
     ])
-    return res.json({ Users, ActiveUsers, Posts })
+    return res.json({ Users, ActiveUsers, Activities })
 }
 
 const GetUserBreakdown = (async (req, res) => {
@@ -27,23 +30,25 @@ const GetUserBreakdown = (async (req, res) => {
 })
 
 const GetUserStatistics = async (req, res) => {
+    const { startDate, endDate, noOfIntervals } = req.query
     const [EventLocations, UsersCount, ActiveUsers] = await Promise.all([
         GetDocumentCountByFields("Events", "Country", {}, -1),
         CountUsers({}),
-        GetActiveUsersWithinAnInterval()
+        GetActiveUsersWithinAnInterval(startDate, endDate, noOfIntervals)
     ])
     const ActiveUsersCount = ActiveUsers.TotalCount;
-    const NonActiveUsersPercentage = ((ActiveUsersCount - UsersCount) / UsersCount) * 100;
-    const ActiveUsersPercentage = (ActiveUsersCount / UsersCount) * 100;
+    const NonActiveUsersPercentage = parseInt((((UsersCount - ActiveUsersCount) / UsersCount) * 100).toFixed(2));
+    const ActiveUsersPercentage = parseInt(((ActiveUsersCount / UsersCount) * 100).toFixed(2));
     return res.json({ EventLocations, NonActiveUsersPercentage, ActiveUsersPercentage })
 }
 
 const GetArticleAnalytics = async (req, res) => {
-    const [NoOfEvents, NoOfEngagements] = await Promise.all([
-        CountEvents({}),
-        GetEngagementCount("Article")
+    const { startDate, endDate, noOfIntervals } = req.query
+    const [Articles, Engagements] = await Promise.all([
+        GetAnalyticsWithinAnInterval("Articles", {}, startDate, endDate, noOfIntervals),
+        GetArticleEngagementCount(startDate, endDate)
     ])
-    return res.json({ NoOfEvents, NoOfEngagements })
+    return res.json({ Articles, Engagements })
 }
 
 
@@ -70,11 +75,11 @@ const GetAnalyticsWithinAnInterval = async (
     const CountWithDate = await Promise.all(intervals.map(async CreatedIndex => {
         const query = { ...where, CreatedIndex: { $lte: CreatedIndex } }
         const Count = await dataHandling.ReadCount(collectionName, query)
-        console.log(collectionName, CreatedIndex, Count)
         return { Date: CreatedIndex, Count }
     }))
     const TotalCount = CountWithDate[noOfIntervals - 1].Count;
-    const PercentageChange = Number((((TotalCount - CountWithDate[0].Count) / CountWithDate[0].Count) * 100).toFixed(2));
+    const PercentageChange = CountWithDate[0].Count !== 0 ?
+        parseInt((((TotalCount - CountWithDate[0].Count) / CountWithDate[0].Count) * 100).toFixed(2)) : 0;
     return { TotalCount, PercentageChange, CountWithDate }
 };
 
@@ -108,7 +113,7 @@ const GetActiveUsersWithinAnInterval = async (
     endDate = moment(endDate).startOf('day').add(1, 'day').valueOf();
     const intervalSize = (endDate - startDate) / (noOfIntervals - 1);
     const intervals = [];
-    for (let i = 0; i < noOfIntervals; i++) {
+    for (let i = 0; i < noOfIntervals - 1; i++) {
         intervals.push({
             Date: {
                 $gte: startDate + i * intervalSize,
@@ -123,39 +128,95 @@ const GetActiveUsersWithinAnInterval = async (
         }
     })
     const data = await Promise.all(intervals.map(async interval => {
-        const UserIds = await CountActiveUsers({ interval });
+        const UserIds = await CountActiveUsers(interval);
         return { Date: interval.Date.$lt, Count: UserIds.length }
     }));
     const TotalCount = data[data.length - 1].Count;
-    const PercentageChange = Number((((TotalCount - data[0].Count) / data[0].Count) * 100).toFixed(2));
+    const PercentageChange = data[0].Count !== 0 ?
+        parseInt((((TotalCount - data[0].Count) / data[0].Count) * 100).toFixed(2)) : 0;
     return { CountWithDate: data, TotalCount, PercentageChange };
+}
+
+const GetDiscussionAnalytics = async (req, res) => {
+    const { startDate, endDate, noOfIntervals } = req.query
+    const [Discussions, Activities] = await Promise.all([
+        GetAnalyticsWithinAnInterval("Discussions", {}, startDate, endDate, noOfIntervals),
+        GetAnalyticsWithinAnInterval("Activities", { Type: "Discussion" }, startDate, endDate, noOfIntervals)
+    ])
+    return res.json({ Discussions, Activities })
+}
+
+const GetEventsAnalytics = async (req, res) => {
+    const { startDate, endDate, noOfIntervals } = req.query
+    const [Events, VirtualEvents, PhysicalEvents] = await Promise.all([
+        GetAnalyticsWithinAnInterval("Events", {}, startDate, endDate, noOfIntervals),
+        GetAnalyticsWithinAnInterval("Events", { Type: "Virtual" }, startDate, endDate, noOfIntervals),
+        GetAnalyticsWithinAnInterval("Events", { Type: "Physical" }, startDate, endDate, noOfIntervals)
+    ])
+    return res.json({ Events, VirtualEvents, PhysicalEvents })
+}
+
+
+const GetAnalyticsTopArticles = async (req, res) => {
+    const { Limit, NextId, Keyword, OrderBy } = req.query;
+    const pipeline = [
+        {
+            $addFields: { InteractionCount: { $sum: ["$NoOfComments", "$NoOfLikes"] } }
+        }
+    ]
+    const data = await AggregateArticles(pipeline, NextId, Limit, { InteractionCount: "desc" })
+    return res.json(data)
+}
+
+
+const GetAnalyticsTopDiscussions = async (req, res) => {
+    const { Filter, Limit, NextId, Keyword, OrderBy } = req.query;
+    const data = await ReadDiscussions(Filter, NextId, Limit, { NoOfActivities: "desc" })
+    return res.json(data)
+}
+
+
+const GetAnalyticsTopEvents = async (req, res) => {
+    const { Filter, Limit, NextId, Keyword, OrderBy } = req.query;
+    const data = await ReadEvents(Filter, NextId, Limit, { NoOfActivities: "desc" })
+    return res.json(data)
 }
 
 /**
  * 
- * @param {"Discussion"|"Event"|"Article"} EntityType 
+ * @param {number} startDate 
+ * @param {number} endDate 
+ * @returns 
  */
-const GetEngagementCount = async (EntityType) => {
-    switch (EntityType) {
-        case "Discussion":
-            return await CountActivities({ Type: "Discussion" });
-        case "Article":
-            const [NoOfComments, NoOfLikes] = await Promise.all([
-                CommentCount({ ParentType: "Article" }),
-                CountLikes({ Type: "Article" })
-            ])
-            return NoOfComments + NoOfLikes;
-        case "Event":
-            return await CountActivities({ Type: "Event" });
-    }
+const GetArticleEngagementCount = async (startDate, endDate,) => {
+    const [NoOfCommentsAtStart, NoOfLikesAtStart, NoOfComments, NoOfLikes] = await Promise.all([
+        CommentCount({ ParentType: "Article", CreatedIndex: { $gte: startDate, $lt: endDate } }),
+        CountLikes({ Type: "Article", CreatedIndex: { $gte: startDate, $lt: endDate } }),
+        CommentCount({ ParentType: "Article", CreatedIndex: { $lt: endDate } }),
+        CountLikes({ Type: "Article", CreatedIndex: { $lt: endDate } }),
+    ])
+    const EngagementCountAtStart = NoOfLikesAtStart + NoOfCommentsAtStart;
+    const EngagementCount = NoOfComments + NoOfLikes;
+    const TotalCount = EngagementCount;
+    const PercentageChange = EngagementCountAtStart !== 0 ?
+        parseInt((((EngagementCount - EngagementCountAtStart) / EngagementCountAtStart) * 100).toFixed(2)) : 0;
+    return { TotalCount, PercentageChange };
 }
+
+
 
 export {
     GetUserInsightsAnalytics,
     GetAnalyticsWithinAnInterval,
     GetUserBreakdown,
     GetUserStatistics,
-    GetArticleAnalytics
+    GetArticleAnalytics,
+    GetAnalyticsTopArticles,
+    GetAnalyticsTopDiscussions,
+    GetAnalyticsTopEvents,
+    GetDiscussionAnalytics,
+    GetEventsAnalytics
+
 }
 
 
