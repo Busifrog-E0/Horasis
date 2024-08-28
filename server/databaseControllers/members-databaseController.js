@@ -90,8 +90,8 @@ const RemoveMembers = async (DocId) => {
  * @param {object} where 
  * @returns 
  */
-const UpdateManyMembers = async (data, where) => {
-    return dataHandling.UpdateMany('Members', data, where);
+const UpdateManyMembers = async (data, where = {}, updateOptions = {}) => {
+    return dataHandling.UpdateMany('Members', data, where, ["$set"], updateOptions);
 }
 
 export {

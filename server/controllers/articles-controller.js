@@ -53,10 +53,9 @@ const GetArticles = async (req, res) => {
  */
 const PostArticles = async (req, res) => {
     const { AuthorId } = req.body;
-    const UserDetails = await ReadOneFromUsers(AuthorId);
     req.body = ArticleInit(req.body);
     req.body.OriginalLanguage = await DetectLanguage(req.body.Description);
-    const ArticleId = await CreateArticles({ ...req.body, UserDetails });
+    const ArticleId = await CreateArticles(req.body);
     return res.json(ArticleId);
 }
 
@@ -94,13 +93,14 @@ const DeleteArticles = async (req, res) => {
  * @param {string} UserId
  */
 const SetArticleDataForGet = async (Article, UserId) => {
-    const [checkLike, checkSave] = await Promise.all([
+    const [UserDetails, checkLike, checkSave] = await Promise.all([
+        ReadOneFromUsers(Article.AuthorId),
         ReadLikes({ EntityId: Article.DocId, UserId }, undefined, 1, undefined),
         ReadSaves({ EntityId: Article.DocId, UserId }, undefined, 1, undefined)
     ])
     const HasSaved = checkSave.length > 0;
     const HasLiked = checkLike.length > 0;
-    return { ...Article, HasLiked, HasSaved }
+    return { ...Article, HasLiked, HasSaved, UserDetails }
 }
 
 const ArticleInit = (Article) => {

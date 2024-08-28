@@ -83,6 +83,10 @@ const AggregateConnections = async (AggregateArray, NextIndex, Limit, OrderBy) =
     return dataHandling.Aggregate("Connections", AggregateArray, NextIndex, Limit, OrderBy);
 }
 
+const UpdateManyConnections = async (data, Where = {}, updateOptions = {}) => {
+    return dataHandling.UpdateMany('Connections', data, Where,["$set"], updateOptions);
+}
+
 export {
     ReadConnections,
     ReadOneFromConnections,
@@ -90,5 +94,6 @@ export {
     CreateConnections,
     RemoveConnections,
     GetConnectionsCount,
-    AggregateConnections
+    AggregateConnections,
+    UpdateManyConnections
 }

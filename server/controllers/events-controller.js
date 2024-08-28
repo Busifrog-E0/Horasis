@@ -159,7 +159,7 @@ const PostEvents = async (req, res) => {
     const { UserId: OrganiserId } = req.user;
     const UserDetails = await ReadOneFromUsers(OrganiserId);
     req.body = EventInit(req.body);
-    const EventId = await CreateEvents({ ...req.body, UserDetails, OrganiserId });
+    const EventId = await CreateEvents({ ...req.body, OrganiserId });
     const Member = MemberInit({ MemberId: OrganiserId, EntityId: EventId, UserDetails }, "Accepted", true);
     await CreateMembers(Member);
     return res.json(EventId);
@@ -207,16 +207,17 @@ const DeleteEvents = async (req, res) => {
  * @returns 
  */
 const SetEventDataForGet = async (Event, UserId) => {
-    const [Member, [Speaker]] = await Promise.all([
+    const [Member, [Speaker], UserDetails] = await Promise.all([
         ReadMembers({ MemberId: UserId, EntityId: Event.DocId }, undefined, 1, undefined),
-        ReadSpeakers({ SpeakerId: UserId, EventId: Event.DocId }, undefined, 1, undefined)
+        ReadSpeakers({ SpeakerId: UserId, EventId: Event.DocId }, undefined, 1, undefined),
+        ReadOneFromUsers(Event.OrganiserId)
     ]);
     //@ts-ignore
     Event.SpeakerStatus = Speaker ? Speaker.MembershipStatus : "None";
     //@ts-ignore
     Event = GetPermissionOfMember(Member[0], Event);
 
-    return Event;
+    return { ...Event, UserDetails };
 }
 
 /**

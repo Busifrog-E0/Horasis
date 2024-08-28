@@ -35,7 +35,8 @@ const GetLikes = async (req, res) => {
     // @ts-ignore
     Filter.EntityId = EntityId;
     //@ts-ignore
-    const data = await ReadLikes(Filter, NextId, Limit, OrderBy);
+    const Likes = await ReadLikes(Filter, NextId, Limit, OrderBy);
+    const data = await Promise.all(Likes.map(async Like => {await ReadOneFromUsers(Like.UserId)}));
     return res.json(data);
 }
 
@@ -54,8 +55,7 @@ const PostLikes = async (req, res) => {
     if (CheckLike.length > 0) {
         return res.status(444).json(AlertBoxObject("Cannot Like", "You cannot like twice"));
     }
-    const UserDetails = await ReadOneFromUsers(UserId);
-    const data = { EntityId, UserId, UserDetails, Type: req.body.Type };
+    const data = { EntityId, UserId, Type: req.body.Type };
     await CreateLikes(data);
     if (data.Type === 'Activity') {
         await IncrementActivities({ NoOfLikes: 1 }, data.EntityId);

@@ -65,22 +65,23 @@ async function Update(collectionName, data, docName, operation = ["$set"], LastU
  * @param {string} collectionName
  * @param {object} data
  * @param {object} filter
+ * @param {object} updateOptions
  * @param {object} dataSets
  * @param {Array<string>} operation
  * @returns {Promise<true>}
  */
-async function UpdateMany(collectionName, data, filter, operation = ["$set"], ...dataSets) {
-        try {
-            const OperationObject = { [operation[0]]: data }
-            for (let index = 1; index < operation.length; index++) {
-                OperationObject[operation[index]] = dataSets[index - 1];
-            }
-            await db.collection(collectionName).updateMany(filter, OperationObject);
-            return true;
-        } catch (error) {
-            logger.log(error);
-            throw new Error(error);
+async function UpdateMany(collectionName, data, filter, operation = ["$set"], updateOptions = {}, ...dataSets) {
+    try {
+        const OperationObject = { [operation[0]]: data }
+        for (let index = 1; index < operation.length; index++) {
+            OperationObject[operation[index]] = dataSets[index - 1];
         }
+        await db.collection(collectionName).updateMany(filter, OperationObject, updateOptions);
+        return true;
+    } catch (error) {
+        logger.log(error);
+        throw new Error(error);
+    }
 }
 
 /**
@@ -105,81 +106,81 @@ async function Delete(collectionName, docName) {
  * @return {Promise<object|Array<object>|null>}
  */
 async function Read(collectionName, docName, NextIndex = "", limit = 10, where = {}, orderBy = { "Index": "desc" }) {
-        let query, NextField = "Index";
-        try {
-            if (docName === undefined || docName === "") {
+    let query, NextField = "Index";
+    try {
+        if (docName === undefined || docName === "") {
 
-                    const OrderByKeys = Object.keys(orderBy);
-                    NextField = OrderByKeys[0] || "Index";
-                    for (let index = 0; index < OrderByKeys.length; index++) {
-                        if (!where[OrderByKeys[index]]) {
-                            where[OrderByKeys[index]] = { "$exists": true };
-                        }
-                    }
-                    orderBy["_id"] = "desc";
-                if (NextIndex) {
-                        const [Index, nextId] = NextIndex.split('--');
-                        if (where["$or"]) {
-                            const FirstOr = where["$or"];
-                            if (orderBy[NextField] === "desc") {
-                                where["$and"] = [
-                                    { "$or": FirstOr },
-                                    { "$or": [{ [NextField]: { "$lt": Index } }, { [NextField]: Index, "_id": { "$lt": new ObjectId(nextId) } }] },
-                                ]
-                            }
-                            else {
-                                where["$and"] = [
-                                    { "$or": FirstOr },
-                                    { "$or": [{ [NextField]: { "$gt": Index } }, { [NextField]: Index, "_id": { "$lt": new ObjectId(nextId) } }] },
-                                ]
-                            }
-
-                            delete where["$or"];
-                        }
-                        else {
-                            if (orderBy[NextField] === "desc") {
-                                where["$or"] = [{ [NextField]: { "$lt": Index } }, { [NextField]: Index, "_id": { "$lt": new ObjectId(nextId) } }];
-                            }
-                            else {
-                                where["$or"] = [{ [NextField]: { "$gt": Index } }, { [NextField]: Index, "_id": { "$lt": new ObjectId(nextId) } }];
-                            }
-                        }
-                    }
-
-
-                    if (limit === -1) {
-                        // @ts-ignore
-                        query = db.collection(collectionName).find(where).sort(orderBy);
+            const OrderByKeys = Object.keys(orderBy);
+            NextField = OrderByKeys[0] || "Index";
+            for (let index = 0; index < OrderByKeys.length; index++) {
+                if (!where[OrderByKeys[index]]) {
+                    where[OrderByKeys[index]] = { "$exists": true };
+                }
+            }
+            orderBy["_id"] = "desc";
+            if (NextIndex) {
+                const [Index, nextId] = NextIndex.split('--');
+                if (where["$or"]) {
+                    const FirstOr = where["$or"];
+                    if (orderBy[NextField] === "desc") {
+                        where["$and"] = [
+                            { "$or": FirstOr },
+                            { "$or": [{ [NextField]: { "$lt": Index } }, { [NextField]: Index, "_id": { "$lt": new ObjectId(nextId) } }] },
+                        ]
                     }
                     else {
-                        // @ts-ignore
-                        query = db.collection(collectionName).find(where).sort(orderBy).limit(limit);
+                        where["$and"] = [
+                            { "$or": FirstOr },
+                            { "$or": [{ [NextField]: { "$gt": Index } }, { [NextField]: Index, "_id": { "$lt": new ObjectId(nextId) } }] },
+                        ]
                     }
 
-                const temp = [];
-                const data = await query.toArray();
-                data.forEach((doc, index) => {
-                    const NextFieldData = NextField.split(".").reduce((prev, cur) => {
-                        return prev[cur];
-                    }, doc);
-                    temp.push({ ...doc, "DocId": doc._id.toString(), "NextId": `${NextFieldData}--${doc._id}` });
-                });
-                return temp;
-            }
-            else {
-                const data = await db.collection(collectionName).find({ "_id": new ObjectId(docName) }).toArray();
-                if (data.length === 1) {
-                    return { ...data[0], "DocId": data[0]._id.toString() };
+                    delete where["$or"];
                 }
                 else {
-                    return null;
+                    if (orderBy[NextField] === "desc") {
+                        where["$or"] = [{ [NextField]: { "$lt": Index } }, { [NextField]: Index, "_id": { "$lt": new ObjectId(nextId) } }];
+                    }
+                    else {
+                        where["$or"] = [{ [NextField]: { "$gt": Index } }, { [NextField]: Index, "_id": { "$lt": new ObjectId(nextId) } }];
+                    }
                 }
             }
+
+
+            if (limit === -1) {
+                // @ts-ignore
+                query = db.collection(collectionName).find(where).sort(orderBy);
+            }
+            else {
+                // @ts-ignore
+                query = db.collection(collectionName).find(where).sort(orderBy).limit(limit);
+            }
+
+            const temp = [];
+            const data = await query.toArray();
+            data.forEach((doc, index) => {
+                const NextFieldData = NextField.split(".").reduce((prev, cur) => {
+                    return prev[cur];
+                }, doc);
+                temp.push({ ...doc, "DocId": doc._id.toString(), "NextId": `${NextFieldData}--${doc._id}` });
+            });
+            return temp;
         }
-        catch (error) {
-            logger.log(error);
-            throw new Error(error);
+        else {
+            const data = await db.collection(collectionName).find({ "_id": new ObjectId(docName) }).toArray();
+            if (data.length === 1) {
+                return { ...data[0], "DocId": data[0]._id.toString() };
+            }
+            else {
+                return null;
+            }
         }
+    }
+    catch (error) {
+        logger.log(error);
+        throw new Error(error);
+    }
 }
 
 /**
@@ -223,7 +224,21 @@ async function Aggregate(collectionName, AggregateArray, NextIndex = "", limit =
     return data;
 }
 
-
+/**
+ * 
+ * @param {string} collectionName 
+ * @param {string} field 
+ * @param {object} where 
+ */
+async function DistinctValues(collectionName, field, where = {}) {
+    try {
+        const data = await db.collection(collectionName).distinct(field, where);
+        return data;
+    } catch (error) {
+        logger.log(error);
+        throw new Error(error);
+    }
+}
 
 const Check = (/** @type {string | null | undefined} */ Field) => {
     if (Field === null || Field === undefined || Field === "") {
@@ -326,6 +341,6 @@ export default {
     Check,
     ObjectId,
     db,
-
+    DistinctValues,
     substract,
 };

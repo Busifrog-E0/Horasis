@@ -1,16 +1,18 @@
 import e from 'express';
 import moment from 'moment-timezone';
-
+import dataHandling from '../databaseControllers/functions.js';
 import { ReadOneFromUsers, ReadUsers, UpdateUsers, CreateUsers, RemoveUsers, } from './../databaseControllers/users-databaseController.js';
 import { AccountVerificationEmail, SendOTPEmail } from './emails-controller.js';
 import { CreateEmailVerifications, ReadOneFromEmailVerifications, UpdateEmailVerifications } from '../databaseControllers/emailVerification-databaseController.js';
 import { GenerateToken, ReadOneFromOTP, SendPasswordOTP, SendRegisterOTP, TokenData, VerifyOTP } from './auth-controller.js';
 import { AlertBoxObject, getOTP, GetUserNonEmptyFieldsPercentage } from './common.js';
-import { ReadConnections } from '../databaseControllers/connections-databaseController.js';
-import { ReadFollows } from '../databaseControllers/follow-databaseController.js';
+import { ReadConnections, UpdateManyConnections } from '../databaseControllers/connections-databaseController.js';
+import { ReadFollows, UpdateManyFollows } from '../databaseControllers/follow-databaseController.js';
 import { ConnectionStatus } from './connections-controller.js';
 import { PostActivityForProfilePatch } from './activities-controller.js';
 import { AddUserDetailsAfterInvited } from './invitations-controller.js';
+import { UpdateManyMembers } from '../databaseControllers/members-databaseController.js';
+
 
 
 
@@ -127,6 +129,7 @@ const PatchUsers = async (req, res) => {
     }
     const { UserId } = req.params;
     await UpdateUsers(req.body, UserId);
+    await UpdateUserDetails(UserId);
     await PostActivityForProfilePatch(req.body, UserId);
     return res.json(true);
 }
@@ -266,7 +269,20 @@ const CheckIfUserWithMailExists = async (Email) => {
     return User ? true : false;
 }
 
-
+/**
+ * 
+ * @param {string} UserId 
+ * @returns 
+ */
+const UpdateUserDetails = async (UserId) => {
+    const UserDetails = await ReadOneFromUsers(UserId);
+    await Promise.all([
+        UpdateManyConnections({ 'UserDetails.$[elem]': UserDetails }, { UserIds: UserId }, { arrayFilters: [{ "elem.DocId": UserId }] }),
+        UpdateManyFollows({ 'UserDetails.$[elem]': UserDetails }, { $or: [{ FolloweeId: UserId }, { FollowerId: UserId }] }, { arrayFilters: [{ "elem.DocId": UserId }] }),
+        UpdateManyMembers({ UserDetails: UserDetails }, { MemberId: UserId })
+    ])
+    return;
+}
 
 /**
  * 

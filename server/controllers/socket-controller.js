@@ -6,6 +6,7 @@ import ENV from "./../Env.js";
 import { decodeSocketIdToken } from "../middleware/auth-middleware.js";
 import { ReadOneFromConversations } from "../databaseControllers/conversations-databaseController.js";
 import moment from "moment";
+import { PostActiveUsers } from "./activeUsers-controller.js";
 
 
 const ConnectSocket = (expressServer) => {
@@ -22,6 +23,8 @@ const ConnectSocket = (expressServer) => {
     io.on('connection', socket => {
         // @ts-ignore
         UpdateUsers({ Online: true }, socket.user.UserId);
+        //@ts-ignore
+        PostActiveUsers(socket.user.UserId);
         //@ts-ignore
         socket.join(socket.user.UserId);
 
