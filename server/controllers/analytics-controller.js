@@ -215,7 +215,7 @@ const GetDocumentCountByFields = async (collectionName, fieldName, where = {}, L
             }
         },
         {
-            $sort: { count: -1 }
+            $sort: { Count: -1 }
         }
     ]
     const data = await dataHandling.Aggregate(collectionName, pipeline, undefined, Limit, undefined);
