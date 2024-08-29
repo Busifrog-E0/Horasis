@@ -70,7 +70,7 @@ const CreateEvent = () => {
 		],
 		Privacy: 'Public',
 		Type: 'Offline',
-		Country: 'USA',
+		Country: 'United States',
 		HasDiscussion: true,
 	})
 

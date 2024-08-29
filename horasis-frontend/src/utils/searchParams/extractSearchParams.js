@@ -11,8 +11,6 @@
 // }
 
 export const jsonToQuery = (json) => {
-	console.log(json)
-
 	let result = Object.entries(json).flatMap(([key, value]) => {
 		if (Array.isArray(value)) {
 			return value.map((v) => [key, v])

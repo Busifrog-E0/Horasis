@@ -143,17 +143,19 @@ const DashboardHeader = () => {
 									location.pathname === '/Articles' ? 'bg-system-primary-accent' : 'bg-transparent'
 								}`}></div>
 						</div>
-						{/* <div className='w-max flex flex-col items-center'>
-						<a
-							className={`cursor-pointer  font-medium text-xl  ${location.pathname === '/Analytics' ? 'text-system-primary-accent' : 'text-system-primary-text'
+						<div className='w-max flex flex-col items-center'>
+							<a
+								className={`cursor-pointer  font-medium text-xl  ${
+									location.pathname === '/Analytics' ? 'text-system-primary-accent' : 'text-system-primary-text'
 								}`}
-							onClick={() => OnClickItem('/Analytics')}>
-							Analytics
-						</a>
-						<div
-							className={`h-1 w-10 rounded-full ${location.pathname === '/Analytics' ? 'bg-system-primary-accent' : 'bg-transparent'
+								onClick={() => OnClickItem('/Analytics')}>
+								Analytics
+							</a>
+							<div
+								className={`h-1 w-10 rounded-full ${
+									location.pathname === '/Analytics' ? 'bg-system-primary-accent' : 'bg-transparent'
 								}`}></div>
-					</div> */}
+						</div>
 					</div>
 					<div className='flex flex-row flex-wrap items-center gap-4 md:gap-4'>
 						<div className='relative inline-block text-left'>
