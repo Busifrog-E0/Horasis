@@ -58,7 +58,7 @@ const Analytics = () => {
 				</svg>
 			),
 			title: 'Articles',
-			render: () => <ArticleAnalyticsSection />,
+			render: () => <ArticleAnalyticsSection filters={filters} setFilters={setFilters} />,
 		},
 		{
 			icon: (
