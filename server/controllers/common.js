@@ -77,6 +77,16 @@ const GetFileFromURI = async (URI) => {
 
 /**
  * 
+ * @param {number} Count
+ * @param {number} TotalCount
+ */
+const GetPercentageOfData = (Count, TotalCount) => {
+    const Percentage = parseFloat(((Count / TotalCount) * 100).toFixed(2));
+    return Percentage;
+}
+
+/**
+ * 
  * @param {string} Message 
  * @param {number} StatusCode 
  * @returns 
@@ -94,4 +104,5 @@ export {
     GetUserNonEmptyFieldsPercentage,
     GetFileFromURI,
     SocketError,
+    GetPercentageOfData
 }
