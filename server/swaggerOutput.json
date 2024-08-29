@@ -7852,17 +7852,12 @@
             "type": "string"
           },
           {
-            "name": "startDate",
+            "name": "Index",
             "in": "query",
             "type": "string"
           },
           {
-            "name": "endDate",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "noOfIntervals",
+            "name": "NoOfIntervals",
             "in": "query",
             "type": "string"
           }
@@ -7944,17 +7939,12 @@
             "type": "string"
           },
           {
-            "name": "startDate",
+            "name": "Index",
             "in": "query",
             "type": "string"
           },
           {
-            "name": "endDate",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "noOfIntervals",
+            "name": "NoOfIntervals",
             "in": "query",
             "type": "string"
           }
@@ -7999,17 +7989,12 @@
             "type": "string"
           },
           {
-            "name": "startDate",
+            "name": "Index",
             "in": "query",
             "type": "string"
           },
           {
-            "name": "endDate",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "noOfIntervals",
+            "name": "NoOfIntervals",
             "in": "query",
             "type": "string"
           }
@@ -8054,17 +8039,12 @@
             "type": "string"
           },
           {
-            "name": "startDate",
+            "name": "Index",
             "in": "query",
             "type": "string"
           },
           {
-            "name": "endDate",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "noOfIntervals",
+            "name": "NoOfIntervals",
             "in": "query",
             "type": "string"
           }
@@ -8109,17 +8089,12 @@
             "type": "string"
           },
           {
-            "name": "startDate",
+            "name": "Index",
             "in": "query",
             "type": "string"
           },
           {
-            "name": "endDate",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "noOfIntervals",
+            "name": "NoOfIntervals",
             "in": "query",
             "type": "string"
           }

@@ -17,14 +17,14 @@ import { AggregateArticles, CountArticles } from '../databaseControllers/article
  * @returns 
  */
 const GetUserInsightsAnalytics = async (req, res) => {
-    const { StartDate, EndDate, NoOfIntervals } = req.query
+    const { Index, NoOfIntervals } = req.query
     const [Users, ActiveUsers, Activities] = await Promise.all([
         //@ts-ignore
-        GetAnalyticsWithinAnInterval("Users", {}, StartDate, EndDate, NoOfIntervals),
+        GetAnalyticsWithinAnInterval("Users", {}, Index, NoOfIntervals),
         //@ts-ignore
-        GetActiveUsersWithinAnInterval(StartDate, EndDate, NoOfIntervals),
+        GetActiveUsersWithinAnInterval(Index, NoOfIntervals),
         //@ts-ignore
-        GetAnalyticsWithinAnInterval("Activities", { Type: "Feed" }, StartDate, EndDate, NoOfIntervals),
+        GetAnalyticsWithinAnInterval("Activities", { Type: "Feed" }, Index, NoOfIntervals),
     ])
     return res.json({ Users, ActiveUsers, Activities })
 }
@@ -52,12 +52,12 @@ const GetUserBreakdown = (async (req, res) => {
  * @returns 
  */
 const GetUserStatistics = async (req, res) => {
-    const { StartDate, EndDate, NoOfIntervals } = req.query
+    const { Index, NoOfIntervals } = req.query
     const [EventLocations, UsersCount, ActiveUsers] = await Promise.all([
         GetDocumentCountByFields("Events", "Country", {}, -1),
         CountUsers({}),
         //@ts-ignore
-        GetActiveUsersWithinAnInterval(StartDate, EndDate, NoOfIntervals)
+        GetActiveUsersWithinAnInterval(Index, NoOfIntervals)
     ])
     const ActiveUsersCount = ActiveUsers.TotalCount;
     const NonActiveUsersPercentage = parseInt((((UsersCount - ActiveUsersCount) / UsersCount) * 100).toFixed(2));
@@ -72,12 +72,12 @@ const GetUserStatistics = async (req, res) => {
  * @returns 
  */
 const GetArticleAnalytics = async (req, res) => {
-    const { StartDate, EndDate, NoOfIntervals } = req.query
+    const { Index, NoOfIntervals } = req.query
     const [Articles, Engagements] = await Promise.all([
         //@ts-ignore
-        GetAnalyticsWithinAnInterval("Articles", {}, StartDate, EndDate, NoOfIntervals),
+        GetAnalyticsWithinAnInterval("Articles", {}, Index, NoOfIntervals),
         //@ts-ignore
-        GetArticleEngagementCount(StartDate, EndDate)
+        GetArticleEngagementCount(Index.$gte, Index.$lte)
     ])
     return res.json({ Articles, Engagements })
 }
@@ -89,12 +89,12 @@ const GetArticleAnalytics = async (req, res) => {
  * @returns 
  */
 const GetDiscussionAnalytics = async (req, res) => {
-    const { StartDate, EndDate, NoOfIntervals } = req.query
+    const { Index, NoOfIntervals } = req.query
     const [Discussions, Activities] = await Promise.all([
         //@ts-ignore
-        GetAnalyticsWithinAnInterval("Discussions", {}, StartDate, EndDate, NoOfIntervals),
+        GetAnalyticsWithinAnInterval("Discussions", {}, Index, NoOfIntervals),
         //@ts-ignore
-        GetAnalyticsWithinAnInterval("Activities", { Type: "Discussion" }, StartDate, EndDate, NoOfIntervals)
+        GetAnalyticsWithinAnInterval("Activities", { Type: "Discussion" }, Index, NoOfIntervals)
     ])
     return res.json({ Discussions, Activities })
 }
@@ -106,14 +106,14 @@ const GetDiscussionAnalytics = async (req, res) => {
  * @returns 
  */
 const GetEventsAnalytics = async (req, res) => {
-    const { StartDate, EndDate, NoOfIntervals } = req.query
+    const { Index, NoOfIntervals } = req.query
     const [Events, VirtualEvents, PhysicalEvents] = await Promise.all([
         //@ts-ignore
-        GetAnalyticsWithinAnInterval("Events", {}, StartDate, EndDate, NoOfIntervals),
+        GetAnalyticsWithinAnInterval("Events", {}, Index, NoOfIntervals),
         //@ts-ignore
-        GetAnalyticsWithinAnInterval("Events", { Type: "Virtual" }, StartDate, EndDate, NoOfIntervals),
+        GetAnalyticsWithinAnInterval("Events", { Type: "Virtual" }, Index, NoOfIntervals),
         //@ts-ignore
-        GetAnalyticsWithinAnInterval("Events", { Type: "Physical" }, StartDate, EndDate, NoOfIntervals)
+        GetAnalyticsWithinAnInterval("Events", { Type: "Physical" }, Index, NoOfIntervals)
     ])
     return res.json({ Events, VirtualEvents, PhysicalEvents })
 }
@@ -167,20 +167,20 @@ const GetAnalyticsTopEvents = async (req, res) => {
  * 
  * @param {"Users"|"Activities"|"Articles"|"Events"|"Discussions"} collectionName 
  * @param {object} where 
+ * @param {{$lte: number, $gte: number}} Index
  * 
  */
 const GetAnalyticsWithinAnInterval = async (
     collectionName,
     where = {},
-    StartDate = moment().subtract(1, 'month').startOf('day').valueOf(),
-    EndDate = moment().startOf('day').valueOf(),
+    Index,
     NoOfIntervals = 6
 ) => {
-    const intervalSize = (EndDate - StartDate) / (NoOfIntervals - 1);
+    const intervalSize = (Index.$lte - Index.$gte) / (NoOfIntervals - 1);
 
     const intervals = [];
     for (let i = 0; i < NoOfIntervals; i++) {
-        intervals.push(moment(StartDate + i * intervalSize).valueOf());
+        intervals.push(moment(Index.$gte + i * intervalSize).valueOf());
     }
 
     const CountWithDate = await Promise.all(intervals.map(async CreatedIndex => {
@@ -222,28 +222,32 @@ const GetDocumentCountByFields = async (collectionName, fieldName, where = {}, L
     return data;
 }
 
-
+/**
+ * 
+ * @param {{$lte: number, $gte: number}} Index 
+ * @param {number} NoOfIntervals 
+ * @returns 
+ */
 const GetActiveUsersWithinAnInterval = async (
-    StartDate = moment().subtract(1, 'month').startOf('day').valueOf(),
-    EndDate = moment().startOf('day').valueOf(),
+    Index,
     NoOfIntervals = 6
 ) => {
-    StartDate = moment(StartDate).startOf('day').valueOf();
-    EndDate = moment(EndDate).startOf('day').add(1, 'day').valueOf();
-    const intervalSize = (EndDate - StartDate) / (NoOfIntervals - 1);
+    Index.$gte = moment(Index.$gte).startOf('day').valueOf();
+    Index.$lte = moment(Index.$lte).startOf('day').add(1, 'day').valueOf();
+    const intervalSize = (Index.$lte - Index.$gte) / (NoOfIntervals - 1);
     const intervals = [];
     for (let i = 0; i < NoOfIntervals - 1; i++) {
         intervals.push({
             Date: {
-                $gte: StartDate + i * intervalSize,
-                $lt: StartDate + (i + 1) * intervalSize
+                $gte: Index.$gte + i * intervalSize,
+                $lt: Index.$gte + (i + 1) * intervalSize
             }
         });
     }
     intervals.unshift({
         Date: {
-            $gte: StartDate - 1 * intervalSize,
-            $lt: StartDate
+            $gte: Index.$gte - 1 * intervalSize,
+            $lt: Index.$gte
         }
     })
     const data = await Promise.all(intervals.map(async interval => {

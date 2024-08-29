@@ -1,10 +1,9 @@
 import Joi from 'joi'
 
-const ValidateGetIntervalAnalytics = async (req, res, next) => { 
+const ValidateGetIntervalAnalytics = async (req, res, next) => {
     const Result = Joi.object({
-        StartDate: Joi.number().required(),
-        EndDate: Joi.number().required(),
-        NoOfIntervals : Joi.number().required()
+        Index: Joi.object({ $lte: Joi.number().required(), $gte: Joi.number().required() }).required(),
+        NoOfIntervals: Joi.number().required()
     }).validate(req.query, { stripUnknown: true, convert: true });
     if (Result.error) {
         const message = Result.error.details.map((detail) => detail.message).join(',');
