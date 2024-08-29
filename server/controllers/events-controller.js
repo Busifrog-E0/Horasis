@@ -2,7 +2,7 @@ import e from 'express';
 
 import { ReadOneFromEvents, ReadEvents, UpdateEvents, CreateEvents, RemoveEvents, AggregateEvents, } from './../databaseControllers/events-databaseController.js';
 import { ReadOneFromUsers } from '../databaseControllers/users-databaseController.js';
-import { GetPermissionOfMember, MemberInit } from './members-controller.js';
+import { DeleteMembersOfEntity, GetPermissionOfMember, MemberInit } from './members-controller.js';
 import { CreateMembers, ReadMembers } from '../databaseControllers/members-databaseController.js';
 import { RemoveNotificationForEntity } from './notifications-controller.js';
 import { AlertBoxObject } from './common.js';
@@ -195,8 +195,12 @@ const PatchEvents = async (req, res) => {
  */
 const DeleteEvents = async (req, res) => {
     const { EventId } = req.params;
-    await RemoveEvents(EventId);
-    await RemoveNotificationForEntity(EventId);
+    await Promise.all([
+        RemoveEvents(EventId),
+        RemoveNotificationForEntity(EventId),
+        DeleteMembersOfEntity(EventId)
+    ])
+
     return res.json(true);
 }
 
