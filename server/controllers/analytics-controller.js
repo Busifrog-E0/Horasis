@@ -1,4 +1,5 @@
 import moment from 'moment';
+import e from 'express';
 import dataHandling from '../databaseControllers/functions.js'
 import { AggregateUsers, CountUsers } from '../databaseControllers/users-databaseController.js';
 import { CountActivities, ReadActivities } from '../databaseControllers/activities-databaseController.js';
@@ -9,16 +10,31 @@ import { CountActiveUsers, ReadActiveUsers } from '../databaseControllers/active
 import { AggregateDiscussions, ReadDiscussions } from '../databaseControllers/discussions-databaseController.js';
 import { AggregateArticles, CountArticles } from '../databaseControllers/articles-databaseController.js';
 
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ * @returns 
+ */
 const GetUserInsightsAnalytics = async (req, res) => {
     const { startDate, endDate, noOfIntervals } = req.query
     const [Users, ActiveUsers, Activities] = await Promise.all([
+        //@ts-ignore
         GetAnalyticsWithinAnInterval("Users", {}, startDate, endDate, noOfIntervals),
+        //@ts-ignore
         GetActiveUsersWithinAnInterval(startDate, endDate, noOfIntervals),
+        //@ts-ignore
         GetAnalyticsWithinAnInterval("Activities", { Type: "Feed" }, startDate, endDate, noOfIntervals),
     ])
     return res.json({ Users, ActiveUsers, Activities })
 }
 
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ * @returns 
+ */
 const GetUserBreakdown = (async (req, res) => {
     const [Country, City, Industry, JobTitle] = await Promise.all([
         GetDocumentCountByFields("Users", "Country"),
@@ -29,11 +45,18 @@ const GetUserBreakdown = (async (req, res) => {
     return res.json({ Country, City, Industry, JobTitle })
 })
 
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ * @returns 
+ */
 const GetUserStatistics = async (req, res) => {
     const { startDate, endDate, noOfIntervals } = req.query
     const [EventLocations, UsersCount, ActiveUsers] = await Promise.all([
         GetDocumentCountByFields("Events", "Country", {}, -1),
         CountUsers({}),
+        //@ts-ignore
         GetActiveUsersWithinAnInterval(startDate, endDate, noOfIntervals)
     ])
     const ActiveUsersCount = ActiveUsers.TotalCount;
@@ -42,13 +65,101 @@ const GetUserStatistics = async (req, res) => {
     return res.json({ EventLocations, NonActiveUsersPercentage, ActiveUsersPercentage })
 }
 
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ * @returns 
+ */
 const GetArticleAnalytics = async (req, res) => {
     const { startDate, endDate, noOfIntervals } = req.query
     const [Articles, Engagements] = await Promise.all([
+        //@ts-ignore
         GetAnalyticsWithinAnInterval("Articles", {}, startDate, endDate, noOfIntervals),
+        //@ts-ignore
         GetArticleEngagementCount(startDate, endDate)
     ])
     return res.json({ Articles, Engagements })
+}
+
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ * @returns 
+ */
+const GetDiscussionAnalytics = async (req, res) => {
+    const { startDate, endDate, noOfIntervals } = req.query
+    const [Discussions, Activities] = await Promise.all([
+        //@ts-ignore
+        GetAnalyticsWithinAnInterval("Discussions", {}, startDate, endDate, noOfIntervals),
+        //@ts-ignore
+        GetAnalyticsWithinAnInterval("Activities", { Type: "Discussion" }, startDate, endDate, noOfIntervals)
+    ])
+    return res.json({ Discussions, Activities })
+}
+
+/** 
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ * @returns 
+ */
+const GetEventsAnalytics = async (req, res) => {
+    const { startDate, endDate, noOfIntervals } = req.query
+    const [Events, VirtualEvents, PhysicalEvents] = await Promise.all([
+        //@ts-ignore
+        GetAnalyticsWithinAnInterval("Events", {}, startDate, endDate, noOfIntervals),
+        //@ts-ignore
+        GetAnalyticsWithinAnInterval("Events", { Type: "Virtual" }, startDate, endDate, noOfIntervals),
+        //@ts-ignore
+        GetAnalyticsWithinAnInterval("Events", { Type: "Physical" }, startDate, endDate, noOfIntervals)
+    ])
+    return res.json({ Events, VirtualEvents, PhysicalEvents })
+}
+
+
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ * @returns 
+ */
+const GetAnalyticsTopArticles = async (req, res) => {
+    const { Limit, NextId, Keyword, OrderBy } = req.query;
+    const pipeline = [
+        {
+            $addFields: { InteractionCount: { $sum: ["$NoOfComments", "$NoOfLikes"] } }
+        }
+    ]
+    const data = await AggregateArticles(pipeline, NextId, Limit, { InteractionCount: "desc" })
+    return res.json(data)
+}
+
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ * @returns 
+ */
+const GetAnalyticsTopDiscussions = async (req, res) => {
+    const { Filter, Limit, NextId, Keyword, OrderBy } = req.query;
+    //@ts-ignore
+    const data = await ReadDiscussions(Filter, NextId, Limit, { NoOfActivities: "desc" })
+    return res.json(data)
+}
+
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ * @returns 
+ */
+const GetAnalyticsTopEvents = async (req, res) => {
+    const { Filter, Limit, NextId, Keyword, OrderBy } = req.query;
+    //@ts-ignore
+    const data = await ReadEvents(Filter, NextId, Limit, { NoOfActivities: "desc" })
+    return res.json(data)
 }
 
 
@@ -83,6 +194,14 @@ const GetAnalyticsWithinAnInterval = async (
     return { TotalCount, PercentageChange, CountWithDate }
 };
 
+/**
+ * 
+ * @param {"Activities"|"Events"|"Discussions"|"Articles"|"Users"} collectionName 
+ * @param {string} fieldName 
+ * @param {object} where 
+ * @param {number} Limit 
+ * @returns 
+ */
 const GetDocumentCountByFields = async (collectionName, fieldName, where = {}, Limit = 6) => {
     const pipeline = [
         {
@@ -137,58 +256,13 @@ const GetActiveUsersWithinAnInterval = async (
     return { CountWithDate: data, TotalCount, PercentageChange };
 }
 
-const GetDiscussionAnalytics = async (req, res) => {
-    const { startDate, endDate, noOfIntervals } = req.query
-    const [Discussions, Activities] = await Promise.all([
-        GetAnalyticsWithinAnInterval("Discussions", {}, startDate, endDate, noOfIntervals),
-        GetAnalyticsWithinAnInterval("Activities", { Type: "Discussion" }, startDate, endDate, noOfIntervals)
-    ])
-    return res.json({ Discussions, Activities })
-}
-
-const GetEventsAnalytics = async (req, res) => {
-    const { startDate, endDate, noOfIntervals } = req.query
-    const [Events, VirtualEvents, PhysicalEvents] = await Promise.all([
-        GetAnalyticsWithinAnInterval("Events", {}, startDate, endDate, noOfIntervals),
-        GetAnalyticsWithinAnInterval("Events", { Type: "Virtual" }, startDate, endDate, noOfIntervals),
-        GetAnalyticsWithinAnInterval("Events", { Type: "Physical" }, startDate, endDate, noOfIntervals)
-    ])
-    return res.json({ Events, VirtualEvents, PhysicalEvents })
-}
-
-
-const GetAnalyticsTopArticles = async (req, res) => {
-    const { Limit, NextId, Keyword, OrderBy } = req.query;
-    const pipeline = [
-        {
-            $addFields: { InteractionCount: { $sum: ["$NoOfComments", "$NoOfLikes"] } }
-        }
-    ]
-    const data = await AggregateArticles(pipeline, NextId, Limit, { InteractionCount: "desc" })
-    return res.json(data)
-}
-
-
-const GetAnalyticsTopDiscussions = async (req, res) => {
-    const { Filter, Limit, NextId, Keyword, OrderBy } = req.query;
-    const data = await ReadDiscussions(Filter, NextId, Limit, { NoOfActivities: "desc" })
-    return res.json(data)
-}
-
-
-const GetAnalyticsTopEvents = async (req, res) => {
-    const { Filter, Limit, NextId, Keyword, OrderBy } = req.query;
-    const data = await ReadEvents(Filter, NextId, Limit, { NoOfActivities: "desc" })
-    return res.json(data)
-}
-
 /**
  * 
  * @param {number} startDate 
  * @param {number} endDate 
  * @returns 
  */
-const GetArticleEngagementCount = async (startDate, endDate,) => {
+const GetArticleEngagementCount = async (startDate, endDate) => {
     const [NoOfCommentsAtStart, NoOfLikesAtStart, NoOfComments, NoOfLikes] = await Promise.all([
         CommentCount({ ParentType: "Article", CreatedIndex: { $gte: startDate, $lt: endDate } }),
         CountLikes({ Type: "Article", CreatedIndex: { $gte: startDate, $lt: endDate } }),
