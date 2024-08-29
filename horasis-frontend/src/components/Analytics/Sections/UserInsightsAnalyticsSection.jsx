@@ -7,6 +7,17 @@ import { useAuth } from '../../../utils/AuthProvider'
 import { useToast } from '../../Toast/ToastService'
 import { getItem } from '../../../constants/operations'
 import { jsonToQuery } from '../../../utils/searchParams/extractSearchParams'
+import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
+
+function transformData(data) {
+	if (data) {
+		return data.map((item) => ({
+			Date: new Date(item.Date).toLocaleDateString(),
+			Count: item.Count,
+		}))
+	}
+	return
+}
 
 const UserInsightsAnalyticsSection = ({ filters, setFilters }) => {
 	const { currentUserData, updateCurrentUser } = useAuth()
@@ -20,7 +31,23 @@ const UserInsightsAnalyticsSection = ({ filters, setFilters }) => {
 				userInsights?.Users?.PercentageChange > 0
 					? `+${userInsights?.Users?.PercentageChange}%`
 					: `${userInsights?.Users?.PercentageChange}%`,
-			render: () => <div className='bg-system-secondary-bg rounded-lg p-3'></div>,
+			render: () => {
+				const [data, setData] = useState(transformData(userInsights?.Users?.CountWithDate))
+
+				return (
+					<div className='bg-system-secondary-bg rounded-lg p-3 overflow-hidden'>
+						<ResponsiveContainer width='100%' height={400}>
+							<LineChart data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+								<CartesianGrid strokeDasharray='3 3' />
+								<XAxis dataKey='Date' />
+								<YAxis />
+								<Tooltip />
+								<Line type='monotone' dataKey='Count' stroke='#8884d8' activeDot={{ r: 8 }} />
+							</LineChart>
+						</ResponsiveContainer>
+					</div>
+				)
+			},
 		},
 		{
 			title: 'Active Users',
@@ -29,7 +56,9 @@ const UserInsightsAnalyticsSection = ({ filters, setFilters }) => {
 				userInsights?.ActiveUsers?.PercentageChange > 0
 					? `+${userInsights?.ActiveUsers?.PercentageChange}%`
 					: `${userInsights?.ActiveUsers?.PercentageChange}%`,
-			render: () => <div className='bg-system-secondary-bg rounded-lg p-3'></div>,
+			render: () => {
+				return <div className='bg-system-secondary-bg rounded-lg p-3'></div>
+			},
 		},
 		{
 			title: 'Total No. of Posts',
@@ -38,7 +67,9 @@ const UserInsightsAnalyticsSection = ({ filters, setFilters }) => {
 				userInsights?.Activities?.PercentageChange > 0
 					? `+${userInsights?.Activities?.PercentageChange}%`
 					: `${userInsights?.Activities?.PercentageChange}%`,
-			render: () => <div className='bg-system-secondary-bg rounded-lg p-3'></div>,
+			render: () => {
+				return <div className='bg-system-secondary-bg rounded-lg p-3'></div>
+			},
 		},
 	]
 
@@ -165,7 +196,9 @@ const UserInsightsAnalyticsSection = ({ filters, setFilters }) => {
 				<div className='mt-8'>
 					<div className='grid lg:grid-cols-3 gap-4 lg:gap-16'>
 						<div>
-							<TabList setActiveTab={setActiveTab} activeTab={activeTab} tablist={tabs(userInsights)} />
+							{userInsights && (
+								<TabList setActiveTab={setActiveTab} activeTab={activeTab} tablist={tabs(userInsights)} />
+							)}
 						</div>
 						<div className='lg:col-span-2'>
 							<TabContent>{tabs()[activeTab].render()}</TabContent>
