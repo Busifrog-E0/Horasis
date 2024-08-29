@@ -78,7 +78,7 @@ const Analytics = () => {
 				</svg>
 			),
 			title: 'Discussions',
-			render: () => <DiscussionsAnalyticsSection />,
+			render: () => <DiscussionsAnalyticsSection filters={filters} setFilters={setFilters} />,
 		},
 		{
 			icon: (
