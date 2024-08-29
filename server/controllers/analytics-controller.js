@@ -66,8 +66,8 @@ const GetUserStatistics = async (req, res) => {
         GetActiveUsersWithinAnInterval(Index, NoOfIntervals)
     ])
     const ActiveUsersCount = ActiveUsers.TotalCount;
-    const NonActiveUsersPercentage = GetPercentageOfData(UsersCount, UsersCount - ActiveUsersCount);
-    const ActiveUsersPercentage = GetPercentageOfData(UsersCount, ActiveUsersCount);
+    const NonActiveUsersPercentage = GetPercentageOfData(UsersCount - ActiveUsersCount, UsersCount);
+    const ActiveUsersPercentage = GetPercentageOfData(ActiveUsersCount, UsersCount);
     return res.json({ EventLocations, NonActiveUsersPercentage, ActiveUsersPercentage })
 }
 
@@ -151,7 +151,7 @@ const GetAnalyticsTopArticles = async (req, res) => {
 const GetAnalyticsTopDiscussions = async (req, res) => {
     const { Filter, Limit, NextId, Keyword, OrderBy } = req.query;
     //@ts-ignore
-    const data = await ReadDiscussions(Filter, NextId, Limit, { NoOfMembers: "desc" })
+    const data = await ReadDiscussions(Filter, NextId, Limit, { NoOfActivities: "desc" })
     return res.json(data)
 }
 
@@ -220,11 +220,8 @@ const GetDocumentCountByFields = async (collectionName, fieldName, where = {}, L
                 Count: { $sum: 1 }
             }
         },
-        {
-            $sort: { Count: -1 }
-        }
     ]
-    const data = await dataHandling.Aggregate(collectionName, pipeline, undefined, Limit, undefined);
+    const data = await dataHandling.Aggregate(collectionName, pipeline, undefined, Limit, {Count : -1});
     return data;
 }
 

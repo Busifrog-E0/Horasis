@@ -2,6 +2,7 @@ import { ObjectId } from "mongodb";
 import { ReadFollows, ReadOneFromFollows, UpdateFollows } from "./follow-databaseController.js";
 import { ReadOneFromUsers } from "./users-databaseController.js";
 import { ReadActivities, UpdateActivities } from "./activities-databaseController.js";
+import { ReadDiscussions, UpdateDiscussions } from "./discussions-databaseController.js";
 
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
 
@@ -40,10 +41,12 @@ const VersionUpdate = async (ReadFn, UpdateFn, where = {}) => {
 
 const OriginalLanguageInActivities = async () => {
     const update = async (activity) => {
-        await UpdateActivities({ OriginalLanguage: "English" }, activity.DocId);
+        await UpdateDiscussions({ NoOfActivities: 0 }, activity.DocId);
     }
-    await VersionUpdate(ReadActivities, update, { OriginalLanguage: { '$exists': false } });
+    await VersionUpdate(ReadDiscussions, update, { NoOfActivities: { '$exists': false } });
 }
+
+
 
 //await OriginalLanguageInActivities();
 
@@ -66,5 +69,6 @@ function Shuffle(array) {
 }
 export {
     VersionUpdate,
-    Shuffle
+    Shuffle,
+    
 }
