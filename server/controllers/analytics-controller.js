@@ -54,7 +54,7 @@ const GetUserBreakdown = (async (req, res) => {
 const GetUserStatistics = async (req, res) => {
     const { Index, NoOfIntervals } = req.query
     const [EventLocations, UsersCount, ActiveUsers] = await Promise.all([
-        GetDocumentCountByFields("Events", "Country", {}, -1),
+        GetDocumentCountByFields("Events", "Country", { StartTime: { $gte: moment().startOf('day').valueOf() } }, -1),
         CountUsers({}),
         //@ts-ignore
         GetActiveUsersWithinAnInterval(Index, NoOfIntervals)
