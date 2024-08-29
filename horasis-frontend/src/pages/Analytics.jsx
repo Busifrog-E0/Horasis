@@ -19,7 +19,7 @@ const Analytics = () => {
 	const [hoveredPieSlice, setHoveredPieSlice] = useState(null)
 	const [hoveredCity, setHoveredCity] = useState(null)
 	const cities = ['India', 'United States']
-	const tabs = () => [
+	const tabs = (filters, setFilters) => [
 		{
 			icon: (
 				<svg
@@ -38,7 +38,7 @@ const Analytics = () => {
 				</svg>
 			),
 			title: 'User Insights',
-			render: () => <UserInsightsAnalyticsSection />,
+			render: () => <UserInsightsAnalyticsSection filters={filters} setFilters={setFilters} />,
 		},
 		{
 			icon: (
@@ -131,7 +131,7 @@ const Analytics = () => {
 
 	useEffect(() => {
 		getUserStatistics()
-	}, [])
+	}, [filters])
 
 	return (
 		<>
@@ -139,7 +139,7 @@ const Analytics = () => {
 				<div className='grid lg:grid-cols-4 gap-3 lg:gap-12'>
 					<div className='lg:col-span-3'>
 						<div>
-							<SidebarTab tabs={tabs()} />
+							<SidebarTab tabs={tabs(filters, setFilters)} />
 						</div>
 					</div>
 					<div>
