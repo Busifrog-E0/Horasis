@@ -11,8 +11,11 @@ const ValidateGetIntervalAnalytics = async (req, res, next) => {
                 //@ts-ignore
                 return helpers.message('Start Date should be less than End Date');
             }
-            if (value.$lte > moment().valueOf())
-                return value;
+            if (value.$lte > moment().valueOf()) {
+                //@ts-ignore
+                return helpers.message("End Date should be less than current date");
+            }
+            return value;
         }),
         NoOfIntervals: Joi.number().required()
     }).validate(req.query, { stripUnknown: true, convert: true });
