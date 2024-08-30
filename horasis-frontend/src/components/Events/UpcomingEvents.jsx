@@ -21,9 +21,10 @@ const UpcomingEvents = () => {
 	const [pageDisabled, setPageDisabled] = useState(true)
 	const navigate = useNavigate()
 	const [filters, setFilters] = useState({
-		OrderBy: 'Index',
+		OrderBy: '-StartTime',
 		Limit: 1,
 		Keyword: '',
+		[`StartTime[$gte]`]: new Date().getTime(),
 	})
 
 	const api = 'events'

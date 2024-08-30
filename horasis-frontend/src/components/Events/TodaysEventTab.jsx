@@ -21,6 +21,24 @@ const TodaysEventTab = () => {
 		OrderBy: 'Index',
 		Limit: 1,
 		Keyword: '',
+		[`StartTime[$gte]`]: new Date(
+			new Date().getFullYear(),
+			new Date().getMonth(),
+			new Date().getDate(),
+			0,
+			0,
+			0,
+			0
+		).getTime(),
+		[`StartTime[$lte]`]: new Date(
+			new Date().getFullYear(),
+			new Date().getMonth(),
+			new Date().getDate() + 1,
+			0,
+			0,
+			0,
+			0
+		).getTime(),
 	})
 	const api = 'events'
 
@@ -41,6 +59,7 @@ const TodaysEventTab = () => {
 			`${endpoint}&NextId=${getNextId(tempData)}`,
 			(data) => {
 				setData([...tempData, ...data])
+
 				setLoadingCom(tempData, false)
 			},
 			(err) => {
@@ -56,6 +75,7 @@ const TodaysEventTab = () => {
 		getItem(
 			`${endpoint}?NextId=${getNextId(tempData)}&${jsonToQuery({ ...filters, Limit: 1 })}`,
 			(data) => {
+				console.log(data)
 				if (data?.length > 0) {
 					setPageDisabled(false)
 				} else {
@@ -88,7 +108,7 @@ const TodaysEventTab = () => {
 
 	return (
 		<>
-			{events.length < 0 ? (
+			{events.length > 0 ? (
 				<>
 					{events.map((item) => {
 						return (

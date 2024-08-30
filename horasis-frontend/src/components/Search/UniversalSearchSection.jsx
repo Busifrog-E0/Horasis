@@ -77,7 +77,7 @@ const UniversalSearchSection = () => {
 						setIsLoading={setIsLoadingMembers}
 						fetchMore={fetchMore}
 						isLoadingMore={isLoadingMoreMembers}
-						pageDisabled={pageDisabled}
+						pageDisabled={true}
 					/>
 					<div className='border-b border-system-file-border m-4'></div>
 					<PostsSearchTab
@@ -88,7 +88,7 @@ const UniversalSearchSection = () => {
 						setIsLoading={setIsLoadingPosts}
 						fetchMore={fetchMore}
 						isLoadingMore={isLoadingMorePosts}
-						pageDisabled={pageDisabled}
+						pageDisabled={true}
 					/>
 					<div className='border-b border-system-file-border m-4'></div>
 					<EventsSearchTab
@@ -99,7 +99,7 @@ const UniversalSearchSection = () => {
 						setIsLoading={setIsLoadingEvents}
 						fetchMore={fetchMore}
 						isLoadingMore={isLoadingMoreEvents}
-						pageDisabled={pageDisabled}
+						pageDisabled={true}
 						eventTab={eventTab}
 						setEventTab={setEventTab}
 					/>
@@ -113,7 +113,7 @@ const UniversalSearchSection = () => {
 						setIsLoading={setIsLoadingDiscussions}
 						fetchMore={fetchMore}
 						isLoadingMore={isLoadingMoreDiscussions}
-						pageDisabled={pageDisabled}
+						pageDisabled={true}
 						discussionTab={discussionTab}
 						setDiscussionTab={setDiscussionTab}
 					/>
@@ -126,7 +126,7 @@ const UniversalSearchSection = () => {
 						setIsLoading={setIsLoadingArticles}
 						fetchMore={fetchMore}
 						isLoadingMore={isLoadingMoreArticles}
-						pageDisabled={pageDisabled}
+						pageDisabled={true}
 					/>
 				</div>
 			),
@@ -310,11 +310,11 @@ const UniversalSearchSection = () => {
 	const fetchData = (initialRender = false) => {
 		switch (activeTab) {
 			case 0:
-				getAllMembers(initialRender ? [] : members, 2)
-				getPosts(initialRender ? [] : posts, 2)
-				getEvents(initialRender ? [] : events, 2)
-				getDiscussions(initialRender ? [] : discussions, 2)
-				getInsights(initialRender ? [] : insights, 2)
+				getAllMembers(initialRender ? [] : members, 10)
+				getPosts(initialRender ? [] : posts, 10)
+				getEvents(initialRender ? [] : events, 10)
+				getDiscussions(initialRender ? [] : discussions, 10)
+				getInsights(initialRender ? [] : insights, 10)
 				break
 			case 1:
 				getAllMembers(initialRender ? [] : members, 10)
