@@ -1,17 +1,19 @@
 import Joi from 'joi'
+import moment from 'moment';
 
 const ValidateGetIntervalAnalytics = async (req, res, next) => {
     const Result = Joi.object({
         Index: Joi.object({
             $lte: Joi.number().required(),
             $gte: Joi.number().required()
-        }).required()//.custom((value, helpers) => {
-           // if (value.$gte >= value.$lte) {
-          //      //@ts-ignore
-           //     return helpers.message('Start Date should be less than End Date');
-          //  }
-        // })
-        ,
+        }).required().custom((value, helpers) => {
+            if (value.$gte >= value.$lte) {
+                //@ts-ignore
+                return helpers.message('Start Date should be less than End Date');
+            }
+            if (value.$lte > moment().valueOf())
+                return value;
+        }),
         NoOfIntervals: Joi.number().required()
     }).validate(req.query, { stripUnknown: true, convert: true });
     if (Result.error) {
