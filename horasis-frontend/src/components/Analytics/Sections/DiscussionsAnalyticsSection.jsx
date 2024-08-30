@@ -32,7 +32,7 @@ const DiscussionsAnalyticsSection = ({ filters, setFilters }) => {
 	const [topFilter, setTopFilter] = useState({
 		OrderBy: 'Index',
 		Keyword: '',
-		Limit: 2,
+		Limit: 3,
 	})
 	const [topDiscussions, setTopDiscussions] = useState([])
 	const getTopDiscussions = () => {
@@ -130,16 +130,21 @@ const DiscussionsAnalyticsSection = ({ filters, setFilters }) => {
 					{/* info icon goes here */}
 				</div>
 				<div className='my-6'>
-					{topDiscussions && (
-						<DiscussionsList
-							data={topDiscussions}
-							updateList={setTopDiscussions}
-							emptyText={'No discussions'}
-							gap={'gap-2 lg:gap-4'}
-							cols={'grid-cols-2 md:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3'}
-							fetch={getTopDiscussions}
-						/>
-					)}
+					<div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3 gap-2'>
+						{topDiscussions && (
+							<>
+								{topDiscussions.length > 0 ? (
+									<>
+										{topDiscussions.map((item) => {
+											return <DiscussionsAnalyticsTab discussion={item} key={item.DocId} />
+										})}
+									</>
+								) : (
+									<></>
+								)}
+							</>
+						)}
+					</div>
 				</div>
 			</div>
 		</>

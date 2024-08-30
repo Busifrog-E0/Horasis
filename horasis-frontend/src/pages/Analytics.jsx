@@ -30,88 +30,24 @@ const Analytics = () => {
 	const cities = ['India', 'United States']
 	const tabs = (filters, setFilters) => [
 		{
-			icon: (
-				<svg
-					className='w-5 h-5 cursor-pointer'
-					aria-hidden='true'
-					xmlns='http://www.w3.org/2000/svg'
-					fill='none'
-					viewBox='0 0 20 20'>
-					<path
-						stroke='currentColor'
-						strokeLinecap='round'
-						strokeLinejoin='round'
-						strokeWidth='2'
-						d='M4 12.25V1m0 11.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M4 19v-2.25m6-13.5V1m0 2.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M10 19V7.75m6 4.5V1m0 11.25a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5ZM16 19v-2'
-					/>
-				</svg>
-			),
 			whiteIcon: <img src={whiteUserActivity} className='h-6' />,
 			blackIcon: <img src={blackUserActivity} className='h-6' />,
 			title: 'User Insights',
 			render: () => <UserInsightsAnalyticsSection filters={filters} setFilters={setFilters} />,
 		},
 		{
-			icon: (
-				<svg
-					className='w-5 h-5 cursor-pointer'
-					aria-hidden='true'
-					xmlns='http://www.w3.org/2000/svg'
-					fill='none'
-					viewBox='0 0 20 20'>
-					<path
-						stroke='currentColor'
-						strokeLinecap='round'
-						strokeLinejoin='round'
-						strokeWidth='2'
-						d='M4 12.25V1m0 11.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M4 19v-2.25m6-13.5V1m0 2.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M10 19V7.75m6 4.5V1m0 11.25a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5ZM16 19v-2'
-					/>
-				</svg>
-			),
 			whiteIcon: <img src={whiteArticle} className='h-6' />,
 			blackIcon: <img src={blackArticle} className='h-6' />,
 			title: 'Articles',
 			render: () => <ArticleAnalyticsSection filters={filters} setFilters={setFilters} />,
 		},
 		{
-			icon: (
-				<svg
-					className='w-5 h-5 cursor-pointer'
-					aria-hidden='true'
-					xmlns='http://www.w3.org/2000/svg'
-					fill='none'
-					viewBox='0 0 20 20'>
-					<path
-						stroke='currentColor'
-						strokeLinecap='round'
-						strokeLinejoin='round'
-						strokeWidth='2'
-						d='M4 12.25V1m0 11.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M4 19v-2.25m6-13.5V1m0 2.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M10 19V7.75m6 4.5V1m0 11.25a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5ZM16 19v-2'
-					/>
-				</svg>
-			),
 			whiteIcon: <img src={whiteforum} className='h-6' />,
 			blackIcon: <img src={blackforum} className='h-6' />,
 			title: 'Discussions',
 			render: () => <DiscussionsAnalyticsSection filters={filters} setFilters={setFilters} />,
 		},
 		{
-			icon: (
-				<svg
-					className='w-5 h-5 cursor-pointer'
-					aria-hidden='true'
-					xmlns='http://www.w3.org/2000/svg'
-					fill='none'
-					viewBox='0 0 20 20'>
-					<path
-						stroke='currentColor'
-						strokeLinecap='round'
-						strokeLinejoin='round'
-						strokeWidth='2'
-						d='M4 12.25V1m0 11.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M4 19v-2.25m6-13.5V1m0 2.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M10 19V7.75m6 4.5V1m0 11.25a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5ZM16 19v-2'
-					/>
-				</svg>
-			),
 			whiteIcon: <img src={whiteevent} className='h-6' />,
 			blackIcon: <img src={blackevent} className='h-6' />,
 			title: 'Events',
