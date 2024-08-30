@@ -228,6 +228,9 @@ const DeleteActivities = async (req, res) => {
     }
     await RemoveActivities(ActivityId);
     await RemoveNotificationForEntity(ActivityId);
+    Activity.Type !== "Feed" ?
+        Activity.Type === "Discussion" ?
+            await IncrementDiscussions({ NoOfActivities: -1 }) : await IncrementEvents({ NoOfActivities: -1 }) : null
     return res.json(true);
 }
 
