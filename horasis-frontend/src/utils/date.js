@@ -151,3 +151,10 @@ export const getMonthsShort = (timestamp) => {
 	const month = new Date(timestamp).getMonth()
 	return MONTHS_SHORT[month]
 }
+
+export function getDateMonth(dateObj) {
+	if (dateObj.getDate() < 10) {
+		return MONTHS_SHORT[dateObj.getMonth()] + ' ' + '0' + dateObj.getDate()
+	}
+	return MONTHS_SHORT[dateObj.getMonth()] + ' ' + dateObj.getDate()
+}

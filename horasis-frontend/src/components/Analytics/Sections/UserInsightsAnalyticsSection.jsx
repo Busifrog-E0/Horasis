@@ -8,11 +8,13 @@ import { useToast } from '../../Toast/ToastService'
 import { getItem } from '../../../constants/operations'
 import { jsonToQuery } from '../../../utils/searchParams/extractSearchParams'
 import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
+import Spinner from '../../ui/Spinner'
+import { getDateMonth } from '../../../utils/date'
 
 function transformData(data) {
 	if (data) {
 		return data.map((item) => ({
-			Date: new Date(item.Date).toLocaleDateString(),
+			Date: getDateMonth(new Date(item.Date)),
 			Count: item.Count,
 		}))
 	}
@@ -32,12 +34,12 @@ const UserInsightsAnalyticsSection = ({ filters, setFilters }) => {
 					? `+${userInsights?.Users?.PercentageChange}%`
 					: `${userInsights?.Users?.PercentageChange}%`,
 			render: () => {
-				const [data, setData] = useState(transformData(userInsights?.Users?.CountWithDate))
-
 				return (
 					<div className='bg-system-secondary-bg rounded-lg p-3 overflow-hidden'>
-						<ResponsiveContainer width='100%' height={400}>
-							<LineChart data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+						<ResponsiveContainer width='100%' height={300}>
+							<LineChart
+								data={transformData(userInsights?.Users?.CountWithDate)}
+								margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
 								<CartesianGrid strokeDasharray='3 3' />
 								<XAxis dataKey='Date' />
 								<YAxis />
@@ -57,7 +59,21 @@ const UserInsightsAnalyticsSection = ({ filters, setFilters }) => {
 					? `+${userInsights?.ActiveUsers?.PercentageChange}%`
 					: `${userInsights?.ActiveUsers?.PercentageChange}%`,
 			render: () => {
-				return <div className='bg-system-secondary-bg rounded-lg p-3'></div>
+				return (
+					<div className='bg-system-secondary-bg rounded-lg p-3'>
+						<ResponsiveContainer width='100%' height={300}>
+							<LineChart
+								data={transformData(userInsights?.ActiveUsers?.CountWithDate)}
+								margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+								<CartesianGrid strokeDasharray='3 3' />
+								<XAxis dataKey='Date' />
+								<YAxis />
+								<Tooltip />
+								<Line type='monotone' dataKey='Count' stroke='#8884d8' activeDot={{ r: 8 }} />
+							</LineChart>
+						</ResponsiveContainer>
+					</div>
+				)
 			},
 		},
 		{
@@ -68,7 +84,21 @@ const UserInsightsAnalyticsSection = ({ filters, setFilters }) => {
 					? `+${userInsights?.Activities?.PercentageChange}%`
 					: `${userInsights?.Activities?.PercentageChange}%`,
 			render: () => {
-				return <div className='bg-system-secondary-bg rounded-lg p-3'></div>
+				return (
+					<div className='bg-system-secondary-bg rounded-lg p-3'>
+						<ResponsiveContainer width='100%' height={300}>
+							<LineChart
+								data={transformData(userInsights?.Activities?.CountWithDate)}
+								margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+								<CartesianGrid strokeDasharray='3 3' />
+								<XAxis dataKey='Date' />
+								<YAxis />
+								<Tooltip />
+								<Line type='monotone' dataKey='Count' stroke='#8884d8' activeDot={{ r: 8 }} />
+							</LineChart>
+						</ResponsiveContainer>
+					</div>
+				)
 			},
 		},
 	]
@@ -119,13 +149,17 @@ const UserInsightsAnalyticsSection = ({ filters, setFilters }) => {
 		},
 	]
 	const [userInsights, setUserInsights] = useState({})
+	const [isLoading, setIsLoading] = useState(false)
 	const getUserInsights = () => {
+		setIsLoading(true)
 		getItem(
 			`analytics/userInsights?${jsonToQuery(filters)}`,
 			(result) => {
+				setIsLoading(false)
 				setUserInsights(result)
 			},
 			(err) => {
+				setIsLoading(false)
 				console.log(err)
 			},
 			updateCurrentUser,
@@ -201,7 +235,7 @@ const UserInsightsAnalyticsSection = ({ filters, setFilters }) => {
 							)}
 						</div>
 						<div className='lg:col-span-2'>
-							<TabContent>{tabs()[activeTab].render()}</TabContent>
+							<TabContent>{tabs(userInsights)[activeTab].render()}</TabContent>
 						</div>
 					</div>
 				</div>
