@@ -5,11 +5,13 @@ const ValidateGetIntervalAnalytics = async (req, res, next) => {
         Index: Joi.object({
             $lte: Joi.number().required(),
             $gte: Joi.number().required()
-        }).required().custom((value, helpers) => {
-            if (value.$gte < value.$lte) {
-                return helpers.error('Start Date should be less than End Date');
-            }
-        }),
+        }).required()//.custom((value, helpers) => {
+           // if (value.$gte >= value.$lte) {
+          //      //@ts-ignore
+           //     return helpers.message('Start Date should be less than End Date');
+          //  }
+        // })
+        ,
         NoOfIntervals: Joi.number().required()
     }).validate(req.query, { stripUnknown: true, convert: true });
     if (Result.error) {
