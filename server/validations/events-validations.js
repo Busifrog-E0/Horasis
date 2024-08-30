@@ -38,7 +38,15 @@ const ValidatePostEvents = async (req, res, next) => {
 
 const ValidateGetEvents = async (req, res, next) => {
     const Result = QueryParametersSchema.keys({
-        StartTime: Joi.number(),
+        StartTime: Joi.object({
+            $lte: Joi.number().required(),
+            $gte: Joi.number().required()
+        }).custom((value, helpers) => {
+            if (value.$gte >= value.$lte) {
+                //@ts-ignore
+                return helpers.message('Start Date should be less than End Date');
+            }
+        }),
         Privacy: Joi.string().valid('Public', 'Private'),
         Type: Joi.string().valid('Virtual', 'Offline'),
         Country: Joi.string(),
