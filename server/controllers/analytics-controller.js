@@ -9,6 +9,7 @@ import { CountEvents, ReadEvents } from '../databaseControllers/events-databaseC
 import { CountActiveUsers, ReadActiveUsers } from '../databaseControllers/activeUsers-databaseController.js';
 import { AggregateDiscussions, ReadDiscussions } from '../databaseControllers/discussions-databaseController.js';
 import { AggregateArticles, CountArticles } from '../databaseControllers/articles-databaseController.js';
+import { GetPercentageOfData } from './common.js';
 
 /**
  * 
@@ -36,13 +37,18 @@ const GetUserInsightsAnalytics = async (req, res) => {
  * @returns 
  */
 const GetUserBreakdown = (async (req, res) => {
-    const [Country, City, Industry, JobTitle] = await Promise.all([
+    const [TotalUsers, Country, City, Industry, JobTitle] = await Promise.all([
+        CountUsers({}),
         GetDocumentCountByFields("Users", "Country"),
         GetDocumentCountByFields("Users", "City"),
         GetDocumentCountByFields("Users", "Industry"),
         GetDocumentCountByFields("Users", "JobTitle"),
     ])
-    return res.json({ Country, City, Industry, JobTitle })
+    const UserCountryPercentage = Country.map(item => { item.Count = 0 ? 0 : GetPercentageOfData(item.Count, TotalUsers); return item; });
+    const UserCityPercentage = City.map(item => { item.Count = 0 ? 0 : GetPercentageOfData(item.Count, TotalUsers); return item; });
+    const UserIndustryPercentage = Industry.map(item => { item.Count = 0 ? 0 : GetPercentageOfData(item.Count, TotalUsers); return item; });
+    const UserJobTitlePercentage = JobTitle.map(item => { item.Count = 0 ? 0 : GetPercentageOfData(item.Count, TotalUsers); return item; });
+    return res.json({ Country: UserCountryPercentage, City: UserCityPercentage, Industry: UserIndustryPercentage, JobTitle: UserJobTitlePercentage })
 })
 
 /**
@@ -60,8 +66,8 @@ const GetUserStatistics = async (req, res) => {
         GetActiveUsersWithinAnInterval(Index, NoOfIntervals)
     ])
     const ActiveUsersCount = ActiveUsers.TotalCount;
-    const NonActiveUsersPercentage = parseInt((((UsersCount - ActiveUsersCount) / UsersCount) * 100).toFixed(2));
-    const ActiveUsersPercentage = parseInt(((ActiveUsersCount / UsersCount) * 100).toFixed(2));
+    const NonActiveUsersPercentage = GetPercentageOfData(UsersCount, UsersCount - ActiveUsersCount);
+    const ActiveUsersPercentage = GetPercentageOfData(UsersCount, ActiveUsersCount);
     return res.json({ EventLocations, NonActiveUsersPercentage, ActiveUsersPercentage })
 }
 
@@ -145,7 +151,7 @@ const GetAnalyticsTopArticles = async (req, res) => {
 const GetAnalyticsTopDiscussions = async (req, res) => {
     const { Filter, Limit, NextId, Keyword, OrderBy } = req.query;
     //@ts-ignore
-    const data = await ReadDiscussions(Filter, NextId, Limit, { NoOfActivities: "desc" })
+    const data = await ReadDiscussions(Filter, NextId, Limit, { NoOfMembers: "desc" })
     return res.json(data)
 }
 
@@ -158,7 +164,7 @@ const GetAnalyticsTopDiscussions = async (req, res) => {
 const GetAnalyticsTopEvents = async (req, res) => {
     const { Filter, Limit, NextId, Keyword, OrderBy } = req.query;
     //@ts-ignore
-    const data = await ReadEvents(Filter, NextId, Limit, { NoOfActivities: "desc" })
+    const data = await ReadEvents(Filter, NextId, Limit, { NoOfMembers: "desc" })
     return res.json(data)
 }
 
@@ -190,7 +196,7 @@ const GetAnalyticsWithinAnInterval = async (
     }))
     const TotalCount = CountWithDate[NoOfIntervals - 1].Count;
     const PercentageChange = CountWithDate[0].Count !== 0 ?
-        parseInt((((TotalCount - CountWithDate[0].Count) / CountWithDate[0].Count) * 100).toFixed(2)) : 0;
+        GetPercentageOfData(TotalCount - CountWithDate[0].Count, CountWithDate[0].Count) : 0;
     return { TotalCount, PercentageChange, CountWithDate }
 };
 
@@ -256,7 +262,7 @@ const GetActiveUsersWithinAnInterval = async (
     }));
     const TotalCount = data[data.length - 1].Count;
     const PercentageChange = data[0].Count !== 0 ?
-        parseInt((((TotalCount - data[0].Count) / data[0].Count) * 100).toFixed(2)) : 0;
+        GetPercentageOfData(TotalCount - data[0].Count, data[0].Count) : 0;
     return { CountWithDate: data, TotalCount, PercentageChange };
 }
 
@@ -277,7 +283,7 @@ const GetArticleEngagementCount = async (StartDate, EndDate) => {
     const EngagementCount = NoOfComments + NoOfLikes;
     const TotalCount = EngagementCount;
     const PercentageChange = EngagementCountAtStart !== 0 ?
-        parseInt((((EngagementCount - EngagementCountAtStart) / EngagementCountAtStart) * 100).toFixed(2)) : 0;
+        GetPercentageOfData(EngagementCount - EngagementCountAtStart, EngagementCountAtStart) : 0;
     return { TotalCount, PercentageChange };
 }
 
