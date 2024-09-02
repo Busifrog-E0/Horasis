@@ -968,6 +968,11 @@
             "name": "OrderBy",
             "in": "query",
             "type": "string"
+          },
+          {
+            "name": "Filter",
+            "in": "query",
+            "type": "string"
           }
         ],
         "responses": {
@@ -1034,6 +1039,11 @@
             "name": "OrderBy",
             "in": "query",
             "type": "string"
+          },
+          {
+            "name": "Filter",
+            "in": "query",
+            "type": "string"
           }
         ],
         "responses": {
@@ -1090,6 +1100,9 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "OK"
+          },
           "400": {
             "description": "Bad Request"
           },
@@ -1101,6 +1114,9 @@
           },
           "403": {
             "description": "Forbidden"
+          },
+          "444": {
+            "description": "Connection Closed Without Response"
           }
         },
         "security": [
@@ -1149,6 +1165,9 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "OK"
+          },
           "401": {
             "description": "Unauthorized"
           },
@@ -1157,6 +1176,9 @@
           },
           "403": {
             "description": "Forbidden"
+          },
+          "444": {
+            "description": "Connection Closed Without Response"
           }
         },
         "security": [
@@ -8314,6 +8336,41 @@
             "BearerAuth": []
           }
         ]
+      }
+    },
+    "/api/event/{EventId}/videoCall/join": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "EventId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "402": {
+            "description": "Payment Required"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "444": {
+            "description": "Connection Closed Without Response"
+          }
+        }
       }
     }
   },
