@@ -77,6 +77,8 @@ const AGORA_APP_ID = process.env.AGORA_APP_ID;
 // @ts-ignore
 const AGORA_APP_CERTIFICATE = process.env.AGORA_APP_CERTIFICATE;
 
+
+
 export default {
     PORT,
     ModeOfDevelopment,
