@@ -30,6 +30,9 @@ import swaggerFile from './swaggerOutput.json' assert { type: 'json' };
 import { GenerateToken } from "./controllers/auth-controller.js";
 import { decodeSocketIdToken } from "./middleware/auth-middleware.js";
 import { ConnectSocket } from "./controllers/socket-controller.js";
+import { CreateActiveUsers } from "./databaseControllers/activeUsers-databaseController.js";
+
+
 app.use('/doc', swaggerUi.serve, swaggerUi.setup(swaggerFile));
 
 app.use((req, res, next) => {
@@ -56,7 +59,7 @@ const expressServer = app.listen(PORT, async (err) => {
         // Role: 'Admin',
         // UserId: "Admin",
         Role: 'User',
-        UserId: "669f7589352378db64eb2c7b",
+        UserId: "669a235e525967c06f6bfc06",
         RegistrationStatus: "",
         Subscription: null
     }

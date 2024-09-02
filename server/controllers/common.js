@@ -1,5 +1,4 @@
 import axios from "axios";
-import moment from "moment";
 
 const UserFields = [
     "FullName",
@@ -59,7 +58,7 @@ const getOTP = (TestUser = false) => {
 const GetUserNonEmptyFieldsPercentage = (Data) => {
     const NoOfFields = UserFields.length;
     const NoOfFilledFields = UserFields.reduce((Num, Field) => {
-        if (Data[Field] != undefined && Data[Field] !== "") {
+        if (Data[Field] !== undefined && Data[Field] !== "") {
             return Num + 1;
         }
         return Num;

@@ -12,7 +12,7 @@ const fileFormats = {
     image: {
         extensions: [
             'jpeg', 'jpg', 'png'],
-        size: 1234556789
+        size: 2097152
     },
     video: {
         extensions: [

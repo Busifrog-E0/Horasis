@@ -196,7 +196,7 @@ const TranslateData = async (req, res) => {
     let TranslatedContent = {};
     let OriginalContent = {};
     switch (Type) {
-        case "Activity":
+        case "Activity": {
             const Activity = await ReadOneFromActivities(EntityId);
             OriginalContent = { Content: Activity.Content };
             if (Activity.Languages && Activity.Languages[TargetLanguage]) {
@@ -208,9 +208,10 @@ const TranslateData = async (req, res) => {
                 TranslatedContent = TranslatedData;
             }
             break;
-        case "Comment":
+        }
+        case "Comment": {
             const Comment = await ReadOneFromComments(EntityId);
-            OriginalContent = {Content : Comment.Content};
+            OriginalContent = { Content: Comment.Content };
             if (Comment.Languages && Comment.Languages[TargetLanguage]) {
                 TranslatedContent = Comment.Languages[TargetLanguage];
             }
@@ -220,7 +221,8 @@ const TranslateData = async (req, res) => {
                 TranslatedContent = TranslatedData;
             }
             break;
-        case "Discussion":
+        }
+        case "Discussion": {
             const Discussion = await ReadOneFromDiscussions(EntityId);
             OriginalContent = { Description: Discussion.Description, Brief: Discussion.Brief }
             if (Discussion.Languages && Discussion.Languages[TargetLanguage]) {
@@ -232,7 +234,8 @@ const TranslateData = async (req, res) => {
                 TranslatedContent = TranslatedData;
             }
             break;
-        case "Event":
+        }
+        case "Event": {
             const Event = await ReadOneFromEvents(EntityId);
             OriginalContent = { Description: Event.Description }
             if (Event.Languages && Event.Languages[TargetLanguage]) {
@@ -244,7 +247,8 @@ const TranslateData = async (req, res) => {
                 TranslatedContent = TranslatedData;
             }
             break;
-        case "Article":
+        }
+        case "Article": {
             const Article = await ReadOneFromArticles(EntityId);
             OriginalContent = { Description: Article.Description }
             if (Article.Languages && Article.Languages[TargetLanguage]) {
@@ -256,6 +260,7 @@ const TranslateData = async (req, res) => {
                 TranslatedContent = TranslatedData;
             }
             break;
+        }
     }
     return res.json({ TranslatedContent, OriginalContent })
 }

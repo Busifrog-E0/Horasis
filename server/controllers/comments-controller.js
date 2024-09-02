@@ -95,7 +95,7 @@ const PatchComments = async (req, res) => {
 const DeleteComments = async (req, res) => {
     const { CommentId, ActivityId } = req.params;
     const Comment = await ReadOneFromComments(CommentId);
-    if (Comment.Type == "Reply") {
+    if (Comment.Type === "Reply") {
         await IncrementComments({ NoOfReplies: -1 }, Comment.ParentId);
     }
     await RemoveComments(CommentId);

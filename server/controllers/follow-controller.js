@@ -126,7 +126,7 @@ const DeleteFollows = async (req, res) => {
     const { FolloweeId, UserId } = req.params;
     //@ts-ignore
     const Follow = await ReadFollows({ FolloweeId, FollowerId: UserId }, undefined, 1, undefined);
-    if (Follow.length == 0) {
+    if (Follow.length === 0) {
         return res.status(444).json(AlertBoxObject("Not following this profile", "You are already not following this profile"));
     }
     await RemoveNotificationsForFollow(UserId);

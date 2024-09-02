@@ -1,15 +1,11 @@
 import e from 'express';
 
 import { ReadOneFromInvitations, ReadInvitations, UpdateInvitations, CreateInvitations, RemoveInvitations, } from './../databaseControllers/invitations-databaseController.js';
-import { AlertBoxObject } from './common.js';
-import { ReadOneFromUsers, ReadUsers } from '../databaseControllers/users-databaseController.js';
-import { CreateSpeakers, ReadSpeakers, UpdateSpeakers } from '../databaseControllers/speakers-databaseController.js';
+import { ReadUsers } from '../databaseControllers/users-databaseController.js';
+import { CreateSpeakers, ReadSpeakers,  } from '../databaseControllers/speakers-databaseController.js';
 import { SpeakerInit } from './speakers-controller.js';
 import { CreateMembers, ReadMembers } from '../databaseControllers/members-databaseController.js';
 import { MemberInit } from './members-controller.js';
-import { CheckIfUserWithMailExists } from './users-controller.js';
-import { CheckIfMailAvailableToInviteInEvent } from './events-controller.js';
-import moment from 'moment';
 import { SendNotificationForMemberInvitation, SendNotificationForSpeaker } from './notifications-controller.js';
 
 /**
@@ -136,7 +132,7 @@ const AddUserDetailsAfterInvited = async (UserData, UserId) => {
  */
 const CreateEntitiesBasedOnActionType = async (ActionType, EntityId, UserData, UserId, SendUserId) => {
     switch (ActionType) {
-        case "Event-Invite-Speaker":
+        case "Event-Invite-Speaker": {
             const MembershipStatus = "Invited";
             const [Speaker] = await ReadSpeakers({ SpeakerId: UserId, EventId: EntityId }, undefined, 1, undefined);
             if (Speaker) {
@@ -145,16 +141,19 @@ const CreateEntitiesBasedOnActionType = async (ActionType, EntityId, UserData, U
             await CreateSpeakers(SpeakerInit({ EventId: EntityId, SpeakerId: UserId, MembershipStatus, UserDetails: UserData }));
             await SendNotificationForSpeaker(EntityId, UserId, SendUserId)
             break;
+        }
         case "Discussion-Invite-Member":
         case "Event-Invite-Member":
-            const [Member] = await ReadMembers({ MemberId: UserId, EntityId }, undefined, 1, undefined);
-            if (Member) {
+            {
+                const [Member] = await ReadMembers({ MemberId: UserId, EntityId }, undefined, 1, undefined);
+                if (Member) {
+                    break;
+                }
+                await CreateMembers(MemberInit({ EntityId, MemberId: UserId, UserDetails: UserData }), "Invited");
+                //@ts-ignore
+                await SendNotificationForMemberInvitation(ActionType.split("-")[0], EntityId, UserId, SendUserId)
                 break;
             }
-            await CreateMembers(MemberInit({ EntityId, MemberId: UserId, UserDetails: UserData }), "Invited");
-            //@ts-ignore
-            await SendNotificationForMemberInvitation(ActionType.split("-")[0], EntityId, UserId, SendUserId)
-            break;
         default:
             break;
     }
@@ -167,5 +166,5 @@ const CreateEntitiesBasedOnActionType = async (ActionType, EntityId, UserData, U
 
 export {
     GetOneFromInvitations, GetInvitations, PostInvitations, PatchInvitations, DeleteInvitations,
-    InviteUserToCreateAccount, AddUserDetailsAfterInvited, 
+    InviteUserToCreateAccount, AddUserDetailsAfterInvited,
 }

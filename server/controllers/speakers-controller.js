@@ -7,7 +7,6 @@ import { MemberInit } from './members-controller.js';
 import { CreateMembers, ReadMembers } from '../databaseControllers/members-databaseController.js';
 import { IncrementEvents, PullArrayEvents, PushArrayEvents } from '../databaseControllers/events-databaseController.js';
 import { RemoveNotificationForSpeaker, SendNotificationForSpeaker } from './notifications-controller.js';
-import { RemoveNotifications } from '../databaseControllers/notifications-databaseController.js';
 /**
  * @typedef {import('./../databaseControllers/speakers-databaseController.js').SpeakerData} SpeakerData 
  */

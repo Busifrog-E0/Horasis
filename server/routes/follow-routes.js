@@ -1,5 +1,5 @@
 import {
-    GetOneFromFollows, GetFollows, PostFollows, PatchFollows, DeleteFollows,
+     GetFollows, PostFollows,  DeleteFollows,
     GetFollowNumber,
 } from '../controllers/follow-controller.js';
 import asyncHandler from 'express-async-handler';

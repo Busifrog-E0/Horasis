@@ -4,7 +4,6 @@ import { ReadOneFromNotifications, ReadNotifications, UpdateNotifications, Creat
 import { ReadOneFromUsers } from '../databaseControllers/users-databaseController.js';
 import { ReadOneFromActivities } from '../databaseControllers/activities-databaseController.js';
 import { ReadLikes } from '../databaseControllers/likes-databaseController.js';
-import { Type } from '@aws-sdk/client-s3';
 import { ReadOneFromDiscussions } from '../databaseControllers/discussions-databaseController.js';
 import { ConnectionStatus } from './connections-controller.js';
 import { ReadMembers } from '../databaseControllers/members-databaseController.js';
@@ -44,7 +43,7 @@ const GetNotifications = async (req, res) => {
 * @returns { Promise<e.Response<NotificationData>>}
 */
 const GetOneFromNotifications = async (req, res) => {
-    const { RecipientId, NotificationId } = req.params;
+    const { NotificationId } = req.params;
     //@ts-ignore
     const Notification = await ReadOneFromNotifications(NotificationId);
     const data = await AddContentAndStatusToNotification(Notification)
@@ -317,7 +316,7 @@ const RemoveNotificationsForConnectionRequest = async (ConnectionId) => {
  * @returns 
  */
 const SendNotificationsForConnectionAccept = async (ConnectionId, SenderId, ReceiverId) => {
-    const [Receiver, Sender] = await Promise.all([ReadOneFromUsers(ReceiverId), ReadOneFromUsers(SenderId)]);
+    const [Receiver] = await Promise.all([ReadOneFromUsers(ReceiverId)]);
     const NotificationObject = {
         NotifierId: ReceiverId,
         EntityId: ConnectionId,
@@ -355,7 +354,7 @@ const SendNotificationsForFollow = async (FollowerId, UserId) => {
  * @returns 
  */
 const RemoveNotificationsForFollow = async (FollowerId) => {
-    const Notification = (await ReadNotifications({ EntityId: FollowerId }, undefined, 1, undefined))[0];
+    const [Notification] = (await ReadNotifications({ EntityId: FollowerId }, undefined, 1, undefined));
     return RemoveNotifications(Notification.DocId);
 }
 

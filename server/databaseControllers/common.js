@@ -1,8 +1,10 @@
 import { ObjectId } from "mongodb";
 import { ReadFollows, ReadOneFromFollows, UpdateFollows } from "./follow-databaseController.js";
-import { ReadOneFromUsers } from "./users-databaseController.js";
+import { ReadOneFromUsers, ReadUsers } from "./users-databaseController.js";
 import { ReadActivities, UpdateActivities } from "./activities-databaseController.js";
 import { ReadDiscussions, UpdateDiscussions } from "./discussions-databaseController.js";
+import { CreateActiveUsers, ReadActiveUsers } from "./activeUsers-databaseController.js";
+import moment from "moment";
 
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
 
@@ -46,6 +48,15 @@ const OriginalLanguageInActivities = async () => {
     await VersionUpdate(ReadDiscussions, update, { NoOfActivities: { '$exists': false } });
 }
 
+const CreateActiveUsersDocument = async () => {
+    const Users = await ReadUsers({}, undefined, -1, undefined);
+    await Promise.all(Users.map(async (user) => {
+        const [ActiveUser] = await ReadActiveUsers({ UserId: user.DocId, Date: moment(user.CreatedIndex).startOf('day').valueOf() }, undefined, 1, undefined);
+        if (!ActiveUser) {
+            await CreateActiveUsers({ UserId: user.DocId, Date: moment(user.CreatedIndex).startOf('day').valueOf() });
+        }
+    }))
+}
 
 
 //await OriginalLanguageInActivities();
@@ -71,4 +82,5 @@ export {
     VersionUpdate,
     Shuffle,
     
+
 }

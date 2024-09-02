@@ -1,8 +1,8 @@
 import {
     CreateConversations, ReadConversations, ReadOneFromConversations,
-    UpdateAndIncrementConversations, UpdateConversations
+     UpdateConversations
 } from "../databaseControllers/conversations-databaseController.js";
-import { CreateMessages, GetMessagesCount, ReadMessages, UpdateManyMessage, UpdateMessages } from "../databaseControllers/messages-databaseController.js";
+import { CreateMessages, GetMessagesCount, ReadMessages, UpdateManyMessage,  } from "../databaseControllers/messages-databaseController.js";
 import e, { json } from 'express'
 import { ReadOneFromUsers } from "../databaseControllers/users-databaseController.js";
 import { AlertBoxObject } from "./common.js";
@@ -128,7 +128,7 @@ const ReterieveConversationId = async (req, res) => {
  */
 const PatchSeeAllMessages = async (req, res) => {
     // @ts-ignore
-    const UserId = req.user.UserId;
+    const {UserId} = req.user;
     const { ConversationId } = req.params;
 
     await UpdateAllNotSeenMessages(ConversationId, UserId);
