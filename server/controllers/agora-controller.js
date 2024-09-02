@@ -1,9 +1,9 @@
-import { RtcTokenBuilder, RtcRole } from 'agora-access-token'
-import { ReadSpeakers } from '../databaseControllers/speakers-databaseController';
-import { ReadMembers } from '../databaseControllers/members-databaseController';
-import { AlertBoxObject } from './common';
-import Env from '../Env';
-import moment from 'moment';
+import agora from 'agora-token'
+import { ReadSpeakers } from '../databaseControllers/speakers-databaseController.js';
+import { ReadMembers } from '../databaseControllers/members-databaseController.js';
+import { AlertBoxObject } from './common.js';
+import Env from '../Env.js';
+const { RtcTokenBuilder, RtcRole } = agora;
 
 const generateRTCToken = async (req, res) => {
     const { EventId } = req.params;
@@ -17,7 +17,7 @@ const generateRTCToken = async (req, res) => {
     if (!Role) {
         return res.status(444).json(AlertBoxObject("Cannot Generate Token", "You are not a member of this event"))
     }
-    const token = RtcTokenBuilder.buildTokenWithUid(Env.AGORA_APP_ID, Env.AGORA_APP_CERTIFICATE, EventId, UserId, Role, moment().valueOf() + 21600000);
+    const token = RtcTokenBuilder.buildTokenWithUid(Env.AGORA_APP_ID, Env.AGORA_APP_CERTIFICATE, EventId, UserId, Role, 600, 600);
     return res.json({ Token: token });
 }
 

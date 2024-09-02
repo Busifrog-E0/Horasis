@@ -11,7 +11,7 @@ const ValidateGetIntervalAnalytics = async (req, res, next) => {
                 //@ts-ignore
                 return helpers.message('Start Date should be less than End Date');
             }
-            if (value.$lte > moment().valueOf()) {
+            if (value.$lte > moment().endOf('day').valueOf()) {
                 //@ts-ignore
                 return helpers.message("End Date should be less than current date");
             }
