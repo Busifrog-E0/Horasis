@@ -1,14 +1,14 @@
 import moment from 'moment';
+//eslint-disable-next-line
 import e from 'express';
 import dataHandling from '../databaseControllers/functions.js'
-import { AggregateUsers, CountUsers } from '../databaseControllers/users-databaseController.js';
-import { CountActivities, ReadActivities } from '../databaseControllers/activities-databaseController.js';
+import {  CountUsers } from '../databaseControllers/users-databaseController.js';
 import { CommentCount } from '../databaseControllers/comments-databaseController.js';
 import { CountLikes } from '../databaseControllers/likes-databaseController.js';
-import { CountEvents, ReadEvents } from '../databaseControllers/events-databaseController.js';
-import { CountActiveUsers, ReadActiveUsers } from '../databaseControllers/activeUsers-databaseController.js';
-import { AggregateDiscussions, ReadDiscussions } from '../databaseControllers/discussions-databaseController.js';
-import { AggregateArticles, CountArticles } from '../databaseControllers/articles-databaseController.js';
+import {  ReadEvents } from '../databaseControllers/events-databaseController.js';
+import { CountActiveUsers,  } from '../databaseControllers/activeUsers-databaseController.js';
+import {  ReadDiscussions } from '../databaseControllers/discussions-databaseController.js';
+import { AggregateArticles,  } from '../databaseControllers/articles-databaseController.js';
 import { GetPercentageOfData } from './common.js';
 
 /**
@@ -44,10 +44,10 @@ const GetUserBreakdown = (async (req, res) => {
         GetDocumentCountByFields("Users", "Industry"),
         GetDocumentCountByFields("Users", "JobTitle"),
     ])
-    const UserCountryPercentage = Country.map(item => { item.Count = 0 ? 0 : GetPercentageOfData(item.Count, TotalUsers); return item; });
-    const UserCityPercentage = City.map(item => { item.Count = 0 ? 0 : GetPercentageOfData(item.Count, TotalUsers); return item; });
-    const UserIndustryPercentage = Industry.map(item => { item.Count = 0 ? 0 : GetPercentageOfData(item.Count, TotalUsers); return item; });
-    const UserJobTitlePercentage = JobTitle.map(item => { item.Count = 0 ? 0 : GetPercentageOfData(item.Count, TotalUsers); return item; });
+    const UserCountryPercentage = Country.map(item => { item.Count === 0 ? 0 : GetPercentageOfData(item.Count, TotalUsers); return item; });
+    const UserCityPercentage = City.map(item => { item.Count === 0 ? 0 : GetPercentageOfData(item.Count, TotalUsers); return item; });
+    const UserIndustryPercentage = Industry.map(item => { item.Count === 0 ? 0 : GetPercentageOfData(item.Count, TotalUsers); return item; });
+    const UserJobTitlePercentage = JobTitle.map(item => { item.Count ===0 ? 0 : GetPercentageOfData(item.Count, TotalUsers); return item; });
     return res.json({ Country: UserCountryPercentage, City: UserCityPercentage, Industry: UserIndustryPercentage, JobTitle: UserJobTitlePercentage })
 })
 

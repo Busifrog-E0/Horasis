@@ -1,6 +1,6 @@
 import e from 'express';
 
-import { ReadOneFromActiveUsers, ReadActiveUsers, UpdateActiveUsers, CreateActiveUsers, RemoveActiveUsers, } from './../databaseControllers/activeUsers-databaseController.js';
+import {ReadActiveUsers, CreateActiveUsers,  } from './../databaseControllers/activeUsers-databaseController.js';
 import moment from 'moment';
 /**
  * @typedef {import('./../databaseControllers/activeUsers-databaseController.js').ActiveUserData} ActiveUserData 

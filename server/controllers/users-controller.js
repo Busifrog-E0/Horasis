@@ -1,12 +1,8 @@
 import e from 'express';
-import moment from 'moment-timezone';
-import dataHandling from '../databaseControllers/functions.js';
-import { ReadOneFromUsers, ReadUsers, UpdateUsers, CreateUsers, RemoveUsers, } from './../databaseControllers/users-databaseController.js';
-import { AccountVerificationEmail, SendOTPEmail } from './emails-controller.js';
-import { CreateEmailVerifications, ReadOneFromEmailVerifications, UpdateEmailVerifications } from '../databaseControllers/emailVerification-databaseController.js';
-import { GenerateToken, ReadOneFromOTP, SendPasswordOTP, SendRegisterOTP, TokenData, VerifyOTP } from './auth-controller.js';
-import { AlertBoxObject, getOTP, GetUserNonEmptyFieldsPercentage } from './common.js';
-import { ReadConnections, UpdateManyConnections } from '../databaseControllers/connections-databaseController.js';
+import { ReadOneFromUsers, ReadUsers, UpdateUsers, CreateUsers } from './../databaseControllers/users-databaseController.js';
+import {  ReadOneFromOTP, SendPasswordOTP, SendRegisterOTP, TokenData, VerifyOTP } from './auth-controller.js';
+import { AlertBoxObject, GetUserNonEmptyFieldsPercentage } from './common.js';
+import {  UpdateManyConnections } from '../databaseControllers/connections-databaseController.js';
 import { ReadFollows, UpdateManyFollows } from '../databaseControllers/follow-databaseController.js';
 import { ConnectionStatus } from './connections-controller.js';
 import { PostActivityForProfilePatch } from './activities-controller.js';
@@ -200,9 +196,7 @@ const ViewOtherUserRelations = async (UserId, OtherUserId) => {
         ReadFollows({ FollowerId: UserId, FolloweeId: OtherUserId }, undefined, 1, undefined),
         ReadFollows({ FolloweeId: UserId, FollowerId: OtherUserId }, undefined, 1, undefined),
     ]);
-    const Connection = PromiseData[0];
-    const Following = PromiseData[1];
-    const Followed = PromiseData[2];
+    const [Connection, Following, Followed] = PromiseData;
     if (Following.length > 0) {
         FollowIndex = Following[0].CreatedIndex;
         FollowingIndex = Following[0].CreatedIndex;
@@ -259,7 +253,7 @@ const PatchPassword = async (req, res) => {
     if (OTPData.EmailVerified === false) {
         return res.status(444).json(AlertBoxObject("OTP not Verified", "OTP is not verified. Please verify your email"));
     }
-    const User = (await ReadUsers({ Email: OTPData.Email }, undefined, 1, undefined))[0];
+    const [User] = (await ReadUsers({ Email: OTPData.Email }, undefined, 1, undefined));
     await UpdateUsers({ Password: Password }, User.DocId);
     return res.json(true);
 }

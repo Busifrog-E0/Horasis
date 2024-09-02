@@ -1,11 +1,11 @@
 import e from 'express';
 
-import { ReadOneFromConnections, ReadConnections, UpdateConnections, CreateConnections, RemoveConnections, GetConnectionsCount, } from './../databaseControllers/connections-databaseController.js';
+import {  ReadConnections, UpdateConnections, CreateConnections, RemoveConnections, GetConnectionsCount, } from './../databaseControllers/connections-databaseController.js';
 import moment from 'moment';
 import { AlertBoxObject } from './common.js';
 import { ViewOtherUserData } from './users-controller.js';
-import { ReadOneFromUsers, ReadUsers } from '../databaseControllers/users-databaseController.js';
-import { RemoveNotificationsForConnectionRequest, SendNotificationsForConnectionAccept, SendNotificationsForConnectionRequest } from './notifications-controller.js';
+import { ReadOneFromUsers,  } from '../databaseControllers/users-databaseController.js';
+import {  SendNotificationsForConnectionAccept, SendNotificationsForConnectionRequest } from './notifications-controller.js';
 /**
  * @typedef {import('./../databaseControllers/connections-databaseController.js').ConnectionData} ConnectionData 
  */
@@ -19,7 +19,7 @@ import { RemoveNotificationsForConnectionRequest, SendNotificationsForConnection
 const GetAUsersConnections = async (req, res) => {
     const { Filter, Keyword, NextId, Limit, OrderBy } = req.query;
     // @ts-ignore
-    const UserId = req.user.UserId;
+    const {UserId} = req.user;
     if (Keyword) {
         //@ts-ignore
         Filter.UserDetails = {
@@ -69,15 +69,13 @@ const PostConnectionSend = async (req, res) => {
         ReadOneFromUsers(SenderId),
         ReadOneFromUsers(ReceiverId),
     ]);
-    const existingConnection = PromiseData[0];
+    const [existingConnection, pendingSentRequest, pendingReceivedRequest] = PromiseData;
     if (existingConnection.length !== 0) {
         return res.status(444).json(AlertBoxObject('Connection Exists', 'Users are already connected'));
     }
-    const pendingSentRequest = PromiseData[1];
     if (pendingSentRequest.length !== 0) {
         return res.status(444).json(AlertBoxObject('Request Already Sent', 'Friend request already sent and pending'));
     }
-    const pendingReceivedRequest = PromiseData[2];
     if (pendingReceivedRequest.length !== 0) {
         return res.status(444).json(AlertBoxObject('Request Already Received', 'Friend request already received and pending'));
     }
@@ -104,7 +102,7 @@ const PostConnectionAccept = async (req, res) => {
         return res.status(444).json(AlertBoxObject('Connection Exists', 'Users are already connected'));
     }
 
-    const ConnectionData = (await ReadConnections({ UserIds: { $all: [SenderId, ReceiverId] }, Status: "Pending" }, undefined, 1, undefined))[0];
+    const [ConnectionData] = (await ReadConnections({ UserIds: { $all: [SenderId, ReceiverId] }, Status: "Pending" }, undefined, 1, undefined));
     if (!ConnectionData || ConnectionData.ReceiverId !== ReceiverId) {
         return res.status(444).json(AlertBoxObject('Connection Invalid', 'Connection Invalid'));
     }
@@ -132,7 +130,7 @@ const DeleteConnectionReject = async (req, res) => {
     if (existingConnection.length !== 0) {
         return res.status(444).json(AlertBoxObject('Connection Exists', 'Users are already connected'));
     }
-    const ConnectionData = (await ReadConnections({ SenderId, ReceiverId, "Status": "Pending" }, undefined, 1, undefined))[0];
+    const [ConnectionData] = (await ReadConnections({ SenderId, ReceiverId, "Status": "Pending" }, undefined, 1, undefined));
     if (!ConnectionData) {
         return res.status(444).json(AlertBoxObject('Invalid Request', 'No pending friend request from this user'));
     }
@@ -156,7 +154,7 @@ const DeleteConnectionCancel = async (req, res) => {
     if (existingConnection.length !== 0) {
         return res.status(444).json(AlertBoxObject('Connection Exists', 'Users are already connected'));
     }
-    const ConnectionData = (await ReadConnections({ SenderId, ReceiverId, "Status": "Pending" }, undefined, 1, undefined))[0];
+    const [ConnectionData] = (await ReadConnections({ SenderId, ReceiverId, "Status": "Pending" }, undefined, 1, undefined));
     if (!ConnectionData) {
         return res.status(444).json(AlertBoxObject('Invalid Request', 'No pending request '));
     }
@@ -177,7 +175,7 @@ const DeleteConnection = async (req, res) => {
     const MyId = req.user.UserId;
     const { UserId } = req.params;
 
-    const ConnectionData = (await ReadConnections({ UserIds: { $all: [MyId, UserId] }, Status: "Connected" }, undefined, 1, undefined))[0];
+    const [ConnectionData] = (await ReadConnections({ UserIds: { $all: [MyId, UserId] }, Status: "Connected" }, undefined, 1, undefined));
     if (!ConnectionData) {
         return res.status(444).json(AlertBoxObject('No Connection Exists', 'Users are not connected'));
     }
@@ -209,7 +207,7 @@ const ConnectionStatus = async (MyId, TheirId) => {
     if (MyId === TheirId) {
         return { Status: "No Connection", ConnectionIndex: 0 };
     }
-    const ConnectionData = (await ReadConnections({ UserIds: { $all: [MyId, TheirId] } }, undefined, 1, undefined))[0];
+    const [ConnectionData] = (await ReadConnections({ UserIds: { $all: [MyId, TheirId] } }, undefined, 1, undefined));
     if (!ConnectionData) {
         return { Status: "No Connection", ConnectionIndex: 0 };
     }

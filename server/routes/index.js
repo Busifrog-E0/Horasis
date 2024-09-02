@@ -19,6 +19,7 @@ import savesRoutes from './saves-routes.js'
 import translationsRoutes from './translations-routes.js'
 import membersRoutes from './members-routes.js'
 import analyticsRoutes from './analytics-routes.js'
+import agoraRoutes from './agora-routes.js'
 
 
 router.use("/api", authRoutes);
@@ -38,7 +39,7 @@ router.use("/api", savesRoutes);
 router.use("/api", translationsRoutes);
 router.use("/api", membersRoutes);
 router.use("/api", analyticsRoutes);
-
+router.use("/api", agoraRoutes);
 
 
 

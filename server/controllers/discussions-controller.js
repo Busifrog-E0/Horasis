@@ -2,11 +2,9 @@ import e from 'express';
 
 import { ReadOneFromDiscussions, ReadDiscussions, UpdateDiscussions, CreateDiscussions, RemoveDiscussions, AggregateDiscussions, } from './../databaseControllers/discussions-databaseController.js';
 import { ReadOneFromUsers } from '../databaseControllers/users-databaseController.js';
-import { CreateMembers, ReadMembers } from '../databaseControllers/members-databaseController.js';
-import { DeleteMembersOfEntity, GetPermissionOfMember, PermissionObjectInit } from './members-controller.js';
-
+import { CreateMembers, ReadMembers, } from '../databaseControllers/members-databaseController.js';
+import { DeleteMembersOfEntity, GetPermissionOfMember, MemberInit } from './members-controller.js';
 import { ReadSaves } from '../databaseControllers/saves-databaseController.js';
-import { MemberInit } from './members-controller.js';
 import { AlertBoxObject } from './common.js';
 import { DetectLanguage } from './translations-controller.js';
 import { RemoveNotificationForEntity } from './notifications-controller.js';

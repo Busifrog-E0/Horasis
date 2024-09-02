@@ -241,26 +241,42 @@ const DeleteActivities = async (req, res) => {
  * @returns {Promise<boolean>}
  */
 const CheckFileType = async (MediaFiles, Documents) => {
-    const validate = async (FileData, Format) => {
-        const FileDataBuffer = new Uint8Array(FileData);
-        //@ts-ignore
-        const { ext } = await fileTypeFromBuffer(FileDataBuffer);
-        const Size = FileData.length;
-        console.log(Format.extensions.includes(ext) && Size <= Format.size)
-        return Format.extensions.includes(ext) && Size <= Format.size;
+    const mediaValidate = async (FileData) => {
+        if (!(await FileValidate(FileData, fileFormats.image) || await FileValidate(FileData, fileFormats.video))) {
+            throw new Error("File Format or Size not supported")
+        }
+        return;
     }
-    for (const File of MediaFiles) {
-        if (!(await validate(File.FileData, fileFormats.image)) &&
-            !(await validate(File.FileData, fileFormats.video))) {
-            return false
+    const documentValidate = async (FileData) => {
+        if (!(await FileValidate(FileData, fileFormats.document))) {
+            throw new Error("File Format or Size not supported")
         }
-    };
-    for (const File of Documents) {
-        if (!(await validate(File.FileData, fileFormats.document))) {
-            return false
-        }
-    };
-    return true;
+        return;
+    }
+    try {
+        await Promise.all([
+            ...MediaFiles.map(async File => mediaValidate(File.FileData)),
+            ...Documents.map(async File => documentValidate(File.FileData))
+        ])
+        return true;
+    } catch (error) {
+        console.log(error)
+        return false;
+    }
+}
+
+/**
+ * 
+ * @param {Array} FileData 
+ * @param {{extensions : string[],size : number}} Format 
+ * @returns 
+ */
+const FileValidate = async (FileData, Format) => {
+    const FileDataBuffer = new Uint8Array(FileData);
+    //@ts-ignore
+    const { ext } = await fileTypeFromBuffer(FileDataBuffer);
+    const Size = FileData.length;
+    return Format.extensions.includes(ext) && Size <= Format.size;
 }
 
 /**
@@ -277,7 +293,7 @@ const UploadFiles = async (MediaFiles, Documents, UserId, ActivityId) => {
         const FileBuffer = new Uint8Array(FileData)
         //@ts-ignore
         const { mime } = await fileTypeFromBuffer(FileBuffer);
-        const Type = mime.split('/')[0];
+        const [Type] = mime.split('/');
         const Link = await AsyncSaveFileToSpaces(UserId, `${ActivityId}/${FileName}`, FileData, mime)
         return { FileUrl: Link, Type }
     }));
@@ -300,15 +316,11 @@ const UploadFiles = async (MediaFiles, Documents, UserId, ActivityId) => {
  * @returns 
  */
 const PostActivityForProfilePatch = async (Data, UserId) => {
-    let Activity = {};
     if (!Data.ProfilePicture && !Data.CoverPicture) {
         return;
     }
-    if (Data.CoverPicture) {
-        Activity = { Content: "Updated their Cover Photo", MediaFiles: [{ FileUrl: Data.CoverPicture, Type: "image" }], UserId };
-    } else {
-        Activity = { Content: "Updated their Profile Photo", MediaFiles: [{ FileUrl: Data.ProfilePicture, Type: "image" }], UserId };
-    }
+    let Activity = Data.CoverPicture ? { Content: "Updated their Cover Photo", MediaFiles: [{ FileUrl: Data.CoverPicture, Type: "image" }], UserId } :
+        { Content: "Updated their Profile Photo", MediaFiles: [{ FileUrl: Data.ProfilePicture, Type: "image" }], UserId }
     Activity = ActivityInit(Activity);
     await CreateActivities(Activity);
 }
