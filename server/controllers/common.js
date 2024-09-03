@@ -1,5 +1,5 @@
 import axios from "axios";
-
+import bcrpyt from 'bcrypt';
 const UserFields = [
     "FullName",
     "Username",
@@ -13,6 +13,28 @@ const UserFields = [
     "ProfilePicture",
     "CoverPicture"
 ];
+
+/**
+ * 
+ * @param {string} Password 
+ * @returns {Promise<string>}
+ */
+const hashPassword = async (Password) => {
+    const salt = await bcrpyt.genSalt(10);
+    const hashedPassword = await bcrpyt.hash(Password, salt);
+    return hashedPassword;
+}
+
+/**
+ * 
+ * @param {string} Password 
+ * @param {string} HashedPassword 
+ * @returns {Promise<boolean>}
+ */
+const ComparePassword = async (Password, HashedPassword) => {
+    return await bcrpyt.compare(Password, HashedPassword);
+}
+
 
 /**
  * 
@@ -103,5 +125,7 @@ export {
     GetUserNonEmptyFieldsPercentage,
     GetFileFromURI,
     SocketError,
-    GetPercentageOfData
+    GetPercentageOfData,
+    hashPassword,
+    ComparePassword
 }
