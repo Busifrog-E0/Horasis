@@ -2,13 +2,13 @@ import moment from 'moment';
 //eslint-disable-next-line
 import e from 'express';
 import dataHandling from '../databaseControllers/functions.js'
-import {  CountUsers } from '../databaseControllers/users-databaseController.js';
+import { CountUsers } from '../databaseControllers/users-databaseController.js';
 import { CommentCount } from '../databaseControllers/comments-databaseController.js';
 import { CountLikes } from '../databaseControllers/likes-databaseController.js';
-import {  ReadEvents } from '../databaseControllers/events-databaseController.js';
-import { CountActiveUsers,  } from '../databaseControllers/activeUsers-databaseController.js';
-import {  ReadDiscussions } from '../databaseControllers/discussions-databaseController.js';
-import { AggregateArticles,  } from '../databaseControllers/articles-databaseController.js';
+import { ReadEvents } from '../databaseControllers/events-databaseController.js';
+import { CountActiveUsers, } from '../databaseControllers/activeUsers-databaseController.js';
+import { ReadDiscussions } from '../databaseControllers/discussions-databaseController.js';
+import { AggregateArticles, } from '../databaseControllers/articles-databaseController.js';
 import { GetPercentageOfData } from './common.js';
 
 /**
@@ -44,10 +44,10 @@ const GetUserBreakdown = (async (req, res) => {
         GetDocumentCountByFields("Users", "Industry"),
         GetDocumentCountByFields("Users", "JobTitle"),
     ])
-    const UserCountryPercentage = Country.map(item => { item.Count === 0 ? 0 : GetPercentageOfData(item.Count, TotalUsers); return item; });
-    const UserCityPercentage = City.map(item => { item.Count === 0 ? 0 : GetPercentageOfData(item.Count, TotalUsers); return item; });
-    const UserIndustryPercentage = Industry.map(item => { item.Count === 0 ? 0 : GetPercentageOfData(item.Count, TotalUsers); return item; });
-    const UserJobTitlePercentage = JobTitle.map(item => { item.Count ===0 ? 0 : GetPercentageOfData(item.Count, TotalUsers); return item; });
+    const UserCountryPercentage = Country.map(item =>  item.Count === 0 ? item : { ...item, Count: GetPercentageOfData(item.Count, TotalUsers)  });
+    const UserCityPercentage = City.map(item =>  item.Count === 0 ? item : { ...item, Count: GetPercentageOfData(item.Count, TotalUsers) } );
+    const UserIndustryPercentage = Industry.map(item =>  item.Count === 0 ? item : { ...item, Count: GetPercentageOfData(item.Count, TotalUsers) } );
+    const UserJobTitlePercentage = JobTitle.map(item =>  item.Count === 0 ? item : { ...item, Count: GetPercentageOfData(item.Count, TotalUsers) } );
     return res.json({ Country: UserCountryPercentage, City: UserCityPercentage, Industry: UserIndustryPercentage, JobTitle: UserJobTitlePercentage })
 })
 
@@ -221,7 +221,7 @@ const GetDocumentCountByFields = async (collectionName, fieldName, where = {}, L
             }
         },
     ]
-    const data = await dataHandling.Aggregate(collectionName, pipeline, undefined, Limit, {Count : -1});
+    const data = await dataHandling.Aggregate(collectionName, pipeline, undefined, Limit, { Count: -1 });
     return data;
 }
 
