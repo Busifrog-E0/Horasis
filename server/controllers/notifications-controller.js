@@ -231,7 +231,8 @@ const SendNotificationsforActivityLikes = async (UserId, ActivityId) => {
         }
         return SendNotificationToUser(NotificationObject, Activity.UserId);
     }
-    const Likes = await ReadLikes({ EntityId: ActivityId }, undefined, 2, undefined);
+    let Likes = await ReadLikes({ EntityId: ActivityId }, undefined, 2, undefined);
+    Likes = await Promise.all(Likes.map(async like => { return { ...like, UserDetails: await ReadOneFromUsers(like.UserId) } }))
     if (Activity.NoOfLikes === 2) {
         Content = `@${Likes[0].UserDetails.FullName}@ and @${Likes[1].UserDetails.FullName}@ liked your Activity!`;
     }
