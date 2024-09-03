@@ -1,8 +1,8 @@
 import e from 'express';
 import { ReadOneFromUsers, ReadUsers, UpdateUsers, CreateUsers } from './../databaseControllers/users-databaseController.js';
-import {  ReadOneFromOTP, SendPasswordOTP, SendRegisterOTP, TokenData, VerifyOTP } from './auth-controller.js';
-import { AlertBoxObject, GetUserNonEmptyFieldsPercentage } from './common.js';
-import {  UpdateManyConnections } from '../databaseControllers/connections-databaseController.js';
+import { ReadOneFromOTP, SendPasswordOTP, SendRegisterOTP, TokenData, VerifyOTP } from './auth-controller.js';
+import { AlertBoxObject, ComparePassword, GetUserNonEmptyFieldsPercentage, hashPassword } from './common.js';
+import { UpdateManyConnections } from '../databaseControllers/connections-databaseController.js';
 import { ReadFollows, UpdateManyFollows } from '../databaseControllers/follow-databaseController.js';
 import { ConnectionStatus } from './connections-controller.js';
 import { PostActivityForProfilePatch } from './activities-controller.js';
@@ -84,7 +84,7 @@ const PostUsersRegister = async (req, res) => {
     if (CheckEmailExists.length > 0) {
         return res.status(444).json(AlertBoxObject("User with Email already exists", "An account with this email already exists"));
     }
-    const User = UserInit(req.body);
+    const User = await UserInit(req.body);
     const OTPId = await SendRegisterOTP(User.Email, User, 'Verify Your Email', res);
     return res.json(OTPId);
 }
@@ -143,19 +143,16 @@ const UserLogin = async (req, res) => {
         res.redirect(RegisterUrl);
     }
     const [User] = Users
-    if (User.Password !== Password) {
+    if (await ComparePassword(Password, User.Password) === false) {
         return res.status(444).json(AlertBoxObject("Invalid Credentials", "The email or password you entered is incorrect"));
     }
-
-    if (User.Password === Password) {
-        const CurrentUser = {
-            Role: 'User',
-            UserId: User.DocId
-        }
-        const LoginData = await TokenData(CurrentUser);
-
-        return res.json(LoginData);
+    const CurrentUser = {
+        Role: 'User',
+        UserId: User.DocId
     }
+    const LoginData = await TokenData(CurrentUser);
+
+    return res.json(LoginData);
 }
 
 /**
@@ -254,7 +251,8 @@ const PatchPassword = async (req, res) => {
         return res.status(444).json(AlertBoxObject("OTP not Verified", "OTP is not verified. Please verify your email"));
     }
     const [User] = (await ReadUsers({ Email: OTPData.Email }, undefined, 1, undefined));
-    await UpdateUsers({ Password: Password }, User.DocId);
+    const HashedPassword = await hashPassword(Password);
+    await UpdateUsers({ Password: HashedPassword }, User.DocId);
     return res.json(true);
 }
 
@@ -281,14 +279,15 @@ const UpdateUserDetails = async (UserId) => {
 /**
  * 
  * @param {UserData} User 
- * @returns {UserData}
+ * @returns {Promise<UserData>}
  */
-const UserInit = (User) => {
-
+const UserInit = async (User) => {
+    const Password = await hashPassword(User.Password);
     return {
         ...User,
         ProfilePicture: "",
-        CoverPicture: ""
+        CoverPicture: "",
+        Password
     };
 }
 
