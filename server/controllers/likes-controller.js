@@ -36,7 +36,10 @@ const GetLikes = async (req, res) => {
     Filter.EntityId = EntityId;
     //@ts-ignore
     const Likes = await ReadLikes(Filter, NextId, Limit, OrderBy);
-    const data = await Promise.all(Likes.map(async Like => await ReadOneFromUsers(Like.UserId)));
+    const data = await Promise.all(Likes.map(async Like => {
+        const UserDetails = await ReadOneFromUsers(Like.UserId);
+        return { UserDetails };
+    }));
     return res.json(data);
 }
 
