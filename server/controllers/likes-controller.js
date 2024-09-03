@@ -38,7 +38,7 @@ const GetLikes = async (req, res) => {
     const Likes = await ReadLikes(Filter, NextId, Limit, OrderBy);
     const data = await Promise.all(Likes.map(async Like => {
         const UserDetails = await ReadOneFromUsers(Like.UserId);
-        return { UserDetails };
+        return { ...Like, UserDetails };
     }));
     return res.json(data);
 }
