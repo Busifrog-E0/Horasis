@@ -4,7 +4,7 @@ const EventTab = ({ event, onClick,from='events' }) => {
     return (
         <div className={`rounded-lg mt-3 overflow-hidden h-full cursor-pointer  flex flex-col ${from === 'search'&& 'p-2'}`} onClick={() => onClick(event.DocId)}>
             <div className="h-28 w-full overflow-hidden rounded-lg bg-system-secondary-bg">
-                <img src={event.DisplayPicture} className="object-cover h-full w-full" />
+                <img src={event.CoverPicture} className="object-cover h-full w-full" />
             </div>
             <div className="mt-1 grid grid-cols-7 gap-1 flex-1">
                 <div className="col-span-2  bg-system-secondary-bg rounded-lg shadow-lg border flex justify-center items-center flex-col">
