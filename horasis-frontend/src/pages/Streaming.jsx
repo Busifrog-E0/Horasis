@@ -14,6 +14,7 @@ import { getItem } from "../constants/operations";
 import { useAuth } from "../utils/AuthProvider";
 import { useToast } from "../components/Toast/ToastService";
 import VideoPlayer from "../components/Streaming/VideoPlayer";
+import testImage from '../assets/images/about-us-image.png'
 
 export const Streaming = () => {
 
@@ -82,8 +83,8 @@ export const Streaming = () => {
                                             cameraOn={cameraOn}
                                             micOn={micOn}
                                             videoTrack={localCameraTrack}
-                                            cover="https://www.agora.io/en/wp-content/uploads/2022/10/3d-spatial-audio-icon.svg"
-                                            className="rounded-full w-32 h-32"
+                                            cover={testImage}
+                                            className="rounded-full w-32 h-32 bg-orange-500"
                                         >
                                             <span className="user-name text-center mt-2 text-lg font-semibold">You</span>
                                         </LocalUser>
@@ -91,9 +92,9 @@ export const Streaming = () => {
                                     {remoteUsers.map((user) => (
                                         <div className="user flex flex-col items-center" key={user.uid}>
                                             <RemoteUser
-                                                cover="https://www.agora.io/en/wp-content/uploads/2022/10/3d-spatial-audio-icon.svg"
+                                                cover={testImage}
                                                 user={user}
-                                                className="rounded-full w-32 h-32"
+                                                className="rounded-full w-32 h-32 bg-red-500"
                                             >
                                                 <span className="user-name text-center mt-2 text-lg font-semibold">
                                                     {user.uid}
