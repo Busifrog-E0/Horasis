@@ -2,7 +2,7 @@
 import './style/global.css'
 import './style/scrollbar.css'
 import './style/chat.css'
-import './style/streaming.css'
+// import './style/streaming.css'
 // lib
 import { RouterProvider } from 'react-router-dom'
 // routes
