@@ -79,11 +79,14 @@ export const Streaming = () => {
                     <div className="text-xl font-semibold text-gray-700">Loading...</div>
                 </div>
             ) : (
-                <div className="bg-system-primary-accent h-full overflow-hidden">
-                    <div className="h-full flex flex-row p-4">
-                        <div className="flex-1">
-                            <div className="overflow-auto h-full mx-auto">
-                                {isConnected ? (
+
+
+                isConnected ?
+                    <div className="bg-system-primary-accent h-full overflow-hidden">
+                        <div className="h-full flex flex-row p-4">
+                            <div className="flex-1">
+                                <div className="overflow-auto h-full mx-auto">
+
                                     <div className="overflow-hidden rounded-lg">
                                         <div className=" grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-0">
                                             <div className=" h-96 flex flex-col items-center">
@@ -95,10 +98,10 @@ export const Streaming = () => {
                                                     cover={testImage}
                                                     className="w-32 h-32 bg-orange-500 relative"
                                                 >
-                                                    <div className="absolute left-0 right-0 p-4 py-3 rounded-t bottom-0 ">
+                                                    <div className="absolute left-0 right-0 p-4 py-3 rounded-t bottom-4 ">
                                                         {isConnected && (
                                                             <div className="flex justify-center items-center">
-                                                                <div className="flex space-x-4 justify-center items-center">
+                                                                <div className="flex space-x-5 justify-center items-center">
                                                                     <button
                                                                         className="bg-brand-btn-prim p-2 rounded-full hover:bg-brand-seagreen-dim"
                                                                         onClick={() => setCamera((a) => !a)}
@@ -106,7 +109,7 @@ export const Streaming = () => {
                                                                         {cameraOn ? <img src={camera}></img> : <img src={camera_off}></img>}
                                                                     </button>
                                                                     <button
-                                                                        className={`btn btn-phone p-4 rounded-full ${calling ? "bg-red-500" : "bg-green-500"
+                                                                        className={`btn btn-phone p-4 rounded-lg ${calling ? "bg-red-500" : "bg-green-500"
                                                                             } text-white`}
                                                                         onClick={() => setCalling((a) => !a)}
                                                                     >
@@ -147,102 +150,62 @@ export const Streaming = () => {
                                             ))}
                                         </div>
                                     </div>
-                                ) : (
-                                    <div className="p-6 rounded-lg shadow-md max-w-md mx-auto">
-                                        <input
-                                            onChange={(e) => setAppId(e.target.value)}
-                                            placeholder="Enter your App ID"
-                                            value={appId}
-                                            className="mb-4 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500"
-                                        />
-                                        <input
-                                            onChange={(e) => setChannel(e.target.value)}
-                                            placeholder="Enter your Channel Name"
-                                            value={channel}
-                                            className="mb-4 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500"
-                                        />
-                                        <input
-                                            onChange={(e) => setToken(e.target.value)}
-                                            placeholder="Enter your Token"
-                                            value={token}
-                                            className="mb-4 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500"
-                                        />
-                                        <button
-                                            className={`w-full py-2 text-white font-semibold rounded-lg ${!appId || !channel
-                                                ? "bg-gray-400 cursor-not-allowed"
-                                                : "bg-indigo-600 hover:bg-indigo-700"
-                                                }`}
-                                            disabled={!appId || !channel}
-                                            onClick={() => setCalling(true)}
-                                        >
-                                            Join Channel
-                                        </button>
+
+
+                                </div>
+                            </div>
+                            <div className=" w-96 h-full">
+                                <div className="flex flex-col h-full overflow-hidden p-4 bg-system-primary-accent-dim shadow-lg rounded-lg">
+                                    <div>
+                                        <p>HI </p>
                                     </div>
-                                )}
+                                    <hr className="my-3" />
+                                    <div className="overflow-auto flex-1 flex-grow-1 w-full">
+                                        <div className="bg-brand-backg text-brand-primary p-5 rounded-lg">
+                                            <p>Hello </p>
+                                        </div>
+                                    </div>
+                                </div>
 
                             </div>
                         </div>
-                        <div className=" w-96 h-full">
-                            <div className="flex flex-col h-full overflow-hidden p-4 bg-system-primary-accent-dim shadow-lg rounded-lg">
-                                <div>
-                                    <p>HI </p>
-                                    <p>HI </p>
-                                </div>
-                                <hr className="my-3" />
-                                <div className="overflow-auto flex-1 flex-grow-1 w-full">
-                                    <div className="bg-brand-backg text-brand-primary p-5 rounded-lg">
-                                        <p>Hello </p>
-                                        <p>Hello </p>
-                                        <p>Hello </p>
-                                        <p>Hello </p>
-                                        <p>Hello </p>
-                                        <p>Hello </p>
-                                        <p>Hello </p>
-                                        <p>Hello </p>
-                                        <p>Hello </p>
-                                        <p>Hello </p>
-                                        <p>Hello </p>
-                                        <p>Hello </p>
-                                        <p>Hello </p>
-                                        <p>Hello </p>
-                                        <p>Hello </p>
-                                        <p>Hello </p>
-                                        <p>Hello </p>
-                                        <p>Hello </p>
-                                        <p>Hello </p>
-                                        <p>Hello </p>
-                                        <p>Hello </p>
-                                        <p>Hello </p>
-                                        <p>Hello </p>
-                                        <p>Hello </p>
-                                        <p>Hello </p>
-                                        <p>Hello </p>
-                                        <p>Hello </p>
-                                        <p>Hello </p>
-                                        <p>Hello </p>
-                                        <p>Hello </p>
-                                        <p>Hello </p>
-                                        <p>Hello </p>
-                                        <p>Hello </p>
-                                        <p>Hello </p>
-                                        <p>Hello </p>
-                                        <p>Hello </p>
-                                        <p>Hello </p>
-                                        <p>Hello </p>
-                                        <p>Hello </p>
-                                        <p>Hello </p>
-                                        <p>Hello </p>
-                                        <p>Hello </p>
-                                        <p>Hello </p>
-                                        <p>Hello </p>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
+                        {/* */}
                     </div>
-                    {/* */}
-                </div>
+                    :
+                    <div className="p-6 rounded-lg shadow-md max-w-md mx-auto bg-brand-secondary mt-5">
+                        <input
+                            onChange={(e) => setAppId(e.target.value)}
+                            placeholder="Enter your App ID"
+                            value={appId}
+                            className="mb-4 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500"
+                        />
+                        <input
+                            onChange={(e) => setChannel(e.target.value)}
+                            placeholder="Enter your Channel Name"
+                            value={channel}
+                            className="mb-4 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500"
+                        />
+                        <input
+                            onChange={(e) => setToken(e.target.value)}
+                            placeholder="Enter your Token"
+                            value={token}
+                            className="mb-4 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500"
+                        />
+                        <button
+                            className={`w-full py-2 text-white font-semibold rounded-lg ${!appId || !channel
+                                ? "bg-gray-400 cursor-not-allowed"
+                                : "bg-indigo-600 hover:bg-indigo-700"
+                                }`}
+                            disabled={!appId || !channel}
+                            onClick={() => setCalling(true)}
+                        >
+                            Join Channel
+                        </button>
+                    </div>
+
+
+
+
             )}
         </>
     );
