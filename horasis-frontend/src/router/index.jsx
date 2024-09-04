@@ -36,6 +36,7 @@ import SingleArticles from '../pages/SingleArticles'
 import ForgotPassword from '../pages/ForgotPassword'
 import SavedArticlesPage from '../pages/SavedArticlesPage'
 import ProfileTabLayout from '../layouts/ProfileTabLayout'
+import Streaming from '../pages/Streaming'
 
 export const router = createBrowserRouter(
 	createRoutesFromElements(
@@ -57,7 +58,7 @@ export const router = createBrowserRouter(
 						<Route path='/Articles/Create/New' element={<CreateArticle />} />
 						<Route path='/Events' element={<Events />} />
 						<Route path='/Events/Create/New' element={<CreateEvent />} />
-					<Route path='/Search' element={<UniversalSearchDetails />} />
+						<Route path='/Search' element={<UniversalSearchDetails />} />
 					</Route>
 
 					<Route path='/MyProfile' element={<MyProfile />} />
@@ -65,6 +66,7 @@ export const router = createBrowserRouter(
 					<Route path='/Discussions/:discussionid' element={<SingleDiscussion />} />
 					<Route path='/Articles/:articleid' element={<SingleArticles />} />
 					<Route path='/Events/:eventid' element={<SingleEvent />} />
+					<Route path='/Events/:eventid/join' element={<Streaming />} />
 					<Route path='/analytics' element={<Analytics />} />
 
 					<Route path='/Chat/:userid' element={<ChatPage />} />
