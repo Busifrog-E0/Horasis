@@ -18,7 +18,8 @@ const generateRTCToken = async (req, res) => {
         return res.status(444).json(AlertBoxObject("Cannot Generate Token", "You are not a member of this event"))
     }
     const token = RtcTokenBuilder.buildTokenWithUid(Env.AGORA_APP_ID, Env.AGORA_APP_CERTIFICATE, EventId, UserId, Role, 600, 600);
-    return res.json({ Token: token });
+    const UserRole = Role === RtcRole.PUBLISHER ? "Speaker" : "Member";
+    return res.json({ Token: token, Role: UserRole });
 }
 
 
