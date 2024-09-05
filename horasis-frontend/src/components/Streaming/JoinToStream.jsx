@@ -1,5 +1,5 @@
 
-const JoinToStream = ({ setAppId, appId, setChannel, channel, token, setToken, setCalling }) => {
+const JoinToStream = ({ appId, channel, token, setChannel, setToken, setCalling, setAppId }) => {
 
     return (
         <div className="p-6 rounded-lg shadow-md max-w-md mx-auto bg-brand-secondary mt-5">

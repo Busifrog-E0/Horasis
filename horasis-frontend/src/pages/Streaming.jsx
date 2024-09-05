@@ -28,7 +28,11 @@ export const Streaming = () => {
     const [channel, setChannel] = useState(eventid);
     const [token, setToken] = useState("");
 
-    useJoin({ appid: appId, channel: channel, token: token ? token : null }, calling);
+    let newUser = useJoin({ appid: appId, channel: channel, token: token ? token : null }, calling);
+
+    useEffect(() => {
+        console.log(newUser)
+    }, [newUser])
 
     const [micOn, setMic] = useState(true);
     const [cameraOn, setCamera] = useState(true);
@@ -63,8 +67,6 @@ export const Streaming = () => {
     }, [])
 
     // console.log("calling", calling)
-    console.log("Local Camera Track:", localCameraTrack);
-
 
     return (
         <>
