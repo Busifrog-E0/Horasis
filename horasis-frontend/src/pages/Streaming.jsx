@@ -4,6 +4,7 @@ import {
     useLocalMicrophoneTrack,
     useLocalCameraTrack,
     usePublish,
+    useClientEvent,
     useRemoteUsers,
 } from "agora-rtc-react";
 import React, { useEffect, useState } from "react";
@@ -28,7 +29,7 @@ export const Streaming = () => {
     const [channel, setChannel] = useState(eventid);
     const [token, setToken] = useState("");
 
-    let newUser = useJoin({ appid: appId, channel: channel, token: token ? token : null }, calling);
+    let newUser = useJoin({ uid: currentUserData.CurrentUser.UserId, appid: appId, channel: channel, token: token ? token : null }, calling);
 
     useEffect(() => {
         console.log(newUser)
@@ -39,6 +40,7 @@ export const Streaming = () => {
     const { localMicrophoneTrack } = useLocalMicrophoneTrack(micOn);
     const { localCameraTrack } = useLocalCameraTrack(cameraOn);
     usePublish([localMicrophoneTrack, localCameraTrack]);
+
 
     const remoteUsers = useRemoteUsers();
     const getToken = () => {
