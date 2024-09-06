@@ -10,30 +10,30 @@ import people from '../../assets/icons/people.svg'
 
 
 
-const StreamUsersList = ({ localMicrophoneTrack, cameraOn, micOn, localCameraTrack, setCamera, remoteUsers, isConnected, calling, setCalling, setMic }) => {
+const StreamUsersList = ({ event, localMicrophoneTrack, cameraOn, micOn, localCameraTrack, setCamera, remoteUsers, isConnected, calling, setCalling, setMic }) => {
 
 
 
     return (
         <div className="flex-1">
-            <div className='flex flex-row gap-4 p-6 items-center border-b-2 '>
+            <div className='flex flex-row gap-4 p-6 items-start border-b-2 '>
                 <div>
 
-                <img src={arrowl} alt='' className='h-6 bg-[#354657] ' />
+                    <img src={arrowl} alt='' className='h-6 bg-[#354657] ' />
                 </div>
                 <div>
 
-                <p className='text-[#CBD2DA] text-[20px] '>Horasis Sustainability Commmunity</p>
+                    <p className='text-[#CBD2DA] text-[20px] '>{event.EventName}</p>
                 </div>
                 <div className='flex flex-row gap-2 p-1 ml-6 items-center bg-[#354657]'>
 
-                <img src={people} alt='' className='h-4 '  />
-                <p className='text-white'>415+ </p>
+                    <img src={people} alt='' className='h-4 ' />
+                    <p className='text-white'>415+ </p>
                 </div>
 
             </div>
-           
-        
+
+
             <div className="overflow-auto h-full mx-auto">
                 <div className="overflow-hidden rounded-lg">
                     <div className=" grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-0 p-4">
