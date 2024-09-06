@@ -6,6 +6,7 @@ import {
     usePublish,
     useClientEvent,
     useRemoteUsers,
+    useRTCClient,
 } from "agora-rtc-react";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -88,6 +89,22 @@ export const Streaming = () => {
         getToken([])
         getEvent()
     }, [])
+
+    const client = useRTCClient();
+    useEffect(() => {
+        if (client) {
+            console.log(client)
+        }
+    }, [client])
+
+
+    useClientEvent(client, "user-joined", (user) => {
+        console.log(user)
+    })
+    useClientEvent(client, "user-left", (user) => {
+        console.log(user)
+    })
+
 
     return (
         <>
