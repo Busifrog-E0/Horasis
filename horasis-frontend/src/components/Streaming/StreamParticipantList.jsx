@@ -1,22 +1,59 @@
+import { useState } from "react";
+import avatar from "../../assets/icons/avatar.svg";
+const StreamParticipantList = ({}) => {
+  const [activeTab, setActiveTab] = useState("participants");
 
-const StreamParticipantList = ({ }) => {
-
-
-
-    return (
-        <div className="flex flex-col h-full overflow-hidden p-4 bg-system-primary-accent-dim shadow-lg rounded-lg">
+  return (
+    <div className="flex flex-col h-full overflow-hidden p-6 bg-system-primary-accent-dim shadow-lg rounded-lg">
+      <div className="flex gap-10">
+        <p
+          className={`text-gray-100 cursor-pointer ${activeTab === 'participants' && 'bg-blue-600'} p-4 rounded-md`}
+          onClick={() => setActiveTab("participants")}
+        >
+          Participant{" "}
+        </p>
+        <p className={`text-gray-100 cursor-pointer ${activeTab === 'messages' && 'bg-blue-600'} p-4 rounded-md`} onClick={() => setActiveTab("messages")}>
+          Messages{" "}
+        </p>
+      </div>
+      <hr className="my-3" />
+      {activeTab === "participants" && (
+        <div className="overflow-auto flex-1 flex-grow-1 w-full">
+          <div className=" grid grid-cols-3 bg-[#D6D3E3] text-brand-primary p-5 rounded-lg gap-6 ">
             <div>
-                <p>HI </p>
+              <img src={avatar} alt="" className="h-20" />
+              <p>swapna</p>
             </div>
-            <hr className="my-3" />
-            <div className="overflow-auto flex-1 flex-grow-1 w-full">
-                <div className="bg-brand-backg text-brand-primary p-5 rounded-lg">
-                    <p>Hello </p>
-                </div>
+            <div>
+              <img src={avatar} alt="" className="h-20" />
+              <p>swapna</p>
             </div>
+            <div>
+              <img src={avatar} alt="" className="h-20" />
+              <p>swapna</p>
+            </div>
+            <div>
+              <img src={avatar} alt="" className="h-20" />
+              <p>swapna</p>
+            </div>
+            <div>
+              <img src={avatar} alt="" className="h-20" />
+              <p>swapna</p>
+            </div>
+            <div>
+              <img src={avatar} alt="" className="h-20" />
+              <p>swapna</p>
+            </div>
+            <div>
+              <img src={avatar} alt="" className="h-20" />
+              <p>swapna</p>
+            </div>
+          </div>
         </div>
-
-    );
+      )}
+      {activeTab === "messages" && <div>messages section</div>}
+    </div>
+  );
 };
 
 export default StreamParticipantList;
