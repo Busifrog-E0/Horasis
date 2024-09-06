@@ -97,14 +97,14 @@ export const Streaming = () => {
                 </div>
             ) : (
                 isConnected ?
-                    <div className="bg-system-primary-accent h-full overflow-hidden">
+                    <div className="bg-system-primary-darker-accent h-full overflow-hidden">
                         <div className="h-full flex flex-row p-4">
                             <StreamUsersList event={event} cameraOn={cameraOn} localCameraTrack={localCameraTrack} localMicrophoneTrack={localMicrophoneTrack}
                                 micOn={micOn} remoteUsers={remoteUsers} setCamera={setCamera} isConnected={isConnected} calling={calling} setMic={setMic}
                                 setCalling={setCalling} />
 
                             <div className=" w-96 h-full">
-                                <StreamParticipantList />
+                                <StreamParticipantList remoteUsers={remoteUsers} />
                             </div>
                         </div>
                         {/* */}

@@ -25,7 +25,7 @@ const StreamUsersList = ({ event, localMicrophoneTrack, cameraOn, micOn, localCa
 
                     <p className='text-[#CBD2DA] text-[20px] '>{event.EventName}</p>
                 </div>
-                <div className='flex flex-row gap-2 p-1 ml-6 items-center bg-[#354657]'>
+                <div className='flex flex-row gap-2 p-1 px-3 rounded-md ml-6 items-center bg-[#354657]'>
 
                     <img src={people} alt='' className='h-4 ' />
                     <p className='text-white'>415+ </p>

@@ -30,6 +30,7 @@ const colors = {
 	'system-primary-text': 'var(--system-primary-text)',
 	'system-secondary-text': 'var(--system-secondary-text)',
 	'system-primary-accent': 'var(--system-primary-accent)',
+	'system-primary-darker-accent': 'var(--system-primary-darker-accent)',
 	'system-primary-accent-transparent': 'var(--system-primary-accent-transparent)',
 	'system-primary-accent-light': 'var(--system-primary-accent-light)',
 	'system-primary-accent-dim': 'var(--system-primary-accent-dim)',
