@@ -22,7 +22,9 @@ export const Streaming = () => {
     const toast = useToast()
 
     const { eventid } = useParams()
-    const [loading, setLoading] = useState(true);
+    const [event, setEvent] = useState({})
+    const [loadingToken, setIsLoadingToken] = useState(true);
+    const [loadingEvent, setIsLoadingEvent] = useState(true)
     const [calling, setCalling] = useState(false);
     const isConnected = useIsConnected();
     const [appId, setAppId] = useState("206c8a92da8d4676aabfb8314a21fa17");
@@ -44,7 +46,7 @@ export const Streaming = () => {
 
     const remoteUsers = useRemoteUsers();
     const getToken = () => {
-        setLoading(true)
+        setIsLoadingToken(true)
         getItem(
             `event/${eventid}/videoCall/join`,
             (result) => {
@@ -52,11 +54,29 @@ export const Streaming = () => {
                     setToken(result.Token)
                 }
                 // setToken("007eJxTYBDl+aDxnmevYv+bF4t2P8m7GMh1qKL6cKfBZFnzpx/OMLsoMBgZmCVbJFoapSRapJiYmZslJialJVkYG5okGhmmJRqaWyffSGsIZGS4qfWQlZEBAkF8doa81PKQ1OISBgYA+HIh1Q==")
-                setLoading(false)
+                setIsLoadingToken(false)
             },
             (err) => {
                 // setToken("007eJxTYBDl+aDxnmevYv+bF4t2P8m7GMh1qKL6cKfBZFnzpx/OMLsoMBgZmCVbJFoapSRapJiYmZslJialJVkYG5okGhmmJRqaWyffSGsIZGS4qfWQlZEBAkF8doa81PKQ1OISBgYA+HIh1Q==")
-                setLoading(false)
+                setIsLoadingToken(false)
+            },
+            updateCurrentUser,
+            currentUserData,
+            toast
+        )
+    }
+
+    const getEvent = () => {
+        setIsLoadingEvent(true)
+        getItem(
+            `events/${eventid}`,
+            (result) => {
+                setEvent(result)
+                setIsLoadingEvent(false)
+            },
+            (err) => {
+                navigate('/NotFound', { replace: true })
+                setIsLoadingEvent(false)
             },
             updateCurrentUser,
             currentUserData,
@@ -66,14 +86,13 @@ export const Streaming = () => {
 
     useEffect(() => {
         getToken([])
+        getEvent()
     }, [])
-
-    // console.log("calling", calling)
 
     return (
         <>
-            {loading ? (
-                <div className="flex items-center justify-center h-screen">
+            {loadingToken ? (
+                <div className="flex items-center justify-center h-full">
                     <div className="text-xl font-semibold text-gray-700">Loading...</div>
                 </div>
             ) : (
@@ -91,7 +110,15 @@ export const Streaming = () => {
                         {/* */}
                     </div>
                     :
-                    <JoinToStream appId={appId} channel={channel} setAppId={setAppId} setCalling={setCalling} setChannel={setChannel} setToken={setToken} token={token} />
+                    loadingEvent ?
+                        <div className="flex items-center justify-center h-full">
+                            <div className="text-xl font-semibold text-gray-700">Loading...</div>
+                        </div>
+                        :
+                        <div className="h-full overflow-hidden relative">
+                            <JoinToStream event={event} appId={appId} channel={channel} token={token}
+                                setAppId={setAppId} setCalling={setCalling} setChannel={setChannel} setToken={setToken} />
+                        </div>
             )}
         </>
     );
