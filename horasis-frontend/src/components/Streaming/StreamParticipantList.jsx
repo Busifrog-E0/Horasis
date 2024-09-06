@@ -22,31 +22,31 @@ const StreamParticipantList = ({}) => {
           <div className=" grid grid-cols-3 bg-[#D6D3E3] text-brand-primary p-5 rounded-lg gap-6 ">
             <div>
               <img src={avatar} alt="" className="h-20" />
-              <p>swapna</p>
+              <p className="text-center">swapna</p>
             </div>
             <div>
               <img src={avatar} alt="" className="h-20" />
-              <p>swapna</p>
+              <p className="text-center">swapna</p>
             </div>
             <div>
               <img src={avatar} alt="" className="h-20" />
-              <p>swapna</p>
+              <p className="text-center">swapna</p>
             </div>
             <div>
               <img src={avatar} alt="" className="h-20" />
-              <p>swapna</p>
+              <p className="text-center">swapna</p>
             </div>
             <div>
               <img src={avatar} alt="" className="h-20" />
-              <p>swapna</p>
+              <p className="text-center">swapna</p>
             </div>
             <div>
               <img src={avatar} alt="" className="h-20" />
-              <p>swapna</p>
+              <p className="text-center">swapna</p>
             </div>
             <div>
               <img src={avatar} alt="" className="h-20" />
-              <p>swapna</p>
+              <p className="text-center">swapna</p>
             </div>
           </div>
         </div>
