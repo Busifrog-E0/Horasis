@@ -96,7 +96,7 @@ export const Streaming = () => {
                     <div className="text-xl font-semibold text-gray-700">Loading...</div>
                 </div>
             ) : (
-                isConnected ?
+                !isConnected ?
                     <div className="bg-system-primary-accent h-full overflow-hidden">
                         <div className="h-full flex flex-row p-4">
                             <StreamUsersList cameraOn={cameraOn} localCameraTrack={localCameraTrack} localMicrophoneTrack={localMicrophoneTrack}

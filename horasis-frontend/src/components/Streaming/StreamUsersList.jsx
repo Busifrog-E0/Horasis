@@ -5,6 +5,10 @@ import camera_off from '../../assets/icons/streaming/camera_off.svg'
 import mic from '../../assets/icons/streaming/mic.svg'
 import mic_off from '../../assets/icons/streaming/mic_off.svg'
 import call_end from '../../assets/icons/streaming/call_end.svg'
+import arrowl from '../../assets/icons/arrowl.svg'
+import people from '../../assets/icons/people.svg'
+
+
 
 const StreamUsersList = ({ localMicrophoneTrack, cameraOn, micOn, localCameraTrack, setCamera, remoteUsers, isConnected, calling, setCalling, setMic }) => {
 
@@ -12,9 +16,27 @@ const StreamUsersList = ({ localMicrophoneTrack, cameraOn, micOn, localCameraTra
 
     return (
         <div className="flex-1">
+            <div className='flex flex-row gap-4 p-6 items-center border-b-2 '>
+                <div>
+
+                <img src={arrowl} alt='' className='h-6 bg-[#354657] ' />
+                </div>
+                <div>
+
+                <p className='text-[#CBD2DA] text-[20px] '>Horasis Sustainability Commmunity</p>
+                </div>
+                <div className='flex flex-row gap-2 p-1 ml-6 items-center bg-[#354657]'>
+
+                <img src={people} alt='' className='h-4 '  />
+                <p className='text-white'>415+ </p>
+                </div>
+
+            </div>
+           
+        
             <div className="overflow-auto h-full mx-auto">
                 <div className="overflow-hidden rounded-lg">
-                    <div className=" grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-0">
+                    <div className=" grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-0 p-4">
                         <div className=" h-96 flex flex-col items-center">
                             <LocalUser
                                 audioTrack={localMicrophoneTrack}
