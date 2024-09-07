@@ -10,14 +10,14 @@ const generateRTCToken = async (req, res) => {
     //@ts-ignore
     const { UserId } = req.user;
     const [[Speaker], [Member]] = await Promise.all([
-        ReadSpeakers({ SpeakerId: UserId, EventId }, undefined, 1, undefined),
-        ReadMembers({ MemberId: UserId, EntityId: EventId }, undefined, 1, undefined)
+        ReadSpeakers({ SpeakerId: UserId, EventId, MembershipStatus: "Accepted" }, undefined, 1, undefined),
+        ReadMembers({ MemberId: UserId, EntityId: EventId, MembershipStatus: "Accepted" }, undefined, 1, undefined)
     ]);
     const Role = Speaker ? RtcRole.PUBLISHER : (Member ? RtcRole.SUBSCRIBER : undefined);
     if (!Role) {
         return res.status(444).json(AlertBoxObject("Cannot Generate Token", "You are not a member of this event"))
     }
-    const token = RtcTokenBuilder.buildTokenWithUid(Env.AGORA_APP_ID, Env.AGORA_APP_CERTIFICATE, EventId, UserId, Role, 600, 600);
+    const token = RtcTokenBuilder.buildTokenWithUid(Env.AGORA_APP_ID, Env.AGORA_APP_CERTIFICATE, EventId, UserId, Role, 6000, 6000);
     const UserRole = Role === RtcRole.PUBLISHER ? "Speaker" : "Member";
     return res.json({ Token: token, Role: UserRole });
 }
