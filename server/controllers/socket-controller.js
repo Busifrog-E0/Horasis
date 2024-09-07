@@ -1,6 +1,6 @@
 import { Socket, Server } from "socket.io";
 import { PostMessages, CheckUserInConversation } from "./chats-controller.js";
-import { UpdateUsers } from "../databaseControllers/users-databaseController.js"
+import { ReadOneFromUsers, UpdateUsers } from "../databaseControllers/users-databaseController.js"
 import jwt from "jsonwebtoken";
 import ENV from "./../Env.js";
 import { decodeSocketIdToken } from "../middleware/auth-middleware.js";
@@ -29,16 +29,19 @@ const ConnectSocket = (expressServer) => {
         //@ts-ignore
         socket.join(socket.user.UserId);
 
-        socket.on('user-joined-videocall', async ({ EventId }) => {
-            // @ts-ignore
-            await CreateParticipants({ EventId, UserId: socket.user.UserId });
+        socket.on('user-joined-videocall', async ({ EventId, UserId }) => {
 
+            const UserDetails = await ReadOneFromUsers(UserId);
+            // @ts-ignore
+            await CreateParticipants({ EventId, UserId, UserDetails });
+            socket.to(EventId).emit('participants-list', { UserDetails });
         });
 
         socket.on('user-left-videocall', async ({ EventId }) => {
             // @ts-ignore
             const [Participant] = await ReadParticipants({ EventId, UserId: socket.user.UserId }, undefined, 1, undefined);
             await RemoveParticipants(Participant.DocId);
+            socket.to(EventId).emit('participants-list', { UserDetails: Participant.UserDetails });
         });
 
         socket.on('Message', async data => {
