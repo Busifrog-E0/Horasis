@@ -7,6 +7,7 @@ import { decodeSocketIdToken } from "../middleware/auth-middleware.js";
 import { ReadOneFromConversations } from "../databaseControllers/conversations-databaseController.js";
 import moment from "moment";
 import { PostActiveUsers } from "./activeUsers-controller.js";
+import { CreateParticipants, ReadParticipants, RemoveParticipants } from "../databaseControllers/participants-databaseController.js";
 
 
 const ConnectSocket = (expressServer) => {
@@ -28,6 +29,17 @@ const ConnectSocket = (expressServer) => {
         //@ts-ignore
         socket.join(socket.user.UserId);
 
+        socket.on('user-joined-videocall', async ({ EventId }) => {
+            // @ts-ignore
+            await CreateParticipants({ EventId, UserId: socket.user.UserId });
+
+        });
+
+        socket.on('user-left-videocall', async ({ EventId }) => {
+            // @ts-ignore
+            const [Participant] = await ReadParticipants({ EventId, UserId: socket.user.UserId }, undefined, 1, undefined);
+            await RemoveParticipants(Participant.DocId);
+        });
 
         socket.on('Message', async data => {
 
