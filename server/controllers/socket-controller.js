@@ -30,7 +30,7 @@ const ConnectSocket = (expressServer) => {
         socket.join(socket.user.UserId);
 
         socket.on('user-joined-videocall', async ({ EventId, UserId }) => {
-
+            console.log("joined vcall")
             const UserDetails = await ReadOneFromUsers(UserId);
             // @ts-ignore
             await CreateParticipants({ EventId, UserId, UserDetails });
@@ -38,6 +38,7 @@ const ConnectSocket = (expressServer) => {
         });
 
         socket.on('user-left-videocall', async ({ EventId }) => {
+            console.log("left vcall")
             // @ts-ignore
             const [Participant] = await ReadParticipants({ EventId, UserId: socket.user.UserId }, undefined, 1, undefined);
             await RemoveParticipants(Participant.DocId);
@@ -69,6 +70,7 @@ const ConnectSocket = (expressServer) => {
             if (CheckUserInConversation(ConversationData, socket.user.UserId)) {
                 // leave existing rooms?
                 socket.join(ConversationId);
+                console.log('joined room');
             }
 
         });
