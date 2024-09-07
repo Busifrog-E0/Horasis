@@ -27,7 +27,7 @@ const JoinToStream = ({ event, appId, channel, token, setChannel, setToken, setC
                             // 	}
                             // }}
                             className={`inline-flex items-center justify-center w-12 h-12 p-3 overflow-hidden rounded-full border border-white bg-white cursor-pointer`}>
-                            <img src={camera} alt='' className='h-6 cursor-pointer' />
+                            <img src={''} alt='' className='h-6 cursor-pointer' />
                         </div>
                     )}
                 </div>
