@@ -3,6 +3,7 @@ import { ReadSpeakers } from '../databaseControllers/speakers-databaseController
 import { ReadMembers } from '../databaseControllers/members-databaseController.js';
 import { AlertBoxObject } from './common.js';
 import Env from '../Env.js';
+import { ReadParticipants } from '../databaseControllers/participants-databaseController.js';
 const { RtcTokenBuilder, RtcRole } = agora;
 
 const generateRTCToken = async (req, res) => {
@@ -22,7 +23,23 @@ const generateRTCToken = async (req, res) => {
     return res.json({ Token: token, Role: UserRole });
 }
 
+const GetParticipants = async (req, res) => {
+    const { Filter, NextId, Limit, OrderBy, Keyword } = req.query;
+    if (Keyword) {
+        //@ts-ignore
+        Filter.$or = [
+            { "UserDetails.FullName": { $regex: Keyword, $options: 'i' } },
+            { "UserDetails.Username": { $regex: Keyword, $options: 'i' } },
+        ];
+    }
+    //@ts-ignore
+    Filter.EventId = req.params.EventId;
+    // @ts-ignore
+    const data = await ReadParticipants(Filter, NextId, Limit, OrderBy);
+    return res.json(data);
+}
 
 export {
-    generateRTCToken
+    generateRTCToken,
+    GetParticipants
 }
