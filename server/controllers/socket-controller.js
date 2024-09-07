@@ -37,6 +37,7 @@ const ConnectSocket = (expressServer) => {
             // @ts-ignore
             await CreateParticipants({ EventId, UserId, UserDetails });
             socket.to(EventId).emit('participants-list', { UserDetails });
+            console.log(socket.rooms)
         });
 
         socket.on('user-left-videocall', async ({ EventId }) => {
