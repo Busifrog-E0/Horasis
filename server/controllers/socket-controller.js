@@ -8,6 +8,8 @@ import { ReadOneFromConversations } from "../databaseControllers/conversations-d
 import moment from "moment";
 import { PostActiveUsers } from "./activeUsers-controller.js";
 import { CreateParticipants, ReadParticipants, RemoveParticipants } from "../databaseControllers/participants-databaseController.js";
+import { ReadMembers } from "../databaseControllers/members-databaseController.js";
+import { ReadSpeakers } from "../databaseControllers/speakers-databaseController.js";
 
 
 const ConnectSocket = (expressServer) => {
@@ -61,6 +63,16 @@ const ConnectSocket = (expressServer) => {
                         io.to(id).emit('ConversationList', true)
                     };
                 })
+            }
+        })
+
+        socket.on('JoinEvent', async ({ EventId }) => {
+            const [Member, Speaker] = await Promise.all([
+                ReadMembers({ MemberId: socket.user.UserId, EntityId: EventId, MembershipStatus: "Accepted" }, undefined, 1, undefined),
+                ReadSpeakers({ SpeakerId: socket.user.UserId, EventId, MembershipStatus: "Accepted" }, undefined, 1, undefined)
+            ])
+            if (Member || Speaker) {
+                socket.join(EventId);
             }
         })
 
