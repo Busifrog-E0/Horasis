@@ -73,6 +73,7 @@ const ConnectSocket = (expressServer) => {
             ])
             if (Member || Speaker) {
                 socket.join(EventId);
+                console.log('joined room');
             }
         })
 
@@ -82,7 +83,7 @@ const ConnectSocket = (expressServer) => {
             if (CheckUserInConversation(ConversationData, socket.user.UserId)) {
                 // leave existing rooms?
                 socket.join(ConversationId);
-                console.log('joined room');
+                
             }
 
         });
