@@ -68,13 +68,14 @@ const ConnectSocket = (expressServer) => {
         })
 
         socket.on('JoinEvent', async ({ EventId }) => {
+            console.log(socket.rooms)
             const [Member, Speaker] = await Promise.all([
                 ReadMembers({ MemberId: socket.user.UserId, EntityId: EventId, MembershipStatus: "Accepted" }, undefined, 1, undefined),
                 ReadSpeakers({ SpeakerId: socket.user.UserId, EventId, MembershipStatus: "Accepted" }, undefined, 1, undefined)
             ])
             if (Member || Speaker) {
                 socket.join(EventId);
-                console.log('joined room');
+                console.log(socket.rooms)
             }
         })
 
