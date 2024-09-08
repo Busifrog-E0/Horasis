@@ -211,7 +211,9 @@ export const Streaming = () => {
                 <div className='bg-system-primary-darker-accent h-full overflow-hidden'>
                     <div className='h-full grid grid-cols-4'>
                         <div className='col-span-3 p-4 overflow-hidden h-full'>
-                            <StreamUsersList event={event} cameraOn={cameraOn} localCameraTrack={localCameraTrack} localMicrophoneTrack={localMicrophoneTrack} micOn={micOn} remoteUsers={remoteUsers} setCamera={setCamera} isConnected={isConnected} calling={calling} setMic={setMic} setCalling={setCalling} role={role} currentUser={user} />
+                            <StreamUsersList event={event} cameraOn={cameraOn} localCameraTrack={localCameraTrack} localMicrophoneTrack={localMicrophoneTrack} micOn={micOn}
+                                remoteUsers={remoteUsers} setCamera={setCamera} isConnected={isConnected} calling={calling} setMic={setMic} setCalling={setCalling}
+                                role={role} currentUser={user} />
                         </div>
 
                         <div className=' h-full col-span-1 p-4 h-full'>
