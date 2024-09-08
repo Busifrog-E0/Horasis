@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import avatar from '../../assets/icons/avatar.svg'
-const StreamParticipantList = ({ remoteUsers }) => {
+const StreamParticipantList = ({ participants }) => {
 	const [activeTab, setActiveTab] = useState('participants')
-	console.log(remoteUsers)
+	console.log(participants)
 	return (
 		<div className='flex flex-col h-full overflow-hidden p-6 bg-system-primary-accent-dim shadow-lg rounded-lg'>
 			<div className='flex gap-2'>
@@ -21,8 +21,8 @@ const StreamParticipantList = ({ remoteUsers }) => {
 							<img src={avatar} alt='' className='h-20 rounded-full overflow-hidden w-20 object-cover' />
 							<p className='text-center truncate'>{'You'}</p>
 						</div>
-						{remoteUsers.length > 0 &&
-							remoteUsers.map((user) => (
+						{participants.length > 0 &&
+							participants.map((user) => (
 								<div key={user.uid} className='flex flex-col items-center'>
 									<img src={user.UserDetails.CoverPicture ? user.UserDetails.CoverPicture : avatar} alt='' className='h-20 rounded-full overflow-hidden w-20 object-cover' />
 									<p className='text-center truncate'>{user.UserDetails.FullName}</p>

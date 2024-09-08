@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react'
 import ScrollableRemoteUsersList from './ScrollableRemoteUsersList'
 import StickyLocalUserView from './StickyLocalUserView'
 
-const StreamUsersList = ({ event, localMicrophoneTrack, cameraOn, micOn, localCameraTrack, setCamera, remoteUsers, isConnected, calling, setCalling, setMic, role, currentUser }) => {
+const StreamUsersList = ({ event, cameraOn, micOn, setCamera, remoteUsers, isConnected, calling, setCalling, setMic, role, currentUser }) => {
 
     const [mainScreenUser, setMainScreenUser] = useState(null)
 
@@ -35,8 +35,8 @@ const StreamUsersList = ({ event, localMicrophoneTrack, cameraOn, micOn, localCa
             <div className='flex-grow-1 flex-1  overflow-hidden'>
                 <div className='h-full flex flex-col overflow-hidden'>
                     <div className='flex-1 flex-grow-1 rounded-lg overflow-hidden relative'>
-                        <StickyLocalUserView calling={calling} cameraOn={cameraOn} isConnected={isConnected} localCameraTrack={localCameraTrack}
-                            localMicrophoneTrack={localMicrophoneTrack} micOn={micOn} role={role} setCalling={setCalling} setCamera={setCamera} setMic={setMic}
+                        <StickyLocalUserView calling={calling} cameraOn={cameraOn} isConnected={isConnected}
+                            micOn={micOn} role={role} setCalling={setCalling} setCamera={setCamera} setMic={setMic}
                         />
                         {mainScreenUser !== null &&
                             <RemoteUser cover={avatar} user={mainScreenUser} className='w-32 h-32 bg-red-500'>

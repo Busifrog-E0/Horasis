@@ -1,4 +1,4 @@
-import { LocalUser } from "agora-rtc-react"
+import { LocalUser, useLocalCameraTrack, useLocalMicrophoneTrack, usePublish } from "agora-rtc-react"
 import avatar from '../../assets/icons/avatar.svg'
 import call_end from '../../assets/icons/streaming/call_end.svg'
 import camera from '../../assets/icons/streaming/camera.svg'
@@ -6,7 +6,11 @@ import camera_off from '../../assets/icons/streaming/camera_off.svg'
 import mic_off from '../../assets/icons/streaming/mic_off.svg'
 import mic from '../../assets/icons/streaming/mic.svg'
 
-const StickyLocalUserView = ({ calling, role, localMicrophoneTrack, cameraOn, micOn, localCameraTrack, isConnected, setCamera, setCalling, setMic }) => {
+const StickyLocalUserView = ({ calling, role, cameraOn, micOn, isConnected, setCamera, setCalling, setMic }) => {
+
+    const { localMicrophoneTrack } = useLocalMicrophoneTrack(micOn)
+    const { localCameraTrack } = useLocalCameraTrack(cameraOn)
+    usePublish([localMicrophoneTrack, localCameraTrack])
     return <>
         {role === 'Speaker' && (
             <div className='z-10 absolute top-0 right-0 p-2'>
