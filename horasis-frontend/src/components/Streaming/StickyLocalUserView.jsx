@@ -6,26 +6,27 @@ import camera_off from '../../assets/icons/streaming/camera_off.svg'
 import mic_off from '../../assets/icons/streaming/mic_off.svg'
 import mic from '../../assets/icons/streaming/mic.svg'
 
-const StickyLocalUserView = ({ calling, role, cameraOn, micOn, isConnected, setCamera, setCalling, setMic, localCameraTrack, localMicrophoneTrack }) => {
+const StickyLocalUserView = ({ participants, calling, role, cameraOn, micOn, isConnected, setCamera, setCalling, setMic, localCameraTrack, localMicrophoneTrack }) => {
 
     return <>
         {role === 'Speaker' && (
             <div className='z-10 absolute top-0 right-0 p-2'>
                 <div className=' h-44 w-60 flex flex-col items-center rounded-lg overflow-hidden'>
-                    <LocalUser audioTrack={localMicrophoneTrack} cameraOn={cameraOn} micOn={micOn} videoTrack={localCameraTrack} cover={avatar}
+                    <LocalUser audioTrack={localMicrophoneTrack} cameraOn={cameraOn} micOn={micOn} videoTrack={localCameraTrack}
+                        cover={avatar}
                         className='w-32 h-32 relative p-0'>
-                        <div className='absolute left-0 right-0 rounded-t bottom-2'>
+                        <div className='absolute left-0 right-0 rounded-t bottom-3'>
                             {isConnected && (
                                 <div className='flex justify-center items-center'>
                                     <div className='flex space-x-5 justify-center items-center'>
-                                        <button className='bg-brand-btn-prim p-2 rounded-full hover:bg-brand-seagreen-dim' onClick={() => setCamera((a) => !a)}>
-                                            {cameraOn ? <img src={camera}></img> : <img src={camera_off}></img>}
+                                        <button className='bg-brand-btn-prim p-1 rounded-full hover:bg-brand-seagreen-dim' onClick={() => setCamera((a) => !a)}>
+                                            {cameraOn ? <img src={camera} className="h-5"></img> : <img src={camera_off} className="h-5"></img>}
                                         </button>
-                                        <button className={`btn btn-phone p-3 rounded-lg ${calling ? 'bg-red-500' : 'bg-green-500'} text-white`} onClick={() => setCalling((a) => !a)}>
-                                            {calling ? <img src={call_end}></img> : <img src={call_end}></img>}
+                                        <button className={`btn btn-phone p-2 rounded-lg ${calling ? 'bg-red-500' : 'bg-green-500'} text-white`} onClick={() => setCalling((a) => !a)}>
+                                            {calling ? <img src={call_end} className="h-6"></img> : <img src={call_end} className="h-6"></img>}
                                         </button>
-                                        <button className='bg-brand-btn-prim p-2 rounded-full hover:bg-brand-seagreen-dim' onClick={() => setMic((a) => !a)}>
-                                            {micOn ? <img src={mic}></img> : <img src={mic_off}></img>}
+                                        <button className='bg-brand-btn-prim p-1 rounded-full hover:bg-brand-seagreen-dim' onClick={() => setMic((a) => !a)}>
+                                            {micOn ? <img src={mic} className="h-5"></img> : <img src={mic_off} className="h-5"></img>}
                                         </button>
                                     </div>
                                 </div>

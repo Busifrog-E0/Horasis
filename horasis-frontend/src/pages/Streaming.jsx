@@ -213,7 +213,7 @@ export const Streaming = () => {
                         <div className='col-span-3 p-4 overflow-hidden h-full'>
                             <StreamUsersList event={event} cameraOn={cameraOn} micOn={micOn} localCameraTrack={localCameraTrack} localMicrophoneTrack={localMicrophoneTrack}
                                 setCamera={setCamera} isConnected={isConnected} calling={calling} setMic={setMic} setCalling={setCalling}
-                                role={role} currentUser={user} />
+                                role={role} currentUser={user} participants={participants} />
                         </div>
 
                         <div className=' h-full col-span-1 p-4 h-full'>

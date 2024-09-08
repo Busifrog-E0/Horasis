@@ -7,7 +7,7 @@ import mic_off from '../../assets/icons/streaming/mic_off.svg'
 import right from '../../assets/icons/streaming/right.svg'
 import left from '../../assets/icons/streaming/left.svg'
 
-const ScrollableRemoteUsersList = ({ remoteUsers, setMainScreenUser, mainScreenUser }) => {
+const ScrollableRemoteUsersList = ({ participants, remoteUsers, setMainScreenUser, mainScreenUser }) => {
     const [isScrollable, setIsScrollable] = useState(false);
     const scrollableDivRef = useRef(null);
 
@@ -43,21 +43,28 @@ const ScrollableRemoteUsersList = ({ remoteUsers, setMainScreenUser, mainScreenU
             <div ref={scrollableDivRef} id="scrollable-div" className='flex flex-row w-full overflow-x-auto gap-2 mt-2 whitespace-nowrap scroll-smooth'>
                 {
                     mainScreenUser !== null &&
-                    remoteUsers.map((user) => (
-                        <div className='relative h-36 w-64 flex-shrink-0 flex flex-col items-center rounded-lg overflow-hidden' key={user.uid}>
-                            <div className='absolute top-0 right-0 mx-2 my-2 z-10 cursor-pointer' onClick={() => setMainScreenUser(user)}>
-                                <span className="material-symbols-outlined">
-                                    <img className='inline-block h-5' src={fullscreen}></img>
-                                </span>
-                            </div>
-                            <RemoteUser cover={avatar} user={user} className='w-32 h-32 bg-red-500'>
-                                <div className='absolute text-xs md:text-sm truncate right-0 rounded-full m-2 bottom-0 font-semibold text-brand-secondary bg-system-primary-accent px-3'>
-                                    {user.uid}
-                                    {user.hasAudio ? <img className='inline-block h-3' src={mic}></img> : <img src={mic_off} className='inline-block h-3'></img>}
+                    remoteUsers
+                        .filter(user => user.uid !== mainScreenUser.uid)
+                        .map((user) => {
+                            return (
+                                <div className='relative h-36 w-64 flex-shrink-0 flex flex-col items-center rounded-lg overflow-hidden' key={user.uid}>
+                                    <div className='absolute top-0 right-0 mx-2 my-2 z-10 cursor-pointer' onClick={() => setMainScreenUser(user)}>
+                                        <span className="material-symbols-outlined">
+                                            <img className='inline-block h-5' src={fullscreen}></img>
+                                        </span>
+                                    </div>
+                                    <RemoteUser
+                                        cover={participants.find(participant => participant.UserDetails.DocId === user.uid)?.CoverPicture ?
+                                            participants.find(participant => participant.UserDetails.DocId === user.uid)?.CoverPicture : avatar}
+                                        user={user} className='w-32 h-32 bg-red-500'>
+                                        <div className='absolute text-xs md:text-sm truncate right-0 rounded-full m-2 bottom-0 font-semibold text-brand-secondary bg-system-primary-accent px-3'>
+                                            {user.uid}
+                                            {user.hasAudio ? <img className='inline-block h-3' src={mic}></img> : <img src={mic_off} className='inline-block h-3'></img>}
+                                        </div>
+                                    </RemoteUser>
                                 </div>
-                            </RemoteUser>
-                        </div>
-                    ))
+                            )
+                        })
                 }
             </div>
 
