@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react'
 import ScrollableRemoteUsersList from './ScrollableRemoteUsersList'
 import StickyLocalUserView from './StickyLocalUserView'
 
-const StreamUsersList = ({ event, cameraOn, micOn, setCamera, isConnected, calling, setCalling, setMic, role, currentUser }) => {
+const StreamUsersList = ({ event, cameraOn, micOn, setCamera, isConnected, calling, setCalling, setMic, role, localCameraTrack, localMicrophoneTrack, currentUser }) => {
 
     const remoteUsers = useRemoteUsers()
     const [mainScreenUser, setMainScreenUser] = useState(null)
@@ -36,7 +36,8 @@ const StreamUsersList = ({ event, cameraOn, micOn, setCamera, isConnected, calli
             <div className='flex-grow-1 flex-1  overflow-hidden'>
                 <div className='h-full flex flex-col overflow-hidden'>
                     <div className='flex-1 flex-grow-1 rounded-lg overflow-hidden relative'>
-                        <StickyLocalUserView calling={calling} cameraOn={cameraOn} isConnected={isConnected}
+                        <StickyLocalUserView localCameraTrack={localCameraTrack} localMicrophoneTrack={localMicrophoneTrack}
+                            calling={calling} cameraOn={cameraOn} isConnected={isConnected}
                             micOn={micOn} role={role} setCalling={setCalling} setCamera={setCamera} setMic={setMic}
                         />
                         {mainScreenUser !== null &&

@@ -1,4 +1,4 @@
-import { useIsConnected, useJoin, useClientEvent, useRTCClient } from 'agora-rtc-react'
+import { useIsConnected, useJoin, useClientEvent, useRTCClient, useLocalMicrophoneTrack, useLocalCameraTrack, usePublish } from 'agora-rtc-react'
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { getItem } from '../constants/operations'
@@ -40,6 +40,10 @@ export const Streaming = () => {
 
     const [micOn, setMic] = useState(true)
     const [cameraOn, setCamera] = useState(true)
+    const { localMicrophoneTrack } = useLocalMicrophoneTrack(micOn)
+    const { localCameraTrack } = useLocalCameraTrack(cameraOn)
+    usePublish([localMicrophoneTrack, localCameraTrack])
+
 
     const getUser = () => {
         getItem(
@@ -207,7 +211,7 @@ export const Streaming = () => {
                 <div className='bg-system-primary-darker-accent h-full overflow-hidden'>
                     <div className='h-full grid grid-cols-4'>
                         <div className='col-span-3 p-4 overflow-hidden h-full'>
-                            <StreamUsersList event={event} cameraOn={cameraOn} micOn={micOn}
+                            <StreamUsersList event={event} cameraOn={cameraOn} micOn={micOn} localCameraTrack={localCameraTrack} localMicrophoneTrack={localMicrophoneTrack}
                                 setCamera={setCamera} isConnected={isConnected} calling={calling} setMic={setMic} setCalling={setCalling}
                                 role={role} currentUser={user} />
                         </div>
