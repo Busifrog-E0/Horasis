@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
 import { AuthProvider } from './utils/AuthProvider'
 import AgoraRTC, { AgoraRTCProvider } from 'agora-rtc-react'
-
+AgoraRTC.setLogLevel(3)
 const client = AgoraRTC.createClient({ mode: 'live', codec: 'vp8' })
 
 const Auth = () => (
