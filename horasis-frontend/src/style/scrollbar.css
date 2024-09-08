@@ -48,6 +48,7 @@ scrollbar {
 
 /* Hide scrollbar on mobile screens */
 @media screen and (max-width: 768px) {
+
 	/* WebKit (Safari/Chrome) */
 	::-webkit-scrollbar {
 		display: none;
