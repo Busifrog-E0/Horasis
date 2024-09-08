@@ -1,4 +1,4 @@
-import { useIsConnected, useJoin, useClientEvent, useRemoteUsers, useRTCClient } from 'agora-rtc-react'
+import { useIsConnected, useJoin, useClientEvent, useRTCClient } from 'agora-rtc-react'
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { getItem } from '../constants/operations'
@@ -41,7 +41,6 @@ export const Streaming = () => {
     const [micOn, setMic] = useState(true)
     const [cameraOn, setCamera] = useState(true)
 
-    const remoteUsers = useRemoteUsers()
     const getUser = () => {
         getItem(
             `users/${currentUserData.CurrentUser.UserId}`,
@@ -209,7 +208,7 @@ export const Streaming = () => {
                     <div className='h-full grid grid-cols-4'>
                         <div className='col-span-3 p-4 overflow-hidden h-full'>
                             <StreamUsersList event={event} cameraOn={cameraOn} micOn={micOn}
-                                remoteUsers={remoteUsers} setCamera={setCamera} isConnected={isConnected} calling={calling} setMic={setMic} setCalling={setCalling}
+                                setCamera={setCamera} isConnected={isConnected} calling={calling} setMic={setMic} setCalling={setCalling}
                                 role={role} currentUser={user} />
                         </div>
 

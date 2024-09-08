@@ -1,4 +1,4 @@
-import { RemoteUser } from 'agora-rtc-react'
+import { RemoteUser, useRemoteUsers } from 'agora-rtc-react'
 import arrowl from '../../assets/icons/arrowl.svg'
 import avatar from '../../assets/icons/avatar.svg'
 import people from '../../assets/icons/people.svg'
@@ -8,8 +8,9 @@ import { useEffect, useState } from 'react'
 import ScrollableRemoteUsersList from './ScrollableRemoteUsersList'
 import StickyLocalUserView from './StickyLocalUserView'
 
-const StreamUsersList = ({ event, cameraOn, micOn, setCamera, remoteUsers, isConnected, calling, setCalling, setMic, role, currentUser }) => {
+const StreamUsersList = ({ event, cameraOn, micOn, setCamera, isConnected, calling, setCalling, setMic, role, currentUser }) => {
 
+    const remoteUsers = useRemoteUsers()
     const [mainScreenUser, setMainScreenUser] = useState(null)
 
     useEffect(() => {
