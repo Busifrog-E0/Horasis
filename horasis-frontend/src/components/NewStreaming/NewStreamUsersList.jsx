@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react'
 import ScrollableRemoteUsersList from './ScrollableRemoteUsersList'
 import StickyLocalUserView from './StickyLocalUserView'
 
-const StreamUsersList = ({ participants, event, cameraOn, micOn, setCamera, isConnected, calling, setCalling, setMic, role, localCameraTrack, localMicrophoneTrack, currentUser }) => {
+const NewStreamUsersList = ({ participants, event, cameraOn, micOn, setCamera, isConnected, calling, setCalling, setMic, role, localCameraTrack, localMicrophoneTrack, currentUser }) => {
 	const remoteUsers = useRemoteUsers()
 	const [mainScreenUser, setMainScreenUser] = useState(null)
 
@@ -37,9 +37,9 @@ const StreamUsersList = ({ participants, event, cameraOn, micOn, setCamera, isCo
 					<div className='flex-1 flex-grow-1 rounded-lg overflow-hidden relative'>
 						<StickyLocalUserView localCameraTrack={localCameraTrack} localMicrophoneTrack={localMicrophoneTrack} calling={calling} cameraOn={cameraOn} isConnected={isConnected} participants={participants} micOn={micOn} role={role} setCalling={setCalling} setCamera={setCamera} setMic={setMic} currentUser={currentUser} />
 						{mainScreenUser !== null && (
-							<RemoteUser cover={participants.find((participant) => participant.UserDetails.DocId === mainScreenUser.uid)?.UserDetails?.CoverPicture ? participants.find((participant) => participant.UserDetails.DocId === mainScreenUser.uid)?.UserDetails?.CoverPicture : avatar} user={mainScreenUser} className='w-32 h-32 bg-red-500'>
+							<RemoteUser cover={participants.find((participant) => participant.UserId === mainScreenUser.uid)?.UserAvatar ? participants.find((participant) => participant.UserId === mainScreenUser.uid)?.UserAvatar : avatar} user={mainScreenUser} className='w-32 h-32 bg-red-500'>
 								<div className='absolute right-0 rounded-full m-2 bottom-0 font-semibold text-brand-secondary bg-system-primary-accent px-3'>
-									{participants.find((participant) => participant.UserDetails.DocId === mainScreenUser.uid)?.UserDetails?.FullName} {mainScreenUser.hasAudio ? <img className='inline-block h-4' src={mic}></img> : <img src={mic_off} className='inline-block h-4'></img>}
+									{participants.find((participant) => participant.UserId === mainScreenUser.uid)?.UserName} {mainScreenUser.hasAudio ? <img className='inline-block h-4' src={mic}></img> : <img src={mic_off} className='inline-block h-4'></img>}
 								</div>
 							</RemoteUser>
 						)}
@@ -51,4 +51,4 @@ const StreamUsersList = ({ participants, event, cameraOn, micOn, setCamera, isCo
 	)
 }
 
-export default StreamUsersList
+export default NewStreamUsersList

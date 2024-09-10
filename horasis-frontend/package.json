@@ -15,6 +15,7 @@
 		"@headlessui/react": "^2.1.2",
 		"agora-rtc-react": "^2.3.0",
 		"agora-rtc-sdk-ng": "^4.22.0",
+		"agora-rtm-sdk": "^2.1.10",
 		"axios": "^1.7.2",
 		"class-variance-authority": "^0.7.0",
 		"joi": "^17.13.3",

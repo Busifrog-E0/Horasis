@@ -37,6 +37,7 @@ import ForgotPassword from '../pages/ForgotPassword'
 import SavedArticlesPage from '../pages/SavedArticlesPage'
 import ProfileTabLayout from '../layouts/ProfileTabLayout'
 import Streaming from '../pages/Streaming'
+import NewStreaming from '../pages/NewStreaming'
 
 export const router = createBrowserRouter(
 	createRoutesFromElements(
@@ -66,7 +67,7 @@ export const router = createBrowserRouter(
 					<Route path='/Discussions/:discussionid' element={<SingleDiscussion />} />
 					<Route path='/Articles/:articleid' element={<SingleArticles />} />
 					<Route path='/Events/:eventid' element={<SingleEvent />} />
-					<Route path='/Events/:eventid/join' element={<Streaming />} />
+					<Route path='/Events/:eventid/join' element={<NewStreaming />} />
 					<Route path='/analytics' element={<Analytics />} />
 
 					<Route path='/Chat/:userid' element={<ChatPage />} />

@@ -68,7 +68,7 @@ const ScrollableRemoteUsersList = ({ participants, remoteUsers, setMainScreenUse
                     remoteUsers
                         .filter(user => user.uid !== mainScreenUser.uid)
                         .map((user) => {
-                            const participant = participants.find(p => p.UserDetails.DocId === user.uid)
+                            const participant = participants.find(p => p.UserId === user.uid)
                             return (
                                 <div className='relative h-36 w-64 flex-shrink-0 flex flex-col items-center rounded-lg overflow-hidden' key={user.uid}>
                                     <div className='absolute top-0 right-0 mx-2 my-2 z-10 cursor-pointer' onClick={() => setMainScreenUser(user)}>
@@ -77,13 +77,13 @@ const ScrollableRemoteUsersList = ({ participants, remoteUsers, setMainScreenUse
                                         </span>
                                     </div>
                                     <RemoteUser
-                                        cover={participant?.UserDetails?.CoverPicture || avatar}
+                                        cover={participant?.UserAvatar || avatar}
                                         user={user}
                                         className='w-32 h-32 bg-red-500'
                                     >
                                         <div className='absolute text-xs md:text-sm truncate right-0 rounded-full m-2 bottom-0 font-semibold text-brand-secondary bg-system-primary-accent px-3'>
                                             {/* {user.uid} */}
-                                            {participant?.UserDetails?.FullName}
+                                            {participant?.UserName}
                                             {user.hasAudio ? <img className='inline-block h-3' src={mic} alt="Mic On" /> : <img src={mic_off} className='inline-block h-3' alt="Mic Off" />}
                                         </div>
                                     </RemoteUser>

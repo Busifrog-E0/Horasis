@@ -12,9 +12,7 @@ const StickyLocalUserView = ({ participants, calling, role, cameraOn, micOn, isC
 			{role === 'Speaker' && (
 				<div className='z-10 absolute top-0 right-0 p-2'>
 					<div className=' h-44 w-60 flex flex-col items-center rounded-lg overflow-hidden'>
-						<LocalUser
-                        playAudio={false}
-                        audioTrack={localMicrophoneTrack} cameraOn={cameraOn} micOn={micOn} videoTrack={localCameraTrack} cover={currentUser?.CoverPicture ? currentUser?.CoverPicture : avatar} className='w-32 h-32 relative p-0'>
+						<LocalUser playAudio={false} audioTrack={localMicrophoneTrack} cameraOn={cameraOn} micOn={micOn} videoTrack={localCameraTrack} cover={currentUser?.ProfilePicture ? currentUser?.ProfilePicture : avatar} className='w-32 h-32 relative p-0'>
 							<div className='absolute left-0 right-0 rounded-t bottom-3'>
 								{isConnected && (
 									<div className='flex justify-center items-center'>

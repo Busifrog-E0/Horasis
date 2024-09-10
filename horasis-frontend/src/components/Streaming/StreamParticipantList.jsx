@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import avatar from '../../assets/icons/avatar.svg'
-const StreamParticipantList = ({ participants }) => {
+const StreamParticipantList = ({ participants, currentUser }) => {
 	const [activeTab, setActiveTab] = useState('participants')
 	console.log(participants)
 	return (
@@ -22,12 +22,14 @@ const StreamParticipantList = ({ participants }) => {
 							<p className='text-center truncate'>{'You'}</p>
 						</div>
 						{participants.length > 0 &&
-							participants.map((user) => (
-								<div key={user.uid} className='flex flex-col items-center'>
-									<img src={user.UserDetails.CoverPicture ? user.UserDetails.CoverPicture : avatar} alt='' className='h-20 rounded-full overflow-hidden w-20 object-cover' />
-									<p className='text-center truncate'>{user.UserDetails.FullName}</p>
-								</div>
-							))}
+							participants
+								.filter((participant) => participant?.UserDetails?.DocId !== currentUser?.DocId)
+								.map((user) => (
+									<div key={user.DocId} className='flex flex-col items-center'>
+										<img src={user.UserDetails.CoverPicture ? user.UserDetails.CoverPicture : avatar} alt='' className='h-20 rounded-full overflow-hidden w-20 object-cover' />
+										<p className='text-center truncate'>{user.UserDetails.FullName}</p>
+									</div>
+								))}
 					</div>
 				</div>
 			)}
