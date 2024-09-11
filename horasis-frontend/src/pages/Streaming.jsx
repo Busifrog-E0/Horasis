@@ -10,12 +10,11 @@ import StreamParticipantList from '../components/Streaming/StreamParticipantList
 import { useSocket } from '../context/Socket/SocketService'
 import { jsonToQuery } from '../utils/searchParams/extractSearchParams'
 import { getNextId } from '../utils/URLParams'
-import { useRTMClient } from '../rtm/AgoraRTMProvider'
-import { useRTMJoin } from '../rtm/useRTMJoin'
+
 
 export const Streaming = () => {
 	const client = useRTCClient()
-	const rtmClient = useRTMClient()
+	
 	const { updateCurrentUser, currentUserData } = useAuth()
 	const toast = useToast()
 	const { socket } = useSocket()
@@ -36,7 +35,7 @@ export const Streaming = () => {
 	// rtc joining
 	let newUser = useJoin({ uid: currentUserData.CurrentUser.UserId, appid: appId, channel: channel, token: rtcToken ? rtcToken : null }, calling, client ? client : null)
 	// rtm joining
-	let newRTM = useRTMJoin({ uid: currentUserData.CurrentUser.UserId, appId: appId, token: rtmToken ? rtmToken : null, channelName: eventid })
+	
 
 	useEffect(() => {
 		console.log(newUser)
@@ -45,12 +44,6 @@ export const Streaming = () => {
 		}
 	}, [newUser])
 
-	useEffect(() => {
-		console.log(newRTM)
-		if (rtmClient) {
-			console.log(rtmClient,'rtm client')
-		}
-	}, [newRTM])
 
 	const [micOn, setMic] = useState(true)
 	const [cameraOn, setCamera] = useState(true)

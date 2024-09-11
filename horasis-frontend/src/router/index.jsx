@@ -3,10 +3,13 @@ import { Outlet, Route, createBrowserRouter, createRoutesFromElements } from 're
 
 // layouts
 import RootLayout from '../layouts/RootLayout'
-//pages
+import SuperAdminLayout from '../layouts/superadmin/SuperAdminLayout'
+import SuperAdminAuthLayout from '../layouts/superadmin/SuperAdminAuthLayout'
+import SuperAdminUnauthLayout from '../layouts/superadmin/SuperAdminUnauthLayout'
 import DashboardLayout from '../layouts/DashboardLayout'
 import AuthLayout from '../layouts/AuthLayout'
 import UnAuthLayout from '../layouts/UnAuthLayout'
+//pages
 import LogIn from '../pages/LogIn'
 import WelcomePage from '../components/Login/WelcomePage'
 import Activities from '../pages/Activities'
@@ -38,10 +41,20 @@ import SavedArticlesPage from '../pages/SavedArticlesPage'
 import ProfileTabLayout from '../layouts/ProfileTabLayout'
 import Streaming from '../pages/Streaming'
 import NewStreaming from '../pages/NewStreaming'
+import SuperAdmin from '../pages/SuperAdmin'
+import SuperAdminLogin from '../pages/SuperAdminLogin'
 
 export const router = createBrowserRouter(
 	createRoutesFromElements(
 		<Route path='/' element={<RootLayout />}>
+			<Route path='/SuperAdmin' element={<SuperAdminLayout />}>
+				<Route path='' element={<SuperAdminAuthLayout />}>
+					<Route index element={<SuperAdmin />} />
+				</Route>
+				<Route path='Login' element={<SuperAdminUnauthLayout />}>
+					<Route index element={<SuperAdminLogin />} />
+				</Route>
+			</Route>
 			<Route path='/' element={<AuthLayout />}>
 				<Route path='/' element={<DashboardLayout />}>
 					<Route path='/' element={<ProfileTabLayout />}>
