@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { AuthAdmin, GetBanners, PatchAdmin, PatchBanners } from "../controllers/admins-controller.js";
+import { AuthAdmin, PatchAdmin,  } from "../controllers/admins-controller.js";
 import { decodeIDToken, ensureAuthorized } from "../middleware/auth-middleware.js";
 import asyncHandler from 'express-async-handler';
 import { AddUserAsAdmin, RemoveUserAsAdmin } from "../controllers/users-controller.js";
