@@ -8,6 +8,7 @@ import { ConnectionStatus } from './connections-controller.js';
 import { PostActivityForProfilePatch } from './activities-controller.js';
 import { AddUserDetailsAfterInvited } from './invitations-controller.js';
 import { UpdateManyMembers } from '../databaseControllers/members-databaseController.js';
+import { ReturnDocument } from 'mongodb';
 
 
 
@@ -276,6 +277,18 @@ const UpdateUserDetails = async (UserId) => {
     return;
 }
 
+const AddUserAsAdmin = async (req, res) => {
+    const { UserId } = req.body;
+    await UpdateUsers({ Roles: ["Admin", "User"] }, UserId);
+    return res.json(true);
+}
+
+const RemoveUserAsAdmin = async (req, res) => {
+    const { UserId } = req.body;
+    await UpdateUsers({ Roles: ["User"] }, UserId);
+    return res.json(true);
+}
+
 /**
  * 
  * @param {UserData} User 
@@ -287,7 +300,8 @@ const UserInit = async (User) => {
         ...User,
         ProfilePicture: "",
         CoverPicture: "",
-        Password
+        Password,
+        Roles: ["User"],
     };
 }
 
@@ -323,5 +337,5 @@ export {
     GetOneFromUsers, GetUsers, PostUsersRegister, PatchUsers,
     UserLogin, VerifyRegistrationOTP, CheckUsernameAvailability,
     ViewOtherUserRelations, ViewOtherUserData, SendForgotPasswordOTP,
-    PatchPassword, CheckIfUserWithMailExists
+    PatchPassword, CheckIfUserWithMailExists, AddUserAsAdmin, RemoveUserAsAdmin
 }

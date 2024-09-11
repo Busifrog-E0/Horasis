@@ -12,7 +12,7 @@ import e from 'express';
 import { GetAdminInfo, GetAuthAdmin, UpdateAdminInfo } from '../databaseControllers/admins-databaseController.js';
 import { GenerateToken } from './auth-controller.js';
 /**
- * @typedef {import('../databaseControllers/admins-databaseController.js').AdminData} AdminData 
+ * @typedef {import("../databaseControllers/admins-databaseController.js").AdminData} AdminData 
  */
 
 /**
@@ -41,7 +41,7 @@ const AuthAdmin = async (req, res) => {
 
     let TokenData;
     if (AdminData.Username === Username && AdminData.Password === Password) {
-        TokenData = await GenerateToken({ Role: "Admin", "UserId": "Admin" })
+        TokenData = await GenerateToken({ Role: "SuperAdmin", "UserId": "SuperAdmin" })
     }
     else {
         /* #swagger.responses[400] = {
@@ -59,8 +59,8 @@ const AuthAdmin = async (req, res) => {
     */
 
     TokenData.CurrentUser = {
-        Role: "Admin",
-        UserId: "Admin",
+        Role: "SuperAdmin",
+        UserId: "SuperAdmin",
         RegistrationStatus: "",
         Subscription: null
     };
@@ -70,34 +70,12 @@ const AuthAdmin = async (req, res) => {
 }
 
 
-/**
- * 
- * @param {e.Request} req
- * @param {e.Response} res
- * @returns {Promise<e.Response<any>>}
- */
-const PatchBanners = async (req, res) => {
-    await UpdateAdminInfo({ Banners: req.body })
+const PatchAdmin = async (req, res) => {
+    await UpdateAdminInfo(req.body);
     return res.json(true);
 }
 
 
-/**
- * 
- * @param {e.Request} req 
- * @param {e.Response} res 
- * @returns {Promise<e.Response<any>>}
- */
-const GetBanners = async (req, res) => {
-    const Banners = (await GetAdminInfo()).Banners;
-    return res.json(Banners);
-}
-
-
-
 export {
-    AuthAdmin,
-    PatchBanners,
-    GetBanners,
-
+    AuthAdmin, PatchAdmin
 }
