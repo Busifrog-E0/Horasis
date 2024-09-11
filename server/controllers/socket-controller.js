@@ -31,22 +31,6 @@ const ConnectSocket = (expressServer) => {
         //@ts-ignore
         socket.join(socket.user.UserId);
 
-        socket.on('user-joined-videocall', async ({ EventId, UserId }) => {
-            console.log("joined vcall")
-            const UserDetails = await ReadOneFromUsers(UserId);
-            // @ts-ignore
-            await CreateParticipants({ EventId, UserId, UserDetails });
-            socket.to(EventId).emit('participants-list', { UserDetails });
-            console.log(socket.rooms)
-        });
-
-        socket.on('user-left-videocall', async ({ EventId }) => {
-            console.log("left vcall")
-            // @ts-ignore
-            const [Participant] = await ReadParticipants({ EventId, UserId: socket.user.UserId }, undefined, 1, undefined);
-            await RemoveParticipants(Participant.DocId);
-            socket.to(EventId).emit('participants-list', { UserDetails: Participant.UserDetails });
-        });
 
         socket.on('Message', async data => {
 
@@ -64,18 +48,6 @@ const ConnectSocket = (expressServer) => {
                         io.to(id).emit('ConversationList', true)
                     };
                 })
-            }
-        })
-
-        socket.on('JoinEvent', async ({ EventId }) => {
-            console.log(socket.rooms)
-            const [Member, Speaker] = await Promise.all([
-                ReadMembers({ MemberId: socket.user.UserId, EntityId: EventId, MembershipStatus: "Accepted" }, undefined, 1, undefined),
-                ReadSpeakers({ SpeakerId: socket.user.UserId, EventId, MembershipStatus: "Accepted" }, undefined, 1, undefined)
-            ])
-            if (Member || Speaker) {
-                socket.join(EventId);
-                console.log(socket.rooms)
             }
         })
 
