@@ -4,7 +4,7 @@ import { ReadMembers } from '../databaseControllers/members-databaseController.j
 import { AlertBoxObject } from './common.js';
 import Env from '../Env.js';
 import { ReadParticipants } from '../databaseControllers/participants-databaseController.js';
-const { RtcTokenBuilder, RtcRole } = agora;
+const { RtcTokenBuilder, RtcRole,RtmTokenBuilder } = agora;
 
 const generateRTCToken = async (req, res) => {
     const { EventId } = req.params;
@@ -18,9 +18,10 @@ const generateRTCToken = async (req, res) => {
     if (!Role) {
         return res.status(444).json(AlertBoxObject("Cannot Generate Token", "You are not a member of this event"))
     }
-    const token = RtcTokenBuilder.buildTokenWithUid(Env.AGORA_APP_ID, Env.AGORA_APP_CERTIFICATE, EventId, UserId, Role, 6000, 6000);
+    const RtcToken = RtcTokenBuilder.buildTokenWithUid(Env.AGORA_APP_ID, Env.AGORA_APP_CERTIFICATE, EventId, UserId, Role, 6000, 6000);
+    const RtmToken = RtmTokenBuilder.buildToken(Env.AGORA_APP_ID, Env.AGORA_APP_CERTIFICATE, UserId, 6000);
     const UserRole = Role === RtcRole.PUBLISHER ? "Speaker" : "Member";
-    return res.json({ Token: token, Role: UserRole });
+    return res.json({ RtcToken, RtmToken, Role: UserRole });
 }
 
 const GetParticipants = async (req, res) => {
