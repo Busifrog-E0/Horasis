@@ -276,16 +276,50 @@ const UpdateUserDetails = async (UserId) => {
     return;
 }
 
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ * @returns 
+ */
 const AddUserAsAdmin = async (req, res) => {
     const { UserId } = req.body;
     await UpdateUsers({ Roles: ["Admin", "User"] }, UserId);
     return res.json(true);
 }
 
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ * @returns 
+ */
 const RemoveUserAsAdmin = async (req, res) => {
     const { UserId } = req.body;
     await UpdateUsers({ Roles: ["User"] }, UserId);
     return res.json(true);
+}
+
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ */
+const GetUsersByRole = async (req, res) => {
+    const { Filter, NextId, Limit, OrderBy, Keyword } = req.query;
+    if (Keyword) {
+        //@ts-ignore
+        Filter['$or'] = [
+            { 'FullName': { $regex: Keyword, $options: 'i' } },
+            { 'Username': { $regex: Keyword, $options: 'i' } },
+        ]
+    }
+    // @ts-ignore
+    Filter.Roles = Filter.Role === "User" ? ["User"] : ["User", "Admin"];
+    delete Filter.Role;
+    // @ts-ignore
+    const Users = await ReadUsers(Filter, NextId, Limit, OrderBy);
+    return res.json(Users);
 }
 
 /**
@@ -336,5 +370,6 @@ export {
     GetOneFromUsers, GetUsers, PostUsersRegister, PatchUsers,
     UserLogin, VerifyRegistrationOTP, CheckUsernameAvailability,
     ViewOtherUserRelations, ViewOtherUserData, SendForgotPasswordOTP,
-    PatchPassword, CheckIfUserWithMailExists, AddUserAsAdmin, RemoveUserAsAdmin
+    PatchPassword, CheckIfUserWithMailExists, AddUserAsAdmin, RemoveUserAsAdmin,
+    GetUsersByRole
 }

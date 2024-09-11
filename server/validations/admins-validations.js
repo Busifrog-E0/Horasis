@@ -15,7 +15,21 @@ const ValidateAdmin = async (req, res, next) => {
     }
 }
 
-const ValidatePatchUserRoles = async (req, res, next) => { 
+const ValidateGetUsersByRole = async (req, res, next) => {
+    const Result = Joi.object({
+        Role: Joi.string().valid("Admin", "User").required(),
+    }).validate(req.query, { stripUnknown: true });
+    if (Result.error) {
+        const message = Result.error.details.map((detail) => detail.message).join(', ');
+        return res.status(400).json(message);
+    }
+    else {
+        req.query = Result.value;
+        return next();
+    }
+}
+
+const ValidatePatchUserRoles = async (req, res, next) => {
     const Result = Joi.object({
         UserId: Joi.string().required(),
     }).validate(req.body, { stripUnknown: true });
@@ -30,5 +44,5 @@ const ValidatePatchUserRoles = async (req, res, next) => {
 }
 
 export {
-    ValidateAdmin, ValidatePatchUserRoles
+    ValidateAdmin, ValidatePatchUserRoles, ValidateGetUsersByRole
 }
