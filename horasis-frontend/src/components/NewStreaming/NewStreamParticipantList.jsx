@@ -4,7 +4,7 @@ import send from '../../assets/icons/send.svg'
 
 import Button from '../ui/Button'
 import Input from '../ui/Input'
-const NewStreamParticipantList = ({ participants, currentUser, leaveEvent, sendMessage, messages, setMessages, speakers }) => {
+const NewStreamParticipantList = ({ participants, currentUser, leaveEvent, sendMessage, messages, setMessages, speakers ,role}) => {
 	const [activeTab, setActiveTab] = useState('participants')
 	const [messageToSend, setMessageToSend] = useState('')
 	return (
@@ -24,25 +24,43 @@ const NewStreamParticipantList = ({ participants, currentUser, leaveEvent, sendM
 						<div className='bg-[#d6d3e3] rounded-t-md'>
 							<p className='px-4 pt-2 font-medium'>Speakers</p>
 							<div className=' grid grid-cols-3 bg-[#D6D3E3] text-brand-primary p-5 rounded-lg gap-6 '>
+								{role === 'Speaker' && (
+									<div key={currentUser.DocId} className='flex flex-col items-center'>
+										<img src={currentUser.ProfilePicture ? currentUser.ProfilePicture : avatar} alt='' className='h-20 rounded-full overflow-hidden w-20 object-cover' />
+										<p className='text-center truncate'>You</p>
+									</div>
+								)}
 								{speakers.length > 0 &&
-									speakers.map((user) => (
-										<div key={user.UserId} className='flex flex-col items-center'>
-											<img src={user.UserAvatar ? user.UserAvatar : avatar} alt='' className='h-20 rounded-full overflow-hidden w-20 object-cover' />
-											<p className='text-center truncate'>{user.UserId === currentUser.DocId ? 'You' : user.UserName}</p>
-										</div>
-									))}
+									speakers.map((user) => {
+										if (user.UserId === currentUser.DocId) return
+										return (
+											<div key={user.UserId} className='flex flex-col items-center'>
+												<img src={user.UserAvatar ? user.UserAvatar : avatar} alt='' className='h-20 rounded-full overflow-hidden w-20 object-cover' />
+												<p className='text-center truncate'>{user.UserId === currentUser.DocId ? 'You' : user.UserName}</p>
+											</div>
+										)
+									})}
 							</div>
 						</div>
 						<div className='bg-[#d6d3e3] rounded-b-md'>
 							<p className='px-4 pt-2 font-medium'>Audience</p>
 							<div className=' grid grid-cols-3 bg-[#D6D3E3] text-brand-primary p-5 rounded-lg gap-6 '>
+								{role === 'Member' && (
+									<div key={currentUser.DocId} className='flex flex-col items-center'>
+										<img src={currentUser.ProfilePicture ? currentUser.ProfilePicture : avatar} alt='' className='h-20 rounded-full overflow-hidden w-20 object-cover' />
+										<p className='text-center truncate'>You</p>
+									</div>
+								)}
 								{participants.length > 0 &&
-									participants.map((user) => (
-										<div key={user.UserId} className='flex flex-col items-center'>
-											<img src={user.UserAvatar ? user.UserAvatar : avatar} alt='' className='h-20 rounded-full overflow-hidden w-20 object-cover' />
-											<p className='text-center truncate'>{user.UserId === currentUser.DocId ? 'You' : user.UserName}</p>
-										</div>
-									))}
+									participants.map((user) => {
+										if (user.UserId === currentUser.DocId) return
+										return (
+											<div key={user.UserId} className='flex flex-col items-center'>
+												<img src={user.UserAvatar ? user.UserAvatar : avatar} alt='' className='h-20 rounded-full overflow-hidden w-20 object-cover' />
+												<p className='text-center truncate'>{user.UserId === currentUser.DocId ? 'You' : user.UserName}</p>
+											</div>
+										)
+									})}
 							</div>
 						</div>
 					</div>

@@ -320,7 +320,7 @@ const NewStreaming = () => {
 							</div>
 
 							<div className=' hidden md:block h-full md:col-span-2 lg:col-span-1 p-4 '>
-								<NewStreamParticipantList participants={participants} currentUser={user} leaveEvent={handleLeave} sendMessage={handleSendMessage} messages={messages} setMessages={setMessages} speakers={speakers} />
+								<NewStreamParticipantList participants={participants} currentUser={user} leaveEvent={handleLeave} sendMessage={handleSendMessage} messages={messages} setMessages={setMessages} speakers={speakers} role={role} />
 							</div>
 
 							<Modal isOpen={modalOpen}>
@@ -335,7 +335,7 @@ const NewStreaming = () => {
 									</div>
 								</Modal.Header>
 								<Modal.Body bgColor='bg-system-primary-accent-dim'>
-									<NewStreamParticipantList participants={participants} currentUser={user} leaveEvent={handleLeave} sendMessage={handleSendMessage} messages={messages} setMessages={setMessages} speakers={speakers} />
+									<NewStreamParticipantList participants={participants} currentUser={user} leaveEvent={handleLeave} sendMessage={handleSendMessage} messages={messages} setMessages={setMessages} speakers={speakers} role={role} />
 								</Modal.Body>
 							</Modal>
 						</div>
