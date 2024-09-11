@@ -6,12 +6,12 @@ import camera_off from '../../assets/icons/streaming/camera_off.svg'
 import mic_off from '../../assets/icons/streaming/mic_off.svg'
 import mic from '../../assets/icons/streaming/mic.svg'
 
-const StickyLocalUserView = ({ participants, calling, role, cameraOn, micOn, isConnected, setCamera, setCalling, setMic, localCameraTrack, localMicrophoneTrack, currentUser }) => {
+const StickyLocalUserView = ({ participants, calling, role, cameraOn, micOn, isConnected, setCamera, setCalling, setMic, localCameraTrack, localMicrophoneTrack, currentUser, speakers }) => {
 	return (
 		<>
 			{role === 'Speaker' && (
 				<div className='z-10 absolute top-0 right-0 p-2'>
-					<div className=' h-44 w-60 flex flex-col items-center rounded-lg overflow-hidden'>
+					<div className='h-44 w-40 md:w-60 flex flex-col items-center rounded-lg overflow-hidden'>
 						<LocalUser playAudio={false} audioTrack={localMicrophoneTrack} cameraOn={cameraOn} micOn={micOn} videoTrack={localCameraTrack} cover={currentUser?.ProfilePicture ? currentUser?.ProfilePicture : avatar} className='w-32 h-32 relative p-0'>
 							<div className='absolute left-0 right-0 rounded-t bottom-3'>
 								{isConnected && (

@@ -11,6 +11,8 @@ import StreamUsersList from '../components/Streaming/StreamUsersList'
 import NewStreamParticipantList from '../components/NewStreaming/NewStreamParticipantList'
 import JoinToStream from '../components/Streaming/JoinToStream'
 import NewStreamUsersList from '../components/NewStreaming/NewStreamUsersList'
+import Modal from '../components/ui/Modal'
+import close from '../assets/icons/closewhite.svg'
 
 const NewStreaming = () => {
 	// context and params
@@ -30,6 +32,7 @@ const NewStreaming = () => {
 	const [user, setUser] = useState({})
 	const [event, setEvent] = useState({})
 	const [participants, setParticipants] = useState([])
+	const [speakers, setSpeakers] = useState([])
 	const [messages, setMessages] = useState([])
 	// clients
 	const rtcClient = useRTCClient()
@@ -135,15 +138,22 @@ const NewStreaming = () => {
 			// console.log(event)
 			if (action === 'SNAPSHOT') {
 				const parts = snapshot.map((item) => item.states)
-				setParticipants(parts)
+				const filteredSpeakers = parts.filter((part) => part.Role === 'Speaker')
+				const filteredMembers = parts.filter((part) => part.Role === 'Member')
+				setParticipants(filteredMembers)
+				setSpeakers(filteredSpeakers)
 			}
 			if (action === 'REMOTE_LEAVE') {
 				await handleGetUsers(newRtmClient)
 			}
 
 			if (action === 'REMOTE_STATE_CHANGED') {
-				if (states.UserName !== undefined && states.UserAvatar !== undefined && states.UserRtcUid !== undefined && states.UserId !== undefined) {
-					setParticipants((prev) => [...prev, states])
+				if (states.UserName !== undefined && states.UserAvatar !== undefined && states.UserRtcUid !== undefined && states.UserId !== undefined && states.Role !== undefined) {
+					if (states.Role === 'Speaker') {
+						setSpeakers((prev) => [...prev, states])
+					} else {
+						setParticipants((prev) => [...prev, states])
+					}
 				}
 			}
 		})
@@ -224,15 +234,17 @@ const NewStreaming = () => {
 		try {
 			const result = await rtmClient.presence.getOnlineUsers(eventid, 'MESSAGE', options)
 			const parts = result.occupants.map((item) => item.states)
-			setParticipants(parts)
-			console.log(parts)
+			const filteredSpeakers = parts.filter((part) => part.Role === 'Speaker')
+			const filteredMembers = parts.filter((part) => part.Role === 'Member')
+			setParticipants(filteredMembers)
+			setSpeakers(filteredSpeakers)
 		} catch (status) {
 			console.log(status)
 		}
 	}
 
 	const handleUserJoinPresence = async (rtmClient) => {
-		var newState = { UserId: currentUserData?.CurrentUser?.UserId, UserName: user?.FullName, UserRtcUid: currentUserData?.CurrentUser?.UserId, UserAvatar: user?.ProfilePicture }
+		var newState = { UserId: currentUserData?.CurrentUser?.UserId, UserName: user?.FullName, UserRtcUid: currentUserData?.CurrentUser?.UserId, UserAvatar: user?.ProfilePicture, Role: role }
 
 		try {
 			const result = await rtmClient.presence.setState(eventid, 'MESSAGE', newState)
@@ -248,7 +260,7 @@ const NewStreaming = () => {
 		}
 		try {
 			const result = await rtmClient.presence.removeState(eventid, 'MESSAGE', options)
-			console.log(result)
+			// console.log(result)
 		} catch (status) {
 			console.log(status)
 		}
@@ -274,7 +286,7 @@ const NewStreaming = () => {
 	const handleSendMessage = async (messagePayload) => {
 		try {
 			const result = await rtmClient.publish(eventid, messagePayload)
-			console.log(result)
+			// console.log(result)
 		} catch (status) {
 			console.log(status)
 		}
@@ -288,13 +300,9 @@ const NewStreaming = () => {
 			else rtcClient.setClientRole('audience')
 		}
 	}, [isConnected])
-	// getChannelMembers
-	// const getChannelMembers = async (rtmChannel, rtmClient) => {
-	// 	let members = await rtmClient.storage.getChannelMetadata(eventid, 'MESSAGE')
-	// 	let parts = Object.keys(members.metadata).map((id) => JSON.parse(members.metadata[id].value))
-	// 	setParticipants(parts)
-	// }
-	// leave rtc and rtm channel
+
+	const [modalOpen, setModalOpen] = useState(false)
+
 	return (
 		<>
 			{isLoadingEvent || isLoadingToken || isLoadingUser ? (
@@ -306,14 +314,30 @@ const NewStreaming = () => {
 			) : isConnected ? (
 				<>
 					<div className='bg-system-primary-darker-accent h-full overflow-hidden'>
-						<div className='h-full grid grid-cols-4'>
-							<div className='col-span-3 p-4 overflow-hidden h-full'>
-								<NewStreamUsersList event={event} cameraOn={cameraOn} micOn={micOn} localCameraTrack={localCameraTrack} localMicrophoneTrack={localMicrophoneTrack} setCamera={setCamera} isConnected={isConnected} calling={isCalling} setMic={setMic} setCalling={handleLeave} role={role} currentUser={user} participants={participants} />
+						<div className='h-full grid grid-cols-4 '>
+							<div className='col-span-4 md:col-span-2 lg:col-span-3 p-4 overflow-hidden h-full '>
+								<NewStreamUsersList event={event} cameraOn={cameraOn} micOn={micOn} localCameraTrack={localCameraTrack} localMicrophoneTrack={localMicrophoneTrack} setCamera={setCamera} isConnected={isConnected} calling={isCalling} setMic={setMic} setCalling={handleLeave} role={role} currentUser={user} participants={participants} setModalOpen={setModalOpen} speakers={speakers} />
 							</div>
 
-							<div className=' h-full col-span-1 p-4 '>
-								<NewStreamParticipantList participants={participants} currentUser={user} leaveEvent={handleLeave} sendMessage={handleSendMessage} messages={messages} setMessages={setMessages} />
+							<div className=' hidden md:block h-full md:col-span-2 lg:col-span-1 p-4 '>
+								<NewStreamParticipantList participants={participants} currentUser={user} leaveEvent={handleLeave} sendMessage={handleSendMessage} messages={messages} setMessages={setMessages} speakers={speakers} />
 							</div>
+
+							<Modal isOpen={modalOpen}>
+								<Modal.Header bgColor='bg-system-primary-accent-dim'>
+									<div className='flex w-full items-center justify-end'>
+										<button
+											onClick={() => {
+												setModalOpen(false)
+											}}>
+											<img src={close} className='h-6  cursor-pointer' alt='' />
+										</button>
+									</div>
+								</Modal.Header>
+								<Modal.Body bgColor='bg-system-primary-accent-dim'>
+									<NewStreamParticipantList participants={participants} currentUser={user} leaveEvent={handleLeave} sendMessage={handleSendMessage} messages={messages} setMessages={setMessages} speakers={speakers} />
+								</Modal.Body>
+							</Modal>
 						</div>
 						{/* */}
 					</div>
