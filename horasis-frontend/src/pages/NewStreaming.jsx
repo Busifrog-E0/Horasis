@@ -13,6 +13,7 @@ import JoinToStream from '../components/Streaming/JoinToStream'
 import NewStreamUsersList from '../components/NewStreaming/NewStreamUsersList'
 import Modal from '../components/ui/Modal'
 import close from '../assets/icons/closewhite.svg'
+import Spinner from '../components/ui/Spinner'
 
 const NewStreaming = () => {
 	// context and params
@@ -308,7 +309,8 @@ const NewStreaming = () => {
 			{isLoadingEvent || isLoadingToken || isLoadingUser ? (
 				<>
 					<div className='flex items-center justify-center h-full'>
-						<div className='text-xl font-semibold text-gray-700'>Loading...</div>
+						<Spinner />
+						{/* <div className='text-xl font-semibold text-gray-700'>Loading...</div> */}
 					</div>
 				</>
 			) : isConnected ? (
