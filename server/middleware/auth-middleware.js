@@ -40,10 +40,10 @@ const decodeIDToken = (req, res, next) => {
  * @returns 
  */
 const ensureAuthorized = (...Roles) => (req, res, next) => {
-
-
     // @ts-ignore
-    if (!Roles.includes(req.user.Role)) {
+    const { Role } = req.user;
+    const hasValidRole = Role.some(role => Roles.includes(role));
+    if (!hasValidRole) {
         return res.status(402).json({ 'message': 'invalid roles' });
     }
     else {

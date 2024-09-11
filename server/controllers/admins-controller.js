@@ -41,7 +41,7 @@ const AuthAdmin = async (req, res) => {
 
     let TokenData;
     if (AdminData.Username === Username && AdminData.Password === Password) {
-        TokenData = await GenerateToken({ Role: "SuperAdmin", "UserId": "SuperAdmin" })
+        TokenData = await GenerateToken({ Role: ["SuperAdmin"], "UserId": "SuperAdmin" })
     }
     else {
         /* #swagger.responses[400] = {
@@ -59,7 +59,7 @@ const AuthAdmin = async (req, res) => {
     */
 
     TokenData.CurrentUser = {
-        Role: "SuperAdmin",
+        Role: ["SuperAdmin"],
         UserId: "SuperAdmin",
         RegistrationStatus: "",
         Subscription: null

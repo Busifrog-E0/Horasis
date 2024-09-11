@@ -8,7 +8,6 @@ import { ConnectionStatus } from './connections-controller.js';
 import { PostActivityForProfilePatch } from './activities-controller.js';
 import { AddUserDetailsAfterInvited } from './invitations-controller.js';
 import { UpdateManyMembers } from '../databaseControllers/members-databaseController.js';
-import { ReturnDocument } from 'mongodb';
 
 
 
@@ -104,7 +103,7 @@ const VerifyRegistrationOTP = async (req, res) => {
     //@ts-ignore
     AddUserDetailsAfterInvited(OTPData.Data, UserId)
     const CurrentUser = {
-        Role: "User",
+        Role: ["User"],
         UserId
     }
     const LoginData = await TokenData(CurrentUser);
@@ -148,7 +147,7 @@ const UserLogin = async (req, res) => {
         return res.status(444).json(AlertBoxObject("Invalid Credentials", "The email or password you entered is incorrect"));
     }
     const CurrentUser = {
-        Role: 'User',
+        Role: User.Roles,
         UserId: User.DocId
     }
     const LoginData = await TokenData(CurrentUser);
