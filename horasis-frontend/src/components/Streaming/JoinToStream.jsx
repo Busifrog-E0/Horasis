@@ -1,6 +1,8 @@
 import cover from '../../assets/icons/cover.svg'
+import useCountdown from '../../hooks/useCountdown'
 import Button from '../ui/Button'
 const JoinToStream = ({ event, appId, channel, token, setChannel, setToken, setCalling, setAppId }) => {
+	const { timeLeft, formattedTime } = useCountdown(event.StartTime, event.EndTime)
 	return (
 		<div className='w-full h-full'>
 			{event.CoverPicture ? (
@@ -27,9 +29,29 @@ const JoinToStream = ({ event, appId, channel, token, setChannel, setToken, setC
 						<div className='flex flex-row flex-wrap gap-3'>
 							<h4 className='text-xl text-white'>{event.Description}</h4>
 						</div>
-						<Button variant='danger' className='px-20 font-bold' size='md' disabled={!appId || !channel} onClick={() => setCalling(true)}>
-							Join
-						</Button>
+						{timeLeft > 0 ? (
+							<div className='bg-system-primary-accent-transparent text-system-secondary-bg p-2 rounded-md'>
+								{new Date().getTime() < event.StartTime ? (
+									<>
+										<p className='text-md'>Event starts in: </p>
+										<p className='text-4xl'>{formattedTime} </p>
+									</>
+								) : (
+									<>
+										<p className='text-md'>Event ends in: </p>
+										<p className='text-4xl'>{formattedTime} </p>
+									</>
+								)}
+							</div>
+						) : (
+							<div className='bg-system-secondary-bg-transparent p-2 rounded-md'>The event has ended.</div>
+						)}
+						{event.StartTime < new Date().getTime() && new Date().getTime() < event.EndTime && (
+							<Button variant='danger' className='px-20 font-bold' size='md' disabled={!appId || !channel} onClick={() => setCalling(true)}>
+								Join
+							</Button>
+						)}
+						{}
 					</div>
 				</div>
 			</div>

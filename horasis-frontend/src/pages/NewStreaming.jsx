@@ -46,8 +46,8 @@ const NewStreaming = () => {
 	const [isLoadingEvent, setIsLoadingEvent] = useState(true)
 
 	// mic and camera
-	const [micOn, setMic] = useState(true)
-	const [cameraOn, setCamera] = useState(true)
+	const [micOn, setMic] = useState(false)
+	const [cameraOn, setCamera] = useState(false)
 	const { localMicrophoneTrack } = useLocalMicrophoneTrack(micOn)
 	const { localCameraTrack } = useLocalCameraTrack(cameraOn)
 	usePublish([localMicrophoneTrack, localCameraTrack])

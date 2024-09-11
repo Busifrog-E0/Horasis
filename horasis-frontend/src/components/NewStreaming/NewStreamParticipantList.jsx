@@ -1,12 +1,25 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import avatar from '../../assets/icons/avatar.svg'
 import send from '../../assets/icons/send.svg'
 
 import Button from '../ui/Button'
 import Input from '../ui/Input'
-const NewStreamParticipantList = ({ participants, currentUser, leaveEvent, sendMessage, messages, setMessages, speakers ,role}) => {
+const NewStreamParticipantList = ({ participants, currentUser, leaveEvent, sendMessage, messages, setMessages, speakers, role }) => {
 	const [activeTab, setActiveTab] = useState('participants')
 	const [messageToSend, setMessageToSend] = useState('')
+	const messagesEndRef = useRef(null) // Reference to the end of the messages list
+
+	// Function to scroll to the bottom when messages are updated
+	const scrollToBottom = () => {
+		if (messagesEndRef.current) {
+			messagesEndRef.current.scrollIntoView({ behavior: 'smooth' })
+		}
+	}
+
+	// useEffect to run scrollToBottom when messages change
+	useEffect(() => {
+		scrollToBottom()
+	}, [messages,activeTab]) // Run this effect every time messages update
 	return (
 		<div className='flex flex-col h-[88vh] relative  overflow-hidden p-4 bg-system-primary-accent-dim shadow-lg rounded-lg'>
 			<div className='flex gap-2'>
@@ -97,6 +110,7 @@ const NewStreamParticipantList = ({ participants, currentUser, leaveEvent, sendM
 										</div>
 									)
 								})}
+							<div ref={messagesEndRef} />
 						</div>
 					</div>
 					<div className='my-4 absolute bottom-0 px-4 w-full left-0 right-0'>
@@ -104,17 +118,19 @@ const NewStreamParticipantList = ({ participants, currentUser, leaveEvent, sendM
 							value={messageToSend}
 							onChange={(e) => setMessageToSend(e.target.value)}
 							onClick={() => {
-								const AuthorId = currentUser.DocId
-								const Content = messageToSend
-								const CreatedIndex = new Date().getTime()
-								const AuthorAvatar = currentUser.ProfilePicture
-								const AuthorName = currentUser.FullName
+								if (messageToSend !== '') {
+									const AuthorId = currentUser.DocId
+									const Content = messageToSend
+									const CreatedIndex = new Date().getTime()
+									const AuthorAvatar = currentUser.ProfilePicture
+									const AuthorName = currentUser.FullName
 
-								const MessageContent = { AuthorId, Content, CreatedIndex, AuthorAvatar, AuthorName }
-								setMessages((prev) => [...prev, MessageContent])
+									const MessageContent = { AuthorId, Content, CreatedIndex, AuthorAvatar, AuthorName }
+									setMessages((prev) => [...prev, MessageContent])
 
-								sendMessage(JSON.stringify(MessageContent))
-								setMessageToSend('')
+									sendMessage(JSON.stringify(MessageContent))
+									setMessageToSend('')
+								}
 							}}
 						/>
 					</div>
@@ -127,7 +143,18 @@ const NewStreamParticipantList = ({ participants, currentUser, leaveEvent, sendM
 const MessageInput = ({ value, onChange, onClick }) => {
 	return (
 		<div className='flex bg-gray-700 gap-2 p-2 rounded-md w-full'>
-			<Input width='full' value={value} placeholder='Enter Message Here' className='bg-transparent flex-1 text-system-secondary-bg outline-none border-none focus:bg-transparent focus:outline-none  focus:border-none hover:shadow-none' onChange={onChange} />
+			<Input
+				width='full'
+				value={value}
+				placeholder='Enter Message Here'
+				className='bg-transparent flex-1 text-system-secondary-bg outline-none border-none focus:bg-transparent focus:outline-none  focus:border-none hover:shadow-none'
+				onChange={onChange}
+				onKeyDown={(e) => {
+					if (e.key === 'Enter') {
+						onClick()
+					}
+				}}
+			/>
 			<Button className='px-4 bg-system-secondary-bg' onClick={onClick}>
 				<img src={send} className='h-6  w-6' />
 			</Button>
