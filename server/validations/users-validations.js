@@ -14,7 +14,19 @@ const UserSchema = Joi.object({
     About: Joi.string().max(500).allow(""),
 });
 
-
+const ValidateGetUsers = async (req, res, next) => {
+    const Result = QueryParametersSchema.keys({
+        Roles : Joi.string().valid("User", "Admin"),
+    }).validate(req.query, { stripUnknown: true });
+    if (Result.error) {
+        const message = Result.error.details.map((detail) => detail.message).join(', ');
+        return res.status(400).json(message);
+    }
+    else {
+        req.query = Result.value;
+        return next();
+    }
+}
 
 const ValidateUserRegister = async (req, res, next) => {
     const Result = UserSchema.validate(req.body, { stripUnknown: true, convert: true });
@@ -192,6 +204,6 @@ export {
     ValidatePatchUsers, ValidatePatchUserPictures,
     ValidateGetUserMedia, ValidatePostForgotPassword,
     ValidatePasswordReset, ValidatePostUsersInvite,
-    ValidateMailCheck
+    ValidateMailCheck,ValidateGetUsers
 
 }

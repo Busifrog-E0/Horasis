@@ -13,7 +13,7 @@ import { decodeIDToken, ensureAuthorized } from '../middleware/auth-middleware.j
 import SwaggerDocs from '../swaggerDocs/users-swaggerDocs.js'
 import e from 'express';
 import { CheckSameUser, QueryParameterFormatting, ValidateGetEntity } from '../middleware/common.js';
-import { ValidateCheckUsername, ValidatePatchUsers, ValidateUserLogin, ValidatePatchUserPictures, ValidateUserRegister, ValidateVerifyOTP, ValidateGetUserMedia, ValidatePostForgotPassword, ValidatePasswordReset, ValidatePostUsersInvite, ValidateMailCheck } from '../validations/users-validations.js';
+import { ValidateCheckUsername, ValidatePatchUsers, ValidateUserLogin, ValidatePatchUserPictures, ValidateUserRegister, ValidateVerifyOTP, ValidateGetUserMedia, ValidatePostForgotPassword, ValidatePasswordReset, ValidatePostUsersInvite, ValidateMailCheck, ValidateGetUsers } from '../validations/users-validations.js';
 import { GetMedias } from '../controllers/medias-controller.js';
 import { CheckOTP } from '../controllers/auth-controller.js';
 import { GetNotifications, GetOneFromNotifications } from '../controllers/notifications-controller.js';
@@ -25,7 +25,7 @@ router.get('/users/:UserId', decodeIDToken, ensureAuthorized("User"), SwaggerDoc
     // @ts-ignore
     asyncHandler(GetOneFromUsers));
 
-router.get('/users', decodeIDToken, ensureAuthorized("User"), ValidateGetEntity, QueryParameterFormatting,
+router.get('/users', decodeIDToken, ensureAuthorized("User"), ValidateGetUsers, QueryParameterFormatting,
     SwaggerDocs.get_Users,
     //@ts-ignore
     asyncHandler(GetUsers));

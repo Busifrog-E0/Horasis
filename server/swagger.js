@@ -83,6 +83,10 @@ const doc = {
         {
             "name": "Analytics",
             "description": "",
+        },
+        {
+            "name": "Admin",
+            "description": "",
         }
     ],
     securityDefinitions: {
@@ -99,6 +103,7 @@ const doc = {
         },
     ],
     definitions: {
+        AdminData: { Username: "String", Password: "string" },
         LoginData: { Token: "string", RefreshToken: "string", CurrentUser: { Role: "User", UserId: "" } },
         ...usersDefinitions,
         ...activitiesDefinitions,
