@@ -8,6 +8,8 @@ import { ReadOneFromConversations } from "../databaseControllers/conversations-d
 import moment from "moment";
 import { PostActiveUsers } from "./activeUsers-controller.js";
 import { CreateParticipants, ReadParticipants, RemoveParticipants } from "../databaseControllers/participants-databaseController.js";
+import { ReadMembers } from "../databaseControllers/members-databaseController.js";
+import { ReadSpeakers } from "../databaseControllers/speakers-databaseController.js";
 
 
 const ConnectSocket = (expressServer) => {
@@ -29,20 +31,6 @@ const ConnectSocket = (expressServer) => {
         //@ts-ignore
         socket.join(socket.user.UserId);
 
-        socket.on('user-joined-videocall', async ({ EventId, UserId }) => {
-
-            const UserDetails = await ReadOneFromUsers(UserId);
-            // @ts-ignore
-            await CreateParticipants({ EventId, UserId, UserDetails });
-            socket.to(EventId).emit('participants-list', { UserDetails });
-        });
-
-        socket.on('user-left-videocall', async ({ EventId }) => {
-            // @ts-ignore
-            const [Participant] = await ReadParticipants({ EventId, UserId: socket.user.UserId }, undefined, 1, undefined);
-            await RemoveParticipants(Participant.DocId);
-            socket.to(EventId).emit('participants-list', { UserDetails: Participant.UserDetails });
-        });
 
         socket.on('Message', async data => {
 
@@ -69,6 +57,7 @@ const ConnectSocket = (expressServer) => {
             if (CheckUserInConversation(ConversationData, socket.user.UserId)) {
                 // leave existing rooms?
                 socket.join(ConversationId);
+                
             }
 
         });
