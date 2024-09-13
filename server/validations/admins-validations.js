@@ -1,4 +1,5 @@
 import Joi from "joi";
+import { QueryParametersSchema } from "./common.js";
 
 const ValidateAdmin = async (req, res, next) => {
     const Result = Joi.object({
@@ -16,7 +17,7 @@ const ValidateAdmin = async (req, res, next) => {
 }
 
 const ValidateGetUsersByRole = async (req, res, next) => {
-    const Result = Joi.object({
+    const Result = QueryParametersSchema.keys({
         Role: Joi.string().valid("Admin", "User").required(),
     }).validate(req.query, { stripUnknown: true });
     if (Result.error) {

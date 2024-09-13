@@ -115,6 +115,10 @@ const AggregateUsers = async (AggregateArray, NextId, Limit, OrderBy) => {
     return dataHandling.Aggregate('Users', AggregateArray, NextId, Limit, OrderBy);
 }
 
+const UpdateManyUsers = async (data, where = {}, updateOptions = {}) => {
+    return dataHandling.UpdateMany('Users', data, where, ["$set"], updateOptions);
+}
+
 
 export {
     ReadUsers,
@@ -123,5 +127,6 @@ export {
     CreateUsers,
     RemoveUsers,
     CountUsers,
-    AggregateUsers
+    AggregateUsers,
+    UpdateManyUsers
 }
