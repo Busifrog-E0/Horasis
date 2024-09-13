@@ -8,6 +8,7 @@ import { ConnectionStatus } from './connections-controller.js';
 import { PostActivityForProfilePatch } from './activities-controller.js';
 import { AddUserDetailsAfterInvited } from './invitations-controller.js';
 import { UpdateManyMembers } from '../databaseControllers/members-databaseController.js';
+import { ObjectId } from 'mongodb';
 
 
 
@@ -284,7 +285,9 @@ const UpdateUserDetails = async (UserId) => {
  */
 const AddUserAsAdmin = async (req, res) => {
     const { UserIds } = req.body;
-    await UpdateManyUsers({ Roles: ["Admin", "User"] }, { "_id": { $in: UserIds } })
+    const objectIds = UserIds.map(id => new ObjectId(id));
+
+    await UpdateManyUsers({ Roles: ["Admin", "User"] }, { "_id": { $in: objectIds } })
     return res.json(true);
 }
 
