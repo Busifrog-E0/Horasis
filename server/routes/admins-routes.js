@@ -2,6 +2,7 @@ import { Router } from "express";
 import { AuthAdmin, PatchAdmin, } from "../controllers/admins-controller.js";
 import { decodeIDToken, ensureAuthorized } from "../middleware/auth-middleware.js";
 import asyncHandler from 'express-async-handler';
+import { QueryParameterFormatting } from '../middleware/common.js';
 import { AddUserAsAdmin, GetUsersByRole, RemoveUserAsAdmin } from "../controllers/users-controller.js";
 import { ValidateAdmin, ValidateGetUsersByRole, ValidatePatchUserRoles } from "../validations/admins-validations.js";
 const router = Router();
@@ -15,7 +16,7 @@ router.patch('/admin', decodeIDToken, ensureAuthorized("SuperAdmin"), ValidateAd
     //@ts-ignore
     asyncHandler(PatchAdmin));
 
-router.get('/admin/users', decodeIDToken, ensureAuthorized("SuperAdmin"), ValidateGetUsersByRole, SwaggerDocs.get_Admin_Users,
+router.get('/admin/users', decodeIDToken, ensureAuthorized("SuperAdmin"), ValidateGetUsersByRole, QueryParameterFormatting,SwaggerDocs.get_Admin_Users,
     //@ts-ignore
     asyncHandler(GetUsersByRole));
 
