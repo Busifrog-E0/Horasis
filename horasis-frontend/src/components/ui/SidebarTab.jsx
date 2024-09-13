@@ -4,12 +4,12 @@ const SidebarTab = ({ tabs, title = 'User Analytics' }) => {
 	const [activeTab, setActiveTab] = useState(0)
 
 	return (
-		<div className='grid lg:grid-cols-3 gap-4 lg:gap-16'>
+		<div className='grid lg:grid-cols-4 gap-4 lg:gap-16'>
 			<div>
 				{title && <h4 className='font-medium text-base text-brand-gray-dim mt-3 lg:mt-5 mb-3 lg:mb-5 mx-2'>{title}</h4>}
 				<TabList setActiveTab={setActiveTab} activeTab={activeTab} tablist={tabs} />
 			</div>
-			<div className='lg:col-span-2'>
+			<div className='lg:col-span-3'>
 				<TabContent>{tabs[activeTab].render()}</TabContent>
 			</div>
 		</div>
