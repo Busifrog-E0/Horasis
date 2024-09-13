@@ -1,5 +1,5 @@
 import e from 'express';
-import { ReadOneFromUsers, ReadUsers, UpdateUsers, CreateUsers } from './../databaseControllers/users-databaseController.js';
+import { ReadOneFromUsers, ReadUsers, UpdateUsers, CreateUsers, UpdateManyUsers } from './../databaseControllers/users-databaseController.js';
 import { ReadOneFromOTP, SendPasswordOTP, SendRegisterOTP, TokenData, VerifyOTP } from './auth-controller.js';
 import { AlertBoxObject, ComparePassword, GetUserNonEmptyFieldsPercentage, hashPassword } from './common.js';
 import { UpdateManyConnections } from '../databaseControllers/connections-databaseController.js';
@@ -283,8 +283,8 @@ const UpdateUserDetails = async (UserId) => {
  * @returns 
  */
 const AddUserAsAdmin = async (req, res) => {
-    const { UserId } = req.body;
-    await UpdateUsers({ Roles: ["Admin", "User"] }, UserId);
+    const { UserIds } = req.body;
+    await UpdateManyUsers({ Roles: ["Admin", "User"] }, { "_id": { $in: UserIds } })
     return res.json(true);
 }
 
