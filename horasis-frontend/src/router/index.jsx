@@ -43,6 +43,7 @@ import Streaming from '../pages/Streaming'
 import NewStreaming from '../pages/NewStreaming'
 import SuperAdmin from '../pages/SuperAdmin'
 import SuperAdminLogin from '../pages/SuperAdminLogin'
+import AdminProtected from '../layouts/AdminProtected'
 
 export const router = createBrowserRouter(
 	createRoutesFromElements(
@@ -71,7 +72,14 @@ export const router = createBrowserRouter(
 						<Route path='/Articles' element={<Articles />} />
 						<Route path='/Articles/Create/New' element={<CreateArticle />} />
 						<Route path='/Events' element={<Events />} />
-						<Route path='/Events/Create/New' element={<CreateEvent />} />
+						<Route
+							path='/Events/Create/New'
+							element={
+								<AdminProtected>
+									<CreateEvent />
+								</AdminProtected>
+							}
+						/>
 						<Route path='/Search' element={<UniversalSearchDetails />} />
 					</Route>
 
@@ -81,7 +89,14 @@ export const router = createBrowserRouter(
 					<Route path='/Articles/:articleid' element={<SingleArticles />} />
 					<Route path='/Events/:eventid' element={<SingleEvent />} />
 					<Route path='/Events/:eventid/join' element={<NewStreaming />} />
-					<Route path='/analytics' element={<Analytics />} />
+					<Route
+						path='/analytics'
+						element={
+							<AdminProtected>
+								<Analytics />
+							</AdminProtected>
+						}
+					/>
 
 					<Route path='/Chat/:userid' element={<ChatPage />} />
 				</Route>
