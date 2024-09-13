@@ -1,0 +1,81 @@
+﻿/* WebKit (Safari/Chrome) */
+::-webkit-scrollbar {
+	height: 3px;
+	width: 10px;
+}
+
+::-webkit-scrollbar-track {
+	background: #f1f1f1;
+	/* Track color */
+}
+
+::-webkit-scrollbar-thumb {
+	background: #8c8c8c99;
+	/* Thumb color */
+	border-radius: 100px;
+	/* Rounded corners */
+}
+
+/* Firefox */
+::-moz-scrollbar {
+	height: 3px;
+	width: 10px;
+}
+
+/* Internet Explorer */
+::-ms-scrollbar {
+	height: 3px;
+	width: 10px;
+}
+
+/* Edge */
+::-ms-scrollbar {
+	height: 3px;
+	width: 10px;
+}
+
+/* Opera */
+::-o-scrollbar {
+	height: 3px;
+	width: 10px;
+}
+
+/* Generic */
+scrollbar {
+	height: 3px;
+	width: 10px;
+}
+
+/* Hide scrollbar on mobile screens */
+@media screen and (max-width: 768px) {
+
+	/* WebKit (Safari/Chrome) */
+	::-webkit-scrollbar {
+		display: none;
+	}
+
+	/* Firefox */
+	::-moz-scrollbar {
+		display: none;
+	}
+
+	/* Internet Explorer */
+	::-ms-scrollbar {
+		display: none;
+	}
+
+	/* Edge */
+	::-ms-scrollbar {
+		display: none;
+	}
+
+	/* Opera */
+	::-o-scrollbar {
+		display: none;
+	}
+
+	/* Generic */
+	scrollbar {
+		display: none;
+	}
+}

@@ -1,0 +1,307 @@
+import { CURRENTUSERDATA, _retrieveData } from "../LocalStorage"
+
+export const allJobs = [{
+    JobTitle: "Senior UX Designer",
+    Favorited: false,
+    Employer: {
+        OrganizationName: "Google Inc.",
+        CompanyLocation: { "District": "New Delhi", "State": "New Delhi" },
+        "FoundedIn": "14 Jun, 2021",
+        "TeamSize": "20000+",
+        "Industry": "Technology",
+        "CompanyDescription": "",
+        "SocialMediaLinks": {
+            Facebook: "aaa",
+            Instagram: "aaa",
+            LinkedIn: "sss",
+            YouTube: "vvv",
+            Twitter: "vvv"
+        }
+    },
+    EmployerId: _retrieveData(CURRENTUSERDATA) ? JSON.parse(_retrieveData(CURRENTUSERDATA)).CurrentUser.UserId : "",
+    NatureOfJob: "",
+    JobProfile: "",
+    VacancyFor: "For other Company",
+    ExpiryDays: null,
+    NoOfOpenings: 30,
+    SearchRadius: null,
+    WalkInInterview: false,
+    RestrictCountries: null,
+    PreferredCountries: [],
+    Type: "Full-Time",
+    IncentiveScheme: true,
+    SalaryType: "Yearly",
+    MinSalary: "100000",
+    MaxSalary: "120000",
+    AvarageEarningPotential: "20000",
+    Description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. ",
+    Skills: ["MS Excel", "MS Word"],
+    SubjectSpecialization: [],
+    Course: [],
+    SalaryCurrency: "",
+    Qualification: "10th",
+    PreferredCandidates: ["Male", "Female"],
+    EnglishKnowledge: "Basic English",
+    Assets: ["Two Wheeler", "4 Wheeler", "Smart Phone", "Laptop / Desktop"],
+    AdditionalBenefits: ["Incentive", "Phone Allowance", "Accommodation", "Fuel Allowance"],
+    CanFreshersApply: true,
+    WorkExperience: {
+        Years: null,
+        Months: null,
+    },
+    DirectCommunication: false,
+    InterviewDetails: {
+        StartDate: null,
+        EndDate: null,
+        InterviewLocation: null
+    },
+    CVReceivingMode: ["Call", "Email"],
+    ContactName: "M Mathew",
+    ContactDesignation: "Marketing Manager",
+    ContactPhone: "98778778778",
+    ContactWhatsapp: null,
+    ContactEmail: "mmathew@gmail.com",
+    JobLocations: [],
+    WorkFromHome: true,
+    FieldWork: true,
+    RecruitmentFor: "Facebook Inc.",
+    RecruitmentFee: false,
+
+    CreatedIndex: 123456,
+    ExpiryIndex: 123456,
+    NumberOfApplications: 10,
+    IsActive: true,
+
+},
+{
+    JobTitle: "Senior UX Designer",
+    Favorited: false,
+    Employer: {
+        OrganizationName: "Google Inc.",
+        CompanyLocation: { "District": "New Delhi", "State": "New Delhi" },
+        "FoundedIn": "14 Jun, 2021",
+        "TeamSize": "20000+",
+        "Industry": "Technology",
+        "CompanyDescription": "",
+        "SocialMediaLinks": {
+            Facebook: "aaa",
+            Instagram: "aaa",
+            LinkedIn: "sss",
+            YouTube: "vvv",
+            Twitter: "vvv"
+        }
+    },
+    NatureOfJob: "",
+    JobProfile: "",
+    VacancyFor: "For other Company",
+    ExpiryDays: null,
+    NoOfOpenings: 30,
+    SearchRadius: null,
+    RestrictCountries: null,
+    PreferredCountries: [],
+    WalkInInterview: false,
+    Type: "Full-Time",
+    IncentiveScheme: true,
+    SalaryType: "Yearly",
+    MinSalary: "100000",
+    MaxSalary: "120000",
+    AvarageEarningPotential: "20000",
+    Description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. ",
+    Skills: ["MS Excel", "MS Word"],
+    SalaryCurrency: "",
+    Course: [],
+    SubjectSpecialization: [],
+    ProfessionalSkills: ["Com"],
+    Qualification: "10th",
+    PreferredCandidates: ["Male", "Female"],
+    EnglishKnowledge: "Basic English",
+    Assets: ["Two Wheeler", "4 Wheeler", "Smart Phone", "Laptop / Desktop"],
+    AdditionalBenefits: ["Incentive", "Phone Allowance", "Accommodation", "Fuel Allowance"],
+    CanFreshersApply: true,
+    WorkExperience: {
+        Years: 0,
+        Months: 0,
+    },
+    DirectCommunication: false,
+    InterviewDetails: {
+        StartDate: null,
+        EndDate: null,
+        InterviewLocation: null
+    },
+    CVReceivingMode: ["Call", "Email"],
+    ContactName: "M Mathew",
+    ContactDesignation: "Marketing Manager",
+    ContactPhone: "98778778778",
+    ContactWhatsapp: null,
+    ContactEmail: "mmathew@gmail.com",
+    JobLocations: [],
+    WorkFromHome: true,
+    FieldWork: true,
+    RecruitmentFor: "Facebook Inc.",
+    RecruitmentFee: false,
+
+    Id: 4,
+    DocId: 4,
+    CreatedIndex: 123456,
+    ExpiryIndex: 123456,
+    NumberOfApplications: 10,
+    IsActive: true,
+
+},
+]
+export const getUserId = () => (_retrieveData(CURRENTUSERDATA) ? JSON.parse(_retrieveData(CURRENTUSERDATA)).CurrentUser.UserId : "")
+
+
+export const defaultJob = () => ({
+    JobTitle: null,
+    JobTitleId: "",
+    NatureOfJob: [],
+    JobProfile: [],
+    VacancyFor: null,
+    ExpiryDays: "30",
+    NoOfOpenings: "1",
+    SearchRadius: "20",
+    PreferredCountries: [],
+    RestrictCountries: null,
+    WalkInInterview: null,
+    Type: null,
+    IncentiveScheme: null,
+    SalaryType: "Monthly",
+    MinSalary: null,
+    MaxSalary: null,
+    AvarageEarningPotential: null,
+    Description: "",
+    Skills: [],
+    SalaryCurrency: "INR",
+    SubjectSpecialization: [],
+    Course: [],
+    ProfessionalSkills: [],
+    Qualification: null,
+    PreferredCandidates: ["Male", "Female", "Other"],
+    EnglishKnowledge: null,
+    Assets: [],
+    AdditionalBenefits: [],
+    CanFreshersApply: null,
+    WorkExperience: {
+        Years: "0",
+        Months: "0",
+    },
+    DirectCommunication: true,
+    InterviewDetails: {
+        StartDate: null,
+        EndDate: null,
+        InterviewLocation: {}
+    },
+    CVReceivingMode: [
+        "Email",
+        "Call",
+        "Whatsapp"
+    ],
+    // ContactName: null,
+    // ContactDesignation: null,
+    // PhoneNumber: null,
+    // PhoneCountryCode: "91",
+    // WhatsappCountryCode: "91",
+    // WhatsappNumber: null,
+    // ContactEmail: null,
+    JobLocations: [],
+    WorkFromHome: null,
+    FieldWork: null,
+    RecruitmentFor: null,
+    RecruitmentFee: null,
+
+
+    EmployerId: getUserId(),
+    UnderReviewAdditionalBenefits: [],
+    UnderReviewAssets: [],
+    UnderReviewSkills: [],
+    UnderReviewProfessionalSkills: [],
+    UnderReviewJobTitle: '',
+    UnderReviewJobProfile: [],
+}
+)
+
+export const expireReasons = [
+    'Applications were not relevant',
+    'Not enough number of candidates',
+    'Candidates not picking up calls/ not attending interviews',
+    'Hired through other sources',
+]
+
+export const randomJob = (min, max, no, type, title) => ({
+    "JobTitle": title,
+    "NatureOfJob": "Engineering",
+    "JobProfile": "TECHNICAL SPECIALIST",
+    "VacancyFor": "For other Company",
+    "ExpiryDays": 30,
+    "NoOfOpenings": no,
+    "SearchRadius": 20,
+    RestrictCountries: null,
+    PreferredCountries: [],
+    "WalkInInterview": false,
+    "Type": type,
+    "IncentiveScheme": true,
+    "SalaryType": "Monthly",
+    "MinSalary": min,
+    "MaxSalary": max,
+    "AvarageEarningPotential": 2332,
+    "Description": "We are currently seeking a highly qualified Environmental Scientist to join our team. As an Environmental Scientist, you will play a crucial role in conducting research, analyzing data, and providing technical support for various environmental projects. This position falls under the engineering category, requiring a strong background in engineering principles and practices.\n\nAs a Technical Specialist, you will be responsible for working on a contract basis to ensure the successful implementation of environmental initiatives. You will apply your expertise in environmental science to evaluate and improve existing processes and systems. In addition, you will collaborate with other team members to develop innovative solutions to environmental challenges.\n\nThe ideal candidate for this position should possess strong technical skills, including proficiency in software applications such as Word and advanced English language abilities. A qualification of ITI / ITC is required to demonstrate knowledge and practical experience in the field.\n\nPreferred candidates for this role should have a good understanding of engineering practices and possess excellent problem-solving abilities. We are open to male and other candidates who meet the necessary qualifications.\n\nThe successful candidate will receive additional benefits such as a car, as well as other incentives and a comprehensive benefits package. While freshers with a year of relevant experience may be considered, this role typically requires a minimum of 1 year of work experience in the field of environmental science or engineering.",
+    "Skills": [
+        "WORD",
+        "TEST111",
+        "RAJATH TEST"
+    ],
+    SalaryCurrency: "",
+    SubjectSpecialization: [],
+    Course: [],
+    "ProfessionalSkills": ["Com"],
+    "Qualification": "ITI / ITC",
+    "PreferredCandidates": [
+        "Male",
+        "Other"
+    ],
+    "EnglishKnowledge": "Advanced English",
+    "Assets": [],
+    "AdditionalBenefits": [
+        "CAR",
+        "TEST BENEFITS 241123",
+        "TEST 21"
+    ],
+    "CanFreshersApply": false,
+    "WorkExperience": {
+        "Years": 1,
+        "Months": 0
+    },
+    "CVReceivingMode": [
+        "Email",
+        "Call"
+    ],
+    "ContactName": "adasd",
+    "ContactDesignation": "asdasd",
+    "PhoneNumber": "34234234",
+    "PhoneCountryCode": "91",
+    "WhatsappCountryCode": "91",
+    "WhatsappNumber": null,
+    "ContactEmail": "dasd@gma.com",
+    "JobLocations": [
+        {
+            "type": "Point",
+            "coordinates": [
+                -74.0706843,
+                40.8092049
+            ]
+        }
+    ],
+    "WorkFromHome": true,
+    "FieldWork": false,
+    "RecruitmentFor": "Infosys",
+    "RecruitmentFee": true,
+    "EmployerId": "6563018eeeea1c2114fd2a9e",
+    "UnderReviewAdditionalBenefits": [],
+    "UnderReviewAssets": [],
+    "UnderReviewSkills": [],
+    "UnderReviewProfessionalSkills": [],
+    "MatchingTitles": [],
+
+
+})
