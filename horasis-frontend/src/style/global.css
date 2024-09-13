@@ -53,8 +53,11 @@
     --system-primary-text: #000000;
     --system-secondary-text: #8a8a8a;
     --system-primary-accent: #0e4d96;
+    --system-primary-darker-accent: #102c54;
     --system-primary-accent-transparent: #0e4d96cc;
+    --system-primary-transparent: #0e4d965b;
     --system-primary-accent-light: #0e4d9611;
+    --system-primary-accent-dim: rgb(28, 62, 104);
     --system-secondary-accent: #0e4d9620;
     --system-black-transparent: #00000044;
 
@@ -118,6 +121,7 @@
     --system-primary-text: #dde;
     --system-secondary-text: #888899;
     --system-primary-accent: #04defc;
+    --system-primary-darker-accent: #107b8a;
     --system-secondary-accent: #04defc44;
 
     --system-secondary-selected-accent: #2D3134;

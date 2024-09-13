@@ -11,17 +11,15 @@ import { useChatPopup } from '../context/ChatPopup/ChatPopupService'
 
 function DashboardLayout() {
 	const { scrollRef } = useContext(AuthContext)
-  const {userIds} = useChatPopup()
+	const { userIds } = useChatPopup()
 	return (
 		<div className='flex flex-col overflow-hidden' style={{ height: '100svh' }}>
 			<DashboardHeader />
-			<div className='h-full overflow-y-auto overflow-x-hidden mt-2'>
+			<div className='h-full overflow-y-auto overflow-x-hidden'>
 				<div ref={scrollRef}></div>
-				<div className=''>
-					<Outlet />
-				</div>
+				<Outlet />
 			</div>
-			{userIds.length>0 && <ChatPopup/>}
+			{userIds.length > 0 && <ChatPopup />}
 			<DashboardBottomNavbar />
 		</div>
 	)

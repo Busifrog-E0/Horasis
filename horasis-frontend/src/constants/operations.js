@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { CURRENTUSERDATA, _retrieveData } from '../utils/LocalStorage'
+import { CURRENTUSERDATA, SUPERUSERDATA, _retrieveData } from '../utils/LocalStorage'
 
 export const DEBUG_API = 'https://deploy.busifrog.com/'
 export const PRODUCTION_API = 'https://deploy.busifrog.com/'
@@ -11,10 +11,10 @@ let retryCountForGet = 0
 let retryCountForDelete = 0
 const maxRetriesForRefreshToken = 3
 
-const refreshToken = async (updateCurrentUser, currentUserData, debug) => {
-	let tokenToBeRefreshed = _retrieveData(CURRENTUSERDATA) ? JSON.parse(_retrieveData(CURRENTUSERDATA)).Token : null
+const refreshToken = async (updateCurrentUser, currentUserData, role, debug) => {
+	const tokenToBeRefreshed = role === 'user' ? (_retrieveData(CURRENTUSERDATA) ? JSON.parse(_retrieveData(CURRENTUSERDATA)).Token : null) : _retrieveData(SUPERUSERDATA) ? JSON.parse(_retrieveData(SUPERUSERDATA)).Token : null
 
-	let refreshToken = _retrieveData(CURRENTUSERDATA) ? JSON.parse(_retrieveData(CURRENTUSERDATA)).RefreshToken : null
+	const refreshToken = role === 'user' ? (_retrieveData(CURRENTUSERDATA) ? JSON.parse(_retrieveData(CURRENTUSERDATA)).RefreshToken : null) : _retrieveData(SUPERUSERDATA) ? JSON.parse(_retrieveData(SUPERUSERDATA)).RefreshToken : null
 
 	const API_URL = debug ? DEBUG_API : PRODUCTION_API
 
@@ -82,25 +82,15 @@ const refreshToken = async (updateCurrentUser, currentUserData, debug) => {
 // 	}
 // }
 
-export const postItem = async (
-	url,
-	data,
-	successCallback,
-	errorCallback,
-	updateCurrentUser,
-	currentUserData,
-	toast = { open: () => {}, close: () => {} },
-	debug = false
-) => {
+export const postItem = async (url, data, successCallback, errorCallback, updateCurrentUser, currentUserData, toast = { open: () => {}, close: () => {} }, role = 'user', debug = false) => {
 	const API_URL = debug ? DEBUG_API : PRODUCTION_API
+	const useToken = role === 'user' ? (_retrieveData(CURRENTUSERDATA) ? JSON.parse(_retrieveData(CURRENTUSERDATA)).Token : null) : _retrieveData(SUPERUSERDATA) ? JSON.parse(_retrieveData(SUPERUSERDATA)).Token : null
 	axios
 		.post(API_URL + 'api/' + url, data, {
 			headers: {
 				'Access-Control-Allow-Origin': '*',
 				'Content-Type': 'application/json',
-				Authorization: `Bearer ${
-					_retrieveData(CURRENTUSERDATA) ? JSON.parse(_retrieveData(CURRENTUSERDATA)).Token : null
-				}`,
+				Authorization: `Bearer ${useToken}`,
 			},
 			mode: 'no-cors',
 		})
@@ -118,9 +108,9 @@ export const postItem = async (
 		.catch(async (err) => {
 			if (err.response) {
 				if (err.response.status === 401) {
-					await refreshToken(updateCurrentUser, currentUserData)
+					await refreshToken(updateCurrentUser, currentUserData, role, debug)
 					// await apiCallback()
-					await postItem(url, data, successCallback, errorCallback, updateCurrentUser, currentUserData, toast, debug)
+					await postItem(url, data, successCallback, errorCallback, updateCurrentUser, currentUserData, toast, role, debug)
 				} else if (err.response.status === 444) {
 					if (typeof err.response.data === 'string') {
 						toast.open('error', 'Error', err.response.data)
@@ -137,25 +127,15 @@ export const postItem = async (
 		})
 }
 
-export const patchItem = async (
-	url,
-	data,
-	successCallback,
-	errorCallback,
-	updateCurrentUser,
-	currentUserData,
-	toast = { open: () => {}, close: () => {} },
-	debug = false
-) => {
+export const patchItem = async (url, data, successCallback, errorCallback, updateCurrentUser, currentUserData, toast = { open: () => {}, close: () => {} }, role = 'user', debug = false) => {
 	const API_URL = debug ? DEBUG_API : PRODUCTION_API
+	const useToken = role === 'user' ? (_retrieveData(CURRENTUSERDATA) ? JSON.parse(_retrieveData(CURRENTUSERDATA)).Token : null) : _retrieveData(SUPERUSERDATA) ? JSON.parse(_retrieveData(SUPERUSERDATA)).Token : null
 	axios
 		.patch(API_URL + 'api/' + url, data, {
 			headers: {
 				'Access-Control-Allow-Origin': '*',
 				'Content-Type': 'application/json',
-				Authorization: `Bearer ${
-					_retrieveData(CURRENTUSERDATA) ? JSON.parse(_retrieveData(CURRENTUSERDATA)).Token : null
-				}`,
+				Authorization: `Bearer ${useToken}`,
 			},
 			mode: 'no-cors',
 		})
@@ -173,8 +153,8 @@ export const patchItem = async (
 		.catch(async (err) => {
 			if (err.response) {
 				if (err.response.status === 401) {
-					await refreshToken(updateCurrentUser, currentUserData)
-					patchItem(url, data, successCallback, errorCallback, updateCurrentUser, currentUserData, toast, debug)
+					await refreshToken(updateCurrentUser, currentUserData, role, debug)
+					patchItem(url, data, successCallback, errorCallback, updateCurrentUser, currentUserData, toast, role, debug)
 				} else if (err.response.status === 444) {
 					errorCallback(err.response.data)
 					if (typeof err.response.data === 'string') {
@@ -191,25 +171,16 @@ export const patchItem = async (
 		})
 }
 
-export const deleteItem = async (
-	url,
-	successCallback,
-	errorCallback,
-	updateCurrentUser,
-	currentUserData,
-	toast = { open: () => {}, close: () => {} },
-	debug = false
-) => {
+export const deleteItem = async (url, successCallback, errorCallback, updateCurrentUser, currentUserData, toast = { open: () => {}, close: () => {} }, role = 'user', debug = false) => {
 	const API_URL = debug ? DEBUG_API : PRODUCTION_API
+	const useToken = role === 'user' ? (_retrieveData(CURRENTUSERDATA) ? JSON.parse(_retrieveData(CURRENTUSERDATA)).Token : null) : _retrieveData(SUPERUSERDATA) ? JSON.parse(_retrieveData(SUPERUSERDATA)).Token : null
 
 	axios
 		.delete(API_URL + 'api/' + url, {
 			headers: {
 				'Access-Control-Allow-Origin': '*',
 				'Content-Type': 'application/json',
-				Authorization: `Bearer ${
-					_retrieveData(CURRENTUSERDATA) ? JSON.parse(_retrieveData(CURRENTUSERDATA)).Token : null
-				}`,
+				Authorization: `Bearer ${useToken}`,
 			},
 			mode: 'no-cors',
 		})
@@ -227,8 +198,8 @@ export const deleteItem = async (
 		.catch(async (err) => {
 			if (err.response) {
 				if (err.response.status === 401) {
-					await refreshToken(updateCurrentUser, currentUserData)
-					deleteItem(url, successCallback, errorCallback, updateCurrentUser, currentUserData, toast, debug)
+					await refreshToken(updateCurrentUser, currentUserData, role, debug)
+					deleteItem(url, successCallback, errorCallback, updateCurrentUser, currentUserData, toast, role, debug)
 				} else if (err.response.status === 444) {
 					errorCallback(err.response.data)
 					if (typeof err.response.data === 'string') {
@@ -245,24 +216,15 @@ export const deleteItem = async (
 		})
 }
 
-export const getItem = async (
-	url,
-	successCallback,
-	errorCallback,
-	updateCurrentUser,
-	currentUserData,
-	toast = { open: () => {}, close: () => {} },
-	debug = false
-) => {
+export const getItem = async (url, successCallback, errorCallback, updateCurrentUser, currentUserData, toast = { open: () => {}, close: () => {} }, role = 'user', debug = false) => {
 	const API_URL = debug ? DEBUG_API : PRODUCTION_API
+	const useToken = role === 'user' ? (_retrieveData(CURRENTUSERDATA) ? JSON.parse(_retrieveData(CURRENTUSERDATA)).Token : null) : _retrieveData(SUPERUSERDATA) ? JSON.parse(_retrieveData(SUPERUSERDATA)).Token : null
 	axios
 		.get(API_URL + 'api/' + url, {
 			headers: {
 				'Access-Control-Allow-Origin': '*',
 				'Content-Type': 'application/json',
-				Authorization: `Bearer ${
-					_retrieveData(CURRENTUSERDATA) ? JSON.parse(_retrieveData(CURRENTUSERDATA)).Token : null
-				}`,
+				Authorization: `Bearer ${useToken}`,
 			},
 			mode: 'no-cors',
 		})
@@ -280,8 +242,8 @@ export const getItem = async (
 		.catch(async (err) => {
 			if (err.response) {
 				if (err.response.status === 401) {
-					await refreshToken(updateCurrentUser, currentUserData)
-					getItem(url, successCallback, errorCallback, updateCurrentUser, currentUserData, toast, debug)
+					await refreshToken(updateCurrentUser, currentUserData, role, debug)
+					getItem(url, successCallback, errorCallback, updateCurrentUser, currentUserData, toast, role, debug)
 				} else if (err.response.status === 444) {
 					errorCallback(err.response.data)
 					if (typeof err.response.data === 'string') {

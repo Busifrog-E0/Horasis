@@ -3,10 +3,13 @@ import { Outlet, Route, createBrowserRouter, createRoutesFromElements } from 're
 
 // layouts
 import RootLayout from '../layouts/RootLayout'
-//pages
+import SuperAdminLayout from '../layouts/superadmin/SuperAdminLayout'
+import SuperAdminAuthLayout from '../layouts/superadmin/SuperAdminAuthLayout'
+import SuperAdminUnauthLayout from '../layouts/superadmin/SuperAdminUnauthLayout'
 import DashboardLayout from '../layouts/DashboardLayout'
 import AuthLayout from '../layouts/AuthLayout'
 import UnAuthLayout from '../layouts/UnAuthLayout'
+//pages
 import LogIn from '../pages/LogIn'
 import WelcomePage from '../components/Login/WelcomePage'
 import Activities from '../pages/Activities'
@@ -36,10 +39,23 @@ import SingleArticles from '../pages/SingleArticles'
 import ForgotPassword from '../pages/ForgotPassword'
 import SavedArticlesPage from '../pages/SavedArticlesPage'
 import ProfileTabLayout from '../layouts/ProfileTabLayout'
+import Streaming from '../pages/Streaming'
+import NewStreaming from '../pages/NewStreaming'
+import SuperAdmin from '../pages/SuperAdmin'
+import SuperAdminLogin from '../pages/SuperAdminLogin'
+import AdminProtected from '../layouts/AdminProtected'
 
 export const router = createBrowserRouter(
 	createRoutesFromElements(
 		<Route path='/' element={<RootLayout />}>
+			<Route path='/SuperAdmin' element={<SuperAdminLayout />}>
+				<Route path='' element={<SuperAdminAuthLayout />}>
+					<Route index element={<SuperAdmin />} />
+				</Route>
+				<Route path='Login' element={<SuperAdminUnauthLayout />}>
+					<Route index element={<SuperAdminLogin />} />
+				</Route>
+			</Route>
 			<Route path='/' element={<AuthLayout />}>
 				<Route path='/' element={<DashboardLayout />}>
 					<Route path='/' element={<ProfileTabLayout />}>
@@ -56,8 +72,15 @@ export const router = createBrowserRouter(
 						<Route path='/Articles' element={<Articles />} />
 						<Route path='/Articles/Create/New' element={<CreateArticle />} />
 						<Route path='/Events' element={<Events />} />
-						<Route path='/Events/Create/New' element={<CreateEvent />} />
-					<Route path='/Search' element={<UniversalSearchDetails />} />
+						<Route
+							path='/Events/Create/New'
+							element={
+								<AdminProtected>
+									<CreateEvent />
+								</AdminProtected>
+							}
+						/>
+						<Route path='/Search' element={<UniversalSearchDetails />} />
 					</Route>
 
 					<Route path='/MyProfile' element={<MyProfile />} />
@@ -65,7 +88,15 @@ export const router = createBrowserRouter(
 					<Route path='/Discussions/:discussionid' element={<SingleDiscussion />} />
 					<Route path='/Articles/:articleid' element={<SingleArticles />} />
 					<Route path='/Events/:eventid' element={<SingleEvent />} />
-					<Route path='/analytics' element={<Analytics />} />
+					<Route path='/Events/:eventid/join' element={<NewStreaming />} />
+					<Route
+						path='/analytics'
+						element={
+							<AdminProtected>
+								<Analytics />
+							</AdminProtected>
+						}
+					/>
 
 					<Route path='/Chat/:userid' element={<ChatPage />} />
 				</Route>

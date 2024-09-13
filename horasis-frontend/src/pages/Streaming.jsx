@@ -1,0 +1,241 @@
+import { useIsConnected, useJoin, useClientEvent, useRTCClient, useLocalMicrophoneTrack, useLocalCameraTrack, usePublish } from 'agora-rtc-react'
+import React, { useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom'
+import { getItem } from '../constants/operations'
+import { useAuth } from '../utils/AuthProvider'
+import { useToast } from '../components/Toast/ToastService'
+import StreamUsersList from '../components/Streaming/StreamUsersList'
+import JoinToStream from '../components/Streaming/JoinToStream'
+import StreamParticipantList from '../components/Streaming/StreamParticipantList'
+import { useSocket } from '../context/Socket/SocketService'
+import { jsonToQuery } from '../utils/searchParams/extractSearchParams'
+import { getNextId } from '../utils/URLParams'
+
+
+export const Streaming = () => {
+	const client = useRTCClient()
+	
+	const { updateCurrentUser, currentUserData } = useAuth()
+	const toast = useToast()
+	const { socket } = useSocket()
+	const { eventid } = useParams()
+
+	const [event, setEvent] = useState({})
+	const [loadingToken, setIsLoadingToken] = useState(true)
+	const [loadingEvent, setIsLoadingEvent] = useState(true)
+	const [calling, setCalling] = useState(false)
+	const isConnected = useIsConnected()
+	const [appId, setAppId] = useState('206c8a92da8d4676aabfb8314a21fa17')
+	const [channel, setChannel] = useState(eventid)
+	const [rtcToken, setRtcToken] = useState('')
+	const [rtmToken, setRtmToken] = useState('')
+	const [role, setRole] = useState('Member')
+	const [user, setUser] = useState({})
+
+	// rtc joining
+	let newUser = useJoin({ uid: currentUserData.CurrentUser.UserId, appid: appId, channel: channel, token: rtcToken ? rtcToken : null }, calling, client ? client : null)
+	// rtm joining
+	
+
+	useEffect(() => {
+		console.log(newUser)
+		if (client) {
+			console.log(client)
+		}
+	}, [newUser])
+
+
+	const [micOn, setMic] = useState(true)
+	const [cameraOn, setCamera] = useState(true)
+	const { localMicrophoneTrack } = useLocalMicrophoneTrack(micOn)
+	const { localCameraTrack } = useLocalCameraTrack(cameraOn)
+	usePublish([localMicrophoneTrack, localCameraTrack])
+
+	const getUser = () => {
+		getItem(
+			`users/${currentUserData.CurrentUser.UserId}`,
+			(result) => {
+				setUser(result)
+			},
+			(err) => {
+				console.log(err)
+			},
+			updateCurrentUser,
+			currentUserData,
+			toast
+		)
+	}
+	const getToken = () => {
+		setIsLoadingToken(true)
+		getItem(
+			`event/${eventid}/videoCall/join`,
+			(result) => {
+				if (result && result.RtcToken && result.RtmToken) {
+					setRtcToken(result.RtcToken)
+					setRtmToken(result.RtmToken)
+					setRole(result.Role)
+				}
+				setIsLoadingToken(false)
+			},
+			(err) => {
+				setIsLoadingToken(false)
+			},
+			updateCurrentUser,
+			currentUserData,
+			toast
+		)
+	}
+
+	const getEvent = () => {
+		setIsLoadingEvent(true)
+		getItem(
+			`events/${eventid}`,
+			(result) => {
+				setEvent(result)
+				setIsLoadingEvent(false)
+			},
+			(err) => {
+				navigate('/NotFound', { replace: true })
+				setIsLoadingEvent(false)
+			},
+			updateCurrentUser,
+			currentUserData,
+			toast
+		)
+	}
+
+	useEffect(() => {
+		getToken([])
+		getEvent()
+		getUser()
+	}, [])
+
+	useClientEvent(client, 'user-joined', (user) => {
+		console.log(user)
+	})
+	useClientEvent(client, 'user-left', (user) => {
+		console.log(user)
+	})
+	const [isLoading, setIsLoading] = useState(true)
+	const [isLoadingMore, setIsLoadingMore] = useState(true)
+	const [pageDisabled, setPageDisabled] = useState(true)
+	const [filters, setFilters] = useState({
+		OrderBy: 'Index',
+		Limit: 10,
+		Keyword: '',
+	})
+	const [participants, setParticipants] = useState([])
+	const setLoadingCom = (tempArr, value) => {
+		if (tempArr.length > 0) {
+			setIsLoadingMore(value)
+		} else {
+			setIsLoading(value)
+		}
+	}
+	const getParticipantsList = (tempParticipants) => {
+		getItem(
+			`events/${eventid}/videoCall/participants?${jsonToQuery(filters)}&NextId=${getNextId(tempParticipants)}`,
+			(result) => {
+				setParticipants([...tempParticipants, ...result])
+			},
+			(err) => {
+				setLoadingCom(tempParticipants, false)
+			},
+			updateCurrentUser,
+			currentUserData,
+			toast
+		)
+	}
+
+	const hasAnyLeft = () => {
+		getItem(
+			`events/${eventid}/videoCall/participants?${jsonToQuery({ ...filters, Limit: 1 })}&NextId=${getNextId(participants)}`,
+			(data) => {
+				if (data?.length > 0) {
+					setPageDisabled(false)
+				} else {
+					setPageDisabled(true)
+				}
+			},
+			(err) => {
+				setPageDisabled(true)
+			},
+			updateCurrentUser,
+			currentUserData,
+			toast
+		)
+	}
+
+	const videoSocket = () => {
+		if (isConnected) {
+			socket.emit('JoinEvent', { EventId: eventid }, () => {
+				console.log('Joined')
+			})
+			socket.emit('user-joined-videocall', {
+				EventId: eventid,
+				UserId: currentUserData.CurrentUser.UserId,
+			})
+
+			if (role === 'Speaker') client.setClientRole('host')
+			else client.setClientRole('audience')
+			if (participants.length === 0) {
+				getParticipantsList([])
+			}
+			socket.on('participants-list', (value) => {
+				getParticipantsList([])
+			})
+			return () => {
+				socket.emit('LeaveEvent', { EventId: eventid })
+				socket.off('participants-list')
+			}
+		} else {
+			socket.emit('user-left-videocall', { EventId: eventid, UserId: currentUserData.CurrentUser.UserId })
+			return () => {}
+		}
+	}
+
+	useEffect(() => {
+		if (!socket || !eventid) return
+		if (eventid) {
+			const cleanup = videoSocket()
+			return cleanup
+		}
+	}, [isConnected, socket])
+
+	useEffect(() => {
+		if (participants.length > 0) hasAnyLeft()
+	}, [participants])
+
+	return (
+		<>
+			{loadingToken ? (
+				<div className='flex items-center justify-center h-full'>
+					<div className='text-xl font-semibold text-gray-700'>Loading...</div>
+				</div>
+			) : isConnected ? (
+				<div className='bg-system-primary-darker-accent h-full overflow-hidden'>
+					<div className='h-full grid grid-cols-4'>
+						<div className='col-span-3 p-4 overflow-hidden h-full'>
+							<StreamUsersList event={event} cameraOn={cameraOn} micOn={micOn} localCameraTrack={localCameraTrack} localMicrophoneTrack={localMicrophoneTrack} setCamera={setCamera} isConnected={isConnected} calling={calling} setMic={setMic} setCalling={setCalling} role={role} currentUser={user} participants={participants} />
+						</div>
+
+						<div className=' h-full col-span-1 p-4 '>
+							<StreamParticipantList participants={participants} currentUser={user} />
+						</div>
+					</div>
+					{/* */}
+				</div>
+			) : loadingEvent ? (
+				<div className='flex items-center justify-center h-full'>
+					<div className='text-xl font-semibold text-gray-700'>Loading...</div>
+				</div>
+			) : (
+				<div className='h-full overflow-hidden relative'>
+					<JoinToStream event={event} appId={appId} channel={channel} token={rtcToken} setAppId={setAppId} setCalling={setCalling} setChannel={setChannel} setToken={setRtcToken} />
+				</div>
+			)}
+		</>
+	)
+}
+
+export default Streaming

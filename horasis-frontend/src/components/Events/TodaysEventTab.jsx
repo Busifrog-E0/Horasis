@@ -21,24 +21,8 @@ const TodaysEventTab = () => {
 		OrderBy: 'Index',
 		Limit: 1,
 		Keyword: '',
-		[`StartTime[$gte]`]: new Date(
-			new Date().getFullYear(),
-			new Date().getMonth(),
-			new Date().getDate(),
-			0,
-			0,
-			0,
-			0
-		).getTime(),
-		[`StartTime[$lte]`]: new Date(
-			new Date().getFullYear(),
-			new Date().getMonth(),
-			new Date().getDate() + 1,
-			0,
-			0,
-			0,
-			0
-		).getTime(),
+		[`StartTime[$gte]`]: new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate(), 0, 0, 0, 0).getTime(),
+		[`StartTime[$lte]`]: new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate() + 1, 0, 0, 0, 0).getTime(),
 	})
 	const api = 'events'
 
@@ -106,6 +90,10 @@ const TodaysEventTab = () => {
 		fetch()
 	}, [filters])
 
+	const navigateToEvent = (eventId) => {
+		navigate(`/Events/${eventId}/join`)
+	}
+
 	return (
 		<>
 			{events.length > 0 ? (
@@ -119,7 +107,7 @@ const TodaysEventTab = () => {
 										<Button
 											loading={false}
 											onClick={() => {
-												// handleLogin()
+												navigateToEvent(item.DocId)
 											}}
 											variant='black'
 											width='full'>
@@ -130,9 +118,7 @@ const TodaysEventTab = () => {
 								<div className='p-3 px-2 grid grid-cols-5 gap-3 items-center'>
 									<div className='p-3 px-5 bg-system-secondary-bg rounded-lg shadow-lg flex flex-col items-center h-full justify-center'>
 										<h4 className='text-sm text-center text-system-primary-text m-0'>{getMonthsShort(item.Date)}</h4>
-										<h4 className='font-semibold text-xl text-center text-system-primary-text m-0'>
-											{new Date(item.Date).getDate()}
-										</h4>
+										<h4 className='font-semibold text-xl text-center text-system-primary-text m-0'>{new Date(item.Date).getDate()}</h4>
 									</div>
 									<div className='col-span-4 p-3 px-5 bg-system-secondary-bg rounded-lg shadow-lg h-full'>
 										<h4 className='text-base text-system-primary-text m-0 leading-5'>{item.EventName}</h4>

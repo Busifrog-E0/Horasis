@@ -6,13 +6,16 @@
 	"scripts": {
 		"dev": "vite",
 		"build": "vite build",
-		"deploy": "firebase deploy --only hosting:hsocial",
+		"deploy": "firebase deploy --only hosting:hsocialtest",
 		"dep": "npm run build && npm run deploy && rm -rf ./dist",
 		"lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
 		"preview": "vite preview"
 	},
 	"dependencies": {
 		"@headlessui/react": "^2.1.2",
+		"agora-rtc-react": "^2.3.0",
+		"agora-rtc-sdk-ng": "^4.22.0",
+		"agora-rtm-sdk": "^2.1.10",
 		"axios": "^1.7.2",
 		"class-variance-authority": "^0.7.0",
 		"joi": "^17.13.3",

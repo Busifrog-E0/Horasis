@@ -12,6 +12,7 @@ import UpcomingEvents from '../components/Events/UpcomingEvents'
 
 const Events = () => {
 	const { currentUserData, scrollToTop } = useContext(AuthContext)
+	const isPermitted = currentUserData.CurrentUser.Role.includes('Admin')
 	const navigate = useNavigate()
 	const OnClickCreateNew = (path) => {
 		scrollToTop()
@@ -154,13 +155,11 @@ const Events = () => {
                     </div> */}
 			</div>
 			<div>
-				<Button
-					onClick={() => OnClickCreateNew('/Events/Create/New')}
-					width='full'
-					variant='black'
-					className=' mb-4 lg:mb-8'>
-					Create an Event
-				</Button>
+				{isPermitted && (
+					<Button onClick={() => OnClickCreateNew('/Events/Create/New')} width='full' variant='black' className=' mb-4 lg:mb-8'>
+						Create an Event
+					</Button>
+				)}
 				<UpcomingEvents />
 			</div>
 		</>

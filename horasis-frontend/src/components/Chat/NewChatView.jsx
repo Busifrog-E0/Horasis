@@ -263,11 +263,7 @@ const NewChatView = ({ userId, setChatToRemove }) => {
 								</div>
 							</div>
 						</div>
-						<svg
-							className='w-6 h-6 text-system-primary-accent cursor-pointer fill-system-primary-accent'
-							onClick={onMessageSend}
-							xmlns='http://www.w3.org/2000/svg'
-							viewBox='0 -960 960 960'>
+						<svg className='w-6 h-6 text-system-primary-accent cursor-pointer fill-system-primary-accent' onClick={onMessageSend} xmlns='http://www.w3.org/2000/svg' viewBox='0 -960 960 960'>
 							<path d='M120-160v-640l760 320-760 320Zm80-120 474-200-474-200v140l240 60-240 60v140Zm0 0v-400 400Z' />
 						</svg>
 					</div>
