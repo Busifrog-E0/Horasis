@@ -12,7 +12,7 @@ import {
 import SwaggerDocs from '../swaggerDocs/events-swaggerDocs.js'
 import e from 'express';
 import { decodeIDToken, ensureAuthorized } from '../middleware/auth-middleware.js';
-import { ValidateGetEvents, ValidatePostEvents } from '../validations/events-validations.js';
+import { ValidateGetEvents, ValidatePostEvents, ValidatePostSpeakers } from '../validations/events-validations.js';
 import { QueryParameterFormatting, ValidateGetEntity } from '../middleware/common.js';
 import { GetEventsActivitiesMiddleware, InsertEventTypeMiddleware, PostEventActivitiesMiddleware } from '../middleware/events-middleware.js';
 import { ValidatePostActivities } from '../validations/activities-validations.js';
@@ -44,7 +44,7 @@ router.patch('/events/:EventId',
 
 router.get('/guest/events/', ValidateGetEvents, QueryParameterFormatting, SwaggerDocs.get_Guest_Events,
     //@ts-ignore
-    asyncHandler(GetPublicEvents));    
+    asyncHandler(GetPublicEvents));
 
 
 /**************************************************************************JOIN******************************************************************* */
@@ -160,7 +160,7 @@ router.delete('/events/:EventId', decodeIDToken, ensureAuthorized("User"),
 
 /******************************************************************************SPEAKERS**************************************************************************************** */
 
-router.post('/events/:EventId/speakers/:SpeakerId', decodeIDToken, ensureAuthorized("User"),
+router.post('/events/:EventId/speakers/:SpeakerId', decodeIDToken, ensureAuthorized("User"), ValidatePostSpeakers,
     SwaggerDocs.post_Events_EventId_Speakers,
     //@ts-ignore
     asyncHandler(PostSpeakers));
@@ -179,7 +179,7 @@ router.delete('/events/:EventId/speakers/:SpeakerId/reject', decodeIDToken, ensu
     SwaggerDocs.delete_Events_EventId_Speakers_SpeakerId,
     //@ts-ignore
     asyncHandler(DeleteSpeakers));
-   
+
 
 router.delete('/events/:EventId/speakers/:SpeakerId', decodeIDToken, ensureAuthorized("User"),
     SwaggerDocs.delete_Events_EventId_Speakers_SpeakerId,
