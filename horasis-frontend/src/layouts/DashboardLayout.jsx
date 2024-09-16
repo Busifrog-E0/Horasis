@@ -13,9 +13,9 @@ function DashboardLayout() {
 	const { scrollRef } = useContext(AuthContext)
 	const { userIds } = useChatPopup()
 	return (
-		<div className='flex flex-col overflow-hidden' style={{ height: '100svh' }}>
+		<div className='flex flex-col overflow-hidden w-full items-center' style={{ height: '100svh' }}>
 			<DashboardHeader />
-			<div className='h-full overflow-y-auto overflow-x-hidden'>
+			<div className='h-full overflow-y-auto overflow-x-hidden w-full max-w-screen-2xl '>
 				<div ref={scrollRef}></div>
 				<Outlet />
 			</div>
