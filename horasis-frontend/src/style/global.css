@@ -178,6 +178,20 @@
     scrollbar-width: none;
     /* Firefox */
   }
+
+  /* Global CSS file or a specific CSS module */
+.tooltip-arrow {
+  position: absolute;
+  bottom: -6px; /* Adjust based on tooltip size */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid  var(--system-secondary-bg); /* Arrow color */
+}
+
 }
 
 .cursor-pointer {
