@@ -160,7 +160,7 @@ const SavedArticlesTab = ({ bordered = false, loadMoreEnabled = false, iconPrese
 		<div className='p-5 bg-system-secondary-bg rounded-lg'>
 			<div className='flex items-center justify-between gap-2 mb-1'>
 				<h4 className='font-medium text-2xl text-system-primary-text'>Saved Articles</h4>
-				{iconPresent && (
+				{iconPresent && articles.length>0 && (
 					<img src={arrowfor} alt='' className='h-6 w-6 cursor-pointer' onClick={() => navigate('/SavedArticles')} />
 				)}
 				{/* arrow cursor-pointer */}

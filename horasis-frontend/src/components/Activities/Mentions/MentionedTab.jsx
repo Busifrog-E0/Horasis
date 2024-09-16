@@ -7,11 +7,11 @@ import { getItem } from '../../../constants/operations'
 import Spinner from '../../ui/Spinner'
 import ActivityListComponent from '../ActivityListComponent'
 import EmptyMembers from '../../Common/EmptyMembers'
-import arrowfor from  '../../../assets/icons/arrowfor.svg'
+import arrowfor from '../../../assets/icons/arrowfor.svg'
 import { useNavigate } from 'react-router-dom'
 
 const MentionedTab = ({ bordered = false }) => {
-	const  navigate =useNavigate()
+	const navigate = useNavigate()
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
 	const toast = useToast()
 	const [isLoading, setIsLoading] = useState(true)
@@ -38,11 +38,7 @@ const MentionedTab = ({ bordered = false }) => {
 	}
 
 	const getAllActivities = (tempActivites) => {
-		getData(
-			`user/${currentUserData.CurrentUser.UserId}/mentions/activities?&${jsonToQuery(filters)}`,
-			tempActivites,
-			setActivitiesData
-		)
+		getData(`user/${currentUserData.CurrentUser.UserId}/mentions/activities?&${jsonToQuery(filters)}`, tempActivites, setActivitiesData)
 	}
 	const getData = (endpoint, tempData, setData) => {
 		setLoadingCom(tempData, true)
@@ -88,8 +84,7 @@ const MentionedTab = ({ bordered = false }) => {
 	const fetchMore = () => fetchData(false)
 
 	useEffect(() => {
-		if (activitiesData.length > 0)
-			hasAnyLeft(`user/${currentUserData.CurrentUser.UserId}/mentions/activities`, activitiesData)
+		if (activitiesData.length > 0) hasAnyLeft(`user/${currentUserData.CurrentUser.UserId}/mentions/activities`, activitiesData)
 	}, [activitiesData])
 
 	useEffect(() => {
@@ -100,8 +95,8 @@ const MentionedTab = ({ bordered = false }) => {
 		<div className='p-5 bg-system-secondary-bg rounded-lg '>
 			<div className='flex items-center justify-between gap-2 mb-5'>
 				<h4 className='font-medium text-2xl text-system-primary-text'>Mentions</h4>
-					<img src={arrowfor} alt='' className='h-6 w-6 cursor-pointer' onClick={()=>navigate('/Mentions')} />
-					{/* arrow cursor-pointer */}
+				{activitiesData.length > 0 && <img src={arrowfor} alt='' className='h-6 w-6 cursor-pointer' onClick={() => navigate('/Mentions')} />}
+				{/* arrow cursor-pointer */}
 			</div>
 			<div>
 				{/* {header && <h4 className='font-medium text-2xl text-system-primary-text mb-4'>All Mentions</h4>} */}
@@ -110,20 +105,7 @@ const MentionedTab = ({ bordered = false }) => {
 					<Spinner />
 				) : activitiesData.length > 0 ? (
 					<>
-						<ActivityListComponent
-							ShowImage={false}
-							className={`p-4 bg-system-secondary-bg rounded-lg border border-system-file-border relative`}
-							avatarSize='w-8 h-8'
-							onDelete={onDelete}
-							gapBnTabs={'gap-3'}
-							titleSize='text-base'
-							descriptionSize="text-sm"
-							bordered={bordered}
-							activitiesData={activitiesData}
-							border={true}
-							iconSize={'4'}
-							timeSize={'text-xs'}
-						/>
+						<ActivityListComponent ShowImage={false} className={`p-4 bg-system-secondary-bg rounded-lg border border-system-file-border relative`} avatarSize='w-8 h-8' onDelete={onDelete} gapBnTabs={'gap-3'} titleSize='text-base' descriptionSize='text-sm' bordered={bordered} activitiesData={activitiesData} border={true} iconSize={'4'} timeSize={'text-xs'} />
 					</>
 				) : (
 					<EmptyMembers emptyText={'No mentions'} />

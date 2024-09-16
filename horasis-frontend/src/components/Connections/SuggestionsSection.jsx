@@ -41,9 +41,7 @@ const SuggestionsSection = ({ limit = 4, loadMoreEnabled = false, iconPresent = 
 	const getSuggested = (tempSuggested) => {
 		setLoadingCom(tempSuggested, true)
 		getItem(
-			`users/${currentUserData.CurrentUser.UsedId}/suggested?&${jsonToQuery(filters)}&NextId=${getNextId(
-				tempSuggested
-			)}`,
+			`users/${currentUserData.CurrentUser.UsedId}/suggested?&${jsonToQuery(filters)}&NextId=${getNextId(tempSuggested)}`,
 			(result) => {
 				// console.log('Suggested')
 				setSuggested([...tempSuggested, ...result])
@@ -94,9 +92,7 @@ const SuggestionsSection = ({ limit = 4, loadMoreEnabled = false, iconPresent = 
 		getItem(
 			`users/${profile.DocId}`,
 			(result) => {
-				setSuggested(
-					suggested.map((suggested) => (suggested.DocId === profile.DocId ? { ...suggested, ...result } : suggested))
-				)
+				setSuggested(suggested.map((suggested) => (suggested.DocId === profile.DocId ? { ...suggested, ...result } : suggested)))
 				setUpdatingId(null)
 			},
 			(err) => {
@@ -116,9 +112,7 @@ const SuggestionsSection = ({ limit = 4, loadMoreEnabled = false, iconPresent = 
 					<h4 className='font-medium text-2xl text-system-primary-text'>Suggestions</h4>
 					{/* arrow cursor-pointer */}
 
-					{iconPresent && (
-						<img src={arrowfor} alt='' className='h-6 w-6 cursor-pointer' onClick={() => navigate('/Suggestions')} />
-					)}
+					{iconPresent && suggested.length > 0 && <img src={arrowfor} alt='' className='h-6 w-6 cursor-pointer' onClick={() => navigate('/Suggestions')} />}
 				</div>
 				<div className='flex flex-col gap-4'>
 					<>
