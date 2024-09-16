@@ -113,7 +113,7 @@ const DashboardHeader = () => {
 							</div>
 						)}
 					</div>
-					<div className='flex flex-row flex-wrap items-center gap-4 md:gap-4'>
+					<div className='flex flex-row flex-wrap items-center gap-2 md:gap-4'>
 						<div className='relative inline-block text-left'>
 							<div className='relative flex'>
 								<button type='button' className='inline-flex justify-center rounded-md border-none bg-system-secondary-bg text-md px-0 font-medium text-brand-gray-dim' onClick={() => OnClickItem('/Search')}>
