@@ -400,12 +400,12 @@ const PostComponent = ({
 				)}
 
 				{user?.ProfilePicture ? (
-					<div className='w-16 h-16 rounded-full bg-black hidden md:block'>
-						<img className='w-16 h-16  rounded-full object-cover' src={user?.ProfilePicture} alt='avatar' />
+					<div className='w-12 h-12 mt-2 md:mt-0 md:w-16 md:h-16 rounded-full bg-black block'>
+						<img className='w-12 h-12  md:w-16 md:h-16  rounded-full object-cover' src={user?.ProfilePicture} alt='avatar' />
 					</div>
 				) : (
 					<>
-						<div className='w-16 h-16 rounded-full bg-brand-light-gray hidden md:block'>
+						<div className='w-12 h-12 mt-2 md:mt-0 md:w-16 md:h-16 rounded-full bg-brand-light-gray block'>
 							<img src={avatar} className='object-cover h-full w-full rounded-lg' alt='No avatar' />
 						</div>
 					</>
