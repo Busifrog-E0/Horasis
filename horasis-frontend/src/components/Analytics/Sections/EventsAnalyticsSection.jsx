@@ -6,6 +6,8 @@ import { jsonToQuery } from '../../../utils/searchParams/extractSearchParams'
 import { getItem } from '../../../constants/operations'
 import DateAndTimePicker from '../../ui/DateAndTimePicker'
 import EmptyMembers from '../../Common/EmptyMembers'
+import arrowfor from '../../../assets/icons/arrowfor.svg'
+
 
 const EventsAnalyticsSection = ({ filters, setFilters }) => {
 	const { updateCurrentUser, currentUserData } = useAuth()
@@ -63,7 +65,7 @@ const EventsAnalyticsSection = ({ filters, setFilters }) => {
 						<h4 className='font-semibold text-xl text-system-primary-text'>Events</h4>
 					</div>
 					<div className='flex flex-wrap items-center gap-5'>
-						<div className='flex border rounded-md'>
+						<div className='flex border rounded-md items-center'>
 							<DateAndTimePicker
 								dateFormat='MMM dd'
 								selected={new Date(filters.StartDate)}
@@ -75,6 +77,7 @@ const EventsAnalyticsSection = ({ filters, setFilters }) => {
 								placeholder='Start date'
 								className='w-24 border-none'
 							/>
+							<img src={arrowfor} alt="" className='h-6'/>
 							<DateAndTimePicker
 								dateFormat='MMM dd'
 								selected={new Date(filters.EndDate)}

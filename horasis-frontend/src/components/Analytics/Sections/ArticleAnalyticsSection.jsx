@@ -6,6 +6,8 @@ import { useToast } from '../../Toast/ToastService'
 import { getItem } from '../../../constants/operations'
 import { jsonToQuery } from '../../../utils/searchParams/extractSearchParams'
 import ArticlesList from '../../Articles/ArticlesList'
+import arrowfor from '../../../assets/icons/arrowfor.svg'
+
 
 const ArticleAnalyticsSection = ({ filters, setFilters }) => {
 	const { updateCurrentUser, currentUserData } = useAuth()
@@ -62,7 +64,7 @@ const ArticleAnalyticsSection = ({ filters, setFilters }) => {
 						<h4 className='font-semibold text-xl text-system-primary-text'>Articles</h4>
 					</div>
 					<div className='flex flex-wrap items-center gap-5'>
-						<div className='flex border rounded-md'>
+						<div className='flex border rounded-md items-center'>
 							<DateAndTimePicker
 								dateFormat='MMM dd'
 								selected={new Date(filters.StartDate)}
@@ -74,6 +76,7 @@ const ArticleAnalyticsSection = ({ filters, setFilters }) => {
 								placeholder='Start date'
 								className='w-24 border-none'
 							/>
+							<img src={arrowfor} alt="" className='h-6' />
 							<DateAndTimePicker
 								dateFormat='MMM dd'
 								selected={new Date(filters.EndDate)}
