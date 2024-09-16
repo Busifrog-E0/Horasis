@@ -8,6 +8,7 @@ import { ConnectionStatus } from './connections-controller.js';
 import { PostActivityForProfilePatch } from './activities-controller.js';
 import { AddUserDetailsAfterInvited } from './invitations-controller.js';
 import { UpdateManyMembers } from '../databaseControllers/members-databaseController.js';
+import { ObjectId } from 'mongodb';
 
 
 
@@ -284,7 +285,9 @@ const UpdateUserDetails = async (UserId) => {
  */
 const AddUserAsAdmin = async (req, res) => {
     const { UserIds } = req.body;
-    await UpdateManyUsers({ Roles: ["Admin", "User"] }, { "_id": { $in: UserIds } })
+    const objectIds = UserIds.map(id => new ObjectId(id));
+
+    await UpdateManyUsers({ Roles: ["Admin", "User"] }, { "_id": { $in: objectIds } })
     return res.json(true);
 }
 
@@ -315,7 +318,7 @@ const GetUsersByRole = async (req, res) => {
         ]
     }
     // @ts-ignore
-    Filter.Roles = Filter.Role === "User" ? ["User"] : ["User", "Admin"];
+    Filter.Roles = Filter.Role === "User" ? { $all: ["User"] } : { $all: ["User", "Admin"] };
     delete Filter.Role;
     // @ts-ignore
     const Users = await ReadUsers(Filter, NextId, Limit, OrderBy);

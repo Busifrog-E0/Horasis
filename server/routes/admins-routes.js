@@ -4,7 +4,7 @@ import { decodeIDToken, ensureAuthorized } from "../middleware/auth-middleware.j
 import asyncHandler from 'express-async-handler';
 import { QueryParameterFormatting } from '../middleware/common.js';
 import { AddUserAsAdmin, GetUsersByRole, RemoveUserAsAdmin } from "../controllers/users-controller.js";
-import { ValidateAdmin, ValidateGetUsersByRole, ValidatePatchUserRoles } from "../validations/admins-validations.js";
+import { ValidateAdmin, ValidateGetUsersByRole, ValidateAddAdmin, ValidateRemoveAdmin } from "../validations/admins-validations.js";
 const router = Router();
 import SwaggerDocs from '../swaggerDocs/admins-swaggerDocs.js'
 
@@ -16,15 +16,15 @@ router.patch('/admin', decodeIDToken, ensureAuthorized("SuperAdmin"), ValidateAd
     //@ts-ignore
     asyncHandler(PatchAdmin));
 
-router.get('/admin/users', decodeIDToken, ensureAuthorized("SuperAdmin"), ValidateGetUsersByRole, QueryParameterFormatting,SwaggerDocs.get_Admin_Users,
+router.get('/admin/users', decodeIDToken, ensureAuthorized("SuperAdmin"), ValidateGetUsersByRole, QueryParameterFormatting, SwaggerDocs.get_Admin_Users,
     //@ts-ignore
     asyncHandler(GetUsersByRole));
 
-router.patch('/admin/addAdmin', decodeIDToken, ensureAuthorized("SuperAdmin"), ValidatePatchUserRoles, SwaggerDocs.patch_Admin_AddAdmin,
+router.patch('/admin/addAdmin', decodeIDToken, ensureAuthorized("SuperAdmin"), ValidateAddAdmin, SwaggerDocs.patch_Admin_AddAdmin,
     //@ts-ignore
     asyncHandler(AddUserAsAdmin));
 
-router.patch('/admin/removeAdmin', decodeIDToken, ensureAuthorized("SuperAdmin"), ValidatePatchUserRoles, SwaggerDocs.patch_Admin_RemoveAdmin,
+router.patch('/admin/removeAdmin', decodeIDToken, ensureAuthorized("SuperAdmin"), ValidateRemoveAdmin, SwaggerDocs.patch_Admin_RemoveAdmin,
     //@ts-ignore
     asyncHandler(RemoveUserAsAdmin));
 
