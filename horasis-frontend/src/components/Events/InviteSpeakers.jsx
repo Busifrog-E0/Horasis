@@ -15,19 +15,25 @@ import deleteIcon from '../../assets/icons/delete.svg'
 import Joi from 'joi'
 import Select from '../ui/Select'
 
-const InviteSpeakers = ({ eventId }) => {
+const InviteSpeakers = ({ eventId, event }) => {
 	const { updateCurrentUser, currentUserData } = useAuth()
 	const toast = useToast()
 	const [isLoading, setIsLoading] = useState(true)
 	const [isLoadingMore, setIsLoadingMore] = useState(false)
 	const [pageDisabled, setPageDisabled] = useState(true)
 	const [connections, setConnections] = useState([])
-
 	const [filters, setFilters] = useState({
 		OrderBy: 'Index',
 		Limit: 2,
 		Keyword: '',
 	})
+	const [emailInvitationData, setEmailInvitationData] = useState([])
+	const [errors, setErrors] = useState([])
+	const [registerSpeakers, setRegisterSpeakers] = useState('No')
+	const [isInviting, setIsInviting] = useState(false)
+
+	const agendaList = event.Agenda
+
 	const setLoadingCom = (tempArr, value) => {
 		if (tempArr.length > 0) {
 			setIsLoadingMore(value)
@@ -81,19 +87,14 @@ const InviteSpeakers = ({ eventId }) => {
 		getConnections(initialRender ? [] : connections)
 	}
 
-	const fetch = () => fetchData(true)
-	const fetchMore = () => fetchData(false)
-
 	useEffect(() => {
 		if (connections.length > 0) hasAnyLeft(`events/${eventId}/speakers/invite`, connections)
 	}, [connections])
 
 	useEffect(() => {
-		fetch()
+		fetchData(true)
 	}, [filters])
 
-	const [emails, setEmails] = useState([])
-	const [errors, setErrors] = useState([])
 	const emailSchema = Joi.string()
 		.email({ tlds: { allow: false } })
 		.required()
@@ -104,51 +105,57 @@ const InviteSpeakers = ({ eventId }) => {
 		})
 
 	const handleEmailChange = (index, event) => {
-		const newEmails = [...emails]
+		const newInvitationData = [...emailInvitationData]
 		const newErrors = [...errors]
 
-		newEmails[index] = event.target.value
+		newInvitationData[index].EmailId = event.target.value
 
 		// Validate the email
-		const { error } = emailSchema.validate(newEmails[index])
+		const { error } = emailSchema.validate(newInvitationData[index].EmailId)
 		newErrors[index] = error ? error.message : ''
 
-		setEmails(newEmails)
+		setEmailInvitationData(newInvitationData)
 		setErrors(newErrors)
 	}
+
+	const handleAgendaChange = (index, selectedOption) => {
+		const newInvitationData = [...emailInvitationData]
+		newInvitationData[index].Agenda = selectedOption ? agendaList.find((agenda) => selectedOption === agenda.Name) : ''
+		setEmailInvitationData(newInvitationData)
+	}
+
 	const addEmailField = () => {
-		if (emails.length < 5) {
-			setEmails([...emails, '']) // Add a new empty string to the array
+		if (emailInvitationData.length < 5) {
+			setEmailInvitationData([...emailInvitationData, { EmailId: '', Agenda: '' }])
 		}
 	}
 
 	const removeEmailField = (index) => {
-		const newEmails = [...emails]
+		const newInvitationData = [...emailInvitationData]
 		const newErrors = [...errors]
 
-		newEmails.splice(index, 1) // Remove the email at the specific index
-		newErrors.splice(index, 1) // Remove the error at the specific index
+		newInvitationData.splice(index, 1)
+		newErrors.splice(index, 1)
 
-		setEmails(newEmails)
+		setEmailInvitationData(newInvitationData)
 		setErrors(newErrors)
 	}
 
-	const isSubmitDisabled = emails.length === 0 || errors.some((error) => error !== '')
-	const [registerSpeakers, setRegisterSpeakers] = useState('No')
-	const [isInviting, setIsInviting] = useState(false)
+	const isSubmitDisabled = emailInvitationData.length === 0 || errors.some((error) => error !== '')
 
 	const postInviteByEmail = () => {
 		const postEmailData = {
 			EntityId: eventId,
 			ActionType: 'Event-Invite-Speaker',
-			EmailIds: emails,
+			InvitationData: emailInvitationData,
 		}
+
 		setIsInviting(true)
 		postItem(
 			`users/invite`,
 			postEmailData,
 			(result) => {
-				setEmails([])
+				setEmailInvitationData([])
 				setIsInviting(false)
 			},
 			(err) => {
@@ -161,144 +168,112 @@ const InviteSpeakers = ({ eventId }) => {
 	}
 
 	return (
-		<>
-			<div className='flex flex-col gap-0'>
-				<div className='mb-4'>
-					<div className='flex-1'>
-						<h1 className='text-system-primary-text font-medium text-lg'>Register Speakers</h1>
-						<p className='text-brand-gray mt-1 mb-2 text-base'>Add speakers for your event</p>
-					</div>
+		<div className='flex flex-col gap-0'>
+			<div className='mb-4'>
+				<div className='flex-1'>
+					<h1 className='text-system-primary-text font-medium text-lg'>Register Speakers</h1>
+					<p className='text-brand-gray mt-1 mb-2 text-base'>Add speakers for your event</p>
 				</div>
-				<div className={`${registerSpeakers !== 'Yes' && 'mb-16'}`}>
-					<Select
-						className='py-3 rounded-xl border-2 border-system-file-border-accent'
-						width='full'
-						setValue={(item) => setRegisterSpeakers(item)}
-						value={registerSpeakers}
-						options={['Yes', 'No']}
-					/>
-				</div>
-				{registerSpeakers === 'Yes' && (
-					<>
-						<div className='flex flex-col border-b pb-4'>
-							<p className='py-2 text-base text-system-secondary-text'>Invite speakers by searching profiles</p>
-							<SearchComponent
-								searchKey={filters.Keyword}
-								setSearchKey={(value) => setFilters((prev) => ({ ...prev, Keyword: value }))}
-								placeholder='Search Speakers'
-							/>
-							{filters.Keyword && (
-								<>
-									{isLoading ? (
-										<>
-											<div className='bg-system-secondary-bg p-4 rounded-b-lg '>
-												<Spinner />
-											</div>
-										</>
-									) : (
-										<>
-											{connections ? (
-												<>
-													{connections.length > 0 ? (
-														<>
-															{isLoading ? (
-																<div className='bg-system-secondary-bg p-4 rounded-b-lg '>
-																	<Spinner />
-																</div>
-															) : (
-																<>
-																	{connections.map((item, index) => {
-																		const lastItem = connections.length - 1 === index
-																		return (
-																			<InviteSpeakersTab
-																				connection={item}
-																				key={item.DocId}
-																				eventId={eventId}
-																				from='events'
-																				lastItem={lastItem}
-																			/>
-																		)
-																	})}
-																</>
-															)}
-														</>
-													) : (
-														<>
-															<EmptyMembers emptyText={'No users found.'} />
-														</>
-													)}
-												</>
-											) : (
-												<></>
-											)}
-
-											{/* {isLoadingMore && (
-									<div className='bg-system-secondary-bg p-4 rounded-b-lg '>
+			</div>
+			<div className={`${registerSpeakers !== 'Yes' && 'mb-16'}`}>
+				<Select
+					className='py-3 rounded-xl border-2 border-system-file-border-accent'
+					width='full'
+					setValue={(item) => setRegisterSpeakers(item)}
+					value={registerSpeakers}
+					options={['Yes', 'No']}
+				/>
+			</div>
+			{registerSpeakers === 'Yes' && (
+				<>
+					<div className='flex flex-col border-b pb-4'>
+						<p className='py-2 text-base text-system-secondary-text'>Invite speakers by searching profiles</p>
+						<SearchComponent
+							searchKey={filters.Keyword}
+							setSearchKey={(value) => setFilters((prev) => ({ ...prev, Keyword: value }))}
+							placeholder='Search Speakers'
+						/>
+						{filters.Keyword && (
+							<>
+								{isLoading ? (
+									<div className='bg-system-secondary-bg p-4 rounded-b-lg'>
 										<Spinner />
 									</div>
+								) : (
+									<>
+										{connections.length > 0 ? (
+											connections.map((item, index) => {
+												const lastItem = connections.length - 1 === index
+												return (
+													<InviteSpeakersTab
+														connection={item}
+														key={item.DocId}
+														eventId={eventId}
+														from='events'
+														lastItem={lastItem}
+														agendaList={agendaList}
+													/>
+												)
+											})
+										) : (
+											<EmptyMembers emptyText='No users found.' />
+										)}
+									</>
 								)}
+							</>
+						)}
+					</div>
+					<div className='flex flex-col'>
+						<p className='py-2 text-base text-system-secondary-text'>Invite by sending mail</p>
+					</div>
+					<div className='flex flex-col gap-4'>
+						{emailInvitationData.map((invitation, index) => (
+							<div key={index} className='flex flex-col w-full'>
+								<div className='flex items-center gap-2 w-full'>
+									<Input
+										className='py-3 rounded-xl border-2 border-system-secondary-accent'
+										width='full'
+										placeholder='Enter email'
+										value={invitation.EmailId}
+										onChange={(e) => handleEmailChange(index, e)}
+									/>
 
-								{!pageDisabled && (
-									<div
-										onClick={() => {
-											fetchMore()
-										}}
-										className='flex flex-row justify-end mt-4 mb-2'>
-										<div className='cursor-pointer flex items-center gap-2'>
-											<h4 className='font-semibold text-xl text-system-primary-accent'>Load More</h4>
-										</div>
-									</div>
-								)} */}
-										</>
-									)}
-								</>
-							)}
-						</div>
-						<div className='flex flex-col'>
-							<p className='py-2 text-base text-system-secondary-text'>Invite by sending mail</p>
-						</div>
-						<div className='flex flex-col gap-4'>
-							{emails.map((email, index) => {
-								return (
-									<div key={index} className='flex flex-col w-full'>
-										<div className='flex items-center gap-2 w-full'>
-											<Input
-												className='py-3 rounded-xl border-2 border-system-secondary-accent'
-												width='full'
-												placeholder='Enter mail'
-												value={email}
-												onChange={(e) => handleEmailChange(index, e)}
-											/>
-											<img
-												src={deleteIcon}
-												alt=''
-												className='h-6 cursor-pointer'
-												onClick={() => removeEmailField(index)}
-											/>
-										</div>
-										{errors[index] && <div style={{ color: 'red', marginTop: '5px' }}>{errors[index]}</div>}
-									</div>
-								)
-							})}
+									<Select
+										className='py-3 rounded-xl border-2 border-system-secondary-accent'
+										width='full'
+										placeholder='Select agenda'
+										value={agendaList.find((option) => option.Name === invitation.Agenda.Name)?.Name}
+										options={agendaList.map((item) => item.Name)}
+										setValue={(selectedOption) => handleAgendaChange(index, selectedOption)}
+									/>
+									<img
+										src={deleteIcon}
+										alt='Delete'
+										className='h-6 cursor-pointer'
+										onClick={() => removeEmailField(index)}
+									/>
+								</div>
+								{errors[index] && <div style={{ color: 'red', marginTop: '5px' }}>{errors[index]}</div>}
+							</div>
+						))}
 
-							{emails.length < 5 && (
-								<Button width='full' size='md' variant='black' onClick={addEmailField}>
-									<img src={addIcon} alt='' className='h-6' />
-								</Button>
-							)}
-							<Button
-								width='full'
-								size='md'
-								variant='black'
-								disabled={isSubmitDisabled || isInviting}
-								onClick={postInviteByEmail}>
-								{isInviting?'Sending emails...':'Send email to speakers'}
+						{emailInvitationData.length < 5 && (
+							<Button width='full' size='md' variant='black' onClick={addEmailField}>
+								<img src={addIcon} alt='Add' className='h-6' />
 							</Button>
-						</div>
-					</>
-				)}
-			</div>
-		</>
+						)}
+						<Button
+							width='full'
+							size='md'
+							variant='black'
+							disabled={isSubmitDisabled || isInviting}
+							onClick={postInviteByEmail}>
+							{isInviting ? 'Sending emails...' : 'Send email to speakers'}
+						</Button>
+					</div>
+				</>
+			)}
+		</div>
 	)
 }
 

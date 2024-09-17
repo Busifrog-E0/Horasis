@@ -65,11 +65,21 @@ const Select = ({
 						</>
 					)}
 					{showOptions ? (
-						<svg xmlns='http://www.w3.org/2000/svg' height='24px' viewBox='0 -960 960 960' width='24px' fill='var(--system-primary-accent)'>
+						<svg
+							xmlns='http://www.w3.org/2000/svg'
+							height='24px'
+							viewBox='0 -960 960 960'
+							width='24px'
+							fill='var(--system-primary-accent)'>
 							<path d='M480-554 283-357l-43-43 240-240 240 240-43 43-197-197Z' />
 						</svg>
 					) : (
-						<svg xmlns='http://www.w3.org/2000/svg' height='24px' viewBox='0 -960 960 960' width='24px' fill='var(--system-primary-accent)'>
+						<svg
+							xmlns='http://www.w3.org/2000/svg'
+							height='24px'
+							viewBox='0 -960 960 960'
+							width='24px'
+							fill='var(--system-primary-accent)'>
 							<path d='M480-344 240-584l43-43 197 197 197-197 43 43-240 240Z' />
 						</svg>
 					)}

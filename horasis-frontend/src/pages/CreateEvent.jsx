@@ -74,9 +74,9 @@ const CreateEvent = () => {
 		HasDiscussion: true,
 	})
 
-	useEffect(() => {
-		console.log(postEventData)
-	}, [postEventData])
+	// useEffect(() => {
+	// 	console.log(postEventData)
+	// }, [postEventData])
 
 	const [event, setEvent] = useState('')
 	const getEvent = () => {
@@ -338,7 +338,7 @@ const CreateEvent = () => {
 							fileFieldName='CoverPicture'
 						/>
 					)}
-					{activeStep === 5 && <CreateEventStep5 changeStep={changeStep} activeStep={activeStep} eventId={eventId} />}
+					{activeStep === 5 && <CreateEventStep5 changeStep={changeStep} activeStep={activeStep} eventId={eventId} event={event} />}
 					{activeStep === 6 && <EventSettings from='create' eventId={eventId} event={event} />}
 					{/* {activeStep !== 6 && */}
 					<div className='grid grid-cols-2 lg:grid-cols-3 gap-4 py-8'>

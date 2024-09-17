@@ -11,7 +11,7 @@ import Spinner from '../../../ui/Spinner'
 import SearchComponent from '../../../Search/SearchBox/SearchComponent'
 import InviteSpeakers from '../../InviteSpeakers'
 
-const CreateEventStep5 = ({ changeStep, activeStep, eventId, from = 'create', IsAdmin = false }) => {
+const CreateEventStep5 = ({ changeStep, activeStep, eventId, from = 'create', IsAdmin = false, event }) => {
 	const { updateCurrentUser, currentUserData } = useAuth()
 	const toast = useToast()
 	const [isLoading, setIsLoading] = useState(true)
@@ -138,9 +138,7 @@ const CreateEventStep5 = ({ changeStep, activeStep, eventId, from = 'create', Is
 					<div className='mb-2'>
 						<div className='flex-1'>
 							<h1 className='text-system-primary-text font-medium text-lg'>Invite Members</h1>
-							<p className='text-system-primary-text mt-1 mb-2 text-base'>
-								Invite by clicking the 'Invite'. Once done, click 'Done'
-							</p>
+							<p className='text-system-primary-text mt-1 mb-2 text-base'>Invite by clicking the 'Invite'. Once done, click 'Done'</p>
 						</div>
 						{from === 'create' && (
 							<Button onClick={() => setShowSpeakers(true)} variant='black' className='px-16'>
@@ -148,11 +146,7 @@ const CreateEventStep5 = ({ changeStep, activeStep, eventId, from = 'create', Is
 							</Button>
 						)}
 					</div>
-					<SearchComponent
-						searchKey={filters.Keyword}
-						setSearchKey={(value) => setFilters((prev) => ({ ...prev, Keyword: value }))}
-						placeholder='Search Members'
-					/>
+					<SearchComponent searchKey={filters.Keyword} setSearchKey={(value) => setFilters((prev) => ({ ...prev, Keyword: value }))} placeholder='Search Members' />
 					{isLoading ? (
 						<>
 							<div className='bg-system-secondary-bg p-4 rounded-b-lg '>
@@ -172,14 +166,7 @@ const CreateEventStep5 = ({ changeStep, activeStep, eventId, from = 'create', Is
 											) : (
 												<>
 													{connections.map((item) => {
-														return (
-															<InviteMemberTab
-																from='events'
-																connection={item}
-																key={item.DocId}
-																discussionId={eventId}
-															/>
-														)
+														return <InviteMemberTab from='events' connection={item} key={item.DocId} discussionId={eventId} />
 													})}
 												</>
 											)}
@@ -219,7 +206,8 @@ const CreateEventStep5 = ({ changeStep, activeStep, eventId, from = 'create', Is
 				</>
 			) : (
 				<>
-					<InviteSpeakers eventId={eventId} />
+				{console.log(event)}
+					<InviteSpeakers eventId={eventId} event={event} />
 				</>
 			)}
 		</div>

@@ -90,7 +90,7 @@ const SingleEvent = () => {
 							<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
 								{event?.Permissions?.CanInviteOthers && (
 									<div>
-										<CreateEventStep5 eventId={event.DocId} from='tab' IsAdmin={event?.Permissions?.IsAdmin} />
+										<CreateEventStep5 event={event} eventId={event.DocId} from='tab' IsAdmin={event?.Permissions?.IsAdmin} />
 									</div>
 								)}
 								<div className='my-4 flex flex-col gap-2'>
@@ -114,7 +114,7 @@ const SingleEvent = () => {
 						title: 'Invite Speakers',
 						render: () => (
 							<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
-								<InviteSpeakers eventId={event.DocId} />
+								<InviteSpeakers eventId={event.DocId} event={event} />
 							</div>
 						),
 					},
@@ -137,7 +137,7 @@ const SingleEvent = () => {
 							<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
 								{event?.Permissions?.CanInviteOthers && (
 									<div>
-										<CreateEventStep5 eventId={event.DocId} from='tab' IsAdmin={event?.Permissions?.IsAdmin} />
+										<CreateEventStep5 event={event} eventId={event.DocId} from='tab' IsAdmin={event?.Permissions?.IsAdmin} />
 									</div>
 								)}
 								<div className='my-4 flex flex-col gap-2'>
@@ -161,7 +161,7 @@ const SingleEvent = () => {
 						title: 'Invite Speakers',
 						render: () => (
 							<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
-								<InviteSpeakers eventId={event.DocId} />
+								<InviteSpeakers eventId={event.DocId} event={event} />
 							</div>
 						),
 					},
@@ -195,7 +195,7 @@ const SingleEvent = () => {
 							<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
 								{event?.Permissions?.CanInviteOthers && (
 									<div>
-										<CreateEventStep5 eventId={event.DocId} from='tab' IsAdmin={event?.Permissions?.IsAdmin} />
+										<CreateEventStep5 event={event} eventId={event.DocId} from='tab' IsAdmin={event?.Permissions?.IsAdmin} />
 									</div>
 								)}
 								<div className='my-4 flex flex-col gap-2'>
@@ -210,7 +210,7 @@ const SingleEvent = () => {
 						title: 'Invite Speakers',
 						render: () => (
 							<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
-								<InviteSpeakers eventId={event.DocId} />
+								<InviteSpeakers eventId={event.DocId} event={event} />
 							</div>
 						),
 					},
@@ -233,7 +233,7 @@ const SingleEvent = () => {
 							<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
 								{event?.Permissions?.CanInviteOthers && (
 									<div>
-										<CreateEventStep5 eventId={event.DocId} from='tab' IsAdmin={event?.Permissions?.IsAdmin} />
+										<CreateEventStep5 event={event} eventId={event.DocId} from='tab' IsAdmin={event?.Permissions?.IsAdmin} />
 									</div>
 								)}
 								<div className='my-4 flex flex-col gap-2'>
@@ -248,7 +248,7 @@ const SingleEvent = () => {
 						title: 'Invite Speakers',
 						render: () => (
 							<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
-								<InviteSpeakers eventId={event.DocId} />
+								<InviteSpeakers eventId={event.DocId} event={event} />
 							</div>
 						),
 					},
@@ -282,7 +282,7 @@ const SingleEvent = () => {
 							<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
 								{event?.Permissions?.CanInviteOthers && (
 									<div>
-										<CreateEventStep5 eventId={event.DocId} from='tab' IsAdmin={event?.Permissions?.IsAdmin} />
+										<CreateEventStep5 event={event} eventId={event.DocId} from='tab' IsAdmin={event?.Permissions?.IsAdmin} />
 									</div>
 								)}
 								<div className='my-4 flex flex-col gap-2'>
@@ -302,7 +302,7 @@ const SingleEvent = () => {
 							<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
 								{event?.Permissions?.CanInviteOthers && (
 									<div>
-										<CreateEventStep5 eventId={event.DocId} from='tab' IsAdmin={event?.Permissions?.IsAdmin} />
+										<CreateEventStep5 event={event} eventId={event.DocId} from='tab' IsAdmin={event?.Permissions?.IsAdmin} />
 									</div>
 								)}
 								<div className='my-4 flex flex-col gap-2'>
@@ -346,7 +346,7 @@ const SingleEvent = () => {
 							{event.Speakers && event.Speakers.length > 0 ? (
 								<>
 									{event.Speakers.map((speaker) => {
-										return <SpeakerProfileTab profile={speaker.UserDetails} />
+										return <SpeakerProfileTab profile={speaker.UserDetails} agenda={speaker.Agenda} />
 									})}
 								</>
 							) : (
@@ -763,7 +763,7 @@ const SingleEvent = () => {
 					<div>
 						<div className='p-5 bg-system-secondary-bg rounded-lg'>
 							<div className='lg:mt-1'>
-								<MiniTab gap='gap-8' fontSize='text-md xl:text-xl' alignment='justify-center' tabs={miniEventTabs(event)} />
+								<MiniTab gap='gap-8' fontSize='text-md xl:text-md' alignment='justify-center' tabs={miniEventTabs(event)} />
 							</div>
 						</div>
 					</div>
