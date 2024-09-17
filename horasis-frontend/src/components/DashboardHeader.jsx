@@ -68,8 +68,9 @@ const DashboardHeader = () => {
 					</div>
 				</Modal.Body>
 			</Modal>
-			<div className='bg-system-secondary-bg py-2 md:py-3 px-1 lg:px-10 shadow border-b border-system-file-border w-full flex justify-center'>
-				<div className='flex flex-row justify-between items-center max-w-screen-2xl w-full'>
+			{/* p-2 lg:px-10  */}
+			<div className='bg-system-secondary-bg py-2 md:py-3 px-2 lg:px-10  border-b border-system-file-border w-full flex justify-center'>
+				<div className='flex flex-row justify-between items-center max-w-screen-2xl w-full px-2 xl:px-10'>
 					<div className='text-4xl font-bold text-brand-violet scale-75 md:scale-90' onClick={() => OnClickItem('/home')}>
 						<Logo />
 					</div>
