@@ -5,10 +5,15 @@ import dataHandling from './functions.js'
  */
 
 /**
+ * @typedef {import('./events-databaseController.js').AgendaData} AgendaData
+ */
+
+/**
  * @typedef {object} SpeakerData
  * @property {string} SpeakerId
  * @property {"Accepted"|"Invited"} MembershipStatus
  * @property {UserData} UserDetails
+ * @property {AgendaData} Agenda
  * @property {string} DocId
  * @property {string} EventId
  */
