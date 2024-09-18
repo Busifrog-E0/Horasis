@@ -20,12 +20,13 @@ import translationsRoutes from './translations-routes.js'
 import membersRoutes from './members-routes.js'
 import analyticsRoutes from './analytics-routes.js'
 import agoraRoutes from './agora-routes.js'
-
+import likesRoutes from './likes-routes.js'
 
 router.use("/api", authRoutes);
 router.use("/api", adminRoutes);
 router.use("/api", userRoutes);
 // router.use("/api", fileRoutes);
+router.use("/api",likesRoutes)
 router.use("/api", followRoutes);
 router.use("/api", connectionsRoutes);
 router.use("/api", filesRoutes);
