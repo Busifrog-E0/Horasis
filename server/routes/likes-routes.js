@@ -9,6 +9,7 @@ import asyncHandler from 'express-async-handler';
 import e from 'express';
 import { decodeIDToken, ensureAuthorized } from '../middleware/auth-middleware.js';
 import { QueryParameterFormatting, ValidateGetEntity } from '../middleware/common.js';
+import { ValidatePostLikes } from '../validations/likes-validations.js';
 const router = e.Router();
 router.route
 
@@ -20,7 +21,7 @@ router.get('/likes/:LikeId',decodeIDToken,ensureAuthorized("User"),
     // @ts-ignore
     asyncHandler(GetOneFromLikes));
 
-router.post('/likes/:EntityId',decodeIDToken,ensureAuthorized("User"),
+router.post('/likes/:EntityId',decodeIDToken,ensureAuthorized("User"),ValidatePostLikes,
     // @ts-ignore
     asyncHandler(PostLikes));
 
