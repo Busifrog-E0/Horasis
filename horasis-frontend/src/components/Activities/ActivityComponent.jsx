@@ -18,7 +18,21 @@ import MentionTextLink from './Mentions/MentionTextLink'
 import ActivityDocuments from './ActivityDocuments'
 import { useNavigate } from 'react-router-dom'
 import { _retrieveData } from '../../utils/LocalStorage'
-const ActivityComponent = ({ titleSize, bordered, activity, activityId, onDelete, className, avatarSize, descriptionSize, timeSize = 'text-base', ShowImage = true, iconSize = '6', openComment = false, onSaveRemoveCallback = () => {} }) => {
+const ActivityComponent = ({
+	titleSize,
+	bordered,
+	activity,
+	activityId,
+	onDelete,
+	className,
+	avatarSize,
+	descriptionSize,
+	timeSize = 'text-base',
+	ShowImage = true,
+	iconSize = '6',
+	openComment = false,
+	onSaveRemoveCallback = () => {},
+}) => {
 	const navigate = useNavigate()
 	const [showComment, setShowComment] = useState(openComment)
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
@@ -301,7 +315,9 @@ const ActivityComponent = ({ titleSize, bordered, activity, activityId, onDelete
 		return (
 			<div className={className}>
 				{isLoadingActivity && (
-					<div style={{ zIndex: 1000 }} className='absolute top-0 bottom-0 right-0 left-0 flex flex-col justify-center items-center'>
+					<div
+						style={{ zIndex: 1000 }}
+						className='absolute top-0 bottom-0 right-0 left-0 flex flex-col justify-center items-center'>
 						<Spinner />
 					</div>
 				)}
@@ -313,7 +329,11 @@ const ActivityComponent = ({ titleSize, bordered, activity, activityId, onDelete
 					}}>
 					{singleActivity.UserDetails?.ProfilePicture ? (
 						<>
-							<img className={`${avatarSize} rounded-full object-cover`} src={singleActivity.UserDetails?.ProfilePicture} alt='Rounded avatar' />
+							<img
+								className={`${avatarSize} rounded-full object-cover`}
+								src={singleActivity.UserDetails?.ProfilePicture}
+								alt='Rounded avatar'
+							/>
 						</>
 					) : (
 						<>
@@ -333,11 +353,19 @@ const ActivityComponent = ({ titleSize, bordered, activity, activityId, onDelete
 								</h1>
 								{/* <h4 className='text-system-primary-text text-md'>Updated their photo</h4> */}
 							</div>
-							<h4 className={`font-medium ${timeSize} text-brand-gray-dim`}>{relativeTime(singleActivity.CreatedIndex)}</h4>
+							<h4 className={`font-medium ${timeSize} text-brand-gray-dim`}>
+								{relativeTime(singleActivity.CreatedIndex)}
+							</h4>
 						</div>
 					</div>
 				</div>
-				<div className='mt-5'>{translating ? <p className='text-sm text-system-secondary-text'>Translating... </p> : <MentionTextLink descriptionSize={descriptionSize} singleActivity={singleActivity} />}</div>
+				<div className='mt-5'>
+					{translating ? (
+						<p className='text-sm text-system-secondary-text'>Translating... </p>
+					) : (
+						<MentionTextLink descriptionSize={descriptionSize} singleActivity={singleActivity} />
+					)}
+				</div>
 				{/* {
 					singleActivity.Mentions?.length > 0 &&
 					<div className='mb-2 mt-1'>
@@ -379,7 +407,15 @@ const ActivityComponent = ({ titleSize, bordered, activity, activityId, onDelete
 							<Spinner />
 						) : (
 							<div className='flex items-center gap-2'>
-								{singleActivity.HasLiked ? <img src={liked} className={`h-${iconSize} w-${iconSize} cursor-pointer text-system-error`} onClick={onUnLikeBtnClicked} /> : <img src={like} className={`h-${iconSize} w-${iconSize} cursor-pointer`} onClick={onLikeBtnClicked} />}
+								{singleActivity.HasLiked ? (
+									<img
+										src={liked}
+										className={`h-${iconSize} w-${iconSize} cursor-pointer text-system-error`}
+										onClick={onUnLikeBtnClicked}
+									/>
+								) : (
+									<img src={like} className={`h-${iconSize} w-${iconSize} cursor-pointer`} onClick={onLikeBtnClicked} />
+								)}
 								<ViewLikedMembers activity={singleActivity} timeSize={timeSize} />
 							</div>
 						)}
@@ -395,10 +431,29 @@ const ActivityComponent = ({ titleSize, bordered, activity, activityId, onDelete
 							</div>
 						)} */}
 					</div>
-					<ActivityDropdown onRemoveClicked={OnRemoveClicked} onSaveClicked={onSaveClicked} activity={singleActivity} isSaving={isSaving} />
+					<ActivityDropdown
+						onRemoveClicked={OnRemoveClicked}
+						onSaveClicked={onSaveClicked}
+						activity={singleActivity}
+						isSaving={isSaving}
+					/>
 				</div>
 				{showComment && (
-					<ActivityCommentList comments={commentsData} activity={singleActivity} getAllActivityComments={getAllActivityComments} getSingleActivity={getSingleActivity} isLoading={isLoading} isLoadingMore={isLoadingMore} pageDisabled={pageDisabled} fetchMore={fetchMore} setIsLoading={setIsLoading} timeSize={timeSize} titleSize={titleSize} iconSize={iconSize} descriptionSize={descriptionSize} />
+					<ActivityCommentList
+						comments={commentsData}
+						activity={singleActivity}
+						getAllActivityComments={getAllActivityComments}
+						getSingleActivity={getSingleActivity}
+						isLoading={isLoading}
+						isLoadingMore={isLoadingMore}
+						pageDisabled={pageDisabled}
+						fetchMore={fetchMore}
+						setIsLoading={setIsLoading}
+						timeSize={timeSize}
+						titleSize={titleSize}
+						iconSize={iconSize}
+						descriptionSize={descriptionSize}
+					/>
 				)}
 			</div>
 		)

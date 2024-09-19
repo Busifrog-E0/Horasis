@@ -1,6 +1,6 @@
-import { useNavigate, useParams } from 'react-router-dom'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import cover from '../assets/icons/cover.svg'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { deleteItem, getItem, patchItem, postItem } from '../constants/operations'
 import { useAuth } from '../utils/AuthProvider'
 import { useToast } from '../components/Toast/ToastService'
@@ -17,7 +17,9 @@ import Spinner from '../components/ui/Spinner'
 
 const SingleArticles = () => {
 	const { updateCurrentUser, currentUserData } = useAuth()
+	// const location = useLocation()
 	const toast = useToast()
+	// const commentsRef = useRef(null)
 	const { articleid } = useParams()
 	const [article, setArticle] = useState({})
 	const [isLoading, setIsLoading] = useState(true)
@@ -44,6 +46,12 @@ const SingleArticles = () => {
 			toast
 		)
 	}
+
+	// useEffect(() => {
+	// 	if (location.state.scrollToComments === true && commentsRef.current) {
+	// 		commentsRef.current.scrollIntoView({behaviour:'smooth'})
+	// 	}
+	// })
 
 	useEffect(() => {
 		getArticle()
@@ -262,6 +270,10 @@ const SingleArticles = () => {
 				<div className='lg:col-span-3 px-10 bg-system-secondary-bg py-10 rounded-b-2xl'>
 					<h4 className='text-xl text-brand-gray  leading-8 whitespace-pre-line'>{article.Description}</h4>
 				</div>
+
+				{/* <div id='comments' ref={commentsRef}>
+					comments
+				</div> */}
 			</div>
 		</>
 	)

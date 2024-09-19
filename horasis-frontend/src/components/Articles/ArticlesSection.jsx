@@ -87,16 +87,16 @@ const ArticlesSection = () => {
 		fetch()
 	}, [filters])
 
-	const getSingleArticle = (id) => {
-		setSaving(id)
+	const getSingleArticle = (id,setLoader) => {
+		setLoader(id)
 		getItem(
 			`articles/${id}`,
 			(result) => {
-				setSaving(null)
+				setLoader(null)
 				setArticles(articles.map((article) => (article.DocId === result.DocId ? result : article)))
 			},
 			(err) => {
-				setSaving(null)
+				setLoader(null)
 			},
 			updateCurrentUser,
 			currentUserData,
@@ -112,7 +112,7 @@ const ArticlesSection = () => {
 			{ EntityId: id, Type: 'Article' },
 			(result) => {
 				if (result === true) {
-					getSingleArticle(id)
+					getSingleArticle(id, setSaving)
 				}
 			},
 			(err) => {
@@ -130,11 +130,46 @@ const ArticlesSection = () => {
 			`saves/${id}`,
 			(result) => {
 				if (result === true) {
-					getSingleArticle(id)
+					getSingleArticle(id, setSaving)
 				}
 			},
 			(err) => {
 				setSaving(null)
+			},
+			updateCurrentUser,
+			currentUserData,
+			toast
+		)
+	}
+	const [liking, setLiking] = useState(null)
+	const likeArticle = (EntId, callback) => {
+		postItem(
+			`likes/${EntId}`,
+			{Type:'Article'},
+			(result) => {
+				if (result === true) {
+					getSingleArticle(EntId, setLiking)
+				}
+			},
+			(err) => {
+				setLiking(null)
+			},
+			updateCurrentUser,
+			currentUserData,
+			toast
+		)
+	}
+
+	const unLikeArticle = (EntId) => {
+		deleteItem(
+			`likes/${EntId}`,
+			(result) => {
+				if (result === true) {
+					getSingleArticle(EntId, setLiking)
+				}
+			},
+			(err) => {
+				setLiking(null)
 			},
 			updateCurrentUser,
 			currentUserData,
@@ -165,6 +200,9 @@ const ArticlesSection = () => {
 							saveArticle={saveArticle}
 							removeSaveArticle={removeSaveArticle}
 							saving={saving}
+							likeArticle={likeArticle}
+							unLikeArticle={unLikeArticle}
+							liking={liking}
 						/>
 					</div>
 				</>

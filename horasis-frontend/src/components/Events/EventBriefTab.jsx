@@ -12,6 +12,7 @@ const EventBriefTab = ({ event }) => {
 					<div className='flex flex-row flex-wrap gap-3'>
 						<h4 className='text-xs text-white'>{event.Privacy} Event</h4>
 						<h4 className='text-xs text-white'>Active {relativeTime(new Date(event.CreatedIndex))}</h4>
+						<h4 className='text-xs text-white'>{event.NoOfMembers} Participants</h4>
 					</div>
 				</div>
 			</div>

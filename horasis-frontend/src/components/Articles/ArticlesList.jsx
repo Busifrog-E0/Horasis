@@ -4,7 +4,7 @@ import { AuthContext } from '../../utils/AuthProvider'
 import EmptyMembers from '../Common/EmptyMembers'
 import ArticleTab from './ArticleTab'
 
-const ArticlesList = ({ data = [], emptyText, saveArticle, removeSaveArticle,saving }) => {
+const ArticlesList = ({ data = [], emptyText, saveArticle, removeSaveArticle, saving, likeArticle, unLikeArticle,liking }) => {
 	const { currentUserData, scrollToTop } = useContext(AuthContext)
 	const navigate = useNavigate()
 
@@ -29,6 +29,9 @@ const ArticlesList = ({ data = [], emptyText, saveArticle, removeSaveArticle,sav
 											saveArticle={saveArticle}
 											removeSaveArticle={removeSaveArticle}
 											saving={saving}
+											likeArticle={likeArticle}
+											unLikeArticle={unLikeArticle}
+											liking={liking}
 										/>
 									)
 								})}
