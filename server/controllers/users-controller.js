@@ -9,6 +9,8 @@ import { PostActivityForProfilePatch } from './activities-controller.js';
 import { AddUserDetailsAfterInvited } from './invitations-controller.js';
 import { UpdateManyMembers } from '../databaseControllers/members-databaseController.js';
 import { ObjectId } from 'mongodb';
+import { CreateUserExtendedProperties, MAX_CONNECTIONLIST_SIZE, PullUserExtendedProperties, PushOnceInUserExtendedProperties, ReadUserExtendedProperties, UserExtendedPropertiesInit } from '../databaseControllers/userExtendedProperties-databaseController.js';
+import { PullManyActivityExtendedProperties, PushOnceInManyActivityExtendedProperties } from '../databaseControllers/activityExtendedProperties-databaseController.js';
 
 
 
@@ -103,6 +105,7 @@ const VerifyRegistrationOTP = async (req, res) => {
     const UserId = await CreateUsers(OTPData.Data);
     //@ts-ignore
     AddUserDetailsAfterInvited(OTPData.Data, UserId)
+    AddConnectionstoUser(UserId, UserId);
     const CurrentUser = {
         Role: ["User"],
         UserId
@@ -279,6 +282,35 @@ const UpdateUserDetails = async (UserId) => {
 
 /**
  * 
+ * @param {string} UserId 
+ * @param {string} ConnectionId 
+ */
+const AddConnectionstoUser = async (UserId, ConnectionId) => {
+    const [checkUserConnections] = await ReadUserExtendedProperties({ Type: "ConnectionsList", UserId, $expr: { $lt: [{ $size: "$Content.ConnectionsList" }, MAX_CONNECTIONLIST_SIZE] } }, undefined, 1, undefined);
+    if (checkUserConnections) {
+        return Promise.all([
+            PushOnceInUserExtendedProperties({ "Content.ConnectionsList": ConnectionId }, checkUserConnections.DocId),
+            PushOnceInManyActivityExtendedProperties({ "Content.ConnectionsList": ConnectionId }, { UserId })
+        ]);
+    }
+    return await CreateUserExtendedProperties(UserExtendedPropertiesInit({ UserId, Type: "ConnectionsList", Content: { ConnectionsList: [ConnectionId] } }));
+}
+
+/**
+ * 
+ * @param {string} UserId 
+ * @param {string} ConnectionId 
+ */
+const RemoveConnectionsToUser = async (UserId, ConnectionId) => {
+    const [checkUserConnections] = await ReadUserExtendedProperties({ Type: "ConnectionsList", UserId, "Content.ConnectionsList": ConnectionId }, undefined, 1, undefined);
+    return Promise.all([
+        PullUserExtendedProperties({ "Content.ConnectionsList": ConnectionId }, checkUserConnections.DocId),
+        PullManyActivityExtendedProperties({ "Content.ConnectionsList": ConnectionId }, { UserId })
+    ])
+}
+
+/**
+ * 
  * @param {e.Request} req 
  * @param {e.Response} res 
  * @returns 
@@ -374,5 +406,5 @@ export {
     UserLogin, VerifyRegistrationOTP, CheckUsernameAvailability,
     ViewOtherUserRelations, ViewOtherUserData, SendForgotPasswordOTP,
     PatchPassword, CheckIfUserWithMailExists, AddUserAsAdmin, RemoveUserAsAdmin,
-    GetUsersByRole
+    GetUsersByRole, AddConnectionstoUser, RemoveConnectionsToUser
 }
