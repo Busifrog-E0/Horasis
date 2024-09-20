@@ -16,7 +16,7 @@ import SwaggerDocs from '../swaggerDocs/analytics-swaggerDocs.js'
 import e from 'express';
 import { decode } from 'jsonwebtoken';
 import { QueryParameterFormatting, ValidateGetEntity } from '../middleware/common.js';
-import { ValidateGetIntervalAnalytics } from '../validations/analytics-validations.js';
+import { ValidateGetIntervalAnalytics, ValidateGetUserBreakdownAnalytics } from '../validations/analytics-validations.js';
 const router = e.Router();
 router.route
 
@@ -25,7 +25,7 @@ router.get('/analytics/userInsights', decodeIDToken, ensureAuthorized("User"), V
     //@ts-ignore
     asyncHandler(GetUserInsightsAnalytics));
 
-router.get('/analytics/userBreakdown', decodeIDToken, ensureAuthorized("User"),
+router.get('/analytics/userBreakdown', decodeIDToken, ensureAuthorized("User"), ValidateGetUserBreakdownAnalytics,
     SwaggerDocs.get_Analytics_UserBreakdown,
     // @ts-ignore
     asyncHandler(GetUserBreakdown));

@@ -36,17 +36,21 @@ const GetUserInsightsAnalytics = async (req, res) => {
  * @returns 
  */
 const GetUserBreakdown = (async (req, res) => {
-    const [TotalUsers, Country, City, Industry, JobTitle] = await Promise.all([
+    const { Country } = req.query;
+    const CountryFilter = Country ? { Country } : {}
+    const [TotalUsers, CountryData, City, Industry, JobTitle, CountryUsers] = await Promise.all([
         CountUsers({}),
         GetDocumentCountByFields("Users", "Country"),
         GetDocumentCountByFields("Users", "City"),
-        GetDocumentCountByFields("Users", "Industry"),
-        GetDocumentCountByFields("Users", "JobTitle"),
+        GetDocumentCountByFields("Users", "Industry", CountryFilter),
+        GetDocumentCountByFields("Users", "JobTitle", CountryFilter),
+        CountUsers(CountryFilter)
     ])
-    const UserCountryPercentage = Country.map(item =>  item.Count === 0 ? item : { ...item, Count: GetPercentageOfData(item.Count, TotalUsers)  });
-    const UserCityPercentage = City.map(item =>  item.Count === 0 ? item : { ...item, Count: GetPercentageOfData(item.Count, TotalUsers) } );
-    const UserIndustryPercentage = Industry.map(item =>  item.Count === 0 ? item : { ...item, Count: GetPercentageOfData(item.Count, TotalUsers) } );
-    const UserJobTitlePercentage = JobTitle.map(item =>  item.Count === 0 ? item : { ...item, Count: GetPercentageOfData(item.Count, TotalUsers) } );
+    const FilteredUsers = Country ? CountryUsers : TotalUsers
+    const UserCountryPercentage = CountryData.map(item => item.Count === 0 ? item : { ...item, Count: GetPercentageOfData(item.Count, TotalUsers) });
+    const UserCityPercentage = City.map(item => item.Count === 0 ? item : { ...item, Count: GetPercentageOfData(item.Count, TotalUsers) });
+    const UserIndustryPercentage = Industry.map(item => item.Count === 0 ? item : { ...item, Count: GetPercentageOfData(item.Count, CountryUsers) });
+    const UserJobTitlePercentage = JobTitle.map(item => item.Count === 0 ? item : { ...item, Count: GetPercentageOfData(item.Count, CountryUsers) });
     return res.json({ Country: UserCountryPercentage, City: UserCityPercentage, Industry: UserIndustryPercentage, JobTitle: UserJobTitlePercentage })
 })
 
@@ -300,4 +304,3 @@ export {
 }
 
 
-   

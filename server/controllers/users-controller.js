@@ -286,6 +286,10 @@ const UpdateUserDetails = async (UserId) => {
  * @param {string} ConnectionId 
  */
 const AddConnectionstoUser = async (UserId, ConnectionId) => {
+    const [ConnectionAdded] = await ReadUserExtendedProperties({ Type: "ConnectionsList", "Content.ConnectionList": ConnectionId, UserId }, undefined, 1, undefined);
+    if (ConnectionAdded) {
+        return;
+    }
     const [checkUserConnections] = await ReadUserExtendedProperties({ Type: "ConnectionsList", UserId, $expr: { $lt: [{ $size: "$Content.ConnectionsList" }, MAX_CONNECTIONLIST_SIZE] } }, undefined, 1, undefined);
     if (checkUserConnections) {
         return Promise.all([
