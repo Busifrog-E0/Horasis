@@ -15,7 +15,9 @@ import moment from "moment-timezone";
 async function Create(collectionName, data, docName = undefined, index = true) {
     return new Promise(async (resolve, reject) => {
         try {
-            data.CreatedIndex = moment().valueOf();
+            if (!data.CreatedIndex) {
+                data.CreatedIndex = moment().valueOf();
+            }
             if (!data.Index && index) {
                 data.Index = `${Date.now()}`;
             }
@@ -232,7 +234,7 @@ async function Aggregate(collectionName, AggregateArray, NextIndex = "", limit =
  */
 async function DistinctValues(collectionName, field, where = {}) {
     try {
-        const data = await db.collection(collectionName).distinct(field,where);
+        const data = await db.collection(collectionName).distinct(field, where);
         return data;
     } catch (error) {
         logger.log(error);

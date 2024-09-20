@@ -13,6 +13,9 @@ import { RemoveNotificationForEntity, RemoveNotificationsAfterActivityMentionPat
 import { DetectLanguage } from './translations-controller.js';
 import { IncrementDiscussions } from '../databaseControllers/discussions-databaseController.js';
 import { IncrementEvents } from '../databaseControllers/events-databaseController.js';
+import { ReadUserExtendedProperties } from '../databaseControllers/userExtendedProperties-databaseController.js';
+import { ActivityExtendedPropertiesInit, CreateActivityExtendedProperties, ReadActivityExtendedProperties } from '../databaseControllers/activityExtendedProperties-databaseController.js';
+import moment from 'moment';
 
 /**
  * @typedef {import('../databaseControllers/activities-databaseController.js').ActivityData} ActivityData 
@@ -43,80 +46,13 @@ const GetActivities = async (req, res) => {
     //@ts-ignore
     const { UserId } = req.user;
     const { NextId, Limit, Filter, OrderBy, Keyword } = req.query;
-    if (Keyword) {
-        //@ts-ignore
-        Filter["Content"] = { $regex: Keyword, $options: 'i' };
-    }
     //@ts-ignore
-    const FilterConditions = Object.entries(Filter).map(([key, value]) => ({ [key]: value }));
-    const AggregateArray = [
-        {
-            $lookup: {
-                from: 'Follows',
-                pipeline: [
-                    { $match: { '$expr': { '$eq': ['$FollowerId', UserId] } } }
-                ],
-                as: 'Followees'
-            }
-        },
-        {
-            $lookup: {
-                from: 'Connections',
-                pipeline: [
-                    {
-                        $match: {
-                            $expr: {
-                                $and: [
-                                    { $in: [UserId, '$UserIds'] },
-                                    { $eq: ['$Status', 'Connected'] }
-                                ]
-                            }
-                        }
-                    }
-                ],
-                as: 'Connections'
-            }
-        },
-        {
-            $addFields: {
-                Followees: {
-                    $map: {
-                        input: '$Followees',
-                        as: 'f',
-                        in: '$$f.FolloweeId'
-                    }
-                },
-                Connections: {
-                    $reduce: {
-                        input: '$Connections',
-                        initialValue: [],
-                        in: { $setUnion: ['$$value', '$$this.UserIds'] }
-                    }
-                }
-            }
-        },
-        {
-            $addFields: {
-                UserIds: { $setUnion: ['$Followees', '$Connections', [UserId]] }
-            }
-        },
-        {
-            $match: {
-                $and: [
-                    { $expr: { $in: ['$UserId', '$UserIds'] } },
-                    ...FilterConditions
-                ]
-            }
-        },
-        {
-            $project: {
-                Followees: 0,
-                Connections: 0,
-                UserIds: 0
-            }
-        }
-    ]
-    const Activities = await AggregateActivities(AggregateArray, NextId, Limit, OrderBy);
+    const UserConnectedActivities = await ReadActivityExtendedProperties({ Type: "ConnectionsList", "Content.ConnectionsList": UserId }, NextId, Limit, OrderBy);
+    const Activities = await Promise.all(UserConnectedActivities.map(async Activity => {
+        const ActivityData = await ReadOneFromActivities(Activity.ActivityId);
+        //@ts-ignore
+        return { ...ActivityData, NextId: Activity.NextId }
+    }));
     const data = await Promise.all(Activities.map(async Activity => {
         const [UserDetails, checkLike, checkSave] = await Promise.all([
             ReadOneFromUsers(Activity.UserId),
@@ -178,6 +114,7 @@ const PostActivities = async (req, res) => {
         CreateActivities(data, ActivityId),
         PostMediasFromAttachments(Attachments, ActivityId, UserId),
         SendNotificationstoActivityMentions(Mentions, UserId, ActivityId),
+        AddtoUserActivities({ ...data, ActivityId }),
         req.body.Type !== "Feed" ?
             req.body.Type === "Discussion" ?
                 IncrementDiscussions({ NoOfActivities: 1 }) : IncrementEvents({ NoOfActivities: 1 }) : null
@@ -330,6 +267,8 @@ const ActivityInit = (Activity) => {
         NoOfLikes: 0,
         ...Activity,
         NoOfComments: 0,
+        Index: String(Date.now()),
+        CreatedIndex: Date.now()
     }
 }
 /**
@@ -355,6 +294,27 @@ const ExtractMentionedUsersFromContent = async (Content) => {
 
 /**
  * 
+ * @param {ActivityData} Activity
+ */
+const AddtoUserActivities = async (Activity) => {
+    const UserConnectionsList = await ReadUserExtendedProperties({ Type: "ConnectionsList", UserId: Activity.UserId }, undefined, -1, undefined);
+    await Promise.all(UserConnectionsList.map(async UserConnection => {
+        await CreateActivityExtendedProperties(ActivityExtendedPropertiesInit({
+            //@ts-ignore
+            ActivityId: Activity.ActivityId,
+            Type: "ConnectionsList",
+            Content: { ConnectionsList: UserConnection.Content.ConnectionsList },
+            UserId: Activity.UserId,
+            //@ts-ignore
+            Index: Activity.Index,
+            //@ts-ignore
+            CreatedIndex: Activity.CreatedIndex
+        }))
+    }))
+}
+
+/**
+ * 
  * @param {ActivityData} Activity 
  * @param {string} UserId 
  * @returns 
@@ -376,5 +336,5 @@ const SetActivityDataForGet = async (Activity, UserId) => {
 export {
     GetOneFromActivities, GetActivities, PostActivities, PatchActivities, DeleteActivities,
     PostActivityForProfilePatch, GetFilteredActivities, ExtractMentionedUsersFromContent,
-    SetActivityDataForGet
+    SetActivityDataForGet, AddtoUserActivities
 }

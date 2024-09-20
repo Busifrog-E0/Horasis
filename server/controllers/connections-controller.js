@@ -3,7 +3,7 @@ import e from 'express';
 import {  ReadConnections, UpdateConnections, CreateConnections, RemoveConnections, GetConnectionsCount, } from './../databaseControllers/connections-databaseController.js';
 import moment from 'moment';
 import { AlertBoxObject } from './common.js';
-import { ViewOtherUserData } from './users-controller.js';
+import { AddConnectionstoUser, RemoveConnectionsToUser, ViewOtherUserData } from './users-controller.js';
 import { ReadOneFromUsers,  } from '../databaseControllers/users-databaseController.js';
 import {  SendNotificationsForConnectionAccept, SendNotificationsForConnectionRequest } from './notifications-controller.js';
 /**
@@ -111,6 +111,8 @@ const PostConnectionAccept = async (req, res) => {
 
     await UpdateConnections({ "Status": "Connected", AcceptedIndex: moment().valueOf() }, ConnectionData.DocId);
     await SendNotificationsForConnectionAccept(ConnectionData.DocId, SenderId, ReceiverId);
+    AddConnectionstoUser(ReceiverId, SenderId);
+    AddConnectionstoUser(SenderId, ReceiverId);
     return res.json(true);
 }
 
@@ -180,6 +182,8 @@ const DeleteConnection = async (req, res) => {
         return res.status(444).json(AlertBoxObject('No Connection Exists', 'Users are not connected'));
     }
     await RemoveConnections(ConnectionData.DocId);
+    RemoveConnectionsToUser(ConnectionData.ReceiverId, ConnectionData.SenderId);
+    RemoveConnectionsToUser(ConnectionData.SenderId, ConnectionData.ReceiverId);
     return res.json(true)
 }
 
