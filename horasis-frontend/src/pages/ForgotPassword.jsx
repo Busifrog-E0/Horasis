@@ -1,24 +1,19 @@
-import { useNavigate } from 'react-router-dom'
-import Logo from '../components/Common/Logo'
-import Button from '../components/ui/Button'
-import Input from '../components/ui/Input'
 import { useState } from 'react'
-import { useAuth } from '../utils/AuthProvider'
-import { useToast } from '../components/Toast/ToastService'
-import { forgotSchema, newPassSchema } from '../utils/schema/forgotValidation'
-import Modal from '../components/ui/Modal'
+import { useNavigate } from 'react-router-dom'
 import close from '../assets/icons/close.svg'
 import eyeoff from '../assets/icons/eyeoff.svg'
 import eyeon from '../assets/icons/eyeon.svg'
-import TimerComponent from '../components/Timer/TimerComponent'
-import { postItem } from '../constants/operations'
 import HeroCoverImage from '../assets/images/hero-cover-image.png'
+import Logo from '../components/Common/Logo'
+import TimerComponent from '../components/Timer/TimerComponent'
+import Button from '../components/ui/Button'
+import Input from '../components/ui/Input'
+import Modal from '../components/ui/Modal'
+import usePostData from '../hooks/usePostData'
+import { forgotSchema, newPassSchema } from '../utils/schema/forgotValidation'
 
 const ForgotPassword = () => {
 	const navigate = useNavigate()
-	const [isLoading, setIsLoading] = useState(false)
-	const { currentUserData, updateCurrentUser } = useAuth()
-	const toast = useToast()
 	const [errorObj, setErrorObj] = useState({})
 	const [forgotFormValue, setForgotFormValue] = useState({ Email: '' })
 
@@ -28,7 +23,6 @@ const ForgotPassword = () => {
 	const [otpOpen, setOtpOpen] = useState(false)
 	const [otpError, setOtpError] = useState({})
 	const [timerValue, setTimerValue] = useState(30)
-	const [verifying, setVerifying] = useState(false)
 	const [otpVerified, setOtpVerified] = useState(false)
 
 	const validateEmailSingle = (value, key, callback) => {
@@ -69,11 +63,12 @@ const ForgotPassword = () => {
 	})
 	const [showpass, setShowpass] = useState(false)
 	const [showConfirmPass, setShowConfirmPass] = useState(false)
-	const [isChanging, setIsChanging] = useState(false)
 
 	const validateNewPassSingle = (value, key, callback) => {
 		setNewPassFormValue({ ...newPassFormValue, ...value })
-		const { error, warning } = newPassSchema.extract(key).validate(value[key], { abortEarly: false, stripUnknown: true })
+		const { error, warning } = newPassSchema
+			.extract(key)
+			.validate(value[key], { abortEarly: false, stripUnknown: true })
 		if (error && error.details) {
 			let obj = {}
 			error.details.forEach((val) => (obj[key] = val.message))
@@ -128,74 +123,46 @@ const ForgotPassword = () => {
 		}
 	}
 
+	const { isLoading, postData: postPasswordChange } = usePostData({
+		onSuccess: (result) => {
+			setOtpid(result)
+			if (!otpOpen) {
+				setTimerValue(30)
+				setOtpOpen(true)
+			}
+		},
+	})
+
+	const { isLoading: verifying, postData: postVerifyOtp } = usePostData({
+		onSuccess: (result) => {
+			if (result === true) {
+				setOtpVerified(true)
+				setOtpOpen(false)
+			}
+		},
+		onError: (err) => {
+			setOtpError({ OTPERROR: err })
+		},
+	})
+
+	const { isLoading: isChanging, postData: postResetPass } = usePostData({
+		onSuccess: (result) => {
+			if (result === true) {
+				navigate('/Login')
+			}
+		},
+	})
+
 	const changePassword = () => {
-		setIsLoading(true)
-		postItem(
-			`users/forgotPassword`,
-			forgotFormValue,
-			(result) => {
-				setIsLoading(false)
-				setOtpid(result)
-				if (!otpOpen) {
-					setTimerValue(30)
-					setOtpOpen(true)
-				}
-			},
-			(err) => {
-				setIsLoading(false)
-			},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
+		postPasswordChange({ endpoint: 'users/forgotPassword', payload: forgotFormValue })
 	}
 
 	const verifyotp = () => {
-		setVerifying(true)
-		postItem(
-			'users/forgotPassword/verify',
-			{
-				OTPId: otpid,
-				OTP: otp,
-			},
-			(result) => {
-				setVerifying(false)
-				if (result === true) {
-					setOtpVerified(true)
-					setOtpOpen(false)
-				}
-			},
-			(err) => {
-				setVerifying(false)
-				setOtpError({ OTPERROR: err })
-			},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
+		postVerifyOtp({ endpoint: 'users/forgotPassword/verify', payload: { OTPId: otpid, OTP: otp } })
 	}
 
 	const resetPass = () => {
-		setIsChanging(true)
-		postItem(
-			`users/forgotPassword/reset`,
-			{
-				...newPassFormValue,
-				OTPId: otpid,
-			},
-			(result) => {
-				setIsChanging(false)
-				if (result === true) {
-					navigate('/Login')
-				}
-			},
-			(err) => {
-				setIsChanging(false)
-			},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
+		postResetPass({ endpoint: 'users/forgotPassword/reset', payload: { ...newPassFormValue, OTPId: otpid } })
 	}
 
 	return (
@@ -211,7 +178,9 @@ const ForgotPassword = () => {
 					</button>
 				</Modal.Header>
 				<Modal.Body>
-					<p className='text-system-secondary-text mb-2'>Please verify the OTP number received in your registered email.</p>
+					<p className='text-system-secondary-text mb-2'>
+						Please verify the OTP number received in your registered email.
+					</p>
 					<h1 className='text-system-primary-text font-medium text-lg'>OTP</h1>
 					<Input
 						className='py-4 rounded-xl border-2 border-system-file-border-accent'
@@ -260,8 +229,12 @@ const ForgotPassword = () => {
 				</Modal.Body>
 			</Modal>
 			<div style={{ backgroundImage: `url(${HeroCoverImage})` }} className='bg-cover bg-no-repeat'>
-				<div style={{ height: '100svh' }} className='p-2 flex  flex-col  justify-center items-center bg-system-primary-accent-transparent '>
-					<div style={{ borderRadius: 20 }} className='bg-system-secondary-bg flex flex-col gap-4 login-form py-4 px-8 lg:px-16 lg:py-10'>
+				<div
+					style={{ height: '100svh' }}
+					className='p-2 flex  flex-col  justify-center items-center bg-system-primary-accent-transparent '>
+					<div
+						style={{ borderRadius: 20 }}
+						className='bg-system-secondary-bg flex flex-col gap-4 login-form py-4 px-8 lg:px-16 lg:py-10'>
 						<center className='mb-10'>
 							<Logo height={60} />
 						</center>
@@ -286,7 +259,13 @@ const ForgotPassword = () => {
 										value={newPassFormValue.Password}
 										type={showpass ? 'text' : 'password'}
 										withIcon='true'
-										icon={showpass ? <img src={eyeon} className='h-6 cursor-pointer' /> : <img src={eyeoff} className='h-6 cursor-pointer' />}
+										icon={
+											showpass ? (
+												<img src={eyeon} className='h-6 cursor-pointer' />
+											) : (
+												<img src={eyeoff} className='h-6 cursor-pointer' />
+											)
+										}
 										iconpos='right'
 										iconClick={() => {
 											setShowpass((prev) => !prev)
@@ -309,13 +288,21 @@ const ForgotPassword = () => {
 										value={newPassFormValue.ConfirmPassword}
 										type={showConfirmPass ? 'text' : 'password'}
 										withIcon='true'
-										icon={showConfirmPass ? <img src={eyeon} className='h-6 cursor-pointer' /> : <img src={eyeoff} className='h-6 cursor-pointer' />}
+										icon={
+											showConfirmPass ? (
+												<img src={eyeon} className='h-6 cursor-pointer' />
+											) : (
+												<img src={eyeoff} className='h-6 cursor-pointer' />
+											)
+										}
 										iconpos='right'
 										iconClick={() => {
 											setShowConfirmPass((prev) => !prev)
 										}}
 									/>
-									{errorObj['ConfirmPassword'] != undefined && <p className='text-brand-red m-0'>{errorObj['ConfirmPassword']}</p>}
+									{errorObj['ConfirmPassword'] != undefined && (
+										<p className='text-brand-red m-0'>{errorObj['ConfirmPassword']}</p>
+									)}
 								</div>
 								<div className='mt-1'>
 									<Button
@@ -336,7 +323,9 @@ const ForgotPassword = () => {
 							<>
 								<div>
 									<h1 className='text-2xl font-semibold text-system-primary-accent'>Forgot Password</h1>
-									<p className='text-system-primary-text text-lg font-medium'>Enter your email to reset your password</p>
+									<p className='text-system-primary-text text-lg font-medium'>
+										Enter your email to reset your password
+									</p>
 								</div>
 								<div>
 									<h1 className='text-system-primary-text font-medium text-lg'>Email</h1>

@@ -5,7 +5,7 @@ import Logo from '../components/Common/Logo'
 import { Link, useNavigate } from 'react-router-dom'
 import Input from '../components/ui/Input'
 import Button from '../components/ui/Button'
-import { AuthContext, defaultUserData } from '../utils/AuthProvider'
+import { AuthContext, defaultUserData, useAuth } from '../utils/AuthProvider'
 import { postItem } from '../constants/operations'
 import { loginValidation } from '../utils/schema/loginValidation'
 import { useToast } from '../components/Toast/ToastService'
@@ -13,6 +13,7 @@ import Select from '../components/ui/Select'
 import eyeon from '../assets/icons/eyeon.svg'
 import eyeoff from '../assets/icons/eyeoff.svg'
 import HeroCoverImage from '../assets/images/hero-cover-image.png'
+import usePostData from '../hooks/usePostData'
 
 const logoText = {
 	fontSize: '1.7rem',
@@ -29,10 +30,15 @@ const branding = {
 
 const LogIn = () => {
 	const navigate = useNavigate()
-	const [loading, setLoading] = useState(false)
+	const { updateCurrentUser } = useAuth()
+	const { isLoading, postData } = usePostData({
+		onSuccess: (result) => {
+			updateCurrentUser(result)
+		},
+	})
+
 	const [showpass, setShowpass] = useState(false)
-	const { currentUserData, updateCurrentUser } = useContext(AuthContext)
-	const toast = useToast()
+
 	const [errorObj, setErrorObj] = useState({})
 	const [loginFormValue, setLoginFormValue] = useState({
 		Email: '',
@@ -41,7 +47,9 @@ const LogIn = () => {
 
 	const validateSingle = (value, key, callback) => {
 		setLoginFormValue({ ...loginFormValue, ...value })
-		const { error, warning } = loginValidation.extract(key).validate(value[key], { abortEarly: false, stripUnknown: true })
+		const { error, warning } = loginValidation
+			.extract(key)
+			.validate(value[key], { abortEarly: false, stripUnknown: true })
 		if (error && error.details) {
 			let obj = {}
 			error.details.forEach((val) => (obj[key] = val.message))
@@ -71,39 +79,28 @@ const LogIn = () => {
 	}
 
 	const login = () => {
-		setLoading(true)
-		let api = 'users/login'
-		postItem(
-			api,
-			loginFormValue,
-			(result) => {
-				setLoading(false)
-				updateCurrentUser(result)
-			},
-			(errMsg) => {
-				setLoading(false)
-				console.log(errMsg)
-				setErrorObj({
-					Email: 'Incorrect Email',
-					Password: 'Incorrect password',
-				})
-			},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
+		postData({
+			endpoint: 'users/login',
+			payload: loginFormValue,
+		})
 	}
 
 	return (
-		<div  style={{ backgroundImage: `url(${HeroCoverImage})` }} className='bg-cover bg-no-repeat'>
-			<div style={{ minHeight: '100svh' }} className='flex flex-col justify-center items-center bg-system-primary-accent-transparent p-2'>
-				<div style={{ borderRadius: 20 }} className='bg-system-secondary-bg flex flex-col gap-4 login-form py-4 px-8 lg:px-16 lg:py-10'>
+		<div style={{ backgroundImage: `url(${HeroCoverImage})` }} className='bg-cover bg-no-repeat'>
+			<div
+				style={{ minHeight: '100svh' }}
+				className='flex flex-col justify-center items-center bg-system-primary-accent-transparent p-2'>
+				<div
+					style={{ borderRadius: 20 }}
+					className='bg-system-secondary-bg flex flex-col gap-4 login-form py-4 px-8 lg:px-16 lg:py-10'>
 					<center>
 						<Logo height={80} />
 					</center>
 					<div>
 						<h1 className='text-3xl font-semibold text-system-primary-accent'>Login</h1>
-						<p className='text-system-primary-text text-lg font-medium'>Login to your account to access all the features of Horasis!</p>
+						<p className='text-system-primary-text text-lg font-medium'>
+							Login to your account to access all the features of Horasis!
+						</p>
 					</div>
 					<div>
 						<h1 className='text-system-primary-text font-medium text-lg'>Email</h1>
@@ -140,7 +137,13 @@ const LogIn = () => {
 							value={loginFormValue.Password}
 							type={showpass ? 'text' : 'password'}
 							withIcon='true'
-							icon={showpass ? <img src={eyeon} className='h-6 cursor-pointer' /> : <img src={eyeoff} className='h-6 cursor-pointer' />}
+							icon={
+								showpass ? (
+									<img src={eyeon} className='h-6 cursor-pointer' />
+								) : (
+									<img src={eyeoff} className='h-6 cursor-pointer' />
+								)
+							}
 							iconpos='right'
 							iconClick={() => {
 								setShowpass((prev) => !prev)
@@ -150,7 +153,9 @@ const LogIn = () => {
 						{errorObj['Password'] != undefined && <p className='text-brand-red m-0'>{errorObj['Password']}</p>}
 						<div className='mt-4'>
 							<div className='text-base font-medium text-end'>
-								<p className='cursor-pointer text-system-primary-accent font-medium underline' onClick={() => navigate('/ForgotPassword')}>
+								<p
+									className='cursor-pointer text-system-primary-accent font-medium underline'
+									onClick={() => navigate('/ForgotPassword')}>
 									Forgot Password?
 								</p>
 							</div>
@@ -159,7 +164,7 @@ const LogIn = () => {
 
 					<div className='mt-4'>
 						<Button
-							loading={loading}
+							loading={isLoading}
 							onClick={() => {
 								validate(login)
 							}}

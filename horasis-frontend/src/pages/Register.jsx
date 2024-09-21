@@ -7,7 +7,7 @@ import Input from '../components/ui/Input'
 import Modal from '../components/ui/Modal'
 import TextArea from '../components/ui/TextArea'
 import { postItem } from '../constants/operations'
-import { AuthContext } from '../utils/AuthProvider'
+import { AuthContext, useAuth } from '../utils/AuthProvider'
 import { registerValidation } from '../utils/schema/users/registerValidation'
 import { useToast } from '../components/Toast/ToastService'
 import TimerComponent from '../components/Timer/TimerComponent'
@@ -17,6 +17,7 @@ import close from '../assets/icons/close.svg'
 import eyeon from '../assets/icons/eyeon.svg'
 import eyeoff from '../assets/icons/eyeoff.svg'
 import HeroCoverImage from '../assets/images/hero-cover-image.png'
+import usePostData from '../hooks/usePostData'
 
 const logoText = {
 	fontSize: '1.7rem',
@@ -33,11 +34,10 @@ const branding = {
 
 const Register = () => {
 	const navigate = useNavigate()
-	const [loading, setLoading] = useState(false)
-	const [verifying, setVerifying] = useState(false)
+	const { updateCurrentUser } = useAuth()
+	
 	const [showpass, setShowpass] = useState(false)
 	const [showConfirmPass, setShowConfirmPass] = useState(false)
-	const [showconfpass, setShowconfpass] = useState(false)
 	const [errorObj, setErrorObj] = useState({})
 	const [otpError, setOtpError] = useState({})
 	const [registerFormValue, setRegisterFormValue] = useState({
@@ -53,17 +53,45 @@ const Register = () => {
 		CompanyName: '',
 		About: '',
 	})
-	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
-	const toast = useToast()
+	
 	const [usernameAvailable, setUsernameAvailable] = useState()
 	const [otpid, setOtpid] = useState('')
 	const [otp, setOtp] = useState('')
 	const [otpOpen, setOtpOpen] = useState(false)
 	const [timerValue, setTimerValue] = useState(30)
-
+	
 	const [termsChecked, setTermsChecked] = useState(false)
 	const [countryOptions, setCountryOptions] = useState(countries.countries.map((item) => item.name))
-
+	
+	const { isLoading, postData: submitRegister } = usePostData({
+		onSuccess: (result) => {
+			setOtpid(result)
+			if (!otpOpen) {
+				setTimerValue(30)
+				setOtpOpen(true)
+			}
+		},
+	})
+	const { isVerifying, postData: submitOtp } = usePostData({
+		onSuccess: (result) => {
+			updateCurrentUser(result)
+		},
+		onError: (err) => {
+			setOtpError({ OTPERROR: err })
+		},
+	})
+	const { postData: checkUsername } = usePostData({
+		onSuccess: (result) => {
+			if (result === true) {
+				setUsernameAvailable({
+					available: result,
+					message: 'Username  available',
+				})
+			} else if (result === false) {
+				setUsernameAvailable({ available: result, message: 'Username not available' })
+			}
+		},
+	})
 	const validateSingle = (value, key, callback) => {
 		setRegisterFormValue({ ...registerFormValue, ...value })
 		const { error, warning } = registerValidation.extract(key).validate(value[key], {
@@ -125,72 +153,24 @@ const Register = () => {
 	}
 
 	const register = () => {
-		setLoading(true)
-		postItem(
-			'users/register',
-			registerFormValue,
-			(result) => {
-				setLoading(false)
-				setOtpid(result)
-				if (!otpOpen) {
-					setTimerValue(30)
-					setOtpOpen(true)
-				}
-			},
-			(err) => {
-				setLoading(false)
-				// console.log(err)
-			},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
+		submitRegister({
+			endpoint: 'users/register',
+			payload: registerFormValue,
+		})
 	}
 
 	const verifyotp = () => {
-		setVerifying(true)
-		postItem(
-			'users/verify',
-			{
-				OTPId: otpid,
-				OTP: otp,
-			},
-			(result) => {
-				setVerifying(false)
-				updateCurrentUser(result)
-				// navigate('/welcome')
-			},
-			(err) => {
-				setVerifying(false)
-				setOtpError({ OTPERROR: err })
-				// console.log(err)
-			},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
+		submitOtp({
+			endpoint: 'users/verify',
+			payload: { OTPId: otpid, OTP: otp },
+		})
 	}
 
 	const checkUsernameAvailability = async (value) => {
-		postItem(
-			'users/register/checkUsername',
-			{ Username: value },
-			(result) => {
-				if (result === true) {
-					setUsernameAvailable({
-						available: result,
-						message: 'Username  available',
-					})
-				} else if (result === false) {
-					setUsernameAvailable({ available: result, message: 'Username not available' })
-				}
-				// setUsernameAvailable(result)
-			},
-			(err) => console.log(err),
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
+		checkUsername({
+			endpoint: 'users/register/checkUsername',
+			payload: { Username: value },
+		})
 	}
 
 	return (
@@ -206,7 +186,9 @@ const Register = () => {
 					</button>
 				</Modal.Header>
 				<Modal.Body>
-					<p className='text-system-secondary-text mb-2'>Please verify the OTP number received in your registered email.</p>
+					<p className='text-system-secondary-text mb-2'>
+						Please verify the OTP number received in your registered email.
+					</p>
 					<h1 className='text-system-primary-text font-medium text-lg'>OTP</h1>
 					<Input
 						className='py-4 rounded-xl border-2 border-system-file-border-accent'
@@ -241,7 +223,7 @@ const Register = () => {
 					</div>
 					<div className='mt-4'>
 						<Button
-							loading={verifying}
+							loading={isVerifying}
 							onClick={() => {
 								verifyotp()
 							}}
@@ -255,14 +237,20 @@ const Register = () => {
 				</Modal.Body>
 			</Modal>
 			<div style={{ backgroundImage: `url(${HeroCoverImage})` }} className='bg-cover bg-no-repeat'>
-				<div style={{ minHeight: '100svh' }} className='p-2 flex flex-col justify-center items-center bg-system-primary-accent-transparent'>
-					<div style={{ borderRadius: 20 }} className='bg-system-secondary-bg flex flex-col gap-4 login-form py-4 px-8 lg:px-16 lg:py-10 bg-red-500'>
+				<div
+					style={{ minHeight: '100svh' }}
+					className='p-2 flex flex-col justify-center items-center bg-system-primary-accent-transparent'>
+					<div
+						style={{ borderRadius: 20 }}
+						className='bg-system-secondary-bg flex flex-col gap-4 login-form py-4 px-8 lg:px-16 lg:py-10 bg-red-500'>
 						<center>
 							<Logo height={80} />
 						</center>
 						<div>
 							<h1 className='text-3xl font-semibold text-system-primary-accent'>Register</h1>
-							<p className='text-system-primary-text text-lg font-medium'>Login to your account to access all the features of Horasis!</p>
+							<p className='text-system-primary-text text-lg font-medium'>
+								Login to your account to access all the features of Horasis!
+							</p>
 						</div>
 						<div>
 							<h1 className='text-system-primary-text font-medium text-lg'>
@@ -342,7 +330,13 @@ const Register = () => {
 								value={registerFormValue.Password}
 								type={showpass ? 'text' : 'password'}
 								withIcon='true'
-								icon={showpass ? <img src={eyeon} className='h-6 cursor-pointer' /> : <img src={eyeoff} className='h-6 cursor-pointer' />}
+								icon={
+									showpass ? (
+										<img src={eyeon} className='h-6 cursor-pointer' />
+									) : (
+										<img src={eyeoff} className='h-6 cursor-pointer' />
+									)
+								}
 								iconpos='right'
 								iconClick={() => {
 									setShowpass((prev) => !prev)
@@ -365,13 +359,21 @@ const Register = () => {
 								value={registerFormValue.ConfirmPassword}
 								type={showConfirmPass ? 'text' : 'password'}
 								withIcon='true'
-								icon={showConfirmPass ? <img src={eyeon} className='h-6 cursor-pointer' /> : <img src={eyeoff} className='h-6 cursor-pointer' />}
+								icon={
+									showConfirmPass ? (
+										<img src={eyeon} className='h-6 cursor-pointer' />
+									) : (
+										<img src={eyeoff} className='h-6 cursor-pointer' />
+									)
+								}
 								iconpos='right'
 								iconClick={() => {
 									setShowConfirmPass((prev) => !prev)
 								}}
 							/>
-							{errorObj['ConfirmPassword'] != undefined && <p className='text-brand-red m-0'>{errorObj['ConfirmPassword']}</p>}
+							{errorObj['ConfirmPassword'] != undefined && (
+								<p className='text-brand-red m-0'>{errorObj['ConfirmPassword']}</p>
+							)}
 						</div>
 						{/* <div>
 						<h1 className='text-system-primary-text font-medium text-lg'>
@@ -526,7 +528,7 @@ const Register = () => {
 						</div>
 						<div className='mt-1'>
 							<Button
-								loading={loading}
+								loading={isLoading}
 								onClick={() => {
 									validate(register)
 									// setOtpOpen(true)
