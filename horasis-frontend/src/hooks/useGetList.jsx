@@ -5,7 +5,7 @@ import { getNextId } from '../utils/URLParams'
 import { getItem } from '../constants/operations'
 import { useToast } from '../components/Toast/ToastService'
 
-export default function useGetList(endpoint, ignoreParams = false, extraParams, checkLeft = true) {
+export default function useGetList(endpoint, extraParams, checkLeft = true) {
 	const { updateCurrentUser, currentUserData } = useAuth()
 	const toast = useToast()
 	const [data, setData] = useState([])
@@ -40,11 +40,9 @@ export default function useGetList(endpoint, ignoreParams = false, extraParams, 
 	}
 
 	const getList = (temp, fromUpdate = true) => {
-		const query = ignoreParams
-			? `${endpoint}`
-			: `${endpoint}?${jsonToQuery(filters)}&NextId=${getNextId(temp)}${
-					extraParams ? `&${jsonToQuery(extraParams)}` : ''
-			  }`
+		const query = `${endpoint}?${jsonToQuery(filters)}&NextId=${getNextId(temp)}${
+			extraParams ? `&${jsonToQuery(extraParams)}` : ''
+		}`
 		setLoadingState(temp, true)
 		getItem(
 			query,
@@ -67,7 +65,7 @@ export default function useGetList(endpoint, ignoreParams = false, extraParams, 
 	}
 
 	const checkMoreLeft = (temp) => {
-		const query = ignoreParams ? `${endpoint}` : `${endpoint}?${jsonToQuery(filters)}&NextId=${getNextId(temp)}`
+		const query = `${endpoint}?${jsonToQuery(filters)}&NextId=${getNextId(temp)}`
 		getItem(
 			query,
 			(result) => {

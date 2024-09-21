@@ -3,7 +3,7 @@ import { useToast } from '../components/Toast/ToastService'
 import { getItem } from '../constants/operations'
 import { useAuth } from '../utils/AuthProvider'
 
-export default function useGetData(endpoint) {
+export default function useGetData(endpoint, fetchOnRender = true) {
 	const { updateCurrentUser, currentUserData } = useAuth()
 	const toast = useToast()
 	const [data, setData] = useState()
@@ -29,7 +29,9 @@ export default function useGetData(endpoint) {
 	}
 
 	useEffect(() => {
-		getData()
+		if (fetchOnRender === true) {
+			getData()
+		}
 	}, [])
 
 	return {

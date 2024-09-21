@@ -1,58 +1,20 @@
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { AuthContext } from '../../utils/AuthProvider'
-import { getItem } from '../../constants/operations'
-import Spinner from '../ui/Spinner'
 import avatar from '../../assets/icons/avatar.svg'
-import { useToast } from '../Toast/ToastService'
 import { useFollow } from '../../context/Follow/FollowService'
+import useGetData from '../../hooks/useGetData'
+import { useAuth } from '../../utils/AuthProvider'
+import Spinner from '../ui/Spinner'
 
 const CurrentProfileTab = () => {
-	const { currentUserData, updateCurrentUser, scrollToTop } = useContext(AuthContext)
-	const toast = useToast()
-	const [expand, setExpand] = useState(false)
-	const [isLoading, setIsLoading] = useState(false)
-	const [user, setUser] = useState()
+	const navigate = useNavigate()
+	const { currentUserData, scrollToTop } = useAuth()
+	const { isLoading, data: user } = useGetData(`users/${currentUserData.CurrentUser.UserId}`)
 	const { followCount, getFollowCount } = useFollow()
 
-	const navigate = useNavigate()
-	const GoToProfilePage = () => {
-		scrollToTop()
-		navigate('/MyProfile')
-	}
-
-	const steps = [
-		{
-			title: 'Profile Photo',
-		},
-		{
-			title: 'Work Information',
-		},
-		{
-			title: 'Biography',
-		},
-	]
-
-	const getUserDetails = () => {
-		setIsLoading(true)
-		getItem(
-			`users/${currentUserData.CurrentUser.UserId}`,
-			(result) => {
-				setIsLoading(false)
-				setUser(result)
-			},
-			(err) => {
-				setIsLoading(false)
-				// console.log(err)
-			},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
-	}
+	const [expand, setExpand] = useState(false)
 
 	useEffect(() => {
-		getUserDetails()
 		getFollowCount()
 	}, [])
 
@@ -65,7 +27,12 @@ const CurrentProfileTab = () => {
 					<>
 						{' '}
 						<div className='flex flex-col lg:flex-col gap-6'>
-							<div className='flex justify-center items-center cursor-pointer' onClick={GoToProfilePage}>
+							<div
+								className='flex justify-center items-center cursor-pointer'
+								onClick={() => {
+									scrollToTop()
+									navigate('/MyProfile')
+								}}>
 								<div className='w-28 h-28 rounded-full bg-brand-light-gray overflow-hidden'>
 									{user ? (
 										<>
@@ -86,18 +53,6 @@ const CurrentProfileTab = () => {
 									) : (
 										<></>
 									)}
-									{/* {user && user.ProfilePicture && (
-                  <img
-                    className='w-28 h-28 rounded-full'
-                    src={user.ProfilePicture}
-                    alt='Rounded avatar'
-                  />
-                )} */}
-									{/* <img
-                  className='w-28 h-28 rounded-full'
-                  src='https://flowbite.com/docs/images/people/profile-picture-5.jpg'
-                  alt='Rounded avatar'
-                /> */}
 								</div>
 							</div>
 							<div>
@@ -205,32 +160,14 @@ const CurrentProfileTab = () => {
 														Biography
 													</p>
 												</div>
-												{/* {steps.map((event, index) => (
-												<div key={index} className=''>
-													<div className='flex flex-row items-center gap-1'>
-														<div
-															className={` w-3.5 h-3.5 p-2
-                          bg-${index !== 2 ? 'brand-green' : 'brand-gray-dim'} rounded-full
-                           text-${index !== 2 ? 'white' : 'brand-gray-dim'} border
-                             border-${index !== 2 ? 'brand-green' : 'brand-gray-dim'} 
-                             flex items-center justify-center`}>
-															{index !== 2 && <span>✓</span>}
-														</div>
-														<p
-															className={`text-sm font-medium text-${
-																index !== 2 ? 'brand-green' : 'brand-gray-dim'
-															} text-system-primary-text`}>
-															{event.title}
-														</p>
-													</div>
-													{index !== 2 && <div className='border-l-2 border-gray-200 pt-3 mx-1.5'></div>}
-												</div>
-											))} */}
 											</div>
 										</div>
 										<h1
 											className='text-center cursor-pointer text-sm font-semibold underline text-system-primary-accent mt-2'
-											onClick={() => GoToProfilePage()}>
+											onClick={() => {
+												scrollToTop()
+												navigate('/MyProfile')
+											}}>
 											Complete Your Profile
 										</h1>
 									</>

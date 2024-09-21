@@ -2,20 +2,24 @@ import { useState } from 'react'
 import { deleteItem } from '../constants/operations'
 import { useAuth } from '../utils/AuthProvider'
 
-export default function useDeleteItem(endpoint, callback = () => {}) {
+export default function useDeleteData(endpoint = '', { onSuccess = () => {}, onError = () => {} } = {}) {
 	const { updateCurrentUser, currentUserData } = useAuth()
 	const [isLoading, setIsLoading] = useState(false)
 
-	const deleteData = () => {
+	const deleteData = ({ endPoint = '', onsuccess = () => {}, onerror = () => {} } = {}) => {
+		const api = endPoint ? endPoint : endpoint
 		setIsLoading(true)
 		deleteItem(
-			`${endpoint}`,
+			`${api}`,
 			(result) => {
-				callback()
+				onsuccess(result)
+				onSuccess(result)
 				setIsLoading(false)
 			},
 			(err) => {
 				console.log(err, 'error from delete single item')
+				onerror(err)
+				onError(err)
 				setIsLoading(false)
 			},
 			updateCurrentUser,

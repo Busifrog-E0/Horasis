@@ -16,7 +16,7 @@ const MemberSuggestionTab = ({ lastElement, profile, updateList }) => {
 		}
 	}
 
-	const { followUser, unFollowUser } = useFollow()
+	const { followUser, unFollowUser, isFollowLoading, isUnfollowLoading } = useFollow()
 	const [loading, setLoading] = useState(false)
 	// if (loading) return <Spinner />
 
