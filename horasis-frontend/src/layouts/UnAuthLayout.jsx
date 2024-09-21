@@ -1,9 +1,8 @@
 import { Navigate, Outlet } from "react-router-dom"
-import { useContext } from "react"
-import { AuthContext } from "../utils/AuthProvider"
+import { useAuth } from "../utils/AuthProvider"
 
 const UnAuthLayout = () => {
-  const { currentUserData } = useContext(AuthContext)
+  const { currentUserData } = useAuth()
   return currentUserData && currentUserData.CurrentUser ? <Navigate to="/" /> : <Outlet />
 }
 
