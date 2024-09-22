@@ -5,7 +5,7 @@ import { getNextId } from '../utils/URLParams'
 import { getItem } from '../constants/operations'
 import { useToast } from '../components/Toast/ToastService'
 
-export default function useGetList(endpoint, extraParams = {}, checkLeft = true) {
+export default function useGetList(endpoint, extraParams = {}, checkLeft = true, loadInitial = true) {
 	const { updateCurrentUser, currentUserData } = useAuth()
 	const toast = useToast()
 	const [data, setData] = useState([])
@@ -18,7 +18,7 @@ export default function useGetList(endpoint, extraParams = {}, checkLeft = true)
 		Keyword: '',
 		Limit: 10,
 		StartDate: null,
-		EndData: null,
+		EndDate: null,
 	})
 
 	function updateFilter(oby, kw, lt, sd, ed) {
@@ -84,7 +84,9 @@ export default function useGetList(endpoint, extraParams = {}, checkLeft = true)
 	}
 
 	useEffect(() => {
-		getList([])
+		if (loadInitial) {
+			getList([])
+		}
 	}, [])
 
 	useEffect(() => {
@@ -95,6 +97,7 @@ export default function useGetList(endpoint, extraParams = {}, checkLeft = true)
 
 	return {
 		data,
+		setData,
 		isLoading,
 		isLoadingMore,
 		isPageDisabled,
