@@ -1,6 +1,6 @@
 import agora from 'agora-token'
 import e from 'express';
-import { ReadSpeakers } from '../databaseControllers/speakers-databaseController.js';
+import { ReadOneFromSpeakers, ReadSpeakers } from '../databaseControllers/speakers-databaseController.js';
 import { ReadMembers } from '../databaseControllers/members-databaseController.js';
 import { AlertBoxObject } from './common.js';
 import Env from '../Env.js';
@@ -75,7 +75,7 @@ const GetCallUserData = async (req, res) => {
 
 const GenerateUserTokenForInvited = async (req, res) => {
     const { SpeakerId } = req.params;
-    const [Speaker] = await ReadSpeakers({ SpeakerId }, undefined, 1, undefined);
+    const Speaker = await ReadOneFromSpeakers(SpeakerId);
     if (!Speaker) {
         return res.status(444).json(AlertBoxObject("No Access", "You have no access"))
     }
