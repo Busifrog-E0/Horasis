@@ -1,6 +1,13 @@
-import { useIsConnected, useJoin, useLocalCameraTrack, useLocalMicrophoneTrack, usePublish, useRTCClient } from 'agora-rtc-react'
+import {
+	useIsConnected,
+	useJoin,
+	useLocalCameraTrack,
+	useLocalMicrophoneTrack,
+	usePublish,
+	useRTCClient,
+} from 'agora-rtc-react'
 import { useEffect, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { useToast } from '../components/Toast/ToastService'
 import { getItem } from '../constants/operations'
 import { useAuth } from '../utils/AuthProvider'
@@ -16,8 +23,9 @@ import close from '../assets/icons/closewhite.svg'
 import Spinner from '../components/ui/Spinner'
 
 const NewStreaming = () => {
+	const location = useLocation()
 	// context and params
-	const { updateCurrentUser, currentUserData } = useAuth()
+	const { updateCurrentUser, currentUserData, logout } = useAuth()
 	const toast = useToast()
 	const { eventid } = useParams()
 	const navigate = useNavigate()
@@ -31,7 +39,7 @@ const NewStreaming = () => {
 	// roles and user and event
 	const [role, setRole] = useState('Member')
 	const [user, setUser] = useState({})
-	const [event, setEvent] = useState({})
+	const [event, setEvent] = useState(location?.state ? location?.state?.Event : null)
 	const [participants, setParticipants] = useState([])
 	const [speakers, setSpeakers] = useState([])
 	const [messages, setMessages] = useState([])
@@ -44,23 +52,24 @@ const NewStreaming = () => {
 	// loading
 	const [isLoadingToken, setIsLoadingToken] = useState(true)
 	const [isLoadingUser, setIsLoadingUser] = useState(true)
-	const [isLoadingEvent, setIsLoadingEvent] = useState(true)
+	const [isLoadingEvent, setIsLoadingEvent] = useState(false)
 
 	// mic and camera
 	const [micOn, setMic] = useState(false)
 	const [cameraOn, setCamera] = useState(false)
 	const { localMicrophoneTrack } = useLocalMicrophoneTrack(micOn)
 	const { localCameraTrack } = useLocalCameraTrack(cameraOn)
-	usePublish([localMicrophoneTrack, localCameraTrack])
-
-	// fetch  token from backend
+	usePublish([localMicrophoneTrack, localCameraTrack]) // fetch  token from backend
+	// `events/${eventid}/videoCall/participants/${currentUserData.CurrentUser.UserId}`
 	const getUser = () => {
 		setIsLoadingUser(true)
 		getItem(
-			`users/${currentUserData.CurrentUser.UserId}`,
+			`events/${eventid}/videoCall/participants/${currentUserData.CurrentUser.UserId}`,
+			// `users/${currentUserData.CurrentUser.UserId}`,
 			(result) => {
 				setIsLoadingUser(false)
 				setUser(result)
+				console.log(result,'single user')
 			},
 			(err) => {
 				setIsLoadingUser(false)
@@ -113,7 +122,9 @@ const NewStreaming = () => {
 
 	useEffect(() => {
 		getUser()
-		getEvent()
+		if (!event) {
+			getEvent()
+		}
 		getRoleAndTokens()
 	}, [])
 
@@ -149,7 +160,13 @@ const NewStreaming = () => {
 			}
 
 			if (action === 'REMOTE_STATE_CHANGED') {
-				if (states.UserName !== undefined && states.UserAvatar !== undefined && states.UserRtcUid !== undefined && states.UserId !== undefined && states.Role !== undefined) {
+				if (
+					states.UserName !== undefined &&
+					states.UserAvatar !== undefined &&
+					states.UserRtcUid !== undefined &&
+					states.UserId !== undefined &&
+					states.Role !== undefined
+				) {
 					if (states.Role === 'Speaker') {
 						setSpeakers((prev) => [...prev, states])
 					} else {
@@ -245,8 +262,14 @@ const NewStreaming = () => {
 	}
 
 	const handleUserJoinPresence = async (rtmClient) => {
-		var newState = { UserId: currentUserData?.CurrentUser?.UserId, UserName: user?.FullName, UserRtcUid: currentUserData?.CurrentUser?.UserId, UserAvatar: user?.ProfilePicture, Role: role }
-
+		var newState = {
+			UserId: currentUserData?.CurrentUser?.UserId,
+			UserName: user?.FullName,
+			UserRtcUid: currentUserData?.CurrentUser?.UserId,
+			UserAvatar: user?.ProfilePicture,
+			Role: role,
+		}
+		console.log(newState)
 		try {
 			const result = await rtmClient.presence.setState(eventid, 'MESSAGE', newState)
 			// console.log(result)
@@ -282,6 +305,10 @@ const NewStreaming = () => {
 		await handleRtmLogout()
 		setIsCalling((a) => !a)
 		setRtmClient(null)
+		if (currentUserData.CurrentUser.Role.includes('Guest')) {
+			logout()
+			navigate('/home')
+		}
 	}
 
 	const handleSendMessage = async (messagePayload) => {
@@ -294,7 +321,11 @@ const NewStreaming = () => {
 	}
 
 	// initialize rtc
-	const {} = useJoin({ uid: currentUserData.CurrentUser.UserId, appid: appId, channel: channel, token: rtcToken ? rtcToken : null }, isCalling, rtcClient ? rtcClient : null)
+	const {} = useJoin(
+		{ uid: currentUserData.CurrentUser.UserId, appid: appId, channel: channel, token: rtcToken ? rtcToken : null },
+		isCalling,
+		rtcClient ? rtcClient : null
+	)
 	useEffect(() => {
 		if (isConnected) {
 			if (role === 'Speaker') rtcClient.setClientRole('host')
@@ -314,15 +345,40 @@ const NewStreaming = () => {
 					</div>
 				</>
 			) : isConnected ? (
-				<>
-					<div className='bg-system-primary-darker-accent h-full overflow-hidden'>
+				<div className='h-screen overflow-hidden relative'>
+					<div className='bg-system-primary-darker-accent h-full overflow-hidden max-h-screen max-w-screen'>
 						<div className='h-full grid grid-cols-4 '>
 							<div className='col-span-4 md:col-span-2 lg:col-span-3 p-4 overflow-hidden h-full '>
-								<NewStreamUsersList event={event} cameraOn={cameraOn} micOn={micOn} localCameraTrack={localCameraTrack} localMicrophoneTrack={localMicrophoneTrack} setCamera={setCamera} isConnected={isConnected} calling={isCalling} setMic={setMic} setCalling={handleLeave} role={role} currentUser={user} participants={participants} setModalOpen={setModalOpen} speakers={speakers} />
+								<NewStreamUsersList
+									event={event}
+									cameraOn={cameraOn}
+									micOn={micOn}
+									localCameraTrack={localCameraTrack}
+									localMicrophoneTrack={localMicrophoneTrack}
+									setCamera={setCamera}
+									isConnected={isConnected}
+									calling={isCalling}
+									setMic={setMic}
+									setCalling={handleLeave}
+									role={role}
+									currentUser={user}
+									participants={participants}
+									setModalOpen={setModalOpen}
+									speakers={speakers}
+								/>
 							</div>
 
 							<div className=' hidden md:block h-full md:col-span-2 lg:col-span-1 p-4 '>
-								<NewStreamParticipantList participants={participants} currentUser={user} leaveEvent={handleLeave} sendMessage={handleSendMessage} messages={messages} setMessages={setMessages} speakers={speakers} role={role} />
+								<NewStreamParticipantList
+									participants={participants}
+									currentUser={user}
+									leaveEvent={handleLeave}
+									sendMessage={handleSendMessage}
+									messages={messages}
+									setMessages={setMessages}
+									speakers={speakers}
+									role={role}
+								/>
 							</div>
 
 							<Modal isOpen={modalOpen}>
@@ -337,17 +393,35 @@ const NewStreaming = () => {
 									</div>
 								</Modal.Header>
 								<Modal.Body bgColor='bg-system-primary-accent-dim'>
-									<NewStreamParticipantList participants={participants} currentUser={user} leaveEvent={handleLeave} sendMessage={handleSendMessage} messages={messages} setMessages={setMessages} speakers={speakers} role={role} />
+									<NewStreamParticipantList
+										participants={participants}
+										currentUser={user}
+										leaveEvent={handleLeave}
+										sendMessage={handleSendMessage}
+										messages={messages}
+										setMessages={setMessages}
+										speakers={speakers}
+										role={role}
+									/>
 								</Modal.Body>
 							</Modal>
 						</div>
 						{/* */}
 					</div>
-				</>
+				</div>
 			) : (
 				<>
-					<div className='h-full overflow-hidden relative'>
-						<JoinToStream event={event} appId={appId} channel={channel} token={rtcToken} setAppId={setAppId} setCalling={rtmConnect} setChannel={setChannel} setToken={setRtcToken} />
+					<div className='h-full overflow-hidden relative '>
+						<JoinToStream
+							event={event}
+							appId={appId}
+							channel={channel}
+							token={rtcToken}
+							setAppId={setAppId}
+							setCalling={rtmConnect}
+							setChannel={setChannel}
+							setToken={setRtcToken}
+						/>
 					</div>
 				</>
 			)}

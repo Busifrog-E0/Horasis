@@ -21,7 +21,7 @@ const NewStreamParticipantList = ({ participants, currentUser, leaveEvent, sendM
 		scrollToBottom()
 	}, [messages,activeTab]) // Run this effect every time messages update
 	return (
-		<div className='flex flex-col h-[88vh] relative  overflow-hidden p-4 bg-system-primary-accent-dim shadow-lg rounded-lg'>
+		<div className='flex flex-col h-[95vh] max-h-screen relative  overflow-hidden p-4 bg-system-primary-accent-dim shadow-lg rounded-lg'>
 			<div className='flex gap-2'>
 				<p className={`text-gray-100 cursor-pointer text-center flex-1 ${activeTab === 'participants' && 'bg-system-primary-accent-transparent'} p-4 rounded-md`} onClick={() => setActiveTab('participants')}>
 					Participants{' '}

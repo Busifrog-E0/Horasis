@@ -140,7 +140,7 @@ const SingleEvent = () => {
 			render: () => (
 				<div className='py-3 pt-6 flex flex-col gap-8'>
 					{event?.Speakers?.length > 0 ? (
-						event.Speakers.map((speaker) => (
+						event?.Speakers.map((speaker) => (
 							<SpeakerProfileTab key={speaker.UserDetails.id} profile={speaker.UserDetails} agenda={speaker.Agenda} />
 						))
 					) : (
@@ -172,25 +172,25 @@ const SingleEvent = () => {
 
 	const acceptInvite = () => {
 		return updateAcceptInvite({
-			endpoint: `events/${event.DocId}/invite/accept`,
+			endpoint: `events/${event?.DocId}/invite/accept`,
 			payload: {},
 		})
 	}
 	const joinEvent = () => {
 		return postJoinEvent({
-			endpoint: `events/${event.DocId}/join`,
+			endpoint: `events/${event?.DocId}/join`,
 			payload: {},
 		})
 	}
 	const unRegisterEvent = () => {
-		return deleteData({ endPoint: `events/${event.DocId}/leave` })
+		return deleteData({ endPoint: `events/${event?.DocId}/leave` })
 	}
 	const rejectInvite = () => {
-		return deleteData({ endPoint: `events/${event.DocId}/invite/${currentUserData.CurrentUser.UserId}/reject` })
+		return deleteData({ endPoint: `events/${event?.DocId}/invite/${currentUserData.CurrentUser.UserId}/reject` })
 	}
 
 	const cancelRegistrationRequest = () => {
-		return deleteData({ endPoint: `events/${event.DocId}/join/${currentUserData.CurrentUser.UserId}/cancel` })
+		return deleteData({ endPoint: `events/${event?.DocId}/join/${currentUserData.CurrentUser.UserId}/cancel` })
 	}
 
 	const {
@@ -204,8 +204,8 @@ const SingleEvent = () => {
 	return (
 		<>
 			<div className='overflow-hidden bg-system-primary-bg h-80 lg:h-96 relative'>
-				{event.CoverPicture ? (
-					<img src={event.CoverPicture} className='object-cover h-full w-full' />
+				{event?.CoverPicture ? (
+					<img src={event?.CoverPicture} className='object-cover h-full w-full' />
 				) : (
 					<img src={cover} className='object-cover h-full w-full' />
 				)}
@@ -224,13 +224,13 @@ const SingleEvent = () => {
 						)}
 					</div>
 					<div>
-						<h4 className='font-bold text-4xl text-white mb-2'>{event.EventName}</h4>
+						<h4 className='font-bold text-4xl text-white mb-2'>{event?.EventName}</h4>
 						<div className='flex flex-row flex-wrap gap-3'>
-							<h4 className='text-xl text-white'>{event.Type} Event</h4>
+							<h4 className='text-xl text-white'>{event?.Type} Event</h4>
 							<h4 className='text-xl text-white'>•</h4>
-							<h4 className='text-xl text-white'>{event.NoOfMembers} Participants</h4>
+							<h4 className='text-xl text-white'>{event?.NoOfMembers} Participants</h4>
 							<h4 className='text-xl text-white'>•</h4>
-							<h4 className='text-xl text-white'>{event.Privacy}</h4>
+							<h4 className='text-xl text-white'>{event?.Privacy}</h4>
 						</div>
 					</div>
 				</div>
@@ -241,9 +241,9 @@ const SingleEvent = () => {
 						<div className='p-5 bg-system-secondary-bg rounded-lg mb-3 lg:mb-8'>
 							<h4 className='font-semibold text-xl text-system-primary-text mt-1 lg:mt-3'>About</h4>
 							<h4 className='font-medium text-md  text-system-secondary-text my-2 lg:my-2 leading-relaxed'>
-								{event.Description}
+								{event?.Description}
 							</h4>
-							{event.OriginalLanguage !== homeLanguage && (
+							{event?.OriginalLanguage !== homeLanguage && (
 								<>
 									{translated ? (
 										<p className='text-sm mt-4 text-system-secondary-text cursor-pointer' onClick={showOriginal}>
@@ -275,7 +275,7 @@ const SingleEvent = () => {
 									<div>
 										<h4 className='text-xs text-brand-gray-dim mb-1'>When</h4>
 										<h4 className='text-sm text-system-primary-text leading-6'>
-											{getDateInWordsFormat(new Date(event.Date))}
+											{getDateInWordsFormat(new Date(event?.Date))}
 										</h4>
 									</div>
 								</div>
@@ -284,33 +284,33 @@ const SingleEvent = () => {
 									<div>
 										<h4 className='text-xs text-brand-gray-dim mb-1'>Time</h4>
 										<h4 className='text-sm text-system-primary-text leading-6'>
-											{gettimenow(new Date(event.StartTime))}
+											{gettimenow(new Date(event?.StartTime))}
 										</h4>
 									</div>
 								</div>
 							</div>
 						</div>
 						<div className='flex gap-2'>
-							{event.IsMember ? (
+							{event?.IsMember ? (
 								<>
 									<Button width='full' variant='black' onClick={() => navigate('join')}>
 										Join
 									</Button>
-									{currentUserData.CurrentUser.UserId !== event.OrganiserId && (
+									{currentUserData.CurrentUser.UserId !== event?.OrganiserId && (
 										<Button width='full' variant='outline' onClick={() => unRegisterEvent()}>
 											Leave Event
 										</Button>
 									)}
 								</>
-							) : event.MembershipStatus === undefined ? (
+							) : event?.MembershipStatus === undefined ? (
 								<Button width='full' variant='black' onClick={() => joinEvent()}>
 									Register
 								</Button>
-							) : event.MembershipStatus === 'Requested' ? (
+							) : event?.MembershipStatus === 'Requested' ? (
 								<Button width='full' variant='outline' onClick={() => cancelRegistrationRequest()}>
 									Cancel Registration
 								</Button>
-							) : event.MembershipStatus === 'Invited' ? (
+							) : event?.MembershipStatus === 'Invited' ? (
 								<div className='flex flex-col items-start gap-2'>
 									<p className='text-system-secondary-text'>You have been invited to this event</p>
 									<div className='flex gap-2'>
@@ -326,7 +326,7 @@ const SingleEvent = () => {
 						</div>
 					</div>
 					<div className='lg:col-span-2'>
-						{event && event.IsMember && (
+						{event && event?.IsMember && (
 							<Tab
 								onTabChange={onTabChange}
 								activeTab={activeTab}
@@ -335,21 +335,21 @@ const SingleEvent = () => {
 								alignment='justify-start'
 							/>
 						)}
-						{event && !event.IsMember && (
+						{event && !event?.IsMember && (
 							<div className={`rounded-lg ${!joined && 'max-h-96 overflow-hidden relative h-full'}`}>
-								{!event.IsMember && (
+								{!event?.IsMember && (
 									<div className='absolute top-0 right-0 left-0 bottom-0 p-4 lg:px-10 lg:py-6 bg-system-primary-accent-light h-100 overflow-hidden overflow-y-auto z-10'>
 										<div className='flex flex-col justify-center items-center mt-6'>
 											<h4 className='font-bold text-center text-3xl text-system-primary-accent mb-3'>Join the Event</h4>
 											<h4 className='text-md text-center text-system-primary-accent'>
 												Get ready for insightful conversations! Our discussions platform will be active 10 days
-												before,during and 10 days after the event. Check in closer to the date to connect with peers,
+												before,during and 10 days after the event?. Check in closer to the date to connect with peers,
 												share perspectives and share most of your event experience.
 											</h4>
 											<h4 className='text-md text-center text-system-primary-accent mt-4 mb-6'>
 												Let the anticipation build - meaningful discussions await!
 											</h4>
-											{event.MembershipStatus === 'Requested' && (
+											{event?.MembershipStatus === 'Requested' && (
 												<p className='text-system-secondary-text'>Registration request has been sent</p>
 											)}
 										</div>

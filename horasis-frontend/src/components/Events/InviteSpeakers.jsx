@@ -11,9 +11,10 @@ import { getNextId } from '../../utils/URLParams'
 import Input from '../ui/Input'
 import Button from '../ui/Button'
 import addIcon from '../../assets/icons/add-icon.svg'
-import deleteIcon from '../../assets/icons/delete.svg'
+import deleteIcon from '../../assets/icons/delete-white.svg'
 import Joi from 'joi'
 import Select from '../ui/Select'
+import TextArea from '../ui/TextArea'
 
 const InviteSpeakers = ({ eventId, event }) => {
 	const { updateCurrentUser, currentUserData } = useAuth()
@@ -103,15 +104,51 @@ const InviteSpeakers = ({ eventId, event }) => {
 			'string.email': 'Please enter a valid email address',
 			'any.required': 'Email is required',
 		})
+	const fullNameSchema = Joi.string().required().messages({
+		'string.empty': 'Full Name cannot be empty',
+		'any.required': 'Full Name is required',
+	})
+	const aboutSchema = Joi.string().required().messages({
+		'string.empty': 'About cannot be empty',
+		'any.required': 'About  is required',
+	})
 
 	const handleEmailChange = (index, event) => {
 		const newInvitationData = [...emailInvitationData]
 		const newErrors = [...errors]
 
-		newInvitationData[index].EmailId = event.target.value
+		newInvitationData[index].Email = event.target.value
 
 		// Validate the email
-		const { error } = emailSchema.validate(newInvitationData[index].EmailId)
+		const { error } = emailSchema.validate(newInvitationData[index].Email)
+		newErrors[index] = error ? error.message : ''
+
+		setEmailInvitationData(newInvitationData)
+		setErrors(newErrors)
+	}
+
+	const handleFullnameChange = (index, event) => {
+		const newInvitationData = [...emailInvitationData]
+		const newErrors = [...errors]
+
+		newInvitationData[index].FullName = event.target.value
+
+		// Validate the email
+		const { error } = fullNameSchema.validate(newInvitationData[index].FullName)
+		newErrors[index] = error ? error.message : ''
+
+		setEmailInvitationData(newInvitationData)
+		setErrors(newErrors)
+	}
+
+	const handleAbooutChange = (index, event) => {
+		const newInvitationData = [...emailInvitationData]
+		const newErrors = [...errors]
+
+		newInvitationData[index].About = event.target.value
+
+		// Validate the email
+		const { error } = aboutSchema.validate(newInvitationData[index].About)
 		newErrors[index] = error ? error.message : ''
 
 		setEmailInvitationData(newInvitationData)
@@ -126,7 +163,7 @@ const InviteSpeakers = ({ eventId, event }) => {
 
 	const addEmailField = () => {
 		if (emailInvitationData.length < 5) {
-			setEmailInvitationData([...emailInvitationData, { EmailId: '', Agenda: '' }])
+			setEmailInvitationData([...emailInvitationData, { Email: '', Agenda: '', FullName: '', About: '' }])
 		}
 	}
 
@@ -152,8 +189,8 @@ const InviteSpeakers = ({ eventId, event }) => {
 
 		setIsInviting(true)
 		postItem(
-			`users/invite`,
-			postEmailData,
+			`events/${event.DocId}/speakers/invite/email`,
+			{ InvitationData: emailInvitationData },
 			(result) => {
 				setEmailInvitationData([])
 				setIsInviting(false)
@@ -229,15 +266,30 @@ const InviteSpeakers = ({ eventId, event }) => {
 					<div className='flex flex-col gap-4'>
 						{emailInvitationData.map((invitation, index) => (
 							<div key={index} className='flex flex-col w-full'>
-								<div className='flex items-center gap-2 w-full'>
+								<div className='grid grid-cols-1 md:grid-cols-2 w-full gap-2 items-center '>
 									<Input
 										className='py-3 rounded-xl border-2 border-system-secondary-accent'
 										width='full'
 										placeholder='Enter email'
-										value={invitation.EmailId}
+										value={invitation.Email}
 										onChange={(e) => handleEmailChange(index, e)}
 									/>
-
+									<Input
+										className='py-3 rounded-xl border-2 border-system-secondary-accent'
+										width='full'
+										placeholder='Enter Fullname'
+										value={invitation.FullName}
+										onChange={(e) => handleFullnameChange(index, e)}
+									/>
+									<div className='col-span-2'>
+										<TextArea
+											className='py-3 rounded-xl  border-2 border-system-secondary-accent'
+											width='full'
+											placeholder='About Speaker'
+											value={invitation.About}
+											onChange={(e) => handleAbooutChange(index, e)}
+										/>
+									</div>
 									<Select
 										className='py-3 rounded-xl border-2 border-system-secondary-accent'
 										width='full'
@@ -246,12 +298,15 @@ const InviteSpeakers = ({ eventId, event }) => {
 										options={agendaList.map((item) => item.Name)}
 										setValue={(selectedOption) => handleAgendaChange(index, selectedOption)}
 									/>
-									<img
-										src={deleteIcon}
-										alt='Delete'
-										className='h-6 cursor-pointer'
-										onClick={() => removeEmailField(index)}
-									/>
+									<Button
+										className='flex items-center justify-center gap-2'
+										width='full'
+										variant='danger'
+										size='md'
+										onClick={() => removeEmailField(index)}>
+										<p className='text-system-primary-bg'>Remove Speaker</p>
+										<img src={deleteIcon} alt='Delete' className='h-6 cursor-pointer' />
+									</Button>
 								</div>
 								{errors[index] && <div style={{ color: 'red', marginTop: '5px' }}>{errors[index]}</div>}
 							</div>

@@ -44,6 +44,7 @@ import NewStreaming from '../pages/NewStreaming'
 import SuperAdmin from '../pages/SuperAdmin'
 import SuperAdminLogin from '../pages/SuperAdminLogin'
 import AdminProtected from '../layouts/AdminProtected'
+import EnterEvent from '../pages/EnterEvent'
 
 export const router = createBrowserRouter(
 	createRoutesFromElements(
@@ -88,7 +89,6 @@ export const router = createBrowserRouter(
 					<Route path='/Discussions/:discussionid' element={<SingleDiscussion />} />
 					<Route path='/Articles/:articleid' element={<SingleArticles />} />
 					<Route path='/Events/:eventid' element={<SingleEvent />} />
-					<Route path='/Events/:eventid/join' element={<NewStreaming />} />
 					<Route
 						path='/analytics'
 						element={
@@ -100,8 +100,13 @@ export const router = createBrowserRouter(
 
 					<Route path='/Chat/:userid' element={<ChatPage />} />
 				</Route>
+				<Route path='/Events/:eventid/join' element={<NewStreaming />} />
 			</Route>
 			<Route path='/home' element={<Home />} />
+			<Route path='EnterEvent' element={<Outlet />}>
+				<Route index path=':DocumentID' element={<EnterEvent />} />
+				<Route path='Events/:eventid/join' element={<NewStreaming />} />
+			</Route>
 			<Route path='ForgotPassword' element={<UnAuthLayout />}>
 				<Route index element={<ForgotPassword />} />
 			</Route>
