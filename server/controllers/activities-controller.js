@@ -303,7 +303,7 @@ const AddtoUserActivities = async (Activity) => {
             //@ts-ignore
             ActivityId: Activity.ActivityId,
             Type: "ConnectionsList",
-            Content: { ConnectionsList: UserConnection.Content.ConnectionsList },
+            Content: { ConnectionsList: UserConnection.Content.ConnectionsList, ConnectionListId: UserConnection.DocId },
             UserId: Activity.UserId,
             //@ts-ignore
             Index: Activity.Index,
