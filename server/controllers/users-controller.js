@@ -308,7 +308,7 @@ const AddConnectionstoUser = async (UserId, ConnectionId) => {
  * @param {string} ConnectionId 
  */
 const RemoveConnectionsToUser = async (UserId, ConnectionId) => {
-    const [Follow, Connection] = await Promise.all([
+    const [[Follow], [Connection]] = await Promise.all([
         ReadFollows({ FolloweeId: UserId, FollowerId: ConnectionId }, undefined, 1, undefined),
         ReadConnections({ UserIds: { "$all": [UserId, ConnectionId], }, Status: "Connected" }, undefined, 1, undefined)
     ])
