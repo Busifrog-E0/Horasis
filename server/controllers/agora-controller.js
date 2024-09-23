@@ -70,7 +70,7 @@ const GetCallUserData = async (req, res) => {
     const [checkUser] = await ReadUsers({ "_id": new ObjectId(UserId) }, undefined, 1, undefined);
     if (!checkUser) {
         const [Speaker] = await ReadSpeakers({ SpeakerId: UserId, EventId }, undefined, 1, undefined);
-        return res.json(Speaker.UserDetails)
+        return res.json({...Speaker.UserDetails,DocId :  Speaker.SpeakerId})
     }
     return res.json(checkUser)
 }
