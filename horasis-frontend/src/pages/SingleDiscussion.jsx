@@ -25,16 +25,25 @@ import Modal from '../components/ui/Modal'
 import PictureUpload from '../components/Profile/EditProfile/PictureUpload'
 import close from '../assets/icons/close.svg'
 import useTranslation from '../hooks/useTranslation'
+import useGetData from '../hooks/useGetData'
+import usePostData from '../hooks/usePostData'
+import useDeleteData from '../hooks/useDeleteData'
+import useUpdateData from '../hooks/useUpdateData'
+import usePatchItem from '../hooks/useUpdateData'
 
 const SingleDiscussion = () => {
 	const [activeTab, setActiveTab] = useState(0)
 	const { updateCurrentUser, currentUserData, scrollToTop } = useContext(AuthContext)
 	const toast = useToast()
 	const { discussionid } = useParams()
-	const [discussion, setDiscussion] = useState({})
-	const [isLoading, setIsLoading] = useState(true)
+	const {
+		isLoading,
+		data: discussion,
+		getData: getDiscussion,
+		setData: setDiscussion,
+	} = useGetData(`discussions/${discussionid}`)
+
 	const navigate = useNavigate()
-	const OnClickFollow = () => {}
 	const handleGoBack = () => {
 		navigate(-1)
 	}
@@ -43,368 +52,171 @@ const SingleDiscussion = () => {
 		setActiveTab(item.key)
 	}
 
-	const getDiscussion = () => {
-		setIsLoading(true)
-		getItem(
-			`discussions/${discussionid}`,
-			(result) => {
-				setDiscussion(result)
-				setIsLoading(false)
-			},
-			(err) => {
-				console.log(err)
-				navigate('/NotFound', { replace: true })
-				setIsLoading(false)
-			},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
+	const saveSuccessCallback = (result) => {
+		if (result === true) {
+			getDiscussion()
+		}
 	}
-
-	useEffect(() => {
-		getDiscussion()
-	}, [])
-
-	const [isSaving, setIsSaving] = useState(false)
-	const getDiscussionUpdate = () => {
-		setIsSaving(true)
-
-		getItem(
-			`discussions/${discussionid}`,
-			(result) => {
-				setIsSaving(false)
-
-				setDiscussion(result)
-			},
-			(err) => {
-				setIsSaving(false)
-			},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
-	}
+	const { isLoading: isSaving, postData: postSaveDiscussion } = usePostData({ onSuccess: saveSuccessCallback })
+	const { isLoading: isUnsaving, deleteData: deleteSaveDiscussion } = useDeleteData('', {
+		onSuccess: saveSuccessCallback,
+	})
 
 	const saveDiscussion = (id) => {
-		setIsSaving(true)
-		postItem(
-			`saves`,
-			{
+		postSaveDiscussion({
+			endpoint: `saves`,
+			payload: {
 				EntityId: id,
 				Type: 'Discussion',
 			},
-			(result) => {
-				if (result === true) {
-					getDiscussionUpdate()
-				}
-			},
-			(err) => {
-				setIsSaving(false)
-			},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
+		})
 	}
 
 	const removeDiscussion = (id) => {
-		setIsSaving(true)
-		deleteItem(
-			`saves/${id}`,
-			(result) => {
-				if (result === true) {
-					getDiscussionUpdate()
-				}
-			},
-			(err) => {
-				setIsSaving(false)
-			},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
+		deleteSaveDiscussion({
+			endPoint: `saves/${id}`,
+		})
 	}
 
 	const tabs = (discussion) => {
-		const isPrivate = discussion.Privacy === 'Private'
-		const isMember = discussion.IsMember
-		const isAccepted = discussion.MembershipStatus === 'Accepted'
-		const isAdmin = discussion?.Permissions?.IsAdmin
+		const { Privacy, IsMember, MembershipStatus, Permissions, DocId } = discussion
+		const isPrivate = Privacy === 'Private'
+		const isMember = IsMember && MembershipStatus === 'Accepted'
+		const isAdmin = Permissions?.IsAdmin
+		const canInvite = Permissions?.CanInviteOthers
+
+		const getAboutTab = (key) => ({
+			key: key,
+			title: 'About',
+			render: () => (
+				<DiscussionAbout
+					discussion={discussion}
+					saveDiscussion={saveDiscussion}
+					removeDiscussion={removeDiscussion}
+					isSaving={isSaving || isUnsaving || isLoading}
+				/>
+			),
+		})
+
+		const getActivitiesTab = (key) => ({
+			key: key,
+			title: 'Activities',
+			render: () => (
+				<div className='bg-system-secondary-bg p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
+					<TimeLineTab
+						api={`discussions/${DocId}/activities`}
+						gapBnTabs='gap-7'
+						classNameForPost='py-5'
+						bordered={true}
+						permissions={Permissions}
+					/>
+				</div>
+			),
+		})
+
+		const getMembersTab = (key) => ({
+			key: key,
+			title: 'Members',
+			render: () => (
+				<div className='bg-system-secondary-bg p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
+					{canInvite && <CreateDiscussionStep3 discussionId={DocId} from='tab' />}
+					<div className='my-4 flex flex-col gap-2'>
+						<h1 className='text-system-primary-text font-medium text-lg'>Current Members</h1>
+						<DiscussionMembers discussionId={DocId} />
+					</div>
+				</div>
+			),
+		})
+
+		const getJoinRequestsTab = (key) => ({
+			key: key,
+			title: 'Join Requests',
+			render: () => (
+				<div className='bg-system-secondary-bg p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
+					<DiscussionJoinRequest discussionId={DocId} />
+				</div>
+			),
+		})
+
+		const getSettingsTab = (key) => ({
+			key: key,
+			title: 'Settings',
+			render: () => (
+				<div className='bg-system-secondary-bg p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
+					<DiscussionSettings discussionId={DocId} discussion={discussion} />
+				</div>
+			),
+		})
+
+		// Tabs logic based on the user's permissions and privacy
 		if (isAdmin && isPrivate) {
-			return [
-				{
-					key: 0,
-					title: 'About',
-					render: () => (
-						<DiscussionAbout
-							discussion={discussion}
-							saveDiscussion={saveDiscussion}
-							removeDiscussion={removeDiscussion}
-							isSaving={isSaving}
-						/>
-					),
-				},
-				{
-					key: 1,
-					title: 'Activities',
-					render: () => (
-						<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
-							<TimeLineTab
-								api={`discussions/${discussion?.DocId}/activities`}
-								gapBnTabs='gap-7'
-								classNameForPost='py-5'
-								bordered={true}
-								permissions={discussion.Permissions}
-							/>
-						</div>
-					),
-				},
-				{
-					key: 2,
-					title: 'Members',
-					render: () => (
-						<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
-							<div>
-								<CreateDiscussionStep3 discussionId={discussion.DocId} from='tab' />
-							</div>
-							<div className='my-4 flex flex-col gap-2'>
-								<h1 className='text-system-primary-text font-medium text-lg'>Current Members</h1>
-
-								<DiscussionMembers discussionId={discussion.DocId} />
-							</div>
-						</div>
-					),
-				},
-				{
-					key: 3,
-					title: 'Join Requests',
-					render: () => (
-						<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
-							<DiscussionJoinRequest discussionId={discussion.DocId} />
-						</div>
-					),
-				},
-
-				{
-					key: 4,
-					title: 'Settings',
-					render: () => (
-						<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
-							<DiscussionSettings discussionId={discussion.DocId} discussion={discussion} />
-						</div>
-					),
-				},
-			]
+			return [getAboutTab(0), getActivitiesTab(1), getMembersTab(2), getJoinRequestsTab(3), getSettingsTab(4)]
 		} else if (isAdmin && !isPrivate) {
-			return [
-				{
-					key: 0,
-					title: 'About',
-					render: () => (
-						<DiscussionAbout
-							discussion={discussion}
-							saveDiscussion={saveDiscussion}
-							removeDiscussion={removeDiscussion}
-							isSaving={isSaving}
-						/>
-					),
-				},
-				{
-					key: 1,
-					title: 'Activities',
-					render: () => (
-						<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
-							<TimeLineTab
-								api={`discussions/${discussion?.DocId}/activities`}
-								gapBnTabs='gap-7'
-								classNameForPost='py-5'
-								bordered={true}
-								permissions={discussion.Permissions}
-							/>
-						</div>
-					),
-				},
-				{
-					key: 2,
-					title: 'Members',
-					render: () => (
-						<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
-							<div>
-								<CreateDiscussionStep3 discussionId={discussion.DocId} from='tab' />
-							</div>
-							<div className='my-4 flex flex-col gap-2'>
-								<h1 className='text-system-primary-text font-medium text-lg'>Current Members</h1>
-
-								<DiscussionMembers discussionId={discussion.DocId} />
-							</div>
-						</div>
-					),
-				},
-
-				{
-					key: 3,
-					title: 'Settings',
-					render: () => (
-						<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
-							<DiscussionSettings discussionId={discussion.DocId} discussion={discussion} />
-						</div>
-					),
-				},
-			]
-		} else if (!isPrivate || (isMember && isAccepted)) {
-			return [
-				{
-					key: 0,
-					title: 'About',
-					render: () => (
-						<DiscussionAbout
-							discussion={discussion}
-							saveDiscussion={saveDiscussion}
-							removeDiscussion={removeDiscussion}
-							isSaving={isSaving}
-						/>
-					),
-				},
-				{
-					key: 1,
-					title: 'Activities',
-					render: () => (
-						<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
-							<TimeLineTab
-								api={`discussions/${discussion?.DocId}/activities`}
-								gapBnTabs='gap-7'
-								classNameForPost='py-5'
-								bordered={true}
-								permissions={discussion.Permissions}
-							/>
-						</div>
-					),
-				},
-				{
-					key: 2,
-					title: 'Members',
-					render: () => (
-						<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
-							{discussion.Permissions.CanInviteOthers && (
-								<div>
-									<CreateDiscussionStep3 discussionId={discussion.DocId} from='tab' />
-								</div>
-							)}
-							<div className='my-4 flex flex-col gap-2'>
-								<h1 className='text-system-primary-text font-medium text-lg'>Current Members</h1>
-
-								<DiscussionMembers discussionId={discussion.DocId} />
-							</div>
-						</div>
-					),
-				},
-			]
+			return [getAboutTab(0), getActivitiesTab(1), getMembersTab(2), getSettingsTab(3)]
+		} else if (!isPrivate || isMember) {
+			return [getAboutTab(0), getActivitiesTab(1), getMembersTab(2)]
 		} else {
-			return [
-				{
-					key: 0,
-					title: 'About',
-					render: () => (
-						<DiscussionAbout
-							discussion={discussion}
-							saveDiscussion={saveDiscussion}
-							removeDiscussion={removeDiscussion}
-							isSaving={isSaving}
-						/>
-					),
-				},
-			]
+			return [getAboutTab(0)]
 		}
 	}
 
+	const successCallback = (result) => {
+		if (result === true || typeof result === 'object') {
+			getDiscussion()
+			onTabChange(tabs(discussion)[0])
+		}
+	}
+
+	const { updateData: updateAcceptInvite } = useUpdateData({ onSuccess: successCallback })
+	const { postData: postJoinDiscussion } = usePostData({ onSuccess: successCallback })
+	const { deleteData } = useDeleteData('', { onSuccess: successCallback })
+
 	const acceptInvite = () => {
-		patchItem(
-			`discussions/${discussion.DocId}/invite/accept`,
-			{},
-			(result) => {
-				if (result === true) {
-					getDiscussion()
-					onTabChange(tabs(discussion)[0])
-				}
-			},
-			(err) => {},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
+		return updateAcceptInvite({
+			endpoint: `discussions/${discussion?.DocId}/invite/accept`,
+			payload: {},
+		})
 	}
 	const joinDiscussion = () => {
-		postItem(
-			`discussions/${discussion.DocId}/join`,
-			{},
-			(result) => {
-				if (result === true) {
-					getDiscussion()
-					onTabChange(tabs(discussion)[0])
-				} else if (typeof result === 'object') {
-					getDiscussion()
-					onTabChange(tabs(discussion)[0])
-				}
-			},
-			(err) => console.log(err),
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
+		return postJoinDiscussion({
+			endpoint: `discussions/${discussion?.DocId}/join`,
+			payload: {},
+		})
 	}
 	const unFollowDiscussion = () => {
-		deleteItem(
-			`discussions/${discussion.DocId}/leave`,
-			(result) => {
-				if (result === true) {
-					getDiscussion()
-					onTabChange(tabs(discussion)[0])
-				}
-			},
-			(err) => {},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
+		return deleteData({ endPoint: `discussions/${discussion?.DocId}/leave` })
 	}
 	const rejectInvite = () => {
-		deleteItem(
-			`discussions/${discussion.DocId}/invite/${currentUserData.CurrentUser.UserId}/reject`,
-			(result) => {
-				if (result === true) {
-					getDiscussion()
-					onTabChange(tabs(discussion)[0])
-				}
-			},
-			(err) => {},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
+		return deleteData({
+			endPoint: `discussions/${discussion?.DocId}/invite/${currentUserData.CurrentUser.UserId}/reject`,
+		})
 	}
 
 	const cancelJoinRequest = () => {
-		deleteItem(
-			`discussions/${discussion.DocId}/join/${currentUserData.CurrentUser.UserId}/cancel`,
-			(result) => {
-				if (result === true) {
-					getDiscussion()
-					onTabChange(tabs(discussion)[0])
-				}
-			},
-			(err) => {},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
+		return deleteData({
+			endPoint: `discussions/${discussion?.DocId}/join/${currentUserData.CurrentUser.UserId}/cancel`,
+		})
 	}
 
 	// cover photo upload logic
-	const [isImageUploading, setIsImageUploading] = useState(false)
 	const [selectedCoverImage, setSelectedCoverImage] = useState(null)
 	const [coverImageToUpload, setCoverImageToUpload] = useState(null)
 	const [isCoverPictureOpen, setIsCoverPictureOpen] = useState(false)
+
+	const { isLoading: isCoverUploading, postData: postCoverUpload } = usePostData({
+		onSuccess: (result) => {
+			onCoverImageSet(result.FileUrl)
+		},
+	})
+	const { isLoading: isCoverPatching, updateData: updateCoverUpload } = useUpdateData({
+		onSuccess: (result) => {
+			if (result === true) {
+				setIsCoverPictureOpen(false)
+				getDiscussion()
+			}
+		},
+	})
+
 	const onCoverImageSelect = (imageData) => {
 		setCoverImageToUpload({ ...imageData, Type: 'Discussions' })
 		const tempUrl = URL.createObjectURL(new Blob([new Uint8Array(imageData.FileData)]))
@@ -414,48 +226,19 @@ const SingleDiscussion = () => {
 		setCoverImageToUpload(null)
 		setSelectedCoverImage(null)
 	}
-	const onCoverImageSet = (url) => {
-		setIsImageUploading(true)
 
-		patchItem(
-			`discussions/${discussionid}/coverPicture`,
-			{
-				CoverPicture: url,
-			},
-			(result) => {
-				if (result === true) {
-					setIsCoverPictureOpen(false)
-					getDiscussion()
-				}
-				setIsImageUploading(false)
-			},
-			(err) => {
-				// console.log(err)
-				setIsImageUploading(false)
-			},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
+	const onCoverImageSet = (url) => {
+		return updateCoverUpload({
+			endpoint: `discussions/${discussionid}/coverPicture`,
+			payload: { CoverPicture: url },
+		})
 	}
 	const onCoverImageUpload = () => {
 		if (coverImageToUpload) {
-			setIsImageUploading(true)
-
-			postItem(
-				'files/users',
-				coverImageToUpload,
-				(result) => {
-					onCoverImageSet(result.FileUrl)
-				},
-				(err) => {
-					// console.log(err)
-					setIsImageUploading(false)
-				},
-				updateCurrentUser,
-				currentUserData,
-				toast
-			)
+			postCoverUpload({
+				endpoint: 'files/users',
+				payload: coverImageToUpload,
+			})
 		} else {
 			onCoverImageSet('')
 		}
@@ -479,7 +262,7 @@ const SingleDiscussion = () => {
 							onClick={() => {
 								setIsCoverPictureOpen(false)
 							}}
-							disabled={isImageUploading}>
+							disabled={isCoverPatching || isCoverUploading}>
 							<img src={close} className='h-6  cursor-pointer' alt='' />
 						</button>
 					</div>
@@ -490,7 +273,6 @@ const SingleDiscussion = () => {
 					</p>
 					<div className=' flex flex-col items-center justify-center pt-10'>
 						<PictureUpload
-							// isBanner={false}
 							altTitle='Cover Picture'
 							selectedImage={selectedCoverImage}
 							setSelectedImage={setSelectedCoverImage}
@@ -498,20 +280,16 @@ const SingleDiscussion = () => {
 							onImageDelete={onCoverImageDelete}
 							onUploadImage={onCoverImageUpload}
 							fileFieldName={'CoverPicture'}
-							isUploading={isImageUploading}
+							isUploading={isCoverPatching || isCoverUploading}
 						/>
 					</div>
 				</Modal.Body>
 			</Modal>
 			<div className='overflow-hidden h-80 lg:h-96 relative'>
-				{discussion.CoverPicture ? (
-					<>
-						<img src={discussion.CoverPicture} className='object-cover h-full w-full' />
-					</>
+				{discussion?.CoverPicture ? (
+					<img src={discussion?.CoverPicture} className='object-cover h-full w-full' />
 				) : (
-					<>
-						<img src={cover} className='object-cover h-full w-full' />
-					</>
+					<img src={cover} className='object-cover h-full w-full' />
 				)}
 
 				<div className='absolute top-0 right-0 left-0 bottom-0 flex flex-col justify-between items-start p-4 lg:px-10 lg:py-6  h-100 overflow-hidden overflow-y-auto bg-system-black-transparent'>
@@ -520,15 +298,13 @@ const SingleDiscussion = () => {
 							className={`inline-flex items-center justify-center w-12 h-12 p-3 overflow-hidden rounded-full border border-white bg-white cursor-pointer`}
 							onClick={handleGoBack}>
 							<img src={arrowback} alt='' className='h-6 cursor-pointer' />
-
-							{/* <h4 className='font-medium text-xl text-brand-secondary'>Back</h4> */}
 						</div>
 						{discussion?.Permissions?.IsAdmin && (
 							<div
 								onClick={() => {
 									setIsCoverPictureOpen(true)
-									if (discussion.CoverPicture) {
-										setSelectedCoverImage(discussion.CoverPicture)
+									if (discussion?.CoverPicture) {
+										setSelectedCoverImage(discussion?.CoverPicture)
 									} else {
 										setSelectedCoverImage(null)
 									}
@@ -539,34 +315,26 @@ const SingleDiscussion = () => {
 						)}
 					</div>
 					<div>
-						<h4 className='font-medium shadow-lg text-4xl text-white mb-3'>{discussion.DiscussionName}</h4>
+						<h4 className='font-medium shadow-lg text-4xl text-white mb-3'>{discussion?.DiscussionName}</h4>
 						<div className='flex flex-row flex-wrap gap-3'>
-							{/* <h4 className='text-2xl text-white'>Virtual Event</h4>
-							<h4 className='text-2xl text-white'>•</h4> */}
-							<h4 className='text-2xl text-white'>{discussion.NoOfMembers} Participants</h4>
+							<h4 className='text-2xl text-white'>{discussion?.NoOfMembers} Participants</h4>
 							<h4 className='text-2xl text-white'>•</h4>
-							<h4 className='text-2xl text-white'>{discussion.Privacy}</h4>
-							{discussion.OriginalLanguage !== homeLanguage && (
+							<h4 className='text-2xl text-white'>{discussion?.Privacy}</h4>
+							{discussion?.OriginalLanguage !== homeLanguage && (
 								<>
 									<h4 className='text-2xl text-white'>•</h4>
 									{translating ? (
-										<>
-											<h4 className='text-2xl text-white  cursor-pointer'>Translating...</h4>
-										</>
+										<h4 className='text-2xl text-white  cursor-pointer'>Translating...</h4>
 									) : (
 										<>
 											{translated ? (
-												<>
-													<h4 className='text-2xl text-white  cursor-pointer' onClick={showOriginal}>
-														Show Original
-													</h4>
-												</>
+												<h4 className='text-2xl text-white  cursor-pointer' onClick={showOriginal}>
+													Show Original
+												</h4>
 											) : (
-												<>
-													<h4 className='text-2xl text-white  cursor-pointer' onClick={translateDiscussion}>
-														Translate this discussion
-													</h4>
-												</>
+												<h4 className='text-2xl text-white  cursor-pointer' onClick={translateDiscussion}>
+													Translate this discussion
+												</h4>
 											)}
 										</>
 									)}
@@ -588,25 +356,27 @@ const SingleDiscussion = () => {
 								<div className='flex flex-row justify-between mt-1 lg:mt-3'>
 									<h4 className='font-semibold text-2xl text-system-primary-text'>Brief</h4>
 								</div>
-								<h4 className='text-xl text-brand-gray mt-2 mb-12 leading-8 whitespace-pre-line'>{discussion.Brief}</h4>
+								<h4 className='text-xl text-brand-gray mt-2 mb-12 leading-8 whitespace-pre-line'>
+									{discussion?.Brief}
+								</h4>
 								<div className='flex gap-2'>
-									{discussion.IsMember ? (
+									{discussion?.IsMember ? (
 										<>
-											{currentUserData.CurrentUser.UserId !== discussion.OrganiserId && (
+											{currentUserData.CurrentUser.UserId !== discussion?.OrganiserId && (
 												<Button variant='outline' onClick={() => unFollowDiscussion()}>
 													Unfollow
 												</Button>
 											)}
 										</>
-									) : discussion.MembershipStatus === undefined ? (
+									) : discussion?.MembershipStatus === undefined ? (
 										<Button variant='black' onClick={() => joinDiscussion()}>
 											Follow
 										</Button>
-									) : discussion.MembershipStatus === 'Requested' ? (
+									) : discussion?.MembershipStatus === 'Requested' ? (
 										<Button variant='outline' onClick={() => cancelJoinRequest()}>
 											Cancel Request
 										</Button>
-									) : discussion.MembershipStatus === 'Invited' ? (
+									) : discussion?.MembershipStatus === 'Invited' ? (
 										<div className='flex flex-col items-start gap-2'>
 											<p className='text-system-secondary-text'>You have been invited to this discussion</p>
 											<div className='flex gap-2'>
@@ -620,43 +390,6 @@ const SingleDiscussion = () => {
 										</div>
 									) : null}
 								</div>
-								{/* {discussion.Privacy === 'Private' ? (
-									<>
-										{discussion.Status === 'Invited' ? (
-											<>
-												<Button onClick={() => acceptInvite()} width='full' variant='black'>
-													Accept invite
-												</Button>
-											</>
-										) : (
-											<>
-												<Button
-													onClick={() => unFollowDiscussion()}
-													width='full'
-													variant='black'
-													className='bg-system-secondary-text border-system-secondary-text'>
-													Unfollow
-												</Button>
-											</>
-										)}
-									</>
-								) : (
-									<>
-										{!discussion.IsMember ? (
-											<Button onClick={() => joinDiscussion()} width='full' variant='black'>
-												Follow
-											</Button>
-										) : (
-											<Button
-												onClick={() => unFollowDiscussion()}
-												width='full'
-												variant='black'
-												className='bg-system-secondary-text border-system-secondary-text'>
-												Unfollow
-											</Button>
-										)}
-									</>
-								)} */}
 							</div>
 						</div>
 						<div className='lg:col-span-3'>
@@ -678,21 +411,3 @@ const SingleDiscussion = () => {
 }
 
 export default SingleDiscussion
-
-// UNUSED PREVIOUS CODE
-
-// const miniEventTabs = () => [
-// 	{
-// 		title: "Speakers' Profile",
-// 		render: () => (
-// 			<div className='py-3 pt-6 flex flex-col gap-8'>
-// 				<SpeakerProfileTab />
-// 				<SpeakerProfileTab />
-// 			</div>
-// 		),
-// 	},
-// 	{
-// 		title: 'Event Agenda',
-// 		render: () => <div className='py-3 pt-6'></div>,
-// 	},
-// ]
