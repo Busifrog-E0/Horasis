@@ -1,4 +1,4 @@
-import { generateRTCToken, GetParticipants } from '../controllers/agora-controller.js';
+import { generateRTCToken, GenerateUserTokenForInvited, GetCallUserData, } from '../controllers/agora-controller.js';
 import asyncHandler from 'express-async-handler';
 
 import { decodeIDToken, ensureAuthorized } from '../middleware/auth-middleware.js';
@@ -9,12 +9,17 @@ import { QueryParameterFormatting, ValidateGetEntity } from '../middleware/commo
 const router = e.Router();
 router.route
 
-router.get('/event/:EventId/videoCall/join', decodeIDToken, ensureAuthorized("User"),
+router.get('/event/:EventId/videoCall/join', decodeIDToken, ensureAuthorized("User","Guest"),
     // @ts-ignore
     asyncHandler(generateRTCToken));
 
-router.get('/events/:EventId/videoCall/participants', decodeIDToken, ensureAuthorized("User"), ValidateGetEntity, QueryParameterFormatting,
+router.get('/events/:EventId/videoCall/participants/:UserId', decodeIDToken, ensureAuthorized("User","Guest"),
     // @ts-ignore
-    asyncHandler(GetParticipants))
+    asyncHandler(GetCallUserData));
+
+router.post('/guest/speaker/:TokenId',
+    //@ts-ignore
+    asyncHandler(GenerateUserTokenForInvited)
+)
 
 export default router;
