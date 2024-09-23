@@ -17,7 +17,7 @@ router.get('/events/:EventId/videoCall/participants/:UserId', decodeIDToken, ens
     // @ts-ignore
     asyncHandler(GetCallUserData));
 
-router.post('/guest/speaker/:TokenId',
+router.post('/guest/speaker/:SpeakerId',
     //@ts-ignore
     asyncHandler(GenerateUserTokenForInvited)
 )
