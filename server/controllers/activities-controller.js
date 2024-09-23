@@ -14,7 +14,7 @@ import { DetectLanguage } from './translations-controller.js';
 import { IncrementDiscussions } from '../databaseControllers/discussions-databaseController.js';
 import { IncrementEvents } from '../databaseControllers/events-databaseController.js';
 import { ReadUserExtendedProperties } from '../databaseControllers/userExtendedProperties-databaseController.js';
-import { ActivityExtendedPropertiesInit, CreateActivityExtendedProperties, ReadActivityExtendedProperties } from '../databaseControllers/activityExtendedProperties-databaseController.js';
+import { ActivityExtendedPropertiesInit, CreateActivityExtendedProperties, PushOnceInManyActivityExtendedProperties, ReadActivityExtendedProperties } from '../databaseControllers/activityExtendedProperties-databaseController.js';
 import moment from 'moment';
 
 /**
@@ -75,7 +75,11 @@ const GetActivities = async (req, res) => {
  */
 const GetFilteredActivities = async (req, res) => {
     const { UserId } = req.params;
-    const { Filter, NextId, Limit, OrderBy } = req.query;
+    const { Filter, NextId, Limit, OrderBy, Keyword } = req.query;
+    if (Keyword) {
+        //@ts-ignore
+        Filter["Content"] = { $regex: Keyword, $options: 'i' };
+    }
     //@ts-ignore
     const Activities = await ReadActivities(Filter, NextId, Limit, OrderBy);
     const data = await Promise.all(Activities.map(async Activity => await SetActivityDataForGet(Activity, UserId)))
@@ -313,6 +317,29 @@ const AddtoUserActivities = async (Activity) => {
     }))
 }
 
+const PushConnectionToUserActivities = async (ConnectionId, ConnectionListId, UserId) => {
+    const [ConnectionListData] = await ReadActivityExtendedProperties({ "Content.ConnectionListId": ConnectionListId }, undefined, 1, undefined);
+    if (ConnectionListData) {
+        await PushOnceInManyActivityExtendedProperties({ "Content.ConnectionsList": ConnectionId }, { "Content.ConnectionListId": ConnectionListId })
+        return;
+    }
+    const Activities = await ReadActivities({ UserId }, undefined, -1, undefined);
+    await Promise.all(Activities.map(async Activity => {
+        await CreateActivityExtendedProperties(ActivityExtendedPropertiesInit({
+            //@ts-ignore
+            ActivityId: Activity.DocId,
+            Type: "ConnectionsList",
+            Content: { ConnectionsList: [ConnectionId], ConnectionListId },
+            UserId: Activity.UserId,
+            //@ts-ignore
+            Index: Activity.Index,
+            //@ts-ignore
+            CreatedIndex: Activity.CreatedIndex
+        }))
+    }))
+    return;
+}
+
 /**
  * 
  * @param {ActivityData} Activity 
@@ -336,5 +363,5 @@ const SetActivityDataForGet = async (Activity, UserId) => {
 export {
     GetOneFromActivities, GetActivities, PostActivities, PatchActivities, DeleteActivities,
     PostActivityForProfilePatch, GetFilteredActivities, ExtractMentionedUsersFromContent,
-    SetActivityDataForGet, AddtoUserActivities
+    SetActivityDataForGet, AddtoUserActivities, PushConnectionToUserActivities
 }

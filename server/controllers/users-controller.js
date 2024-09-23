@@ -5,7 +5,7 @@ import { AlertBoxObject, ComparePassword, GetUserNonEmptyFieldsPercentage, hashP
 import { ReadConnections, UpdateManyConnections } from '../databaseControllers/connections-databaseController.js';
 import { ReadFollows, UpdateManyFollows } from '../databaseControllers/follow-databaseController.js';
 import { ConnectionStatus } from './connections-controller.js';
-import { PostActivityForProfilePatch } from './activities-controller.js';
+import { PostActivityForProfilePatch, PushConnectionToUserActivities } from './activities-controller.js';
 import { AddUserDetailsAfterInvited } from './invitations-controller.js';
 import { UpdateManyMembers } from '../databaseControllers/members-databaseController.js';
 import { ObjectId } from 'mongodb';
@@ -294,11 +294,11 @@ const AddConnectionstoUser = async (UserId, ConnectionId) => {
     if (checkUserConnections) {
         return await Promise.all([
             PushOnceInUserExtendedProperties({ "Content.ConnectionsList": ConnectionId }, checkUserConnections.DocId),
-            PushOnceInManyActivityExtendedProperties({ "Content.ConnectionsList": ConnectionId }, { "Content.ConnectionListId": checkUserConnections.DocId })
+            PushConnectionToUserActivities(ConnectionId, checkUserConnections.DocId, UserId)
         ]);
     }
     const ConnectionListId = await CreateUserExtendedProperties(UserExtendedPropertiesInit({ UserId, Type: "ConnectionsList", Content: { ConnectionsList: [ConnectionId] } }));
-    await PushOnceInManyActivityExtendedProperties({ "Content.ConnectionsList": ConnectionId }, { "Content.ConnectionListId": ConnectionListId });
+    await PushConnectionToUserActivities(ConnectionId, ConnectionListId, UserId);
     return;
 }
 
@@ -310,7 +310,7 @@ const AddConnectionstoUser = async (UserId, ConnectionId) => {
 const RemoveConnectionsToUser = async (UserId, ConnectionId) => {
     const [Follow, Connection] = await Promise.all([
         ReadFollows({ FolloweeId: UserId, FollowerId: ConnectionId }, undefined, 1, undefined),
-        ReadConnections({ UserIds: { "$all": [UserId, ConnectionId], Status: "Connected" } }, undefined, 1, undefined)
+        ReadConnections({ UserIds: { "$all": [UserId, ConnectionId], }, Status: "Connected" }, undefined, 1, undefined)
     ])
     if (Follow || Connection) {
         return;
