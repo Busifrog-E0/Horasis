@@ -5,9 +5,10 @@ import { ReadMembers } from '../databaseControllers/members-databaseController.j
 import { AlertBoxObject } from './common.js';
 import Env from '../Env.js';
 import { ReadParticipants } from '../databaseControllers/participants-databaseController.js';
-import { ReadOneFromUsers } from '../databaseControllers/users-databaseController.js';
+import { ReadOneFromUsers, ReadUsers } from '../databaseControllers/users-databaseController.js';
 import { TokenData } from './auth-controller.js';
 import { ReadOneFromEvents } from '../databaseControllers/events-databaseController.js';
+import { ObjectId } from 'mongodb';
 const { RtcTokenBuilder, RtcRole, RtmTokenBuilder } = agora;
 
 /**
@@ -66,7 +67,7 @@ const generateAgoraToken = async (EventId, UserId) => {
  */
 const GetCallUserData = async (req, res) => {
     const { UserId, EventId } = req.params;
-    const checkUser = await ReadOneFromUsers(UserId);
+    const [checkUser] = await ReadUsers({ "_id": new ObjectId(UserId) }, undefined, 1, undefined);
     if (!checkUser) {
         const [Speaker] = await ReadSpeakers({ SpeakerId: UserId, EventId }, undefined, 1, undefined);
         return res.json(Speaker.UserDetails)
