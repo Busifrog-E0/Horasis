@@ -122,20 +122,23 @@ const PatchSpeakers = async (req, res) => {
  * @param {e.Request} req 
  * @param {e.Response} res 
  */
-const InviteSpeakerThroughEmail = async (req, res) => {
+const InviteSpeakersThroughEmail = async (req, res) => {
     const { EventId } = req.params;
-    const { Email, FullName, About, Agenda } = req.body;
-    const [Speaker] = await ReadSpeakers({ "UserDetails.Email": Email, EventId }, undefined, 1, undefined);
-    if (Speaker) {
-        return res.status(444).json(AlertBoxObject("Already Invited", "You have already invited this Email"));
-    }
-    const SpeakerId = new ObjectId().toString();
-    const SpeakerData = SpeakerInit({ SpeakerId, EventId, MembershipStatus: "Accepted", Agenda, UserDetails: { FullName, About, Email, ProfilePicture: '' } });
+    const { InvitationData } = req.body;
+    await Promise.all(InvitationData.map(async Data => {
+        const { Email, Agenda, FullName, About } = Data;
+        const [Speaker] = await ReadSpeakers({ "UserDetails.Email": Email, EventId }, undefined, 1, undefined);
+        if (Speaker) {
+            return res.status(444).json(AlertBoxObject("Already Invited", "You have already invited this Email"));
+        }
+        const SpeakerId = new ObjectId().toString();
+        const SpeakerData = SpeakerInit({ SpeakerId, EventId, MembershipStatus: "Accepted", Agenda, UserDetails: { FullName, About, Email, ProfilePicture: '' } });
 
-    await Promise.all([
-        PushArrayEvents({ Speakers: { SpeakerId, UserDetails: SpeakerData.UserDetails, Agenda, } }, EventId),
-        //Send Email
-    ])
+        await Promise.all([
+            PushArrayEvents({ Speakers: { SpeakerId, UserDetails: SpeakerData.UserDetails, Agenda, } }, EventId),
+            //Send Email
+        ])
+    }))
     return res.json(true);
 }
 
@@ -174,5 +177,5 @@ const SpeakerInit = (Data) => {
 
 export {
     GetOneFromSpeakers, GetSpeakerstoInvite, PostSpeakers, PatchSpeakers, DeleteSpeakers,
-    SpeakerInit, InviteSpeakerThroughEmail
+    SpeakerInit, InviteSpeakersThroughEmail
 }
