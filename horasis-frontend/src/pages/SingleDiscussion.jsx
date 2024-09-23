@@ -24,6 +24,7 @@ import camera from '../assets/icons/camera.svg'
 import Modal from '../components/ui/Modal'
 import PictureUpload from '../components/Profile/EditProfile/PictureUpload'
 import close from '../assets/icons/close.svg'
+import useTranslation from '../hooks/useTranslation'
 
 const SingleDiscussion = () => {
 	const [activeTab, setActiveTab] = useState(0)
@@ -459,47 +460,14 @@ const SingleDiscussion = () => {
 			onCoverImageSet('')
 		}
 	}
-	const [translated, setTranslated] = useState(false)
-	const [translating, setTranslating] = useState(false)
 
-	const storedLanguage = _retrieveData('currentLanguage')
-	const homeLanguage = storedLanguage ? storedLanguage : 'English'
-	const [translationData, setTranslationData] = useState(null)
-
-	const translateDiscussion = () => {
-		if (translationData) {
-			setTranslated((prev) => !prev)
-			setDiscussion({ ...discussion, ...translationData.TranslatedContent })
-		} else {
-			const targetLanguage = homeLanguage
-			if (discussion.OriginalLanguage !== targetLanguage) {
-				setTranslating(true)
-				postItem(
-					'translate',
-					{ EntityId: discussion.DocId, Type: 'Discussion', TargetLanguage: targetLanguage },
-					(result) => {
-						setTranslated((prev) => !prev)
-						setTranslating(false)
-						setTranslationData(result)
-						setDiscussion({ ...discussion, ...result.TranslatedContent })
-					},
-					(err) => {
-						setTranslating(false)
-					},
-					updateCurrentUser,
-					currentUserData,
-					toast
-				)
-			}
-		}
-	}
-
-	const showOriginal = () => {
-		if (translationData) {
-			setTranslated((prev) => !prev)
-			setDiscussion({ ...discussion, ...translationData.OriginalContent })
-		}
-	}
+	const {
+		isTranslated: translated,
+		isTranslating: translating,
+		translate: translateDiscussion,
+		showOriginal,
+		homeLanguage,
+	} = useTranslation({ data: discussion, setData: setDiscussion, Type: 'Discussion' })
 
 	return (
 		<>

@@ -18,6 +18,7 @@ import MentionTextLink from './Mentions/MentionTextLink'
 import ActivityDocuments from './ActivityDocuments'
 import { useNavigate } from 'react-router-dom'
 import { _retrieveData } from '../../utils/LocalStorage'
+import useTranslation from '../../hooks/useTranslation'
 const ActivityComponent = ({
 	titleSize,
 	bordered,
@@ -267,49 +268,19 @@ const ActivityComponent = ({
 	// 	</div>
 	// }
 
-	const [translated, setTranslated] = useState(false)
-	const [translating, setTranslating] = useState(false)
-	const storedLanguage = _retrieveData('currentLanguage')
-	const homeLanguage = storedLanguage ? storedLanguage : 'English'
-	const [translationData, setTranslationData] = useState(null)
-	const translateThisPost = () => {
-		if (translationData) {
-			setTranslated((prev) => !prev)
-			setSingleActivity({ ...singleActivity, ...translationData.TranslatedContent })
-		} else {
-			const targetLanguage = homeLanguage
-			if (singleActivity.OriginalLanguage !== targetLanguage) {
-				setTranslating(true)
-				postItem(
-					`translate`,
-					{
-						EntityId: singleActivity.DocId,
-						Type: 'Activity',
-						TargetLanguage: targetLanguage,
-					},
-					(result) => {
-						setTranslating(false)
-						setTranslated((prev) => !prev)
-						setTranslationData(result)
-						setSingleActivity({ ...singleActivity, ...result.TranslatedContent })
-					},
-					(err) => {
-						setTranslating(false)
-					},
-					updateCurrentUser,
-					currentUserData,
-					toast
-				)
-			}
-		}
-	}
+	const {
+		isTranslated: translated,
+		translate: translateThisPost,
+		showOriginal,
+		homeLanguage,
+		isTranslating: translating,
+	} = useTranslation({
+		data: singleActivity,
+		setData: setSingleActivity,
+		Type: 'Activity',
+	})
 
-	const showOriginal = () => {
-		if (translationData) {
-			setTranslated((prev) => !prev)
-			setSingleActivity({ ...singleActivity, ...translationData.OriginalContent })
-		}
-	}
+
 
 	if (singleActivity)
 		return (

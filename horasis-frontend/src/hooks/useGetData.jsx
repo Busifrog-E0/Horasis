@@ -38,5 +38,6 @@ export default function useGetData(endpoint, fetchOnRender = true) {
 		data,
 		isLoading,
 		getData,
+		setData
 	}
 }
