@@ -1255,6 +1255,9 @@
           }
         ],
         "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
           "401": {
             "description": "Unauthorized"
           },
@@ -8356,6 +8359,11 @@
             "name": "authorization",
             "in": "header",
             "type": "string"
+          },
+          {
+            "name": "Country",
+            "in": "query",
+            "type": "string"
           }
         ],
         "responses": {
@@ -8364,6 +8372,9 @@
             "schema": {
               "$ref": "#/definitions/UserBreakdownData"
             }
+          },
+          "400": {
+            "description": "Bad Request"
           },
           "401": {
             "description": "Unauthorized"
@@ -8789,9 +8800,6 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK"
-          },
           "401": {
             "description": "Unauthorized"
           },
@@ -8807,7 +8815,7 @@
         }
       }
     },
-    "/api/events/{EventId}/videoCall/participants": {
+    "/api/events/{EventId}/videoCall/participants/{UserId}": {
       "get": {
         "description": "",
         "parameters": [
@@ -8818,42 +8826,20 @@
             "type": "string"
           },
           {
+            "name": "UserId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
             "name": "authorization",
             "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "NextId",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "Limit",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "Keyword",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "OrderBy",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "Filter",
-            "in": "query",
             "type": "string"
           }
         ],
         "responses": {
           "200": {
             "description": "OK"
-          },
-          "400": {
-            "description": "Bad Request"
           },
           "401": {
             "description": "Unauthorized"
@@ -8863,6 +8849,27 @@
           },
           "403": {
             "description": "Forbidden"
+          }
+        }
+      }
+    },
+    "/api/guest/speaker/{TokenId}": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "TokenId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "444": {
+            "description": "Connection Closed Without Response"
           }
         }
       }
