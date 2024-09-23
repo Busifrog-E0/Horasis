@@ -62,7 +62,7 @@ const ValidateGetEvents = async (req, res, next) => {
     }
 }
 
-const ValidatePostSpeakers = async (req, res, next) => { 
+const ValidatePostSpeakers = async (req, res, next) => {
     const Result = Joi.object({
         Agenda: AgendaDataSchema.required()
     }).validate(req.body, { stripUnknown: true });
@@ -76,10 +76,31 @@ const ValidatePostSpeakers = async (req, res, next) => {
     }
 }
 
+const ValidatePostSpeakerMailInvite = async (req, res, next) => {
+    const Result = Joi.object({
+        InvitationData: Joi.array().items(
+            Joi.object({
+                Email: Joi.string().email().lowercase().required(),
+                FullName: Joi.string().required(),
+                Agenda: AgendaDataSchema.required(),
+                About: Joi.string().max(500).allow("").required()
+            })
+        ).max(5).required()
+    }).validate(req.body, { stripUnknown: true });
+    if (Result.error) {
+        const message = Result.error.details.map((detail) => detail.message).join(', ');
+        return res.status(400).json(message);
+    }
+    else {
+        req.body = Result.value;
+        return next();
+    }
+}
 
 export {
     ValidatePostEvents,
     ValidateGetEvents,
     ValidatePostSpeakers,
-    AgendaDataSchema
+    AgendaDataSchema,
+    ValidatePostSpeakerMailInvite
 }

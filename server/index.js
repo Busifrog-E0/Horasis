@@ -58,7 +58,7 @@ const expressServer = app.listen(PORT, async (err) => {
     const CurrentUser = {
         // Role: 'Admin',
         // UserId: "Admin",
-        Role: 'User',
+        Role: ['User'],
         UserId: "669a235e525967c06f6bfc06",
         RegistrationStatus: "",
         Subscription: null
