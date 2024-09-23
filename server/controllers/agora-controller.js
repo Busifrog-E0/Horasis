@@ -1,46 +1,94 @@
 import agora from 'agora-token'
+import e from 'express';
 import { ReadSpeakers } from '../databaseControllers/speakers-databaseController.js';
 import { ReadMembers } from '../databaseControllers/members-databaseController.js';
 import { AlertBoxObject } from './common.js';
 import Env from '../Env.js';
 import { ReadParticipants } from '../databaseControllers/participants-databaseController.js';
-const { RtcTokenBuilder, RtcRole,RtmTokenBuilder } = agora;
+import { ReadOneFromUsers } from '../databaseControllers/users-databaseController.js';
+import { TokenData } from './auth-controller.js';
+const { RtcTokenBuilder, RtcRole, RtmTokenBuilder } = agora;
 
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ * @returns 
+ */
 const generateRTCToken = async (req, res) => {
     const { EventId } = req.params;
     //@ts-ignore
     const { UserId } = req.user;
+    try {
+        return await generateAgoraToken(EventId, UserId);
+    } catch (error) {
+        return res.status(444).json(AlertBoxObject("Cannot Generate Token", "You are not a member of this event"))
+    }
+}
+
+const generateTokenForInvitedUser = async (req, res) => {
+    const { EventId } = req.params;
+    const { Email } = req.body;
+    try {
+        return await generateAgoraToken(EventId, Email);
+    } catch (error) {
+        return res.status(444).json(AlertBoxObject("Cannot Generate Token", "You are not a member of this event"))
+    }
+}
+
+/**
+ * 
+ * @param {string} EventId 
+ * @param {string} UserId 
+ * @returns 
+ */
+const generateAgoraToken = async (EventId, UserId) => {
     const [[Speaker], [Member]] = await Promise.all([
         ReadSpeakers({ SpeakerId: UserId, EventId, MembershipStatus: "Accepted" }, undefined, 1, undefined),
         ReadMembers({ MemberId: UserId, EntityId: EventId, MembershipStatus: "Accepted" }, undefined, 1, undefined)
     ]);
     const Role = Speaker ? RtcRole.PUBLISHER : (Member ? RtcRole.SUBSCRIBER : undefined);
     if (!Role) {
-        return res.status(444).json(AlertBoxObject("Cannot Generate Token", "You are not a member of this event"))
+        throw new Error("No Access");
     }
     const RtcToken = RtcTokenBuilder.buildTokenWithUid(Env.AGORA_APP_ID, Env.AGORA_APP_CERTIFICATE, EventId, UserId, Role, 6000, 6000);
     const RtmToken = RtmTokenBuilder.buildToken(Env.AGORA_APP_ID, Env.AGORA_APP_CERTIFICATE, UserId, 6000);
     const UserRole = Role === RtcRole.PUBLISHER ? "Speaker" : "Member";
-    return res.json({ RtcToken, RtmToken, Role: UserRole });
+    return { RtcToken, RtmToken, Role: UserRole };
 }
 
-const GetParticipants = async (req, res) => {
-    const { Filter, NextId, Limit, OrderBy, Keyword } = req.query;
-    if (Keyword) {
-        //@ts-ignore
-        Filter.$or = [
-            { "UserDetails.FullName": { $regex: Keyword, $options: 'i' } },
-            { "UserDetails.Username": { $regex: Keyword, $options: 'i' } },
-        ];
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ * @returns 
+ */
+const GetCallUserData = async (req, res) => {
+    const { UserId, EventId } = req.params;
+    const checkUser = await ReadOneFromUsers(UserId);
+    if (!checkUser) {
+        const [Speaker] = await ReadSpeakers({ SpeakerId: UserId, EventId }, undefined, 1, undefined);
+        return res.json(Speaker.UserDetails)
     }
-    //@ts-ignore
-    Filter.EventId = req.params.EventId;
-    // @ts-ignore
-    const data = await ReadParticipants(Filter, NextId, Limit, OrderBy);
-    return res.json(data);
+    return res.json(checkUser)
+}
+
+const GenerateUserTokenForInvited = async (req, res) => {
+    const { SpeakerId } = req.params;
+    const [Speaker] = await ReadSpeakers({ SpeakerId }, undefined, 1, undefined);
+    if (!Speaker) {
+        return res.status(444).json(AlertBoxObject("No Access", "You have no access"))
+    }
+    const Token = await TokenData({
+        Role: ["Guest"],
+        UserId: Speaker.SpeakerId
+    })
+    return res.json({ EventId: Speaker.EventId, TokenData: Token })
 }
 
 export {
     generateRTCToken,
-    GetParticipants
+    generateTokenForInvitedUser,
+    GetCallUserData,
+    GenerateUserTokenForInvited
 }

@@ -42,7 +42,27 @@ const SendOTPEmail = async (Email, OTP, Name,Description) => {
     return EmailAPI(Email, "Verify OTP", OTPTemplateId, MergeInfo);
 }
 
-
+/**
+ * 
+ * @param {string} Email 
+ * @param {string} SpeakerDocId 
+ * @param {import("../databaseControllers/events-databaseController.js").EventData} Event 
+ * @param {import("../databaseControllers/speakers-databaseController.js").AgendaData} Agenda
+ * @param {string} FullName
+ */
+const SendSpeakerInviteEmail = async (Email, SpeakerId, Event, Agenda, FullName) => {
+    const InviteLink = `https://example.com/speaker/${SpeakerId}`
+    const SpeakerInviteTemplateId = "";
+    const MergeInfo = {
+        "eventName": Event.EventName,
+        "agendaName": Agenda.Name,
+        "agendaStartTime": Agenda.StartTime,
+        "agendaEndTime": Agenda.EndTime,
+        "name": FullName,
+        "inviteLink": InviteLink
+    }
+    return EmailAPI(Email, "Speaker Invitation", SpeakerInviteTemplateId, MergeInfo);
+}
 
 /* const ListOTPs = async (req, res) => {
     const { Filter, NextId, Limit, OrderBy, Keyword } = req.query;
@@ -60,6 +80,6 @@ const SendOTPEmail = async (Email, OTP, Name,Description) => {
 
 
 export {
-    AccountVerificationEmail, SendOTPEmail
+    AccountVerificationEmail, SendOTPEmail,SendSpeakerInviteEmail
 }
 

@@ -77,6 +77,11 @@ const AGORA_APP_ID = process.env.AGORA_APP_ID;
 // @ts-ignore
 const AGORA_APP_CERTIFICATE = process.env.AGORA_APP_CERTIFICATE;
 
+/**
+ * @type {string}
+ */
+//@ts-ignore
+const { EXTERNAL_SPEAKER_URL } = process.env;
 
 
 export default {
@@ -92,5 +97,6 @@ export default {
     ZeptoMailToken,
     GOOGLE_TRANSLATE_KEY,
     AGORA_APP_ID,
-    AGORA_APP_CERTIFICATE
+    AGORA_APP_CERTIFICATE,
+    EXTERNAL_SPEAKER_URL
 }

@@ -13,6 +13,7 @@ import dataHandling from './functions.js'
 /**
  * @typedef {object} ConnectionsListObject
  * @property {string[]} ConnectionsList
+ * @property {string} ConnectionListId
  */
 
 /**

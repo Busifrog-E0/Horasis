@@ -2,7 +2,7 @@ import e from 'express';
 import { ReadOneFromUsers, ReadUsers, UpdateUsers, CreateUsers, UpdateManyUsers } from './../databaseControllers/users-databaseController.js';
 import { ReadOneFromOTP, SendPasswordOTP, SendRegisterOTP, TokenData, VerifyOTP } from './auth-controller.js';
 import { AlertBoxObject, ComparePassword, GetUserNonEmptyFieldsPercentage, hashPassword } from './common.js';
-import { UpdateManyConnections } from '../databaseControllers/connections-databaseController.js';
+import { ReadConnections, UpdateManyConnections } from '../databaseControllers/connections-databaseController.js';
 import { ReadFollows, UpdateManyFollows } from '../databaseControllers/follow-databaseController.js';
 import { ConnectionStatus } from './connections-controller.js';
 import { PostActivityForProfilePatch } from './activities-controller.js';
@@ -292,12 +292,14 @@ const AddConnectionstoUser = async (UserId, ConnectionId) => {
     }
     const [checkUserConnections] = await ReadUserExtendedProperties({ Type: "ConnectionsList", UserId, $expr: { $lt: [{ $size: "$Content.ConnectionsList" }, MAX_CONNECTIONLIST_SIZE] } }, undefined, 1, undefined);
     if (checkUserConnections) {
-        return Promise.all([
+        return await Promise.all([
             PushOnceInUserExtendedProperties({ "Content.ConnectionsList": ConnectionId }, checkUserConnections.DocId),
-            PushOnceInManyActivityExtendedProperties({ "Content.ConnectionsList": ConnectionId }, { UserId })
+            PushOnceInManyActivityExtendedProperties({ "Content.ConnectionsList": ConnectionId }, { "Content.ConnectionListId": checkUserConnections.DocId })
         ]);
     }
-    return await CreateUserExtendedProperties(UserExtendedPropertiesInit({ UserId, Type: "ConnectionsList", Content: { ConnectionsList: [ConnectionId] } }));
+    const ConnectionListId = await CreateUserExtendedProperties(UserExtendedPropertiesInit({ UserId, Type: "ConnectionsList", Content: { ConnectionsList: [ConnectionId] } }));
+    await PushOnceInManyActivityExtendedProperties({ "Content.ConnectionsList": ConnectionId }, { "Content.ConnectionListId": ConnectionListId });
+    return;
 }
 
 /**
@@ -306,6 +308,13 @@ const AddConnectionstoUser = async (UserId, ConnectionId) => {
  * @param {string} ConnectionId 
  */
 const RemoveConnectionsToUser = async (UserId, ConnectionId) => {
+    const [Follow, Connection] = await Promise.all([
+        ReadFollows({ FolloweeId: UserId, FollowerId: ConnectionId }, undefined, 1, undefined),
+        ReadConnections({ UserIds: { "$all": [UserId, ConnectionId], Status: "Connected" } }, undefined, 1, undefined)
+    ])
+    if (Follow || Connection) {
+        return;
+    }
     const [checkUserConnections] = await ReadUserExtendedProperties({ Type: "ConnectionsList", UserId, "Content.ConnectionsList": ConnectionId }, undefined, 1, undefined);
     return Promise.all([
         PullUserExtendedProperties({ "Content.ConnectionsList": ConnectionId }, checkUserConnections.DocId),
