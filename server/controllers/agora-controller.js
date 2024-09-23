@@ -7,6 +7,7 @@ import Env from '../Env.js';
 import { ReadParticipants } from '../databaseControllers/participants-databaseController.js';
 import { ReadOneFromUsers } from '../databaseControllers/users-databaseController.js';
 import { TokenData } from './auth-controller.js';
+import { ReadOneFromEvents } from '../databaseControllers/events-databaseController.js';
 const { RtcTokenBuilder, RtcRole, RtmTokenBuilder } = agora;
 
 /**
@@ -76,6 +77,7 @@ const GetCallUserData = async (req, res) => {
 const GenerateUserTokenForInvited = async (req, res) => {
     const { SpeakerId } = req.params;
     const Speaker = await ReadOneFromSpeakers(SpeakerId);
+    const Event = await ReadOneFromEvents(Speaker.EventId);
     if (!Speaker) {
         return res.status(444).json(AlertBoxObject("No Access", "You have no access"))
     }
@@ -83,7 +85,7 @@ const GenerateUserTokenForInvited = async (req, res) => {
         Role: ["Guest"],
         UserId: Speaker.SpeakerId
     })
-    return res.json({ EventId: Speaker.EventId, TokenData: Token })
+    return res.json({ EventId: Speaker.EventId, TokenData: Token, Event })
 }
 
 export {
