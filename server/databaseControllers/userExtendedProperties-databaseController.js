@@ -81,7 +81,7 @@ const RemoveUserExtendedProperties = async (DocId) => {
  * @param {string} DocId 
  */
 const PushOnceInUserExtendedProperties = async (data, DocId) => {   // Using AddToSet doesnt push duplicates to array
-    return dataHandling.Update("UserExtendedProperties", data, DocId, ["$addToSet"])
+    return dataHandling.Update("UserExtendedProperties", data, DocId, ["$addToSet"], false)
 }
 
 /**
@@ -90,7 +90,7 @@ const PushOnceInUserExtendedProperties = async (data, DocId) => {   // Using Add
  * @param {string} DocId 
  */
 const PullUserExtendedProperties = async (data, DocId) => {
-    return dataHandling.Update("UserExtendedProperties", data, DocId, ["$pull"])
+    return dataHandling.Update("UserExtendedProperties", data, DocId, ["$pull"], false)
 }
 
 
