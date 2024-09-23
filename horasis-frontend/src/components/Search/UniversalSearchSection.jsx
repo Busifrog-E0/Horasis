@@ -47,7 +47,7 @@ const UniversalSearchSection = () => {
 		data: posts,
 		setData: setPosts,
 		getList: getAllPosts,
-	} = useGetList('activities', { ...filters }, true, false)
+	} = useGetList('activities/search', { ...filters }, true, false)
 	const {
 		isLoading: isLoadingEvents,
 		isLoadingMore: isLoadingMoreEvents,

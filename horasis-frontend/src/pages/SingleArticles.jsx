@@ -14,54 +14,40 @@ import { getDateInWordsFormat } from '../utils/date'
 import Modal from '../components/ui/Modal'
 import PictureUpload from '../components/Profile/EditProfile/PictureUpload'
 import Spinner from '../components/ui/Spinner'
+import useGetData from '../hooks/useGetData'
+import usePostData from '../hooks/usePostData'
+import useUpdateData from '../hooks/useUpdateData'
 
 const SingleArticles = () => {
-	const { updateCurrentUser, currentUserData } = useAuth()
-	// const location = useLocation()
-	const toast = useToast()
-	// const commentsRef = useRef(null)
-	const { articleid } = useParams()
-	const [article, setArticle] = useState({})
-	const [isLoading, setIsLoading] = useState(true)
 	const navigate = useNavigate()
+	const { updateCurrentUser, currentUserData } = useAuth()
+	const toast = useToast()
+	const { articleid } = useParams()
+
+	const { isLoading, data: article, getData: getArticle } = useGetData(`articles/${articleid}`)
+
 	const handleGoBack = () => {
 		navigate(-1)
 	}
-	const getArticle = () => {
-		setIsLoading(true)
-		getItem(
-			`articles/${articleid}`,
-			(result) => {
-				setArticle(result)
-				setIsLoading(false)
-				setSaving(null)
-			},
-			(err) => {
-				navigate('/NotFound', { replace: true })
-				console.log(err)
-				setIsLoading(false)
-			},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
-	}
-
-	// useEffect(() => {
-	// 	if (location.state.scrollToComments === true && commentsRef.current) {
-	// 		commentsRef.current.scrollIntoView({behaviour:'smooth'})
-	// 	}
-	// })
-
-	useEffect(() => {
-		getArticle()
-	}, [])
 
 	// cover photo upload logic
-	const [isImageUploading, setIsImageUploading] = useState(false)
 	const [selectedCoverImage, setSelectedCoverImage] = useState(null)
 	const [coverImageToUpload, setCoverImageToUpload] = useState(null)
 	const [isCoverPictureOpen, setIsCoverPictureOpen] = useState(false)
+
+	const { isLoading: isCoverUploading, postData: postCoverUpload } = usePostData({
+		onSuccess: (result) => {
+			onCoverImageSet(result.FileUrl)
+		},
+	})
+	const { isLoading: isCoverPatching, updateData: updateCoverUpload } = useUpdateData({
+		onSuccess: (result) => {
+			if (result === true) {
+				setIsCoverPictureOpen(false)
+				getArticle()
+			}
+		},
+	})
 	const onCoverImageSelect = (imageData) => {
 		setCoverImageToUpload({ ...imageData, Type: 'Articles' })
 		const tempUrl = URL.createObjectURL(new Blob([new Uint8Array(imageData.FileData)]))
@@ -72,47 +58,17 @@ const SingleArticles = () => {
 		setSelectedCoverImage(null)
 	}
 	const onCoverImageSet = (url) => {
-		setIsImageUploading(true)
-
-		patchItem(
-			`articles/${articleid}/coverPicture`,
-			{
-				CoverPicture: url,
-			},
-			(result) => {
-				if (result === true) {
-					setIsCoverPictureOpen(false)
-					getArticle()
-				}
-				setIsImageUploading(false)
-			},
-			(err) => {
-				// console.log(err)
-				setIsImageUploading(false)
-			},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
+		return updateCoverUpload({
+			endpoint: `articles/${articleid}/coverPicture`,
+			payload: { CoverPicture: url },
+		})
 	}
 	const onCoverImageUpload = () => {
 		if (coverImageToUpload) {
-			setIsImageUploading(true)
-
-			postItem(
-				'files/users',
-				coverImageToUpload,
-				(result) => {
-					onCoverImageSet(result.FileUrl)
-				},
-				(err) => {
-					// console.log(err)
-					setIsImageUploading(false)
-				},
-				updateCurrentUser,
-				currentUserData,
-				toast
-			)
+			postCoverUpload({
+				endpoint: 'files/users',
+				payload: coverImageToUpload,
+			})
 		} else {
 			onCoverImageSet('')
 		}
@@ -155,6 +111,9 @@ const SingleArticles = () => {
 			toast
 		)
 	}
+	if (isLoading) {
+		return <Spinner />
+	}
 
 	return (
 		<>
@@ -166,7 +125,7 @@ const SingleArticles = () => {
 							onClick={() => {
 								setIsCoverPictureOpen(false)
 							}}
-							disabled={isImageUploading}>
+							disabled={isCoverPatching || isCoverUploading}>
 							<img src={close} className='h-6  cursor-pointer' alt='' />
 						</button>
 					</div>
@@ -185,16 +144,16 @@ const SingleArticles = () => {
 							onImageDelete={onCoverImageDelete}
 							onUploadImage={onCoverImageUpload}
 							fileFieldName={'CoverPicture'}
-							isUploading={isImageUploading}
+							isUploading={isCoverPatching || isCoverUploading}
 						/>
 					</div>
 				</Modal.Body>
 			</Modal>
 			<div className='p-4 md:px-10 max-w-9xl md:py-10'>
 				<div className='overflow-hidden h-80 lg:h-96 relative rounded-t-2xl'>
-					{article.CoverPicture ? (
+					{article?.CoverPicture ? (
 						<>
-							<img src={article.CoverPicture} className='object-cover h-full w-full' />
+							<img src={article?.CoverPicture} className='object-cover h-full w-full' />
 						</>
 					) : (
 						<>
@@ -215,8 +174,8 @@ const SingleArticles = () => {
 									<div
 										onClick={() => {
 											setIsCoverPictureOpen(true)
-											if (article.CoverPicture) {
-												setSelectedCoverImage(article.CoverPicture)
+											if (article?.CoverPicture) {
+												setSelectedCoverImage(article?.CoverPicture)
 											} else {
 												setSelectedCoverImage(null)
 											}
@@ -227,19 +186,19 @@ const SingleArticles = () => {
 								)}
 								<div
 									className={`inline-flex items-center justify-center w-12 h-12 p-3 overflow-hidden rounded-full border border-white bg-white cursor-pointer `}>
-									{saving === article.DocId ? (
+									{saving === article?.DocId ? (
 										<div className=' self-end'>
 											<Spinner />
 										</div>
 									) : (
 										<>
-											{article.HasSaved ? (
+											{article?.HasSaved ? (
 												<>
 													<img
 														src={graysavefill}
 														alt=''
 														className='h-6 cursor-pointer'
-														onClick={() => removeSaveArticle(article.DocId)}
+														onClick={() => removeSaveArticle(article?.DocId)}
 													/>
 												</>
 											) : (
@@ -248,7 +207,7 @@ const SingleArticles = () => {
 														src={graysave}
 														alt=''
 														className='h-6 cursor-pointer'
-														onClick={() => saveArticle(article.DocId)}
+														onClick={() => saveArticle(article?.DocId)}
 													/>
 												</>
 											)}
@@ -258,7 +217,7 @@ const SingleArticles = () => {
 							</div>
 						</div>
 						<div>
-							<h4 className='font-medium shadow-lg text-4xl text-white mb-3'>{article.ArticleName}</h4>
+							<h4 className='font-medium shadow-lg text-4xl text-white mb-3'>{article?.ArticleName}</h4>
 							<div className='flex flex-row flex-wrap gap-3'>
 								<h4 className='text-2xl text-white'>{article?.UserDetails?.FullName}</h4>
 								<h4 className='text-2xl text-white'>•</h4>
@@ -268,12 +227,8 @@ const SingleArticles = () => {
 					</div>
 				</div>
 				<div className='lg:col-span-3 px-10 bg-system-secondary-bg py-10 rounded-b-2xl'>
-					<h4 className='text-xl text-brand-gray  leading-8 whitespace-pre-line'>{article.Description}</h4>
+					<h4 className='text-xl text-brand-gray  leading-8 whitespace-pre-line'>{article?.Description}</h4>
 				</div>
-
-				{/* <div id='comments' ref={commentsRef}>
-					comments
-				</div> */}
 			</div>
 		</>
 	)

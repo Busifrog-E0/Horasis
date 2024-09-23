@@ -3,7 +3,7 @@ import { useToast } from '../components/Toast/ToastService'
 import { patchItem } from '../constants/operations'
 import { useAuth } from '../utils/AuthProvider'
 
-export default function usePatchItem({ onSuccess = () => {}, onError = () => {} } = {}) {
+export default function useUpdateData({ onSuccess = () => {}, onError = () => {} } = {}) {
 	const { updateCurrentUser, currentUserData } = useAuth()
 	const toast = useToast()
 	const [isLoading, setIsLoading] = useState(false)
