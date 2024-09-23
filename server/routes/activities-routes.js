@@ -28,6 +28,10 @@ router.get('/user/:UserId/mentions/activities', decodeIDToken, ensureAuthorized(
     //@ts-ignore
     asyncHandler(GetFilteredActivities));
 
+router.get('/activities/search', decodeIDToken, ensureAuthorized("User"), GetFeedActivitiesMiddleware, ValidateGetEntity, QueryParameterFormatting,
+    //@ts-ignore
+    asyncHandler(GetFilteredActivities))
+
 router.get('/activities/:ActivityId', decodeIDToken, ensureAuthorized("User"), SwaggerDocs.get_Activities_ActivityId,
     // @ts-ignore
     asyncHandler(GetOneFromActivities));

@@ -75,7 +75,11 @@ const GetActivities = async (req, res) => {
  */
 const GetFilteredActivities = async (req, res) => {
     const { UserId } = req.params;
-    const { Filter, NextId, Limit, OrderBy } = req.query;
+    const { Filter, NextId, Limit, OrderBy, Keyword } = req.query;
+    if (Keyword) {
+        //@ts-ignore
+        Filter["Content"] = { $regex: Keyword, $options: 'i' };
+    }
     //@ts-ignore
     const Activities = await ReadActivities(Filter, NextId, Limit, OrderBy);
     const data = await Promise.all(Activities.map(async Activity => await SetActivityDataForGet(Activity, UserId)))
@@ -359,5 +363,5 @@ const SetActivityDataForGet = async (Activity, UserId) => {
 export {
     GetOneFromActivities, GetActivities, PostActivities, PatchActivities, DeleteActivities,
     PostActivityForProfilePatch, GetFilteredActivities, ExtractMentionedUsersFromContent,
-    SetActivityDataForGet, AddtoUserActivities,PushConnectionToUserActivities
+    SetActivityDataForGet, AddtoUserActivities, PushConnectionToUserActivities
 }
