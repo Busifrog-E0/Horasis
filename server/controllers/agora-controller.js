@@ -20,7 +20,7 @@ const generateRTCToken = async (req, res) => {
     //@ts-ignore
     const { UserId } = req.user;
     try {
-        return await generateAgoraToken(EventId, UserId);
+        return res.json(await generateAgoraToken(EventId, UserId))
     } catch (error) {
         return res.status(444).json(AlertBoxObject("Cannot Generate Token", "You are not a member of this event"))
     }
@@ -30,7 +30,7 @@ const generateTokenForInvitedUser = async (req, res) => {
     const { EventId } = req.params;
     const { Email } = req.body;
     try {
-        return await generateAgoraToken(EventId, Email);
+        return res.json(await generateAgoraToken(EventId, Email));
     } catch (error) {
         return res.status(444).json(AlertBoxObject("Cannot Generate Token", "You are not a member of this event"))
     }
