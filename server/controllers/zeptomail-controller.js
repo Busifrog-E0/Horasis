@@ -2,7 +2,12 @@ import ENV from "../Env.js";
 
 import axios from 'axios';
 
+import {SendMailClient} from 'zeptomail'
 
+const url = "api.zeptomail.in/v1.1/email";
+const token = ENV.ZeptoMailToken;
+
+let client = new SendMailClient({ url, token });
 
 /**
  * 
@@ -22,15 +27,11 @@ const EmailAPI = async (emailid, subject, htmlbody, from_address = "noreply@epoq
         "htmlbody": htmlbody,
     };
     // @ts-ignore
-    return axios({
-        method: 'post',
-        url: `https://api.zeptomail.in/v1.1/email/template`,
-        headers: {
-            "accept": "application/json",
-            'content-type': 'application/json',
-            "authorization": `${ENV.ZeptoMailToken}`,
-        },
-        data: data,
+    return client.sendMail({
+        "from": { 'address': from_address },
+        "to": [{ 'email_address': { 'address': emailid } }],
+        "subject": subject,
+        "htmlbody": htmlbody,
     })
         .then(snap => {
             console.log(emailid);

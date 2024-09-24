@@ -1,5 +1,6 @@
 import { EmailAPI } from "./zeptomail-controller.js"
 import Env from "../Env.js"
+import moment from "moment";
 const TestUsers = [
     "qwertyui@tgmail.com",
 ]
@@ -95,7 +96,7 @@ const SendSpeakerInviteEmail = async (Email, SpeakerId, Event, Agenda, FullName)
                             <span class="size" style="font-size: 16px">Hi ${FullName}</span><span class="size" style="font-size: 16px"><br></span>
                         </p>
                         <p style="margin: 0px 0px 35px; line-height: 22px;">
-                            <span class="size" style="font-size: 16px">We’re excited to invite you to be a speaker at our upcoming event, </span><b><span class="size" style="font-size: 16px">${Event.EventName}</span></b><span class="size" style="font-size: 16px">, scheduled for </span><b><span class="size" style="font-size: 16px">${Event.Date}</span></b><span class="size" style="font-size: 16px"> at </span><b><span class="size" style="font-size: 16px">${Event.StartTime}</span></b><span class="size" style="font-size: 16px">. As a speaker, you’ll be presenting on the following topic: </span><b><span class="size" style="font-size: 16px">${Agenda.Name}</span></b><span class="size" style="font-size: 16px">.</span><span class="size" style="font-size: 16px"><br></span>
+                            <span class="size" style="font-size: 16px">We’re excited to invite you to be a speaker at our upcoming event, </span><b><span class="size" style="font-size: 16px">${Event.EventName}</span></b><span class="size" style="font-size: 16px">, scheduled for </span><b><span class="size" style="font-size: 16px">${moment(Event.Date).format("DD-MM-YYYY")}</span></b><span class="size" style="font-size: 16px"> at </span><b><span class="size" style="font-size: 16px">${moment(Event.StartTime).format("HH:mm")}</span></b><span class="size" style="font-size: 16px">. As a speaker, you’ll be presenting on the following topic: </span><b><span class="size" style="font-size: 16px">${Agenda.Name}</span></b><span class="size" style="font-size: 16px">.</span><span class="size" style="font-size: 16px"><br></span>
                         </p>
                         <div>
                             <span class="size" style="font-size: 16px">To join the event as a speaker, please click the link below at the event’s start time:</span><span class="size" style="font-size: 16px"><br></span>
@@ -103,7 +104,7 @@ const SendSpeakerInviteEmail = async (Email, SpeakerId, Event, Agenda, FullName)
                         <div><span class="size" style="font-size: 16px"><br></span></div>
                         <div class="align-center" style="text-align: center;">
                             <span class="size" style="font-size: 16px"> </span><a target="_blank"
-                                href=${InviteLink}><span class="size" style="font-size: 16px">{{link}}</span></a><span class="size" style="font-size: 16px"> </span><span class="size" style="font-size: 16px"><br></span>
+                                href=${InviteLink}><span class="size" style="font-size: 16px">${InviteLink}</span></a><span class="size" style="font-size: 16px"> </span><span class="size" style="font-size: 16px"><br></span>
                         </div>
                         <div><span class="size" style="font-size: 16px"><br></span></div>
                         <div>
