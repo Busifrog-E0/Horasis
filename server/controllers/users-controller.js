@@ -238,6 +238,10 @@ const ViewOtherUserData = async (UserId, OtherUserId, NextIdObject = {}) => {
  */
 const SendForgotPasswordOTP = async (req, res) => {
     const { Email } = req.body;
+    const [User] = await ReadUsers({ Email }, undefined, 1, undefined);
+    if (!User) {
+        return res.status(444).json(AlertBoxObject("User with Email does not exist", "User with this email does not exist"));
+    }
     const OTPId = await SendPasswordOTP(Email, res);
     return res.json(OTPId);
 }
