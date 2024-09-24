@@ -129,15 +129,15 @@ const InviteSpeakersThroughEmail = async (req, res) => {
     const Event = await ReadOneFromEvents(EventId);
     await Promise.all(InvitationData.map(async Data => {
         const { Email, Agenda, FullName, About } = Data;
-        const [Speaker,User] = await Promise.all([
+        const [[Speaker], [User]] = await Promise.all([
             ReadSpeakers({ "UserDetails.Email": Email, EventId }, undefined, 1, undefined),
-            ReadUsers({Email},undefined,1,undefined)
+            ReadUsers({ Email }, undefined, 1, undefined)
         ]);
         if (Speaker) {
             return res.status(444).json(AlertBoxObject("Already Invited", "You have already invited this Email"));
         }
         if (User) {
-            return res.status(444).json(AlertBoxObject("User Already Exists","User aLready Exists"))
+            return res.status(444).json(AlertBoxObject("User Already Exists", "User aLready Exists"))
         }
         const SpeakerId = new ObjectId().toString();
         const SpeakerData = SpeakerInit({ SpeakerId, EventId, MembershipStatus: "Accepted", Agenda, UserDetails: { FullName, About, Email, ProfilePicture: '' } });
@@ -145,7 +145,7 @@ const InviteSpeakersThroughEmail = async (req, res) => {
         await Promise.all([
             PushArrayEvents({ Speakers: { SpeakerId, UserDetails: SpeakerData.UserDetails, Agenda, } }, EventId),
             CreateSpeakers(SpeakerData),
-            SendSpeakerInviteEmail(Email,SpeakerId,Event,Agenda,FullName)
+            SendSpeakerInviteEmail(Email, SpeakerId, Event, Agenda, FullName)
         ])
     }))
     return res.json(true);
