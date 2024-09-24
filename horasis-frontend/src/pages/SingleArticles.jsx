@@ -1,34 +1,30 @@
-import { useLocation, useNavigate, useParams } from 'react-router-dom'
-import cover from '../assets/icons/cover.svg'
-import { useEffect, useRef, useState } from 'react'
-import { deleteItem, getItem, patchItem, postItem } from '../constants/operations'
-import { useAuth } from '../utils/AuthProvider'
-import { useToast } from '../components/Toast/ToastService'
+import { useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
 import arrowback from '../assets/icons/arrowback.svg'
 import camera from '../assets/icons/camera.svg'
 import close from '../assets/icons/close.svg'
+import cover from '../assets/icons/cover.svg'
 import graysave from '../assets/icons/graysave.svg'
 import graysavefill from '../assets/icons/graysavefill.svg'
+import { useToast } from '../components/Toast/ToastService'
+import { useAuth } from '../utils/AuthProvider'
 
-import { getDateInWordsFormat } from '../utils/date'
-import Modal from '../components/ui/Modal'
 import PictureUpload from '../components/Profile/EditProfile/PictureUpload'
+import Modal from '../components/ui/Modal'
 import Spinner from '../components/ui/Spinner'
+import useDeleteData from '../hooks/useDeleteData'
 import useGetData from '../hooks/useGetData'
 import usePostData from '../hooks/usePostData'
+import useTranslation from '../hooks/useTranslation'
 import useUpdateData from '../hooks/useUpdateData'
+import { getDateInWordsFormat } from '../utils/date'
 
 const SingleArticles = () => {
 	const navigate = useNavigate()
-	const { updateCurrentUser, currentUserData } = useAuth()
-	const toast = useToast()
 	const { articleid } = useParams()
+	const { currentUserData } = useAuth()
 
-	const { isLoading, data: article, getData: getArticle } = useGetData(`articles/${articleid}`)
-
-	const handleGoBack = () => {
-		navigate(-1)
-	}
+	const { isLoading, data: article, getData: getArticle, setData: setArticle } = useGetData(`articles/${articleid}`)
 
 	// cover photo upload logic
 	const [selectedCoverImage, setSelectedCoverImage] = useState(null)
@@ -74,43 +70,36 @@ const SingleArticles = () => {
 		}
 	}
 
-	const [saving, setSaving] = useState(null)
+	const saveSuccessCallback = (result) => {
+		if (result === true) getArticle()
+	}
+
+	const { isLoading: isSaving, postData: postSaveArticle } = usePostData({ onSuccess: saveSuccessCallback })
+	const { isLoading: isUnsaving, deleteData: deleteSaveArticle } = useDeleteData('', { onSuccess: saveSuccessCallback })
+
 	const saveArticle = (id) => {
-		setSaving(id)
-		postItem(
-			`saves`,
-			{ EntityId: id, Type: 'Article' },
-			(result) => {
-				if (result === true) {
-					getArticle(id)
-				}
+		postSaveArticle({
+			endpoint: 'saves',
+			payload: {
+				EntityId: id,
+				Type: 'Article',
 			},
-			(err) => {
-				setSaving(null)
-			},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
+		})
 	}
 
 	const removeSaveArticle = (id) => {
-		setSaving(id)
-		deleteItem(
-			`saves/${id}`,
-			(result) => {
-				if (result === true) {
-					getArticle(id)
-				}
-			},
-			(err) => {
-				setSaving(null)
-			},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
+		deleteSaveArticle({
+			endPoint: `saves/${id}`,
+		})
 	}
+
+	const {
+		isTranslated: translated,
+		isTranslating: translating,
+		translate: translateArticle,
+		showOriginal,
+		homeLanguage,
+	} = useTranslation({ data: article, setData: setArticle, Type: 'Article' })
 	if (isLoading) {
 		return <Spinner />
 	}
@@ -136,7 +125,6 @@ const SingleArticles = () => {
 					</p>
 					<div className=' flex flex-col items-center justify-center pt-10'>
 						<PictureUpload
-							// isBanner={false}
 							altTitle='Cover Picture'
 							selectedImage={selectedCoverImage}
 							setSelectedImage={setSelectedCoverImage}
@@ -152,22 +140,16 @@ const SingleArticles = () => {
 			<div className='p-4 md:px-10 max-w-9xl md:py-10'>
 				<div className='overflow-hidden h-80 lg:h-96 relative rounded-t-2xl'>
 					{article?.CoverPicture ? (
-						<>
-							<img src={article?.CoverPicture} className='object-cover h-full w-full' />
-						</>
+						<img src={article?.CoverPicture} className='object-cover h-full w-full' />
 					) : (
-						<>
-							<img src={cover} className='object-cover h-full w-full' />
-						</>
+						<img src={cover} className='object-cover h-full w-full' />
 					)}
 					<div className='absolute top-0 right-0 left-0 bottom-0 flex flex-col justify-between items-start p-4 lg:px-10 lg:py-6  h-100 overflow-hidden overflow-y-auto bg-system-black-transparent'>
 						<div className='flex w-full items-start justify-between'>
 							<div
 								className={`inline-flex items-center justify-center w-12 h-12 p-3 overflow-hidden rounded-full border border-white bg-white cursor-pointer`}
-								onClick={handleGoBack}>
+								onClick={()=>navigate(-1)}>
 								<img src={arrowback} alt='' className='h-6 cursor-pointer' />
-
-								{/* <h4 className='font-medium text-xl text-brand-secondary'>Back</h4> */}
 							</div>
 							<div className='flex gap-2'>
 								{article?.UserDetails?.DocId === currentUserData.CurrentUser.UserId && (
@@ -186,30 +168,26 @@ const SingleArticles = () => {
 								)}
 								<div
 									className={`inline-flex items-center justify-center w-12 h-12 p-3 overflow-hidden rounded-full border border-white bg-white cursor-pointer `}>
-									{saving === article?.DocId ? (
+									{isSaving || isUnsaving ? (
 										<div className=' self-end'>
 											<Spinner />
 										</div>
 									) : (
 										<>
 											{article?.HasSaved ? (
-												<>
-													<img
-														src={graysavefill}
-														alt=''
-														className='h-6 cursor-pointer'
-														onClick={() => removeSaveArticle(article?.DocId)}
-													/>
-												</>
+												<img
+													src={graysavefill}
+													alt=''
+													className='h-6 cursor-pointer'
+													onClick={() => removeSaveArticle(article?.DocId)}
+												/>
 											) : (
-												<>
-													<img
-														src={graysave}
-														alt=''
-														className='h-6 cursor-pointer'
-														onClick={() => saveArticle(article?.DocId)}
-													/>
-												</>
+												<img
+													src={graysave}
+													alt=''
+													className='h-6 cursor-pointer'
+													onClick={() => saveArticle(article?.DocId)}
+												/>
 											)}
 										</>
 									)}
@@ -222,6 +200,26 @@ const SingleArticles = () => {
 								<h4 className='text-2xl text-white'>{article?.UserDetails?.FullName}</h4>
 								<h4 className='text-2xl text-white'>•</h4>
 								<h4 className='text-2xl text-white'>{getDateInWordsFormat(new Date(article?.CreatedIndex))}</h4>
+								{article?.OriginalLanguage !== homeLanguage && (
+									<>
+										<h4 className='text-2xl text-white'>•</h4>
+										{translating ? (
+											<h4 className='text-2xl text-white  cursor-pointer'>Translating...</h4>
+										) : (
+											<>
+												{translated ? (
+													<h4 className='text-2xl text-white  cursor-pointer' onClick={showOriginal}>
+														Show Original
+													</h4>
+												) : (
+													<h4 className='text-2xl text-white  cursor-pointer' onClick={translateArticle}>
+														Translate this article
+													</h4>
+												)}
+											</>
+										)}
+									</>
+								)}
 							</div>
 						</div>
 					</div>
