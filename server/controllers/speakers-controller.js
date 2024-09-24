@@ -5,9 +5,10 @@ import { AlertBoxObject } from './common.js';
 import { AggregateUsers, ReadOneFromUsers } from '../databaseControllers/users-databaseController.js';
 import { MemberInit } from './members-controller.js';
 import { CreateMembers, ReadMembers } from '../databaseControllers/members-databaseController.js';
-import { IncrementEvents, PullArrayEvents, PushArrayEvents } from '../databaseControllers/events-databaseController.js';
+import { IncrementEvents, PullArrayEvents, PushArrayEvents, ReadOneFromEvents } from '../databaseControllers/events-databaseController.js';
 import { RemoveNotificationForSpeaker, SendNotificationForSpeaker } from './notifications-controller.js';
 import { ObjectId } from 'mongodb';
+import { SendSpeakerInviteEmail } from './emails-controller.js';
 /**
  * @typedef {import('./../databaseControllers/speakers-databaseController.js').SpeakerData} SpeakerData 
  */
@@ -125,6 +126,7 @@ const PatchSpeakers = async (req, res) => {
 const InviteSpeakersThroughEmail = async (req, res) => {
     const { EventId } = req.params;
     const { InvitationData } = req.body;
+    const Event = await ReadOneFromEvents(EventId);
     await Promise.all(InvitationData.map(async Data => {
         const { Email, Agenda, FullName, About } = Data;
         const [Speaker] = await ReadSpeakers({ "UserDetails.Email": Email, EventId }, undefined, 1, undefined);
@@ -137,7 +139,7 @@ const InviteSpeakersThroughEmail = async (req, res) => {
         await Promise.all([
             PushArrayEvents({ Speakers: { SpeakerId, UserDetails: SpeakerData.UserDetails, Agenda, } }, EventId),
             CreateSpeakers(SpeakerData),
-            //Send Email
+            //SendSpeakerInviteEmail(Email,SpeakerId,Event,Agenda,FullName)
         ])
     }))
     return res.json(true);
