@@ -78,6 +78,9 @@ const AddContentAndStatusToNotification = async (Notification) => {
                 ]
                 break;
             }
+            case 0: {
+                break;
+            }
             default: {
                 Notification.Content = `@${Likes[0].UserDetails.FullName}@, @${Likes[1].UserDetails.FullName}@ and ${NoOfLikes - 2} others liked your Activity!`;
                 Notification.UserDetails = Likes[0].UserDetails;
@@ -611,6 +614,6 @@ export {
     SendNotificationToUser, SendNotificationForMemberJoin, SendNotificationsForConnectionAccept, SendNotificationsForConnectionRequest,
     RemoveNotificationsAfterActivityMentionPatch, RemoveNotificationsForConnectionRequest, GetOneFromNotifications,
     RemoveNotificationsForFollow, RemoveNotificationForMember, SendNotificationToUserOnCommentPost, RemoveNotificationForEntity,
-    SendNotificationForSpeaker, RemoveNotificationForSpeaker,RemoveNotificationForActivityLikes
+    SendNotificationForSpeaker, RemoveNotificationForSpeaker, RemoveNotificationForActivityLikes
 
 }
