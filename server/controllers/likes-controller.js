@@ -5,7 +5,7 @@ import { IncrementActivities } from '../databaseControllers/activities-databaseC
 import { ReadOneFromUsers } from '../databaseControllers/users-databaseController.js';
 import { AlertBoxObject } from './common.js';
 import { IncrementComments } from '../databaseControllers/comments-databaseController.js';
-import { SendNotificationsforActivityLikes } from './notifications-controller.js';
+import { RemoveNotificationForActivityLikes, SendNotificationsforActivityLikes } from './notifications-controller.js';
 import { IncrementArticles } from '../databaseControllers/articles-databaseController.js';
 /**
  * @typedef {import('./../databaseControllers/likes-databaseController.js').LikeData} LikeData 
@@ -101,6 +101,7 @@ const DeleteLikes = async (req, res) => {
     }
     const [Like] = CheckLike;
     await RemoveLikes(Like.DocId);
+    await RemoveNotificationForActivityLikes(EntityId);
     if (Like.Type === 'Activity') {
         await IncrementActivities({ NoOfLikes: -1 }, Like.EntityId);
     }
