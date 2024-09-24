@@ -70,14 +70,14 @@ const GetCallUserData = async (req, res) => {
     const [checkUser] = await ReadUsers({ "_id": new ObjectId(UserId) }, undefined, 1, undefined);
     if (!checkUser) {
         const [Speaker] = await ReadSpeakers({ SpeakerId: UserId, EventId }, undefined, 1, undefined);
-        return res.json({...Speaker.UserDetails,DocId :  Speaker.SpeakerId})
+        return res.json({ ...Speaker.UserDetails, DocId: Speaker.SpeakerId })
     }
     return res.json(checkUser)
 }
 
 const GenerateUserTokenForInvited = async (req, res) => {
     const { SpeakerId } = req.params;
-    const Speaker = await ReadOneFromSpeakers(SpeakerId);
+    const [Speaker] = await ReadSpeakers({ SpeakerId }, undefined, 1, undefined);
     const Event = await ReadOneFromEvents(Speaker.EventId);
     if (!Speaker) {
         return res.status(444).json(AlertBoxObject("No Access", "You have no access"))
