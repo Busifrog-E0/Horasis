@@ -3,7 +3,7 @@ import { useToast } from '../components/Toast/ToastService'
 import { getItem } from '../constants/operations'
 import { useAuth } from '../utils/AuthProvider'
 
-export default function useGetData(endpoint, fetchOnRender = true) {
+export default function useGetData(endpoint, { onSuccess = () => {}, onError = () => {} } = {}, fetchOnRender = true) {
 	const { updateCurrentUser, currentUserData } = useAuth()
 	const toast = useToast()
 	const [data, setData] = useState()
@@ -16,10 +16,12 @@ export default function useGetData(endpoint, fetchOnRender = true) {
 			query,
 			(result) => {
 				setData(result)
+				onSuccess(result)
 				setIsLoading(false)
 			},
 			(err) => {
 				console.log(err, 'error from get list')
+				onError(err)
 				setIsLoading(false)
 			},
 			updateCurrentUser,
@@ -38,6 +40,7 @@ export default function useGetData(endpoint, fetchOnRender = true) {
 		data,
 		isLoading,
 		getData,
-		setData
+		setData,
+		setIsLoading,
 	}
 }

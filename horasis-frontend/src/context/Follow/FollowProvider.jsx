@@ -13,7 +13,7 @@ const FollowProvider = ({ children }) => {
 		isLoading: isCountLoading,
 		data: followCount,
 		getData: getFollowCount,
-	} = useGetData(`users/${currentUserData?.CurrentUser?.UserId}/follow/count`, false)
+	} = useGetData(`users/${currentUserData?.CurrentUser?.UserId}/follow/count`, {}, false)
 
 	const { isLoading: isFollowLoading, postData: postFollow } = usePostData()
 	const { isLoading: isUnfollowLoading, deleteData: deleteUnfollow } = useDeleteData()
