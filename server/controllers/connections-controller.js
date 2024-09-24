@@ -5,7 +5,7 @@ import moment from 'moment';
 import { AlertBoxObject } from './common.js';
 import { AddConnectionstoUser, RemoveConnectionsToUser, ViewOtherUserData } from './users-controller.js';
 import { ReadOneFromUsers,  } from '../databaseControllers/users-databaseController.js';
-import {  SendNotificationsForConnectionAccept, SendNotificationsForConnectionRequest } from './notifications-controller.js';
+import {  RemoveNotificationsForConnectionRequest, SendNotificationsForConnectionAccept, SendNotificationsForConnectionRequest } from './notifications-controller.js';
 /**
  * @typedef {import('./../databaseControllers/connections-databaseController.js').ConnectionData} ConnectionData 
  */
@@ -182,6 +182,7 @@ const DeleteConnection = async (req, res) => {
         return res.status(444).json(AlertBoxObject('No Connection Exists', 'Users are not connected'));
     }
     await RemoveConnections(ConnectionData.DocId);
+    await RemoveNotificationsForConnectionRequest(ConnectionData.DocId);
     RemoveConnectionsToUser(ConnectionData.ReceiverId, ConnectionData.SenderId);
     RemoveConnectionsToUser(ConnectionData.SenderId, ConnectionData.ReceiverId);
     return res.json(true)
