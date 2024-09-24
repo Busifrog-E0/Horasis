@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import ENV from "./../Env.js";
 import dataHandling from '../databaseControllers/functions.js';
 import { getOTP } from "./common.js";
-import { SendOTPEmail } from "./emails-controller.js";
+import { ForgotPasswordOTPEmail, SendOTPEmail } from "./emails-controller.js";
 import moment from "moment";
 import { ReadUsers } from "../databaseControllers/users-databaseController.js";
 const { Read, Create, Delete, Update } = dataHandling;
@@ -116,7 +116,8 @@ const SendRegisterOTP = async (Email, Data, Description, res) => {
     }
     const OTP = getOTP(TestUser);
 
-    const ReturnMessage = true;           //await SendOTPEmail(Email, OTP, Data.FullName, Description)
+    const ReturnMessage = true;
+   // await SendOTPEmail(Email, OTP, Data.FullName)
 
     if (ReturnMessage === true) {
         const Now = moment();
@@ -144,8 +145,9 @@ const SendPasswordOTP = async (Email, res) => {
         TestUser = true;
     }
     const OTP = getOTP(TestUser);
-    const User = (await ReadUsers({ Email }, undefined, 1, undefined))[0];
-    const ReturnMessage = true;           //await SendOTPEmail(Email, OTP, User.FullName, "Verify the OTP to change your password")
+    const [User] = (await ReadUsers({ Email }, undefined, 1, undefined));
+    const ReturnMessage = true;
+    //await ForgotPasswordOTPEmail(Email, User.FullName, OTP)
 
     if (ReturnMessage === true) {
         const Now = moment();
