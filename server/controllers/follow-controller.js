@@ -132,7 +132,7 @@ const DeleteFollows = async (req, res) => {
     if (Follow.length === 0) {
         return res.status(444).json(AlertBoxObject("Not following this profile", "You are already not following this profile"));
     }
-    await RemoveNotificationsForFollow(UserId);
+    await RemoveNotificationsForFollow(UserId, FolloweeId);
     await RemoveFollows(Follow[0].DocId);
     RemoveConnectionsToUser(FolloweeId, UserId);
     return res.json(true);
