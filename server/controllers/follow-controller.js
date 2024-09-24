@@ -124,7 +124,9 @@ const PatchFollows = async (req, res) => {
  * @returns {Promise<e.Response<true>>}
  */
 const DeleteFollows = async (req, res) => {
-    const { FolloweeId, UserId } = req.params;
+    const { FolloweeId } = req.params;
+    //@ts-ignore
+    const { UserId } = req.user;
     //@ts-ignore
     const Follow = await ReadFollows({ FolloweeId, FollowerId: UserId }, undefined, 1, undefined);
     if (Follow.length === 0) {
