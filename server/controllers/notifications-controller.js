@@ -368,7 +368,7 @@ const SendNotificationsForConnectionAccept = async (ConnectionId, SenderId, Rece
 
 /************************************************************************FOLLOW********************************************************************************************************* */
 
-const SendNotificationsForFollow = async (FollowerId, UserId) => {
+const SendNotificationsForFollow = async (FollowerId, FolloweeId) => {
     const Follower = await ReadOneFromUsers(FollowerId);
     const NotificationObject = {
         NotifierId: FollowerId,
@@ -380,7 +380,7 @@ const SendNotificationsForFollow = async (FollowerId, UserId) => {
         ContentLinks: [{ Text: Follower.FullName, Link: `/ViewProfile/${FollowerId}` }],
         UserDetails: Follower
     }
-    return await SendNotificationToUser(NotificationObject, UserId);
+    return await SendNotificationToUser(NotificationObject, FolloweeId);
 }
 
 
@@ -389,8 +389,8 @@ const SendNotificationsForFollow = async (FollowerId, UserId) => {
  * @param {string} FollowerId 
  * @returns 
  */
-const RemoveNotificationsForFollow = async (FollowerId) => {
-    const [Notification] = (await ReadNotifications({ EntityId: FollowerId }, undefined, 1, undefined));
+const RemoveNotificationsForFollow = async (FollowerId,FolloweeId) => {
+    const [Notification] = (await ReadNotifications({ EntityId: FollowerId , RecipientId : FolloweeId }, undefined, 1, undefined));
     return RemoveNotifications(Notification.DocId);
 }
 
