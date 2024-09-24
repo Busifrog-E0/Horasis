@@ -98,7 +98,6 @@ const DeleteLikes = async (req, res) => {
     }
     const [Like] = CheckLike;
     await RemoveLikes(Like.DocId);
-    await RemoveNotificationForActivityLikes(EntityId);
     if (Like.Type === 'Activity') {
         await IncrementActivities({ NoOfLikes: -1 }, Like.EntityId);
     }
@@ -108,6 +107,7 @@ const DeleteLikes = async (req, res) => {
     if (Like.Type === 'Article') {
         await IncrementArticles({ NoOfLikes: -1 }, Like.EntityId);
     }
+    await RemoveNotificationForActivityLikes(EntityId);
     return res.json(true);
 }
 
