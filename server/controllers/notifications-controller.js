@@ -389,8 +389,8 @@ const SendNotificationsForFollow = async (FollowerId, FolloweeId) => {
  * @param {string} FollowerId 
  * @returns 
  */
-const RemoveNotificationsForFollow = async (FollowerId,FolloweeId) => {
-    const [Notification] = (await ReadNotifications({ EntityId: FollowerId , RecipientId : FolloweeId }, undefined, 1, undefined));
+const RemoveNotificationsForFollow = async (FollowerId, FolloweeId) => {
+    const [Notification] = (await ReadNotifications({ EntityId: FollowerId, RecipientId: FolloweeId }, undefined, 1, undefined));
     return RemoveNotifications(Notification.DocId);
 }
 
@@ -424,7 +424,7 @@ const SendNotificationForMemberJoin = async (Type, EntityId, UserId) => {
         NotifierId: UserId,
         EntityId: EntityId,
         EntityType: Type,
-        Content: `@${UserDetails.FullName}@ joined your ${Type}  ${EntityName}!`,
+        Content: `@${UserDetails.FullName}@ joined your ${Type} : ${EntityName}!`,
         Link: Link,
         Type: "Join",
         ContentLinks: [{ Text: UserDetails.FullName, Link: `/ViewProfile/${UserId}` }],
@@ -554,8 +554,8 @@ const SendNotificationForMemberInvitation = async (Type, EntityId, UserId, Sende
 }
 
 const RemoveNotificationForMember = async (EntityId, UserId) => {
-    const Notifications = await ReadNotifications({ EntityId, RecipientId: UserId }, undefined, -1, undefined);
-    const NotificationsForAdmin = await ReadNotifications({ EntityId, NotifierId: UserId }, undefined, -1, undefined);
+    const Notifications = await ReadNotifications({ EntityId, RecipientId: UserId, Type: { $in: ["Invitation", "Join-Status", "Join-Request"] } }, undefined, -1, undefined);
+    const NotificationsForAdmin = await ReadNotifications({ EntityId, NotifierId: UserId ,Type : "Join" }, undefined, -1, undefined);
     return Promise.all([...Notifications, ...NotificationsForAdmin].map(Notification => RemoveNotifications(Notification.DocId)));
 }
 
