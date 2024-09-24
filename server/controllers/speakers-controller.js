@@ -2,7 +2,7 @@ import e from 'express';
 
 import { ReadOneFromSpeakers, ReadSpeakers, UpdateSpeakers, CreateSpeakers, RemoveSpeakers, } from './../databaseControllers/speakers-databaseController.js';
 import { AlertBoxObject } from './common.js';
-import { AggregateUsers, ReadOneFromUsers } from '../databaseControllers/users-databaseController.js';
+import { AggregateUsers, ReadOneFromUsers, ReadUsers } from '../databaseControllers/users-databaseController.js';
 import { MemberInit } from './members-controller.js';
 import { CreateMembers, ReadMembers } from '../databaseControllers/members-databaseController.js';
 import { IncrementEvents, PullArrayEvents, PushArrayEvents, ReadOneFromEvents } from '../databaseControllers/events-databaseController.js';
@@ -129,9 +129,15 @@ const InviteSpeakersThroughEmail = async (req, res) => {
     const Event = await ReadOneFromEvents(EventId);
     await Promise.all(InvitationData.map(async Data => {
         const { Email, Agenda, FullName, About } = Data;
-        const [Speaker] = await ReadSpeakers({ "UserDetails.Email": Email, EventId }, undefined, 1, undefined);
+        const [Speaker,User] = await Promise.all([
+            ReadSpeakers({ "UserDetails.Email": Email, EventId }, undefined, 1, undefined),
+            ReadUsers({Email},undefined,1,undefined)
+        ]);
         if (Speaker) {
             return res.status(444).json(AlertBoxObject("Already Invited", "You have already invited this Email"));
+        }
+        if (User) {
+            return res.status(444).json(AlertBoxObject("User Already Exists","User aLready Exists"))
         }
         const SpeakerId = new ObjectId().toString();
         const SpeakerData = SpeakerInit({ SpeakerId, EventId, MembershipStatus: "Accepted", Agenda, UserDetails: { FullName, About, Email, ProfilePicture: '' } });
@@ -139,7 +145,7 @@ const InviteSpeakersThroughEmail = async (req, res) => {
         await Promise.all([
             PushArrayEvents({ Speakers: { SpeakerId, UserDetails: SpeakerData.UserDetails, Agenda, } }, EventId),
             CreateSpeakers(SpeakerData),
-            //SendSpeakerInviteEmail(Email,SpeakerId,Event,Agenda,FullName)
+            SendSpeakerInviteEmail(Email,SpeakerId,Event,Agenda,FullName)
         ])
     }))
     return res.json(true);

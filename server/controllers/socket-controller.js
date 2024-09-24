@@ -17,7 +17,7 @@ const ConnectSocket = (expressServer) => {
 
     const io = new Server(expressServer, {
         cors: {
-            origin: ["http://localhost:5173", "http://127.0.0.1:5173", "https://hsocial.web.app"]
+            origin: ["http://localhost:5173", "http://127.0.0.1:5173", "https://hsocial.web.app", "https://hsocialtest.web.app/"]
         }
     });
     io.use(decodeSocketIdToken);
