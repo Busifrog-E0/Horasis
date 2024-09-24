@@ -25,6 +25,7 @@ import { getItem, patchItem, postItem } from '../constants/operations'
 import { AuthContext } from '../utils/AuthProvider'
 import { MAINTAB, _retrieveData, _storeData } from '../utils/LocalStorage'
 import MyArticlesTab from '../components/Profile/Tabs/MyArticlesTab'
+import useGetData from '../hooks/useGetData'
 
 const tabs = (user, getUserDetails) => [
 	{
@@ -98,40 +99,26 @@ const MyProfile = () => {
 	}
 	const { currentUserData, updateCurrentUser } = useContext(AuthContext)
 	const toast = useToast()
-	const [isLoading, setIsLoading] = useState(false)
-	const [isImageUploading, setIsImageUploading] = useState(false)
-	const [user, setUser] = useState()
-	const getUserDetails = () => {
-		setIsLoading(true)
-		getItem(
-			`users/${currentUserData.CurrentUser.UserId}`,
-			(result) => {
-				setIsLoading(false)
-				setUser(result)
-				if (result.ProfilePicture) {
-					setSelectedProfileImage(result.ProfilePicture)
-				} else {
-					setSelectedProfileImage(null)
-				}
-			},
-			(err) => {
-				setIsLoading(false)
-				// console.log(err)
-			},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
-	}
-	const [isProfilePictureOpen, setIsProfilePictureOpen] = useState(false)
+	const {
+		isLoading,
+		data: user,
+		getData: getUserDetails,
+	} = useGetData(`users/${currentUserData.CurrentUser.UserId}`, {
+		onSuccess: (result) => {
+			if (result.ProfilePicture) {
+				setSelectedProfileImage(result.ProfilePicture)
+			} else {
+				setSelectedProfileImage(null)
+			}
+		},
+	})
 
-	useEffect(() => {
-		getUserDetails()
-	}, [])
+	const [isImageUploading, setIsImageUploading] = useState(false)
 
 	// profile image upload logic
 	const [selectedProfileImage, setSelectedProfileImage] = useState(null)
 	const [profileImageToUpload, setProfileImageToUpload] = useState(null)
+	const [isProfilePictureOpen, setIsProfilePictureOpen] = useState(false)
 	const onProfileImageSelect = (imageData) => {
 		setProfileImageToUpload(imageData)
 		const tempUrl = URL.createObjectURL(new Blob([new Uint8Array(imageData.FileData)]))
