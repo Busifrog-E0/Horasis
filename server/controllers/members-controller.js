@@ -90,7 +90,7 @@ const PostMembers = async (req, res) => {
     else {
         req.body = MemberInit({ MemberId: UserId, EntityId, UserDetails }, "Accepted");
         await Promise.all([
-            SendNotificationForMemberJoin(req.body.Type, EntityId, UserId),
+            SendNotificationForMemberJoin(Type, EntityId, UserId),
             CreateMembers({ ...req.body, MemberId: UserId, EntityId, UserDetails }),
             Type === "Discussion" ? IncrementDiscussions({ NoOfMembers: 1 }, EntityId) :
                 IncrementEvents({ NoOfMembers: 1 }, EntityId)
