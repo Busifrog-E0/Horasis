@@ -22,6 +22,12 @@ const EventDataSchema = Joi.object({
     DisplayPicture: Joi.string().required(),
     CoverPicture: Joi.string().required(),
     HasDiscussion: Joi.boolean().required()
+}).custom((value, helpers) => {
+    if (value.StartTime >= value.EndTime) {
+        //@ts-ignore
+        return helpers.message('"StartTime" must be less than "EndTime"');
+    }
+    return value; // Validation success
 });
 
 const ValidatePostEvents = async (req, res, next) => {
