@@ -146,7 +146,7 @@ const InviteSpeakersThroughEmail = async (req, res) => {
         await Promise.all([
             PushArrayEvents({ Speakers: { SpeakerId, UserDetails: SpeakerData.UserDetails, Agenda, } }, EventId),
             CreateSpeakers(SpeakerData),
-            SendSpeakerInviteEmail(Email, SpeakerId, Event, Agenda, FullName)
+            //SendSpeakerInviteEmail(Email, SpeakerId, Event, Agenda, FullName)
         ])
     }))
     return res.json(true);
