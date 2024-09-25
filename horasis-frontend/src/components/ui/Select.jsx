@@ -21,12 +21,34 @@ const Select = ({
 	required,
 	iconClick,
 	options,
+	isSearchable=false,
 	...props
 }) => {
 	const [selected, setSelected] = useState(value)
 	const [showOptions, setShowOptions] = useState(false)
+	const [searchTerm, setSearchTerm] = useState('')
+
+	// Filter options based on search term
+	const filteredOptions = options.filter((option) => option.toLowerCase().includes(searchTerm.toLowerCase()))
+
+	// Handle keyboard input to search
+	const handleKeyDown = (e) => {
+		if (isSearchable === true) {
+			if (e.key.length === 1) {
+				// Add key to searchTerm if it's a regular character
+				setSearchTerm((prev) => prev + e.key)
+			} else if (e.key === 'Backspace') {
+				// Handle backspace to remove the last character
+				setSearchTerm((prev) => prev.slice(0, -1))
+			}
+		}
+	}
+
 	return (
-		<div className={`flex flex-col my-1 ${width === 'full' ? 'w-[100%]' : 'w-max'}`}>
+		<div
+			className={`flex flex-col my-1 ${
+				width === 'full' ? 'w-[100%]' : 'w-max'
+			} outline-none border-none focus:outline-none`}>
 			<div className='flex flex-row items-start justify-between flex-wrap'>
 				{inputlabel && (
 					<label htmlFor={name} className='font-medium text-sm text-system-primary-text'>
@@ -36,19 +58,7 @@ const Select = ({
 				{extra && <div className='hidden lg:block lg:m-0 text-sm'>{extra}</div>}
 			</div>
 
-			{/* <select
-				onChange={(e) => setValue(e.target.value, e)}
-				type={type}
-				name={name}
-				value={value}
-				placeholder={placeholder}
-				className={
-					twMerge(inputVariants({ variant, size, width, withIcon, className })) +
-					' hover:shadow-inner focus:bg-system-secondary-bg focus:border-2 focus:border-system-primary-accent'
-				}
-				required={required}
-				{...props}></select> */}
-			<div className='relative'>
+			<div className='relative' onKeyDown={handleKeyDown} tabIndex={0}>
 				<div
 					onClick={() => setShowOptions((prev) => !prev)}
 					className={
@@ -90,19 +100,25 @@ const Select = ({
 						className={
 							'border-2 border-system-primary-bg rounded-lg text-base w-full z-50 bg-white flex flex-col max-h-40 overflow-auto absolute left-0 top-12 mb-10'
 						}>
-						{options.map((item) => {
-							return (
-								<p
-									key={item}
-									className='px-5 py-2 hover:bg-system-primary-bg rounded-md cursor-pointer w-full select-none'
-									onClick={() => {
-										setShowOptions(false)
-										setValue(item)
-									}}>
-									{item}
-								</p>
-							)
-						})}
+						{/* Display filtered options */}
+						{filteredOptions.length > 0 ? (
+							filteredOptions.map((item) => {
+								return (
+									<p
+										key={item}
+										className='px-5 py-2 hover:bg-system-primary-bg rounded-md cursor-pointer w-full select-none'
+										onClick={() => {
+											setShowOptions(false)
+											setValue(item)
+											setSearchTerm('') // Clear search after selection
+										}}>
+										{item}
+									</p>
+								)
+							})
+						) : (
+							<p className='px-5 py-2 text-system-secondary-text'>No options found</p>
+						)}
 					</div>
 				)}
 			</div>

@@ -247,6 +247,7 @@ const AboutProfile = ({ user, getUserDetails, isCurrentUser }) => {
 								}}
 								value={updateFormValue.Country}
 								options={countryOptions}
+								isSearchable={true}
 							/>
 							{errorObj['Country'] != undefined && <p className='text-brand-red m-0'>{errorObj['Country']}</p>}
 						</div>

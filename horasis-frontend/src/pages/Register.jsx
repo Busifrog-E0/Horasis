@@ -35,7 +35,7 @@ const branding = {
 const Register = () => {
 	const navigate = useNavigate()
 	const { updateCurrentUser } = useAuth()
-	
+
 	const [showpass, setShowpass] = useState(false)
 	const [showConfirmPass, setShowConfirmPass] = useState(false)
 	const [errorObj, setErrorObj] = useState({})
@@ -53,16 +53,16 @@ const Register = () => {
 		CompanyName: '',
 		About: '',
 	})
-	
+
 	const [usernameAvailable, setUsernameAvailable] = useState()
 	const [otpid, setOtpid] = useState('')
 	const [otp, setOtp] = useState('')
 	const [otpOpen, setOtpOpen] = useState(false)
 	const [timerValue, setTimerValue] = useState(30)
-	
+
 	const [termsChecked, setTermsChecked] = useState(false)
 	const [countryOptions, setCountryOptions] = useState(countries.countries.map((item) => item.name))
-	
+
 	const { isLoading, postData: submitRegister } = usePostData({
 		onSuccess: (result) => {
 			setOtpid(result)
@@ -403,6 +403,7 @@ const Register = () => {
 								}}
 								value={registerFormValue.Country}
 								options={countryOptions}
+								isSearchable={true}
 							/>
 							{errorObj['Country'] != undefined && <p className='text-brand-red m-0'>{errorObj['Country']}</p>}
 						</div>
