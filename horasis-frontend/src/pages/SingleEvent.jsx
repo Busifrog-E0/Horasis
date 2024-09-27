@@ -41,11 +41,24 @@ const SingleEvent = () => {
 		setActiveTab(item.key)
 	}
 	const [joined, setJoined] = useState(false)
+
 	const tabs = (event) => {
-		const { Privacy, IsMember, Permissions, HasDiscussion, DocId } = event
+		const { Privacy, IsMember, Permissions, HasDiscussion, DocId, Date: EventDate } = event // Assuming EventDate is part of the event object
 		const isPrivate = Privacy === 'Private'
 		const isAdmin = Permissions?.IsAdmin
 		const canInvite = Permissions?.CanInviteOthers
+
+		// Convert EventDate to a Date object
+
+		const eventDate = new Date(EventDate)
+		const currentDate = new Date() // Current date at the time of execution
+		const tenDaysBefore = new Date(eventDate)
+		const tenDaysAfter = new Date(eventDate)
+
+		tenDaysBefore.setDate(eventDate.getDate() - 10)
+		tenDaysAfter.setDate(eventDate.getDate() + 10)
+
+		const isWithinTenDays = currentDate >= tenDaysBefore && currentDate <= tenDaysAfter
 
 		const getParticipantsTab = (key) => ({
 			key: key,
@@ -111,17 +124,30 @@ const SingleEvent = () => {
 			),
 		})
 
-		if (isAdmin && isPrivate) {
-			return HasDiscussion
-				? [getActivityTab(0), getParticipantsTab(1), getRegistrationTab(2), getInviteSpeakersTab(3), getSettingsTab(4)]
-				: [getParticipantsTab(0), getRegistrationTab(1), getInviteSpeakersTab(2), getSettingsTab(3)]
-		} else if (isAdmin && !isPrivate) {
-			return HasDiscussion
-				? [getActivityTab(0), getParticipantsTab(1), getInviteSpeakersTab(2), getSettingsTab(3)]
-				: [getParticipantsTab(0), getInviteSpeakersTab(1), getSettingsTab(2)]
-		} else if (!isPrivate || IsMember) {
-			return HasDiscussion ? [getActivityTab(0), getParticipantsTab(1)] : [getParticipantsTab(2)]
+		// Start with key 0
+		let tabsArray = []
+
+		// Add activity tab if within the specified date range and has discussion
+		if (isWithinTenDays && HasDiscussion) {
+			tabsArray.push(getActivityTab(0)) // Key for Activity tab is 0
+		}
+
+		// Add other tabs, incrementing keys accordingly
+		tabsArray.push(getParticipantsTab(tabsArray.length)) // Participants tab key will be 1
+		tabsArray.push(getRegistrationTab(tabsArray.length)) // Registration Requests key will be 2
+
+		// Add invite speakers tab and settings tab
+		if (isAdmin) {
+			tabsArray.push(getInviteSpeakersTab(tabsArray.length)) // Invite Speakers key will be 3
+			tabsArray.push(getSettingsTab(tabsArray.length)) // Settings key will be 4
+		}
+
+		// For non-admins or non-private events
+		if (!isPrivate || IsMember) {
+			// Add only the necessary tabs for members or public events
+			return tabsArray
 		} else {
+			// If user is not a member and the event is private
 			return [
 				{
 					key: 0,
@@ -236,8 +262,8 @@ const SingleEvent = () => {
 				</div>
 			</div>
 			<div className='p-2 lg:px-10 lg:py-6'>
-				<div className='grid lg:grid-cols-4 gap-3 lg:gap-12 '>
-					<div>
+				<div className='grid grid-cols-1 lg:grid-cols-4 gap-3 lg:gap-12 '>
+					<div className=''>
 						<div className='p-5 bg-system-secondary-bg rounded-lg mb-3 lg:mb-8'>
 							<h4 className='font-semibold text-xl text-system-primary-text mt-1 lg:mt-3'>About</h4>
 							<h4 className='font-medium text-md  text-system-secondary-text my-2 lg:my-2 leading-relaxed'>
@@ -293,9 +319,6 @@ const SingleEvent = () => {
 						<div className='flex gap-2'>
 							{event?.IsMember ? (
 								<>
-									<Button width='full' variant='black' onClick={() => navigate('join')}>
-										Join
-									</Button>
 									{currentUserData.CurrentUser.UserId !== event?.OrganiserId && (
 										<Button width='full' variant='outline' onClick={() => unRegisterEvent()}>
 											Leave Event
@@ -358,7 +381,8 @@ const SingleEvent = () => {
 							</div>
 						)}
 					</div>
-					<div>
+					<div className='flex flex-col gap-2'>
+						<ShowJoinButton event={event} />
 						<div className='p-5 bg-system-secondary-bg rounded-lg'>
 							<div className='lg:mt-1'>
 								<MiniTab
@@ -373,6 +397,35 @@ const SingleEvent = () => {
 				</div>
 			</div>
 		</>
+	)
+}
+
+const ShowJoinButton = ({ event }) => {
+	// Assuming you have event.StartTime available and it's in a valid date format
+	const { IsMember, StartTime } = event
+
+	// Convert StartTime to a Date object
+	const eventStartTime = new Date(StartTime) // Ensure StartTime is in a valid format
+
+	// Get current date and time
+	const currentDateTime = new Date()
+
+	// Calculate the time limit for showing the Join button (30 minutes before the event)
+	const thirtyMinutesBefore = new Date(eventStartTime)
+	thirtyMinutesBefore.setMinutes(eventStartTime.getMinutes() - 30)
+
+	// Check if the button should be shown
+	const shouldShowJoinButton = event?.IsMember && currentDateTime <= thirtyMinutesBefore
+
+	return (
+		<div>
+			{/* Other components */}
+			{shouldShowJoinButton && (
+				<Button width='full' variant='black' onClick={() => navigate('join')}>
+					Join
+				</Button>
+			)}
+		</div>
 	)
 }
 

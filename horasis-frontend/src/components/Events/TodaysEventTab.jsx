@@ -67,7 +67,7 @@ const TodaysEventTab = () => {
 													<Button
 														loading={false}
 														onClick={() => {
-															navigate(`/Events/${item.DocId}/join`)
+															navigate(`/Events/${item.DocId}`)
 														}}
 														variant='black'
 														width='full'>

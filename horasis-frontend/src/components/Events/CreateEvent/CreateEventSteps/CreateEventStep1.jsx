@@ -337,7 +337,17 @@ const CreateEventStep1 = ({ postEventData, setPostEventData, validateSingle, err
 				<h1 className='text-system-primary-text font-medium text-lg'>
 					Event Type<span className='text-brand-red'>*</span>
 				</h1>
-				<SelectEventTypeList multiSelect={false} onSelect={onSelectType} selectedValue={postEventData.Type} />
+				{/* <SelectEventTypeList multiSelect={false} onSelect={onSelectType} selectedValue={postEventData.Type} /> */}
+				<Select
+					className='rounded-xl border-2 border-system-file-border-accent'
+					width='full'
+					placeholder='Select a country'
+					setValue={(item) => {
+						validateSingle({ ['Type']: item }, 'Type')
+					}}
+					value={postEventData.Type}
+					options={['Offline', 'Virtual']}
+				/>
 				{errorObj['Type'] != undefined && <p className='text-brand-red m-0'>{errorObj['Type']}</p>}
 			</div>
 			<div>
@@ -353,6 +363,7 @@ const CreateEventStep1 = ({ postEventData, setPostEventData, validateSingle, err
 					}}
 					value={postEventData.Country}
 					options={countryOptions}
+					isSearchable={true}
 				/>
 				{errorObj['Country'] != undefined && <p className='text-brand-red m-0'>{errorObj['Country']}</p>}
 				{/* <SelectEventCountry /> */}

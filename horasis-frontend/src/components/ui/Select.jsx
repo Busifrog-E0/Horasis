@@ -71,7 +71,7 @@ const Select = ({
 						</>
 					) : (
 						<>
-							<p className='w-full text-base'>{value}</p>
+							<p className='w-full text-base'>{searchTerm?searchTerm:value}</p>
 						</>
 					)}
 					{showOptions ? (

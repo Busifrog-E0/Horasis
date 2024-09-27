@@ -5,7 +5,7 @@ import Button from '../ui/Button'
 import { getItem } from '../../constants/operations'
 import { jsonToQuery } from '../../utils/searchParams/extractSearchParams'
 import { getNextId } from '../../utils/URLParams'
-import { getDateInWordsFormat, gettimenow, relativeTime } from '../../utils/date'
+import { getDateInWordsFormat, getDateMonth, gettimenow, relativeTime } from '../../utils/date'
 import Spinner from '../ui/Spinner'
 import EmptyMembers from '../Common/EmptyMembers'
 import arrowforwhite from '../../assets/icons/arrowforwhite.svg'
@@ -149,7 +149,7 @@ const UpcomingEvents = () => {
 															{/* <h4 className='text-system-primary-text text-md'>Updated their photo</h4> */}
 														</div>
 														<h4 className={`font-medium text-sm text-brand-gray-dim`}>
-															{relativeTime(item.CreatedIndex)}
+															{getDateInWordsFormat(new Date(item.Date))}
 														</h4>
 													</div>
 												</div>

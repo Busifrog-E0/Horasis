@@ -4,17 +4,12 @@ import Button from '../ui/Button'
 const JoinToStream = ({ event, appId, channel, token, setChannel, setToken, setCalling, setAppId }) => {
 	const { timeLeft, formattedTime } = useCountdown(event.StartTime, event.EndTime)
 	return (
-		<div className='w-full h-full max-w-screen max-h-screen'>
+		<div className='w-full h-screen max-w-screen max-h-screen overflow-hidden'>
 			{event.DisplayPicture ? (
-				<>
-					<img src={event.DisplayPicture} className='object-cover h-full w-full' />
-				</>
+				<img src={event.DisplayPicture} className='object-cover w-full h-full' alt='Event Cover' />
 			) : (
-				<>
-					<img src={cover} className='object-cover w-full h-full' />
-				</>
+				<img src={cover} className='object-cover w-full h-full' alt='Default Cover' />
 			)}
-
 			<div className='absolute top-0 right-0 left-0 bottom-0 flex flex-col justify-center items-center p-4 md:p-16 lg:p-32 overflow-hidden bg-system-primary-transparent'>
 				<div className='grid md:grid-cols-2 xl:grid-cols-3 w-full'>
 					<div className='flex flex-col gap-10  w-full'>
@@ -46,12 +41,16 @@ const JoinToStream = ({ event, appId, channel, token, setChannel, setToken, setC
 						) : (
 							<div className='bg-system-secondary-bg-transparent p-2 rounded-md'>The event has ended.</div>
 						)}
-						{event.StartTime < new Date().getTime() && new Date().getTime() < event.EndTime && (
-							<Button variant='danger' className='px-20 font-bold' size='md' disabled={!appId || !channel} onClick={() => setCalling(true)}>
+						{event.StartTime < new Date().getTime() && new Date().getTime() < event.EndTime && event?.IsMember && (
+							<Button
+								variant='danger'
+								className='px-20 font-bold'
+								size='md'
+								disabled={!appId || !channel}
+								onClick={() => setCalling(true)}>
 								Join
 							</Button>
 						)}
-						{}
 					</div>
 				</div>
 			</div>

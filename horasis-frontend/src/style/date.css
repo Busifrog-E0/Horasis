@@ -1,0 +1,165 @@
+/* src/DatePicker.css */
+
+/* Customize the calendar container */
+.custom-calendar {
+	background-color: white;
+	border: 1px solid #ccc;
+	border-radius: 8px;
+	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+	/* padding: 10px; */
+}
+
+/* Customize the calendar header (month and year navigation) */
+.react-datepicker__header {
+	background-color: #0e4d96; /* Accent color for header */
+	border-bottom: 1px solid #0e4d96;
+	color: white;
+	border-radius: 8px 8px 0 0;
+}
+
+/* Style the month and year display in the header */
+.react-datepicker__current-month {
+	font-size: 1.2rem;
+	font-weight: bold;
+	color: white;
+}
+
+/* Style the navigation buttons (previous/next month) */
+.react-datepicker__navigation {
+	border-color: white;
+}
+
+.react-datepicker__navigation:hover {
+	border-color: #e3f2fd;
+}
+
+/* Style for the day numbers in the calendar */
+.react-datepicker__day {
+	color: #333;
+	cursor: pointer;
+}
+
+/* Style for the selected day */
+.react-datepicker__day--selected,
+.react-datepicker__day--keyboard-selected {
+	background-color: #0e4d96; /* Accent color for selected day */
+	color: white;
+}
+
+/* Style for today's date */
+.react-datepicker__day--today {
+	font-weight: bold;
+	color: white;
+}
+
+/* Style for weekends (Saturday and Sunday) */
+.weekend-day {
+	background-color: #e0f7fa; /* Light blue background for weekends */
+	color: #0e4d96; /* Accent color for weekends */
+}
+
+/* Style for day hover */
+.react-datepicker__day:hover {
+	background-color: #0e4d96; /* Accent color for hover */
+	color: white;
+}
+
+/* Disabled days styling */
+.react-datepicker__day--disabled {
+	color: #ccc; /* Grey out disabled days */
+	background-color: transparent; /* No background for disabled */
+	cursor: not-allowed; /* Show not-allowed cursor */
+	opacity: 0.6; /* Reduce opacity for disabled days */
+}
+
+.react-datepicker__day--disabled:hover {
+	background-color: transparent; /* Disable hover for disabled days */
+	color: #ccc; /* Maintain greyed-out color */
+}
+
+/* Customize the input field */
+.react-datepicker__input-container input {
+	width: 100%;
+	padding: 8px;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	font-size: 1rem;
+}
+
+/* Customize the input focus */
+.react-datepicker__input-container input:focus {
+	outline: none;
+	border-color: #0e4d96;
+	box-shadow: 0 0 5px rgba(14, 77, 150, 0.5);
+}
+
+/* Customize the time picker */
+.react-datepicker__time-container {
+	border-left: 1px solid #0e4d96;
+	width: 85px; /* Width of the time picker */
+}
+
+/* Customize the time picker header */
+.react-datepicker__time-header {
+	background-color: #0e4d96; /* Accent color for time header background */
+	color: white !important; /* Ensure the text color is white */
+	font-weight: bold;
+	padding: 10px;
+	text-align: center;
+}
+
+/* Week day names (e.g. Sun, Mon, etc.) */
+.react-datepicker__day-names {
+	background-color: #0e4d96; /* Blue background for week names */
+}
+
+.react-datepicker__day-name {
+	color: white; /* White text for week names */
+}
+
+/* Style the time list */
+.react-datepicker__time-list {
+	height: 200px; /* Set a fixed height for the time list */
+	overflow-y: scroll; /* Enable vertical scrolling */
+	margin: 0;
+	padding: 0;
+	background-color: white;
+	color: #0e4d96;
+	list-style: none;
+}
+
+.react-datepicker__time-list-item {
+	padding: 10px;
+	text-align: center;
+	cursor: pointer;
+	color: #333;
+}
+
+.react-datepicker__time-list-item:hover {
+	background-color: #e0f7fa; /* Light blue on hover */
+}
+
+.react-datepicker__time-list-item--selected {
+	background-color: #0e4d96; /* Accent color for selected time */
+	color: white;
+}
+
+.react-datepicker-time__header {
+	color: white;
+}
+
+/* Add a scrollbar for the time picker */
+.react-datepicker__time-list::-webkit-scrollbar {
+	width: 4px;
+}
+
+.react-datepicker__time-list::-webkit-scrollbar-thumb {
+	background-color: #0e4d96;
+	border-radius: 4px;
+}
+
+@media (max-width: 768px) {
+	.react-datepicker__time-list {
+		height: 150px; /* Smaller height on mobile devices */
+	}
+}

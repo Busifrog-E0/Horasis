@@ -19,6 +19,7 @@ import { getItem, postItem } from '../constants/operations'
 import { useToast } from '../components/Toast/ToastService'
 import EventSettings from '../components/Events/EventsTabs/EventSettings'
 import UpcomingEvents from '../components/Events/UpcomingEvents'
+import Spinner from '../components/ui/Spinner'
 
 const CreateEvent = () => {
 	const { currentUserData, updateCurrentUser } = useAuth()
@@ -312,7 +313,12 @@ const CreateEvent = () => {
 			<div className='lg:col-span-2'>
 				<Steps changeStep={changeStep} activeStep={activeStep} steps={steps} />
 				<h4 className='font-medium text-2xl text-system-primary-accent mt-5 mb-4'>Create an Event</h4>
-				<div className='p-6 bg-system-secondary-bg rounded-lg'>
+				<div className='p-6 bg-system-secondary-bg rounded-lg relative overflow-hidden'>
+					{isImageUploading && (
+						<div className='absolute top-0 left-0 bg-system-secondary-bg-transparent w-full h-full flex items-center justify-center'>
+							<Spinner />
+						</div>
+					)}
 					{activeStep === 1 && (
 						<CreateEventStep1
 							postEventData={postEventData}
@@ -322,7 +328,12 @@ const CreateEvent = () => {
 						/>
 					)}
 					{activeStep === 2 && (
-						<CreateEventStep2 errorObj={errorObj} postEventData={postEventData} setPostEventData={setPostEventData} />
+						<CreateEventStep2
+							errorObj={errorObj}
+							postEventData={postEventData}
+							setPostEventData={setPostEventData}
+							validateSingle={newValidateSingle}
+						/>
 					)}
 					{activeStep === 3 && (
 						<CreateEventStep3
@@ -338,7 +349,9 @@ const CreateEvent = () => {
 							fileFieldName='CoverPicture'
 						/>
 					)}
-					{activeStep === 5 && <CreateEventStep5 changeStep={changeStep} activeStep={activeStep} eventId={eventId} event={event} />}
+					{activeStep === 5 && (
+						<CreateEventStep5 changeStep={changeStep} activeStep={activeStep} eventId={eventId} event={event} />
+					)}
 					{activeStep === 6 && <EventSettings from='create' eventId={eventId} event={event} />}
 					{/* {activeStep !== 6 && */}
 					<div className='grid grid-cols-2 lg:grid-cols-3 gap-4 py-8'>
@@ -357,12 +370,25 @@ const CreateEvent = () => {
 								</Button>
 							)}
 							{isFourthStep && (
-								<Button onClick={() => setIsModalOpen(true)} width='full' variant='black'>
+								<Button
+									onClick={() => setIsModalOpen(true)}
+									width='full'
+									variant='black'
+									disabled={!selectedCoverImage || !selectedDisplayImage}>
 									Create Event
 								</Button>
 							)}
-							{(isFirstStep || isSecondStep || isThirdStep) && (
+							{(isFirstStep || isSecondStep) && (
 								<Button onClick={() => validate(() => changeStep(activeStep + 1))} width='full' variant='black'>
+									Next
+								</Button>
+							)}
+							{isThirdStep && (
+								<Button
+									onClick={() => validate(() => changeStep(activeStep + 1))}
+									width='full'
+									variant='black'
+									disabled={!selectedDisplayImage}>
 									Next
 								</Button>
 							)}
@@ -373,7 +399,6 @@ const CreateEvent = () => {
 							)}
 						</div>
 					</div>
-					{/* } */}
 				</div>
 			</div>
 			<div>
