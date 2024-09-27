@@ -1,5 +1,6 @@
 import Joi from 'joi';
 import { QueryParametersSchema } from './common.js';
+import moment from 'moment';
 
 const AgendaDataSchema = Joi.object({
     Name: Joi.string().required(),
@@ -12,9 +13,9 @@ const EventDataSchema = Joi.object({
     OrganiserId: Joi.string().required(),
     EventName: Joi.string().required(),
     Description: Joi.string().required(),
-    Date: Joi.number().required(),
-    StartTime: Joi.number().required(),
-    EndTime: Joi.number().required(),
+    Date: Joi.number().required(),  // Assume it's a timestamp (milliseconds since epoch)
+    StartTime: Joi.number().required(),  // Timestamp in milliseconds
+    EndTime: Joi.number().required(),  // Timestamp in milliseconds
     Agenda: Joi.array().items(AgendaDataSchema).required(),
     Privacy: Joi.string().valid('Public', 'Private').required(),
     Type: Joi.string().valid('Virtual', 'Offline').required(),
@@ -23,11 +24,24 @@ const EventDataSchema = Joi.object({
     CoverPicture: Joi.string().required(),
     HasDiscussion: Joi.boolean().required()
 }).custom((value, helpers) => {
+    const currentTime = moment().valueOf();  
+
     if (value.StartTime >= value.EndTime) {
         //@ts-ignore
         return helpers.message('"StartTime" must be less than "EndTime"');
     }
-    return value; // Validation success
+
+    if (value.Date <= currentTime) {
+        // @ts-ignore
+        return helpers.message('"Date" must be a future date');
+    }
+
+    if (value.StartTime <= currentTime) {
+        // @ts-ignore
+        return helpers.message('"StartTime" must be in the future');
+    }
+
+    return value;  
 });
 
 const ValidatePostEvents = async (req, res, next) => {
