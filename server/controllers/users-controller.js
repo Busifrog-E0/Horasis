@@ -336,10 +336,10 @@ const AddUserAsAdmin = async (req, res) => {
     const { UserIds } = req.body;
     const objectIds = await Promise.all(UserIds.map(async id => {
         const [RefreshToken] = await ReadRefreshTokens({ 'SignObject.UserId': id }, undefined, 1, { Index: "desc" })
-        await UpdateRefreshToken(RefreshToken.DocId, { 'SignObject.Roles': ["Admin", "User"] });
+        await UpdateRefreshToken(RefreshToken.DocId, { 'SignObject.Role': ["Admin", "User"] });
         return new ObjectId(id)
     }));
-    await UpdateManyUsers({ Roles: ["Admin", "User"] }, { "_id": { $in: objectIds } })
+    await UpdateManyUsers({ Role: ["Admin", "User"] }, { "_id": { $in: objectIds } })
     return res.json(true);
 }
 
@@ -352,7 +352,7 @@ const AddUserAsAdmin = async (req, res) => {
 const RemoveUserAsAdmin = async (req, res) => {
     const { UserId } = req.body;
     const [RefreshToken] = await ReadRefreshTokens({ 'SignObject.UserId': UserId }, undefined, 1, { Index: "desc" })
-    await UpdateRefreshToken(RefreshToken.DocId, { 'SignObject.Roles': ["User"] });
+    await UpdateRefreshToken(RefreshToken.DocId, { 'SignObject.Role': ["User"] });
     await UpdateUsers({ Roles: ["User"] }, UserId);
     return res.json(true);
 }
