@@ -96,7 +96,7 @@ const CheckOTP = async (req, res) => {
  * @param {object} SignObject 
  */
 const GenerateToken = async (SignObject) => {
-    const Token = jwt.sign(SignObject, ENV.TOKEN_KEY, { expiresIn: "2h", });
+    const Token = jwt.sign(SignObject, ENV.TOKEN_KEY, { expiresIn: 60, });
     const RefreshToken = await Create("RefreshTokens", { SignObject, "Token": Token, "Valid": true });
     console.log(Token);
     return { "Token": Token, "RefreshToken": RefreshToken };
@@ -117,7 +117,7 @@ const SendRegisterOTP = async (Email, Data, Description, res) => {
     const OTP = getOTP(TestUser);
 
     const ReturnMessage = true;
-   // await SendOTPEmail(Email, OTP, Data.FullName)
+    // await SendOTPEmail(Email, OTP, Data.FullName)
 
     if (ReturnMessage === true) {
         const Now = moment();
@@ -201,6 +201,28 @@ const VerifyOTP = async (OTPId, OTP, res) => {
 
 /**
  * 
+ * @param {undefined|object} Where 
+ * @param {undefined|string} NextIndex 
+ * @param {undefined|number} Limit 
+ * @param {undefined|object} orderBy 
+ * @returns {Promise<Array<RefreshTokenData>>} Returns DiscussionData
+ */
+const ReadRefreshTokens = async (Where, NextIndex, Limit, orderBy) => {
+    return await Read("RefreshTokens", undefined, NextIndex, Limit, Where, orderBy);
+}
+
+/**
+ * 
+ * @param {string} DocId 
+ * @param {object} data 
+ * @returns 
+ */
+const UpdateRefreshToken = async (DocId, data) => {
+    return await Update("RefreshTokens", data, DocId);
+}
+
+/**
+ * 
  * @param {string} OTPId 
  * @returns {Promise<OTPData>}
  */
@@ -225,6 +247,7 @@ const TokenData = async (CurrentUser) => {
 export {
     ModelLogin, RefreshToken, GenerateToken,
     VerifyOTP, SendRegisterOTP, TokenData,
-    SendPasswordOTP, ReadOneFromOTP, CheckOTP
+    SendPasswordOTP, ReadOneFromOTP, CheckOTP,
+    ReadRefreshTokens, UpdateRefreshToken
 };
 
