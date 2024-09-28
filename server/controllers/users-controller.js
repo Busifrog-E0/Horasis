@@ -339,7 +339,7 @@ const AddUserAsAdmin = async (req, res) => {
         await UpdateRefreshToken(RefreshToken.DocId, { 'SignObject.Role': ["Admin", "User"] });
         return new ObjectId(id)
     }));
-    await UpdateManyUsers({ Role: ["Admin", "User"] }, { "_id": { $in: objectIds } })
+    await UpdateManyUsers({ Roles: ["Admin", "User"] }, { "_id": { $in: objectIds } })
     return res.json(true);
 }
 
