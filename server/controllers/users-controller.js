@@ -1,6 +1,6 @@
 import e from 'express';
 import { ReadOneFromUsers, ReadUsers, UpdateUsers, CreateUsers, UpdateManyUsers } from './../databaseControllers/users-databaseController.js';
-import { ReadOneFromOTP, ReadRefreshTokens, SendPasswordOTP, SendRegisterOTP, TokenData, UpdateRefreshToken, VerifyOTP } from './auth-controller.js';
+import { MaintainAdminRoleArray, ReadOneFromOTP, ReadRefreshTokens, SendPasswordOTP, SendRegisterOTP, TokenData, UpdateRefreshToken, VerifyOTP } from './auth-controller.js';
 import { AlertBoxObject, ComparePassword, GetUserNonEmptyFieldsPercentage, hashPassword } from './common.js';
 import { ReadConnections, UpdateManyConnections } from '../databaseControllers/connections-databaseController.js';
 import { ReadFollows, UpdateManyFollows } from '../databaseControllers/follow-databaseController.js';
@@ -337,6 +337,7 @@ const AddUserAsAdmin = async (req, res) => {
     const objectIds = await Promise.all(UserIds.map(async id => {
         const [RefreshToken] = await ReadRefreshTokens({ 'SignObject.UserId': id }, undefined, 1, { Index: "desc" })
         await UpdateRefreshToken(RefreshToken.DocId, { 'SignObject.Role': ["Admin", "User"] });
+        await MaintainAdminRoleArray(id, "push")
         return new ObjectId(id)
     }));
     await UpdateManyUsers({ Roles: ["Admin", "User"] }, { "_id": { $in: objectIds } })

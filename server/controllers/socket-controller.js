@@ -31,11 +31,6 @@ const ConnectSocket = (expressServer) => {
         //@ts-ignore
         socket.join(socket.user.UserId);
 
-        socket.on('UserRoleChanged', async ({ UserId }) => {
-            io.to(UserId).emit('UpdateRole')
-        });
-        
-
         socket.on('Message', async data => {
 
             // @ts-ignore

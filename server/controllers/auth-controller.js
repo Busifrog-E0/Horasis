@@ -221,6 +221,30 @@ const UpdateRefreshToken = async (DocId, data) => {
     return await Update("RefreshTokens", data, DocId);
 }
 
+const ReadAdminRoleArray = async (UserId) => {
+    return (await Read("PendingAdminRoles", undefined, undefined, undefined, { "AdminArray": UserId }))[0];
+}
+
+/**
+ * 
+ * @param {string} UserId 
+ * @param {"pull"|"push"} action 
+ */
+const MaintainAdminRoleArray = async (UserId, action) => {
+    const [AdminArrayDoc] = await Read("PendingAdminRoles", undefined, undefined, 1, undefined);
+    switch (action) {
+        case "push": {
+            return await Update("PendingAdminRoles", { "AdminArray": UserId }, AdminArrayDoc.DocId, ["$push"], false);
+        }
+        case "pull": {
+            return await Update("PendingAdminRoles", { "AdminArray": UserId }, AdminArrayDoc.DocId, ["$pull"], false);
+        }
+        default: {
+            return;
+        }
+    }
+}
+
 /**
  * 
  * @param {string} OTPId 
@@ -248,6 +272,7 @@ export {
     ModelLogin, RefreshToken, GenerateToken,
     VerifyOTP, SendRegisterOTP, TokenData,
     SendPasswordOTP, ReadOneFromOTP, CheckOTP,
-    ReadRefreshTokens, UpdateRefreshToken
+    ReadRefreshTokens, UpdateRefreshToken,
+    MaintainAdminRoleArray, ReadAdminRoleArray
 };
 
