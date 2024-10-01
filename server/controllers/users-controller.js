@@ -354,6 +354,7 @@ const RemoveUserAsAdmin = async (req, res) => {
     const { UserId } = req.body;
     const [RefreshToken] = await ReadRefreshTokens({ 'SignObject.UserId': UserId }, undefined, 1, { Index: "desc" })
     await UpdateRefreshToken(RefreshToken.DocId, { 'SignObject.Role': ["User"] });
+    await MaintainAdminRoleArray(UserId, "pull");
     await UpdateUsers({ Roles: ["User"] }, UserId);
     return res.json(true);
 }

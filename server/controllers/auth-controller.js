@@ -96,7 +96,7 @@ const CheckOTP = async (req, res) => {
  * @param {object} SignObject 
  */
 const GenerateToken = async (SignObject) => {
-    const Token = jwt.sign(SignObject, ENV.TOKEN_KEY, { expiresIn: 60, });
+    const Token = jwt.sign(SignObject, ENV.TOKEN_KEY, { expiresIn: "2h", });
     const RefreshToken = await Create("RefreshTokens", { SignObject, "Token": Token, "Valid": true });
     console.log(Token);
     return { "Token": Token, "RefreshToken": RefreshToken };
@@ -231,7 +231,7 @@ const ReadAdminRoleArray = async (UserId) => {
  * @param {"pull"|"push"} action 
  */
 const MaintainAdminRoleArray = async (UserId, action) => {
-    const [AdminArrayDoc] = await Read("PendingAdminRoles", undefined, undefined, 1, undefined);
+    const [AdminArrayDoc] = await Read("PendingAdminRoles", undefined, undefined, 1);
     switch (action) {
         case "push": {
             return await Update("PendingAdminRoles", { "AdminArray": UserId }, AdminArrayDoc.DocId, ["$push"], false);
