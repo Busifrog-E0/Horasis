@@ -60,7 +60,7 @@ export const router = createBrowserRouter(
 			<Route path='/' element={<AuthLayout />}>
 				<Route path='/' element={<DashboardLayout />}>
 					<Route path='/' element={<ProfileTabLayout />}>
-						<Route path='/' element={<Activities />} />
+						<Route path='/' element={<Events />} />
 						<Route path='/Activities' element={<Activities />} />
 						<Route path='/Mentions' element={<Mentions />} />
 						<Route path='/Saved' element={<Saved />} />
