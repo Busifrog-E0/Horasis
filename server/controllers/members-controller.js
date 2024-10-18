@@ -3,10 +3,10 @@ import e from 'express';
 import { ReadOneFromMembers, ReadMembers, UpdateMembers, CreateMembers, RemoveMembers, UpdateManyMembers, } from './../databaseControllers/members-databaseController.js';
 import { IncrementDiscussions, ReadOneFromDiscussions } from '../databaseControllers/discussions-databaseController.js';
 import { AlertBoxObject } from './common.js';
-import { ReadOneFromUsers,  } from '../databaseControllers/users-databaseController.js';
+import { ReadOneFromUsers, } from '../databaseControllers/users-databaseController.js';
 import { AggregateConnections } from '../databaseControllers/connections-databaseController.js';
 import { SendNotificationForMemberInvitation, SendNotificationForMemberJoin, SendNotificationForMemberRequest, SendNotificationForMemberRequestStatus } from './notifications-controller.js';
-import { IncrementEvents, ReadOneFromEvents,  } from '../databaseControllers/events-databaseController.js';
+import { IncrementEvents, ReadOneFromEvents, } from '../databaseControllers/events-databaseController.js';
 /**
  * @typedef {import('./../databaseControllers/members-databaseController.js').MemberData} MemberData 
  */
@@ -165,12 +165,12 @@ const InviteMembers = async (req, res) => {
 
         }
     }
-
+    const { Type } = req.body;
     const UserDetails = await ReadOneFromUsers(InviteeId);
     req.body = MemberInit({ MemberId: InviteeId, EntityId, UserDetails }, "Invited");
     await Promise.all([
         await CreateMembers(req.body),
-        await SendNotificationForMemberInvitation(req.body.Type, EntityId, InviteeId, UserId)
+        await SendNotificationForMemberInvitation(Type, EntityId, InviteeId, UserId)
     ])
     return res.json(true);
 }
