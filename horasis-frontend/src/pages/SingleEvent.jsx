@@ -415,7 +415,7 @@ const ShowJoinButton = ({ event }) => {
 	thirtyMinutesBefore.setMinutes(eventStartTime.getMinutes() - 30)
 
 	// Check if the button should be shown
-	const shouldShowJoinButton = event?.IsMember && currentDateTime <= thirtyMinutesBefore
+	const shouldShowJoinButton = event?.IsMember && currentDateTime > thirtyMinutesBefore
 
 	return (
 		<div>
