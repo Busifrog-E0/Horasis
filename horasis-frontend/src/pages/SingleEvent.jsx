@@ -403,6 +403,7 @@ const SingleEvent = () => {
 const ShowJoinButton = ({ event }) => {
 	// Assuming you have event.StartTime available and it's in a valid date format
 	const { IsMember, StartTime } = event
+	const navigate = useNavigate()
 
 	// Convert StartTime to a Date object
 	const eventStartTime = new Date(StartTime) // Ensure StartTime is in a valid format
