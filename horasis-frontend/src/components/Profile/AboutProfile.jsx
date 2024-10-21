@@ -41,6 +41,7 @@ const AboutProfile = ({ user, getUserDetails, isCurrentUser }) => {
 		CompanyName: user?.CompanyName,
 		Country: user?.Country,
 		About: user?.About,
+		LinkedIn: user?.LinkedIn,
 	})
 
 	const validateSingle = (value, key, callback) => {
@@ -177,6 +178,23 @@ const AboutProfile = ({ user, getUserDetails, isCurrentUser }) => {
 									{usernameAvailable.message} {usernameAvailable.available}
 								</p>
 							)}
+						</div>
+
+						<div>
+							<h1 className='text-system-primary-text font-medium text-lg'>Linkedin URL</h1>
+							{/* {errorObj[field] != undefined ? { borderColor: 'red' } : {}} */}
+							<Input
+								className='px-4 py-3 rounded-xl'
+								width='full'
+								name='name'
+								placeholder='LinkedIn Url'
+								setValue={(e) => {
+									validateSingle({ ['LinkedIn']: e }, 'LinkedIn')
+								}}
+								value={updateFormValue.LinkedIn}
+								type='text'
+							/>
+							{errorObj['LinkedIn'] != undefined && <p className='text-brand-red m-0'>{errorObj['LinkedIn']}</p>}
 						</div>
 						{/* <div>
             <h1 className='text-system-primary-text font-medium text-lg'>
