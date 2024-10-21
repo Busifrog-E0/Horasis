@@ -11,7 +11,7 @@ import { useToast } from '../Toast/ToastService'
 import countries from '../../assets/json/countries-with-coords.json'
 import Select from '../ui/Select'
 import edit from '../../assets/icons/edit.svg'
-import close  from '../../assets/icons/close.svg'
+import close from '../../assets/icons/close.svg'
 const AboutProfile = ({ user, getUserDetails, isCurrentUser }) => {
 	const [isOpen, setIsOpen] = useState(false)
 	const [errorObj, setErrorObj] = useState({})
@@ -119,8 +119,7 @@ const AboutProfile = ({ user, getUserDetails, isCurrentUser }) => {
 						onClick={() => {
 							setIsOpen(false)
 						}}>
-					<img src={close} className='h-6  cursor-pointer' alt="" />
-						
+						<img src={close} className='h-6  cursor-pointer' alt='' />
 					</button>
 				</Modal.Header>
 				<Modal.Body padding={10}>
@@ -285,7 +284,7 @@ const AboutProfile = ({ user, getUserDetails, isCurrentUser }) => {
 			<div className='bg-system-secondary-bg p-4 lg:px-10 lg:py-8 rounded-b-lg '>
 				{isCurrentUser ? (
 					<div className='flex w-full items-start justify-end text-system-primary-text'>
-						<img src={edit} alt="" className='h-6 cursor-pointer' onClick={()=>setIsOpen(true)} />
+						<img src={edit} alt='' className='h-6 cursor-pointer' onClick={() => setIsOpen(true)} />
 						{/* <svg
 							className='w-6 h-6 cursor-pointer'
 							aria-hidden='true'
@@ -321,12 +320,16 @@ const AboutProfile = ({ user, getUserDetails, isCurrentUser }) => {
 					<div className='lg:col-span-3'>
 						<h4 className='font-medium text-system-primary-text'>{user && user.Username}</h4>
 					</div>
-					<div>
-						<h4 className='font-medium text-brand-gray-dim'>Email</h4>
-					</div>
-					<div className='lg:col-span-3'>
-						<h4 className='font-medium text-system-primary-text'>{user && user.Email}</h4>
-					</div>
+					{isCurrentUser && (
+						<>
+							<div>
+								<h4 className='font-medium text-brand-gray-dim'>Email</h4>
+							</div>
+							<div className='lg:col-span-3'>
+								<h4 className='font-medium text-system-primary-text'>{user && user.Email}</h4>
+							</div>
+						</>
+					)}
 					<div>
 						<h4 className='font-medium text-brand-gray-dim'>Job Title</h4>
 					</div>
