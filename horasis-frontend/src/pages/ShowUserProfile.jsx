@@ -7,7 +7,7 @@ import company from '../assets/icons/company.svg'
 import cover from '../assets/icons/cover.svg'
 import globe from '../assets/icons/globe.svg'
 import job from '../assets/icons/job.svg'
-import AboutProfile from '../components/Profile/AboutProfile'
+import AboutProfile, { extractLinkedInUsername } from '../components/Profile/AboutProfile'
 import Button from '../components/ui/Button'
 import Spinner from '../components/ui/Spinner'
 import Tab from '../components/ui/Tab'
@@ -297,6 +297,19 @@ const ShowUserProfile = () => {
 										</div>
 										<h4 className='font-medium text-xl text-brand-gray-dim truncate'>{user && user.CompanyName}</h4>
 									</div>
+									{user && user?.LinkedIn && (
+										<div className='flex items-center gap-2'>
+											<div className='justify-end text-system-primary-accent'>
+												{/* <img src={globe} alt='' className='h-6 cursor-pointer' /> */}
+												<p className='text-system-primary-accent font-bold'>in</p>
+											</div>
+											<h4
+												className='font-semibold text-xl text-brand-gray-dim truncate cursor-pointer hover:text-sky-600'
+												onClick={() => window.open(user.LinkedIn, '_blank')}>
+												{user && extractLinkedInUsername(user.LinkedIn)}
+											</h4>
+										</div>
+									)}
 								</div>
 							</>
 						)}

@@ -12,6 +12,18 @@ import countries from '../../assets/json/countries-with-coords.json'
 import Select from '../ui/Select'
 import edit from '../../assets/icons/edit.svg'
 import close from '../../assets/icons/close.svg'
+
+export const extractLinkedInUsername = (url) => {
+	// Define the regular expression to match LinkedIn profile URLs
+	const pattern = /linkedin\.com\/in\/([a-zA-Z0-9\-]+)/
+
+	// Use the regex to find the match in the URL
+	const match = url.match(pattern)
+
+	// Return the matched username or null if not found
+	return match ? `in @${match[1]}` : null
+}
+
 const AboutProfile = ({ user, getUserDetails, isCurrentUser }) => {
 	const [isOpen, setIsOpen] = useState(false)
 	const [errorObj, setErrorObj] = useState({})
@@ -320,6 +332,21 @@ const AboutProfile = ({ user, getUserDetails, isCurrentUser }) => {
 					<div className='lg:col-span-3'>
 						<h4 className='font-medium text-system-primary-text'>{user && user.Username}</h4>
 					</div>
+
+					{user && user.LinkedIn && (
+						<>
+							<div>
+								<h4 className='font-medium text-brand-gray-dim'>Linkedin</h4>
+							</div>
+							<div className='lg:col-span-3'>
+								<h4
+									className='font-semibold text-system-primary-text cursor-pointer hover:text-blue-500'
+									onClick={() => window.open(user.LinkedIn, '_blank')}>
+									{user && extractLinkedInUsername(user.LinkedIn)}
+								</h4>
+							</div>
+						</>
+					)}
 					{isCurrentUser && (
 						<>
 							<div>
