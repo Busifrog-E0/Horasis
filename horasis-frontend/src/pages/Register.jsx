@@ -266,24 +266,7 @@ const Register = () => {
 								Login to your account to access all the features of Horasis!
 							</p>
 						</div>
-						<div>
-							<h1 className='text-system-primary-text font-medium text-lg'>
-								Email<span className='text-brand-red'>*</span>
-							</h1>
-							{/* {errorObj[field] != undefined ? { borderColor: 'red' } : {}} */}
-							<Input
-								className='py-4 rounded-xl border-2 border-system-file-border-accent'
-								width='full'
-								name='email'
-								placeholder='Ex. abc@efg.com'
-								setValue={(e) => {
-									validateSingle({ ['Email']: e }, 'Email')
-								}}
-								value={registerFormValue.Email}
-								type='text'
-							/>
-							{errorObj['Email'] != undefined && <p className='text-brand-red m-0'>{errorObj['Email']}</p>}
-						</div>
+						{/* Name */}
 						<div>
 							<h1 className='text-system-primary-text font-medium text-lg'>
 								Your Name<span className='text-brand-red'>*</span>
@@ -302,6 +285,8 @@ const Register = () => {
 							/>
 							{errorObj['FullName'] != undefined && <p className='text-brand-red m-0'>{errorObj['FullName']}</p>}
 						</div>
+
+						{/* Username */}
 						<div>
 							<h1 className='text-system-primary-text font-medium text-lg'>
 								Username<span className='text-brand-red'>*</span>
@@ -329,6 +314,124 @@ const Register = () => {
 								</p>
 							)}
 						</div>
+
+						{/* Email */}
+						<div>
+							<h1 className='text-system-primary-text font-medium text-lg'>
+								Email<span className='text-brand-red'>*</span>
+							</h1>
+							{/* {errorObj[field] != undefined ? { borderColor: 'red' } : {}} */}
+							<Input
+								className='py-4 rounded-xl border-2 border-system-file-border-accent'
+								width='full'
+								name='email'
+								placeholder='Ex. abc@efg.com'
+								setValue={(e) => {
+									validateSingle({ ['Email']: e }, 'Email')
+								}}
+								value={registerFormValue.Email}
+								type='text'
+							/>
+							{errorObj['Email'] != undefined && <p className='text-brand-red m-0'>{errorObj['Email']}</p>}
+						</div>
+
+						{/* Job Title */}
+						<div>
+							<h1 className='text-system-primary-text font-medium text-lg'>
+								Job Title<span className='text-brand-red'>*</span>
+							</h1>
+							{/* {errorObj[field] != undefined ? { borderColor: 'red' } : {}} */}
+							<Input
+								className='py-4 rounded-xl border-2 border-system-file-border-accent'
+								width='full'
+								name='jobTitle'
+								placeholder='Ex. Consultant'
+								setValue={(e) => {
+									validateSingle({ ['JobTitle']: e }, 'JobTitle')
+								}}
+								value={registerFormValue.JobTitle}
+								type='text'
+							/>
+							{errorObj['JobTitle'] != undefined && <p className='text-brand-red m-0'>{errorObj['JobTitle']}</p>}
+						</div>
+
+						{/* Company Name */}
+						<div>
+							<h1 className='text-system-primary-text font-medium text-lg'>
+								Company Name<span className='text-brand-red'>*</span>
+							</h1>
+							{/* {errorObj[field] != undefined ? { borderColor: 'red' } : {}} */}
+							<Input
+								className='py-4 rounded-xl border-2 border-system-file-border-accent'
+								width='full'
+								name='companyName'
+								placeholder='Ex. xyz Ltd.'
+								setValue={(e) => {
+									validateSingle({ ['CompanyName']: e }, 'CompanyName')
+								}}
+								value={registerFormValue.CompanyName}
+								type='text'
+							/>
+							{errorObj['CompanyName'] != undefined && <p className='text-brand-red m-0'>{errorObj['CompanyName']}</p>}
+						</div>
+
+						{/* Industry */}
+						<div>
+							<h1 className='text-system-primary-text font-medium text-lg'>
+								Industry<span className='text-brand-red'>*</span>
+							</h1>
+							{/* {errorObj[field] != undefined ? { borderColor: 'red' } : {}} */}
+							<Input
+								className='py-4 rounded-xl border-2 border-system-file-border-accent'
+								width='full'
+								name='industry'
+								placeholder='Ex. Health Care'
+								setValue={(e) => {
+									validateSingle({ ['Industry']: e }, 'Industry')
+								}}
+								value={registerFormValue.Industry}
+								type='text'
+							/>
+							{errorObj['Industry'] != undefined && <p className='text-brand-red m-0'>{errorObj['Industry']}</p>}
+						</div>
+
+						{/* Country */}
+						<div>
+							<h1 className='text-system-primary-text font-medium text-lg'>Country</h1>
+							<Select
+								className='py-4 rounded-xl border-2 border-system-file-border-accent'
+								width='full'
+								placeholder='Select a country'
+								setValue={(item) => {
+									validateSingle({ ['Country']: item }, 'Country')
+								}}
+								value={registerFormValue.Country}
+								options={countryOptions}
+								isSearchable={true}
+							/>
+							{errorObj['Country'] != undefined && <p className='text-brand-red m-0'>{errorObj['Country']}</p>}
+						</div>
+
+						{/* City */}
+						<div>
+							<h1 className='text-system-primary-text font-medium text-lg'>
+								City<span className='text-brand-red'>*</span>
+							</h1>
+							{/* {errorObj[field] != undefined ? { borderColor: 'red' } : {}} */}
+							<Input
+								className='py-4 rounded-xl border-2 border-system-file-border-accent'
+								width='full'
+								name='city'
+								placeholder='Ex. Melbourne'
+								setValue={(e) => {
+									validateSingle({ ['City']: e }, 'City')
+								}}
+								value={registerFormValue.City}
+								type='text'
+							/>
+							{errorObj['City'] != undefined && <p className='text-brand-red m-0'>{errorObj['City']}</p>}
+						</div>
+						{/* Password */}
 						<div>
 							<h1 className='text-system-primary-text font-medium text-lg'>
 								Password<span className='text-brand-red'>*</span>
@@ -360,6 +463,7 @@ const Register = () => {
 							/>
 							{errorObj['Password'] != undefined && <p className='text-brand-red m-0'>{errorObj['Password']}</p>}
 						</div>
+						{/* Confirm Password */}
 						<div>
 							<h1 className='text-system-primary-text font-medium text-lg'>
 								Confirm Password<span className='text-brand-red'>*</span>
@@ -393,110 +497,8 @@ const Register = () => {
 								<p className='text-brand-red m-0'>{errorObj['ConfirmPassword']}</p>
 							)}
 						</div>
-						{/* <div>
-						<h1 className='text-system-primary-text font-medium text-lg'>
-							Country<span className='text-brand-red'>*</span>
-						</h1>
-						<Input
-							className='py-4 rounded-xl border-2 border-system-file-border-accent'
-							width='full'
-							name='country'
-							placeholder='Ex. Australia'
-							setValue={(e) => {
-								validateSingle({ ['Country']: e }, 'Country')
-							}}
-							value={registerFormValue.Country}
-							type='text'
-						/>
-						{errorObj['Country'] != undefined && <p className='text-brand-red m-0'>{errorObj['Country']}</p>}
-					</div> */}
-						<div>
-							<h1 className='text-system-primary-text font-medium text-lg'>Country</h1>
-							<Select
-								className='py-4 rounded-xl border-2 border-system-file-border-accent'
-								width='full'
-								placeholder='Select a country'
-								setValue={(item) => {
-									validateSingle({ ['Country']: item }, 'Country')
-								}}
-								value={registerFormValue.Country}
-								options={countryOptions}
-								isSearchable={true}
-							/>
-							{errorObj['Country'] != undefined && <p className='text-brand-red m-0'>{errorObj['Country']}</p>}
-						</div>
-						<div>
-							<h1 className='text-system-primary-text font-medium text-lg'>
-								City<span className='text-brand-red'>*</span>
-							</h1>
-							{/* {errorObj[field] != undefined ? { borderColor: 'red' } : {}} */}
-							<Input
-								className='py-4 rounded-xl border-2 border-system-file-border-accent'
-								width='full'
-								name='city'
-								placeholder='Ex. Melbourne'
-								setValue={(e) => {
-									validateSingle({ ['City']: e }, 'City')
-								}}
-								value={registerFormValue.City}
-								type='text'
-							/>
-							{errorObj['City'] != undefined && <p className='text-brand-red m-0'>{errorObj['City']}</p>}
-						</div>
-						<div>
-							<h1 className='text-system-primary-text font-medium text-lg'>
-								Job Title<span className='text-brand-red'>*</span>
-							</h1>
-							{/* {errorObj[field] != undefined ? { borderColor: 'red' } : {}} */}
-							<Input
-								className='py-4 rounded-xl border-2 border-system-file-border-accent'
-								width='full'
-								name='jobTitle'
-								placeholder='Ex. Consultant'
-								setValue={(e) => {
-									validateSingle({ ['JobTitle']: e }, 'JobTitle')
-								}}
-								value={registerFormValue.JobTitle}
-								type='text'
-							/>
-							{errorObj['JobTitle'] != undefined && <p className='text-brand-red m-0'>{errorObj['JobTitle']}</p>}
-						</div>
-						<div>
-							<h1 className='text-system-primary-text font-medium text-lg'>
-								Industry<span className='text-brand-red'>*</span>
-							</h1>
-							{/* {errorObj[field] != undefined ? { borderColor: 'red' } : {}} */}
-							<Input
-								className='py-4 rounded-xl border-2 border-system-file-border-accent'
-								width='full'
-								name='industry'
-								placeholder='Ex. Health Care'
-								setValue={(e) => {
-									validateSingle({ ['Industry']: e }, 'Industry')
-								}}
-								value={registerFormValue.Industry}
-								type='text'
-							/>
-							{errorObj['Industry'] != undefined && <p className='text-brand-red m-0'>{errorObj['Industry']}</p>}
-						</div>
-						<div>
-							<h1 className='text-system-primary-text font-medium text-lg'>
-								Company Name<span className='text-brand-red'>*</span>
-							</h1>
-							{/* {errorObj[field] != undefined ? { borderColor: 'red' } : {}} */}
-							<Input
-								className='py-4 rounded-xl border-2 border-system-file-border-accent'
-								width='full'
-								name='companyName'
-								placeholder='Ex. xyz Ltd.'
-								setValue={(e) => {
-									validateSingle({ ['CompanyName']: e }, 'CompanyName')
-								}}
-								value={registerFormValue.CompanyName}
-								type='text'
-							/>
-							{errorObj['CompanyName'] != undefined && <p className='text-brand-red m-0'>{errorObj['CompanyName']}</p>}
-						</div>
+
+						{/* Bio */}
 						<div>
 							<h1 className='text-system-primary-text font-medium text-lg'>About Yourself</h1>
 							{/* {errorObj[field] != undefined ? { borderColor: 'red' } : {}} */}
@@ -579,3 +581,23 @@ const Register = () => {
 }
 
 export default Register
+
+{
+	/* <div>
+						<h1 className='text-system-primary-text font-medium text-lg'>
+							Country<span className='text-brand-red'>*</span>
+						</h1>
+						<Input
+							className='py-4 rounded-xl border-2 border-system-file-border-accent'
+							width='full'
+							name='country'
+							placeholder='Ex. Australia'
+							setValue={(e) => {
+								validateSingle({ ['Country']: e }, 'Country')
+							}}
+							value={registerFormValue.Country}
+							type='text'
+						/>
+						{errorObj['Country'] != undefined && <p className='text-brand-red m-0'>{errorObj['Country']}</p>}
+					</div> */
+}
