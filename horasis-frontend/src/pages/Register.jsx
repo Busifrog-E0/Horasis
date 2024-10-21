@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react'
+import { useContext, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Logo from '../components/Common/Logo'
 import Button from '../components/ui/Button'
@@ -63,6 +63,9 @@ const Register = () => {
 	const [termsChecked, setTermsChecked] = useState(false)
 	const [countryOptions, setCountryOptions] = useState(countries.countries.map((item) => item.name))
 
+	const passwordRef = useRef()
+	const confirmPasswordRef = useRef()
+
 	const { isLoading, postData: submitRegister } = usePostData({
 		onSuccess: (result) => {
 			setOtpid(result)
@@ -92,6 +95,17 @@ const Register = () => {
 			}
 		},
 	})
+
+	const handlePasswordChange = (e) => {
+		passwordRef.current = e.target.value
+		validateSingle({ ['Password']: e.target.value }, 'Password')
+	}
+
+	const handleConfirmPasswordChange = (e) => {
+		confirmPasswordRef.current = e.target.value
+		validateConfirmPassword({ ['ConfirmPassword']: e.target.value }, 'ConfirmPassword')
+	}
+
 	const validateSingle = (value, key, callback) => {
 		setRegisterFormValue({ ...registerFormValue, ...value })
 		const { error, warning } = registerValidation.extract(key).validate(value[key], {
@@ -320,14 +334,16 @@ const Register = () => {
 								Password<span className='text-brand-red'>*</span>
 							</h1>
 							<Input
+								ref={passwordRef}
 								className='py-4 rounded-xl border-2 border-system-file-border-accent'
 								width='full'
 								name='password'
 								placeholder='Enter the password'
-								setValue={(e) => {
-									validateSingle({ ['Password']: e }, 'Password')
-								}}
-								value={registerFormValue.Password}
+								// setValue={(e) => {
+								// 	validateSingle({ ['Password']: e }, 'Password')
+								// }}
+								// value={registerFormValue.Password}
+								onChange={handlePasswordChange}
 								type={showpass ? 'text' : 'password'}
 								withIcon='true'
 								icon={
@@ -349,14 +365,16 @@ const Register = () => {
 								Confirm Password<span className='text-brand-red'>*</span>
 							</h1>
 							<Input
+								ref={confirmPasswordRef}
 								className='py-4 rounded-xl border-2 border-system-file-border-accent'
 								width='full'
 								name='confirmPassword'
 								placeholder='Confirm password'
-								setValue={(e) => {
-									validateConfirmPassword({ ['ConfirmPassword']: e }, 'ConfirmPassword')
-								}}
-								value={registerFormValue.ConfirmPassword}
+								// setValue={(e) => {
+								// 	validateConfirmPassword({ ['ConfirmPassword']: e }, 'ConfirmPassword')
+								// }}
+								// value={registerFormValue.ConfirmPassword}
+								onChange={handleConfirmPasswordChange}
 								type={showConfirmPass ? 'text' : 'password'}
 								withIcon='true'
 								icon={

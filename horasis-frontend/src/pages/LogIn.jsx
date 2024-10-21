@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react'
+import { useContext, useRef, useState } from 'react'
 import LoaderOverlay from '../components/Loader/LoaderOverlay'
 import LoginForm from '../components/Login/LoginForm'
 import Logo from '../components/Common/Logo'
@@ -38,6 +38,7 @@ const LogIn = () => {
 	})
 
 	const [showpass, setShowpass] = useState(false)
+	const passwordRef = useRef()
 
 	const [errorObj, setErrorObj] = useState({})
 	const [loginFormValue, setLoginFormValue] = useState({
@@ -76,6 +77,11 @@ const LogIn = () => {
 				callback()
 			}
 		}
+	}
+
+	const handlePasswordChange = (e) => {
+		passwordRef.current = e.target.value
+		validateSingle({ ['Password']: e.target.value }, 'Password')
 	}
 
 	const login = () => {
@@ -121,20 +127,22 @@ const LogIn = () => {
 					<div>
 						<h1 className='text-system-primary-text font-medium text-lg'>Password</h1>
 						<Input
+							ref={passwordRef}
 							className='py-4 rounded-xl border-2 border-system-file-border-accent'
 							width='full'
 							name='password'
 							placeholder='Enter the password'
-							setValue={(e) => {
-								validateSingle({ ['Password']: e }, 'Password')
-							}}
+							// setValue={(e) => {
+							// 	validateSingle({ ['Password']: e }, 'Password')
+							// }}
 							onKeyDown={(e) => {
 								if (e.key === 'Enter') {
 									e.preventDefault()
 									validate(login)
 								}
 							}}
-							value={loginFormValue.Password}
+							onChange={handlePasswordChange}
+							// value={loginFormValue.Password}
 							type={showpass ? 'text' : 'password'}
 							withIcon='true'
 							icon={

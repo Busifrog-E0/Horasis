@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import close from '../assets/icons/close.svg'
 import eyeoff from '../assets/icons/eyeoff.svg'
@@ -63,6 +63,19 @@ const ForgotPassword = () => {
 	})
 	const [showpass, setShowpass] = useState(false)
 	const [showConfirmPass, setShowConfirmPass] = useState(false)
+
+	const passwordRef = useRef()
+	const confirmPasswordRef = useRef()
+
+	const handlePasswordChange = (e) => {
+		passwordRef.current = e.target.value
+		validateNewPassSingle({ ['Password']: e.target.value }, 'Password')
+	}
+
+	const handleConfirmPasswordChange = (e) => {
+		confirmPasswordRef.current = e.target.value
+		validateConfirmPassword({ ['ConfirmPassword']: e.target.value }, 'ConfirmPassword')
+	}
 
 	const validateNewPassSingle = (value, key, callback) => {
 		setNewPassFormValue({ ...newPassFormValue, ...value })
@@ -249,14 +262,16 @@ const ForgotPassword = () => {
 										Password<span className='text-brand-red'>*</span>
 									</h1>
 									<Input
+										ref={passwordRef}
+										onChange={handlePasswordChange}
 										className='py-4 rounded-xl border-2 border-system-file-border-accent'
 										width='full'
 										name='password'
 										placeholder='Enter the password'
-										setValue={(e) => {
-											validateNewPassSingle({ ['Password']: e }, 'Password')
-										}}
-										value={newPassFormValue.Password}
+										// setValue={(e) => {
+										// 	validateNewPassSingle({ ['Password']: e }, 'Password')
+										// }}
+										// value={newPassFormValue.Password}
 										type={showpass ? 'text' : 'password'}
 										withIcon='true'
 										icon={
@@ -278,14 +293,16 @@ const ForgotPassword = () => {
 										Confirm Password<span className='text-brand-red'>*</span>
 									</h1>
 									<Input
+										ref={confirmPasswordRef}
+										onChange={handleConfirmPasswordChange}
 										className='py-4 rounded-xl border-2 border-system-file-border-accent'
 										width='full'
 										name='confirmPassword'
 										placeholder='Confirm password'
-										setValue={(e) => {
-											validateConfirmPassword({ ['ConfirmPassword']: e }, 'ConfirmPassword')
-										}}
-										value={newPassFormValue.ConfirmPassword}
+										// setValue={(e) => {
+										// 	validateConfirmPassword({ ['ConfirmPassword']: e }, 'ConfirmPassword')
+										// }}
+										// value={newPassFormValue.ConfirmPassword}
 										type={showConfirmPass ? 'text' : 'password'}
 										withIcon='true'
 										icon={
