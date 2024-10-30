@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import ENV from "./../Env.js";
 import dataHandling from '../databaseControllers/functions.js';
 import { getOTP } from "./common.js";
-import { SendOTPEmail } from "./emails-controller.js";
+import { ForgotPasswordOTPEmail, SendOTPEmail } from "./emails-controller.js";
 import moment from "moment";
 import { ReadUsers } from "../databaseControllers/users-databaseController.js";
 const { Read, Create, Delete, Update } = dataHandling;
@@ -116,7 +116,8 @@ const SendRegisterOTP = async (Email, Data, Description, res) => {
     }
     const OTP = getOTP(TestUser);
 
-    const ReturnMessage = true;           //await SendOTPEmail(Email, OTP, Data.FullName, Description)
+    const ReturnMessage = true;
+    // await SendOTPEmail(Email, OTP, Data.FullName)
 
     if (ReturnMessage === true) {
         const Now = moment();
@@ -144,8 +145,9 @@ const SendPasswordOTP = async (Email, res) => {
         TestUser = true;
     }
     const OTP = getOTP(TestUser);
-    const User = (await ReadUsers({ Email }, undefined, 1, undefined))[0];
-    const ReturnMessage = true;           //await SendOTPEmail(Email, OTP, User.FullName, "Verify the OTP to change your password")
+    const [User] = (await ReadUsers({ Email }, undefined, 1, undefined));
+    const ReturnMessage = true;
+    //await ForgotPasswordOTPEmail(Email, User.FullName, OTP)
 
     if (ReturnMessage === true) {
         const Now = moment();
@@ -199,6 +201,52 @@ const VerifyOTP = async (OTPId, OTP, res) => {
 
 /**
  * 
+ * @param {undefined|object} Where 
+ * @param {undefined|string} NextIndex 
+ * @param {undefined|number} Limit 
+ * @param {undefined|object} orderBy 
+ * @returns {Promise<Array<RefreshTokenData>>} Returns DiscussionData
+ */
+const ReadRefreshTokens = async (Where, NextIndex, Limit, orderBy) => {
+    return await Read("RefreshTokens", undefined, NextIndex, Limit, Where, orderBy);
+}
+
+/**
+ * 
+ * @param {string} DocId 
+ * @param {object} data 
+ * @returns 
+ */
+const UpdateRefreshToken = async (DocId, data) => {
+    return await Update("RefreshTokens", data, DocId);
+}
+
+const ReadAdminRoleArray = async (UserId) => {
+    return (await Read("PendingAdminRoles", undefined, undefined, undefined, { "AdminArray": UserId }))[0];
+}
+
+/**
+ * 
+ * @param {string} UserId 
+ * @param {"pull"|"push"} action 
+ */
+const MaintainAdminRoleArray = async (UserId, action) => {
+    const [AdminArrayDoc] = await Read("PendingAdminRoles", undefined, undefined, 1);
+    switch (action) {
+        case "push": {
+            return await Update("PendingAdminRoles", { "AdminArray": UserId }, AdminArrayDoc.DocId, ["$push"], false);
+        }
+        case "pull": {
+            return await Update("PendingAdminRoles", { "AdminArray": UserId }, AdminArrayDoc.DocId, ["$pull"], false);
+        }
+        default: {
+            return;
+        }
+    }
+}
+
+/**
+ * 
  * @param {string} OTPId 
  * @returns {Promise<OTPData>}
  */
@@ -223,6 +271,8 @@ const TokenData = async (CurrentUser) => {
 export {
     ModelLogin, RefreshToken, GenerateToken,
     VerifyOTP, SendRegisterOTP, TokenData,
-    SendPasswordOTP, ReadOneFromOTP, CheckOTP
+    SendPasswordOTP, ReadOneFromOTP, CheckOTP,
+    ReadRefreshTokens, UpdateRefreshToken,
+    MaintainAdminRoleArray, ReadAdminRoleArray
 };
 

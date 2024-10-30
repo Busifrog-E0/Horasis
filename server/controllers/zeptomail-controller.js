@@ -2,39 +2,36 @@ import ENV from "../Env.js";
 
 import axios from 'axios';
 
+import {SendMailClient} from 'zeptomail'
 
+const url = "api.zeptomail.in/v1.1/email";
+const token = ENV.ZeptoMailToken;
+
+let client = new SendMailClient({ url, token });
 
 /**
  * 
  * @param {string} emailid 
  * @param {string} subject 
- * @param {string} template_key 
+ * @param {string} htmlbody 
  * @param {string} bounce_address 
  * @param {string} from_address
- * @param {object} merge_info
  * @returns {Promise<true|string>}
  */
-const EmailAPI = async (emailid, subject, template_key, merge_info, from_address = "noreply@epoqzero.com", bounce_address = "bounce@support.epoqzero.com",) => {
+const EmailAPI = async (emailid, subject, htmlbody, from_address = "noreply@epoqzero.com", bounce_address = "bounce@support.epoqzero.com",) => {
     const data = {
         bounce_address,
         "from": { 'address': from_address },
         "to": [{ 'email_address': { 'address': emailid } }],
         "subject": subject,
-        "mail_template_key": template_key,
-
-        merge_info,
-        // "htmlbody": "<div><b> Test email sent successfully.</b></div>",
+        "htmlbody": htmlbody,
     };
     // @ts-ignore
-    return axios({
-        method: 'post',
-        url: `https://api.zeptomail.in/v1.1/email/template`,
-        headers: {
-            "accept": "application/json",
-            'content-type': 'application/json',
-            "authorization": `${ENV.ZeptoMailToken}`,
-        },
-        data: data,
+    return client.sendMail({
+        "from": { 'address': from_address },
+        "to": [{ 'email_address': { 'address': emailid } }],
+        "subject": subject,
+        "htmlbody": htmlbody,
     })
         .then(snap => {
             console.log(emailid);

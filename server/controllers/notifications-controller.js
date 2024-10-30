@@ -56,6 +56,42 @@ const GetOneFromNotifications = async (req, res) => {
  * @returns 
  */
 const AddContentAndStatusToNotification = async (Notification) => {
+    if (Notification.Type === "Like") {
+        const [Activity, Likes] = await Promise.all([
+            ReadOneFromActivities(Notification.EntityId),
+            ReadLikes({ EntityId: Notification.EntityId }, undefined, 2, undefined)
+        ])
+        const { NoOfLikes } = Activity;
+        switch (NoOfLikes) {
+            case (1): {
+                Notification.Content = `@${Likes[0].UserDetails.FullName}@ liked your Activity!`;
+                Notification.UserDetails = Likes[0].UserDetails;
+                Notification.ContentLinks = [{ Text: Likes[0].UserDetails.FullName, Link: `/ViewProfile/${Likes[0].UserId}` }]
+                break;
+            }
+            case (2): {
+                Notification.Content = `@${Likes[0].UserDetails.FullName}@ and @${Likes[1].UserDetails.FullName}@ liked your Activity!`;
+                Notification.UserDetails = Likes[0].UserDetails;
+                Notification.ContentLinks = [
+                    { Text: Likes[0].UserDetails.FullName, Link: `/ViewProfile/${Likes[0].UserId}` },
+                    { Text: Likes[1].UserDetails.FullName, Link: `/ViewProfile/${Likes[1].UserId}` }
+                ]
+                break;
+            }
+            case 0: {
+                break;
+            }
+            default: {
+                Notification.Content = `@${Likes[0].UserDetails.FullName}@, @${Likes[1].UserDetails.FullName}@ and ${NoOfLikes - 2} others liked your Activity!`;
+                Notification.UserDetails = Likes[0].UserDetails;
+                Notification.ContentLinks = [
+                    { Text: Likes[0].UserDetails.FullName, Link: `/ViewProfile/${Likes[0].UserId}` },
+                    { Text: Likes[1].UserDetails.FullName, Link: `/ViewProfile/${Likes[1].UserId}` }
+                ]
+                break;
+            }
+        }
+    }
     if (Notification.Type === "Connection-Request") {
         const ConnectionRequestStatus = await ConnectionStatus(Notification.RecipientId, Notification.UserDetails.DocId);
         switch (ConnectionRequestStatus.Status) {
@@ -213,40 +249,39 @@ const SendNotificationstoCommentMentions = async (Mentions, UserId, ActivityId) 
  * @returns 
  */
 const SendNotificationsforActivityLikes = async (UserId, ActivityId) => {
+    const [Notification] = await ReadNotifications({ EntityId: ActivityId, Type: "Like" }, undefined, 1, undefined);
+    if (Notification) {
+        return;
+    }
     const [UserDetails, Activity] = await Promise.all([
         ReadOneFromUsers(UserId),
         ReadOneFromActivities(ActivityId),
     ]);
-    let Content = ""
-    if (Activity.NoOfLikes === 1) {
-        const NotificationObject = {
-            NotifierId: UserId,
-            EntityId: ActivityId,
-            EntityType: "Activity",
-            UserId: Activity.UserId, Content: `@${UserDetails.FullName}@ liked your Activity!`,
-            Link: `/activities/${ActivityId}`,
-            Type: "Like",
-            ContentLinks: [{ Text: UserDetails.FullName, Link: `/ViewProfile/${UserId}` }],
-            UserDetails
-        }
-        return SendNotificationToUser(NotificationObject, Activity.UserId);
+    const NotificationObject = {
+        NotifierId: UserId,
+        EntityId: ActivityId,
+        EntityType: "Activity",
+        Content: "",
+        Link: `/activities/${ActivityId}`,
+        Type: "Like",
+        ContentLinks: [],
+        UserDetails
     }
-    let Likes = await ReadLikes({ EntityId: ActivityId }, undefined, 2, undefined);
-    Likes = await Promise.all(Likes.map(async like => { return { ...like, UserDetails: await ReadOneFromUsers(like.UserId) } }))
-    if (Activity.NoOfLikes === 2) {
-        Content = `@${Likes[0].UserDetails.FullName}@ and @${Likes[1].UserDetails.FullName}@ liked your Activity!`;
-    }
-    if (Activity.NoOfLikes > 2) {
-        Content = `@${Likes[0].UserDetails.FullName}@ and @${Likes[1].UserDetails.FullName}@ and ${Activity.NoOfLikes - 2} others liked your Activity!`;
-    }
-    const Notification = await ReadNotifications({ UserId: Activity.UserId, EntityId: ActivityId, Type: "Like" }, undefined, 1, undefined);
-    return await UpdateNotifications({
-        Content, HasSeen: false,
-        ContentLinks: [
-            { Text: Likes[0].UserDetails.FullName, Link: `/ViewProfile/${Likes[0].UserId}` },
-            { Text: Likes[1].UserDetails.FullName, Link: `/ViewProfile/${Likes[1].UserId}` }]
-    }, Notification[0].DocId);
+    return SendNotificationToUser(NotificationObject, Activity.UserId);
+}
 
+/**
+ * 
+ * @param {string} ActivityId 
+ * @returns 
+ */
+const RemoveNotificationForActivityLikes = async (ActivityId) => {
+    const Activity = await ReadOneFromActivities(ActivityId);
+    if (Activity.NoOfLikes === 0) {
+        const [Notification] = await ReadNotifications({ EntityId: ActivityId, Type: "Like" }, undefined, 1, undefined);
+        await RemoveNotifications(Notification.DocId);
+    }
+    return;
 }
 
 /**
@@ -333,7 +368,7 @@ const SendNotificationsForConnectionAccept = async (ConnectionId, SenderId, Rece
 
 /************************************************************************FOLLOW********************************************************************************************************* */
 
-const SendNotificationsForFollow = async (FollowerId, UserId) => {
+const SendNotificationsForFollow = async (FollowerId, FolloweeId) => {
     const Follower = await ReadOneFromUsers(FollowerId);
     const NotificationObject = {
         NotifierId: FollowerId,
@@ -345,7 +380,7 @@ const SendNotificationsForFollow = async (FollowerId, UserId) => {
         ContentLinks: [{ Text: Follower.FullName, Link: `/ViewProfile/${FollowerId}` }],
         UserDetails: Follower
     }
-    return await SendNotificationToUser(NotificationObject, UserId);
+    return await SendNotificationToUser(NotificationObject, FolloweeId);
 }
 
 
@@ -354,8 +389,8 @@ const SendNotificationsForFollow = async (FollowerId, UserId) => {
  * @param {string} FollowerId 
  * @returns 
  */
-const RemoveNotificationsForFollow = async (FollowerId) => {
-    const [Notification] = (await ReadNotifications({ EntityId: FollowerId }, undefined, 1, undefined));
+const RemoveNotificationsForFollow = async (FollowerId, FolloweeId) => {
+    const [Notification] = (await ReadNotifications({ EntityId: FollowerId, RecipientId: FolloweeId }, undefined, 1, undefined));
     return RemoveNotifications(Notification.DocId);
 }
 
@@ -389,7 +424,7 @@ const SendNotificationForMemberJoin = async (Type, EntityId, UserId) => {
         NotifierId: UserId,
         EntityId: EntityId,
         EntityType: Type,
-        Content: `@${UserDetails.FullName}@ joined your ${Type}  ${EntityName}!`,
+        Content: `@${UserDetails.FullName}@ joined your ${Type} : ${EntityName}!`,
         Link: Link,
         Type: "Join",
         ContentLinks: [{ Text: UserDetails.FullName, Link: `/ViewProfile/${UserId}` }],
@@ -519,8 +554,8 @@ const SendNotificationForMemberInvitation = async (Type, EntityId, UserId, Sende
 }
 
 const RemoveNotificationForMember = async (EntityId, UserId) => {
-    const Notifications = await ReadNotifications({ EntityId, RecipientId: UserId }, undefined, -1, undefined);
-    const NotificationsForAdmin = await ReadNotifications({ EntityId, NotifierId: UserId }, undefined, -1, undefined);
+    const Notifications = await ReadNotifications({ EntityId, RecipientId: UserId, Type: { $in: ["Invitation", "Join-Status", "Join-Request"] } }, undefined, -1, undefined);
+    const NotificationsForAdmin = await ReadNotifications({ EntityId, NotifierId: UserId ,Type : "Join" }, undefined, -1, undefined);
     return Promise.all([...Notifications, ...NotificationsForAdmin].map(Notification => RemoveNotifications(Notification.DocId)));
 }
 
@@ -579,6 +614,6 @@ export {
     SendNotificationToUser, SendNotificationForMemberJoin, SendNotificationsForConnectionAccept, SendNotificationsForConnectionRequest,
     RemoveNotificationsAfterActivityMentionPatch, RemoveNotificationsForConnectionRequest, GetOneFromNotifications,
     RemoveNotificationsForFollow, RemoveNotificationForMember, SendNotificationToUserOnCommentPost, RemoveNotificationForEntity,
-    SendNotificationForSpeaker, RemoveNotificationForSpeaker
+    SendNotificationForSpeaker, RemoveNotificationForSpeaker, RemoveNotificationForActivityLikes
 
 }

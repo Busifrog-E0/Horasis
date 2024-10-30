@@ -1,7 +1,7 @@
 import e from 'express';
 
 import { ReadOneFromFollows, ReadFollows, UpdateFollows, CreateFollows, RemoveFollows, GetFollowCount, } from './../databaseControllers/follow-databaseController.js';
-import { ViewOtherUserData } from './users-controller.js';
+import { AddConnectionstoUser, RemoveConnectionsToUser, ViewOtherUserData } from './users-controller.js';
 import { AlertBoxObject } from './common.js';
 import { ReadOneFromUsers } from '../databaseControllers/users-databaseController.js';
 import { RemoveNotificationsForFollow, SendNotificationsForFollow } from './notifications-controller.js';
@@ -100,7 +100,8 @@ const PostFollows = async (req, res) => {
     const UserDetails = await Promise.all([ReadOneFromUsers(FolloweeId), ReadOneFromUsers(FollowerId)]);
     req.body.UserDetails = UserDetails;
     await CreateFollows(req.body);
-    await SendNotificationsForFollow(FollowerId, FolloweeId); 
+    await SendNotificationsForFollow(FollowerId, FolloweeId);
+    AddConnectionstoUser(FolloweeId, FollowerId);
     return res.json(true);
 }
 
@@ -123,14 +124,17 @@ const PatchFollows = async (req, res) => {
  * @returns {Promise<e.Response<true>>}
  */
 const DeleteFollows = async (req, res) => {
-    const { FolloweeId, UserId } = req.params;
+    const { FolloweeId } = req.params;
+    //@ts-ignore
+    const { UserId } = req.user;
     //@ts-ignore
     const Follow = await ReadFollows({ FolloweeId, FollowerId: UserId }, undefined, 1, undefined);
     if (Follow.length === 0) {
         return res.status(444).json(AlertBoxObject("Not following this profile", "You are already not following this profile"));
     }
-    await RemoveNotificationsForFollow(UserId);
+    await RemoveNotificationsForFollow(UserId, FolloweeId);
     await RemoveFollows(Follow[0].DocId);
+    RemoveConnectionsToUser(FolloweeId, UserId);
     return res.json(true);
 }
 

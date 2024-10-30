@@ -12,7 +12,7 @@ import {
 import SwaggerDocs from '../swaggerDocs/events-swaggerDocs.js'
 import e from 'express';
 import { decodeIDToken, ensureAuthorized } from '../middleware/auth-middleware.js';
-import { ValidateGetEvents, ValidatePostEvents } from '../validations/events-validations.js';
+import { ValidateGetEvents, ValidatePostEvents, ValidatePostSpeakerMailInvite, ValidatePostSpeakers } from '../validations/events-validations.js';
 import { QueryParameterFormatting, ValidateGetEntity } from '../middleware/common.js';
 import { GetEventsActivitiesMiddleware, InsertEventTypeMiddleware, PostEventActivitiesMiddleware } from '../middleware/events-middleware.js';
 import { ValidatePostActivities } from '../validations/activities-validations.js';
@@ -20,7 +20,7 @@ import { MemberPostActivityMiddleware } from '../middleware/members-middleware.j
 import { ValidateAddPermissionForEveryone, ValidatePatchMemberPermission, ValidatePatchRemovePermission } from '../validations/discussions-validations.js';
 import { GetFilteredActivities, PostActivities } from '../controllers/activities-controller.js';
 import { ValidateGetMembers, ValidateInviteMembers } from '../validations/members-validations.js';
-import { DeleteSpeakers, GetSpeakerstoInvite, PatchSpeakers, PostSpeakers } from '../controllers/speakers-controller.js';
+import { DeleteSpeakers, GetSpeakerstoInvite, InviteSpeakersThroughEmail, PatchSpeakers, PostSpeakers } from '../controllers/speakers-controller.js';
 const router = e.Router();
 
 router.get('/events', decodeIDToken, ensureAuthorized("User"), ValidateGetEvents, QueryParameterFormatting,
@@ -44,7 +44,7 @@ router.patch('/events/:EventId',
 
 router.get('/guest/events/', ValidateGetEvents, QueryParameterFormatting, SwaggerDocs.get_Guest_Events,
     //@ts-ignore
-    asyncHandler(GetPublicEvents));    
+    asyncHandler(GetPublicEvents));
 
 
 /**************************************************************************JOIN******************************************************************* */
@@ -160,10 +160,14 @@ router.delete('/events/:EventId', decodeIDToken, ensureAuthorized("User"),
 
 /******************************************************************************SPEAKERS**************************************************************************************** */
 
-router.post('/events/:EventId/speakers/:SpeakerId', decodeIDToken, ensureAuthorized("User"),
+router.post('/events/:EventId/speakers/:SpeakerId', decodeIDToken, ensureAuthorized("User"), ValidatePostSpeakers,
     SwaggerDocs.post_Events_EventId_Speakers,
     //@ts-ignore
     asyncHandler(PostSpeakers));
+
+router.post('/events/:EventId/speakers/invite/email', decodeIDToken, ensureAuthorized("User"), ValidatePostSpeakerMailInvite,
+    //@ts-ignore
+    asyncHandler(InviteSpeakersThroughEmail))
 
 router.patch('/events/:EventId/speakers', decodeIDToken, ensureAuthorized("User"),
     SwaggerDocs.patch_Events_EventId_Speakers,
@@ -179,7 +183,7 @@ router.delete('/events/:EventId/speakers/:SpeakerId/reject', decodeIDToken, ensu
     SwaggerDocs.delete_Events_EventId_Speakers_SpeakerId,
     //@ts-ignore
     asyncHandler(DeleteSpeakers));
-   
+
 
 router.delete('/events/:EventId/speakers/:SpeakerId', decodeIDToken, ensureAuthorized("User"),
     SwaggerDocs.delete_Events_EventId_Speakers_SpeakerId,

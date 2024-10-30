@@ -33,10 +33,12 @@
     "socket.io": "^4.7.5",
     "swagger-autogen": "^2.23.1",
     "swagger-jsdoc": "^6.2.8",
-    "swagger-ui-express": "^4.6.3"
+    "swagger-ui-express": "^4.6.3",
+    "zeptomail": "^6.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.1",
+    "@faker-js/faker": "^9.0.1",
     "eslint": "^9.9.1",
     "globals": "^15.9.0"
   }

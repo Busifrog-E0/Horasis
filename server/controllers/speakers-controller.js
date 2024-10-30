@@ -2,11 +2,13 @@ import e from 'express';
 
 import { ReadOneFromSpeakers, ReadSpeakers, UpdateSpeakers, CreateSpeakers, RemoveSpeakers, } from './../databaseControllers/speakers-databaseController.js';
 import { AlertBoxObject } from './common.js';
-import { AggregateUsers, ReadOneFromUsers } from '../databaseControllers/users-databaseController.js';
+import { AggregateUsers, ReadOneFromUsers, ReadUsers } from '../databaseControllers/users-databaseController.js';
 import { MemberInit } from './members-controller.js';
 import { CreateMembers, ReadMembers } from '../databaseControllers/members-databaseController.js';
-import { IncrementEvents, PullArrayEvents, PushArrayEvents } from '../databaseControllers/events-databaseController.js';
+import { IncrementEvents, PullArrayEvents, PushArrayEvents, ReadOneFromEvents } from '../databaseControllers/events-databaseController.js';
 import { RemoveNotificationForSpeaker, SendNotificationForSpeaker } from './notifications-controller.js';
+import { ObjectId } from 'mongodb';
+import { SendSpeakerInviteEmail } from './emails-controller.js';
 /**
  * @typedef {import('./../databaseControllers/speakers-databaseController.js').SpeakerData} SpeakerData 
  */
@@ -76,6 +78,7 @@ const PostSpeakers = async (req, res) => {
     //@ts-ignore
     const { UserId } = req.user
     const { EventId, SpeakerId } = req.params;
+    const { Agenda } = req.body;
     const [Speaker] = await ReadSpeakers({ SpeakerId, EventId }, undefined, 1, undefined);
     if (Speaker) {
         return res.status(444).json(AlertBoxObject("Already Invited", "You have already invited this user."));
@@ -83,7 +86,7 @@ const PostSpeakers = async (req, res) => {
     const MembershipStatus = "Invited";
     const UserDetails = await ReadOneFromUsers(SpeakerId);
     await Promise.all([
-        CreateSpeakers({ EventId, SpeakerId, MembershipStatus, UserDetails }),
+        CreateSpeakers({ EventId, SpeakerId, MembershipStatus, UserDetails, Agenda }),
         SendNotificationForSpeaker(EventId, SpeakerId, UserId)
     ])
 
@@ -110,8 +113,42 @@ const PatchSpeakers = async (req, res) => {
         UpdateSpeakers({ MembershipStatus: "Accepted" }, Speaker.DocId),
         Member ? Promise.resolve() : CreateMembers(MemberData),
         IncrementEvents({ NoOfMembers: 1 }, EventId),
-        PushArrayEvents({ Speakers: { SpeakerId, UserDetails: Speaker.UserDetails } }, EventId),
+        PushArrayEvents({ Speakers: { SpeakerId, UserDetails: Speaker.UserDetails, Agenda: Speaker.Agenda } }, EventId),
     ])
+    return res.json(true);
+}
+
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ */
+const InviteSpeakersThroughEmail = async (req, res) => {
+    const { EventId } = req.params;
+    const { InvitationData } = req.body;
+    const Event = await ReadOneFromEvents(EventId);
+    await Promise.all(InvitationData.map(async Data => {
+        const { Email, Agenda, FullName, About } = Data;
+        const [[Speaker], [User]] = await Promise.all([
+            ReadSpeakers({ "UserDetails.Email": Email, EventId }, undefined, 1, undefined),
+            ReadUsers({ Email }, undefined, 1, undefined)
+        ]);
+        if (User) {
+            return res.status(444).json(AlertBoxObject("User Already Exists", "User aLready Exists"))
+        }
+        if (Speaker) {
+            return res.status(444).json(AlertBoxObject("Already Invited", "You have already invited this Email"));
+        }
+
+        const SpeakerId = new ObjectId().toString();
+        const SpeakerData = SpeakerInit({ SpeakerId, EventId, MembershipStatus: "Accepted", Agenda, UserDetails: { FullName, About, Email, ProfilePicture: '' } });
+
+        await Promise.all([
+            PushArrayEvents({ Speakers: { SpeakerId, UserDetails: SpeakerData.UserDetails, Agenda, } }, EventId),
+            CreateSpeakers(SpeakerData),
+            //SendSpeakerInviteEmail(Email, SpeakerId, Event, Agenda, FullName)
+        ])
+    }))
     return res.json(true);
 }
 
@@ -138,7 +175,8 @@ const DeleteSpeakers = async (req, res) => {
  * @param {string} Data.SpeakerId
  * @param {string} Data.EventId
  * @param {"Invited"|"Accepted"} Data.MembershipStatus
- * @param {UserData} Data.UserDetails
+ * @param {UserData|{FullName: string,About : string,Email : string}} Data.UserDetails
+ * @param {import('./../databaseControllers/speakers-databaseController.js').AgendaData} Data.Agenda
  * @returns 
  */
 const SpeakerInit = (Data) => {
@@ -149,5 +187,5 @@ const SpeakerInit = (Data) => {
 
 export {
     GetOneFromSpeakers, GetSpeakerstoInvite, PostSpeakers, PatchSpeakers, DeleteSpeakers,
-    SpeakerInit
+    SpeakerInit, InviteSpeakersThroughEmail
 }

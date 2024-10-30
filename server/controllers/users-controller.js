@@ -1,14 +1,16 @@
 import e from 'express';
 import { ReadOneFromUsers, ReadUsers, UpdateUsers, CreateUsers, UpdateManyUsers } from './../databaseControllers/users-databaseController.js';
-import { ReadOneFromOTP, SendPasswordOTP, SendRegisterOTP, TokenData, VerifyOTP } from './auth-controller.js';
+import { MaintainAdminRoleArray, ReadOneFromOTP, ReadRefreshTokens, SendPasswordOTP, SendRegisterOTP, TokenData, UpdateRefreshToken, VerifyOTP } from './auth-controller.js';
 import { AlertBoxObject, ComparePassword, GetUserNonEmptyFieldsPercentage, hashPassword } from './common.js';
-import { UpdateManyConnections } from '../databaseControllers/connections-databaseController.js';
+import { ReadConnections, UpdateManyConnections } from '../databaseControllers/connections-databaseController.js';
 import { ReadFollows, UpdateManyFollows } from '../databaseControllers/follow-databaseController.js';
 import { ConnectionStatus } from './connections-controller.js';
-import { PostActivityForProfilePatch } from './activities-controller.js';
+import { PostActivityForProfilePatch, PushConnectionToUserActivities } from './activities-controller.js';
 import { AddUserDetailsAfterInvited } from './invitations-controller.js';
 import { UpdateManyMembers } from '../databaseControllers/members-databaseController.js';
 import { ObjectId } from 'mongodb';
+import { CreateUserExtendedProperties, MAX_CONNECTIONLIST_SIZE, PullUserExtendedProperties, PushOnceInUserExtendedProperties, ReadUserExtendedProperties, UserExtendedPropertiesInit } from '../databaseControllers/userExtendedProperties-databaseController.js';
+import { PullManyActivityExtendedProperties, PushOnceInManyActivityExtendedProperties } from '../databaseControllers/activityExtendedProperties-databaseController.js';
 
 
 
@@ -103,6 +105,7 @@ const VerifyRegistrationOTP = async (req, res) => {
     const UserId = await CreateUsers(OTPData.Data);
     //@ts-ignore
     AddUserDetailsAfterInvited(OTPData.Data, UserId)
+    AddConnectionstoUser(UserId, UserId);
     const CurrentUser = {
         Role: ["User"],
         UserId
@@ -235,6 +238,10 @@ const ViewOtherUserData = async (UserId, OtherUserId, NextIdObject = {}) => {
  */
 const SendForgotPasswordOTP = async (req, res) => {
     const { Email } = req.body;
+    const [User] = await ReadUsers({ Email }, undefined, 1, undefined);
+    if (!User) {
+        return res.status(444).json(AlertBoxObject("User with Email does not exist", "User with this email does not exist"));
+    }
     const OTPId = await SendPasswordOTP(Email, res);
     return res.json(OTPId);
 }
@@ -279,14 +286,60 @@ const UpdateUserDetails = async (UserId) => {
 
 /**
  * 
+ * @param {string} UserId 
+ * @param {string} ConnectionId 
+ */
+const AddConnectionstoUser = async (UserId, ConnectionId) => {
+    const [ConnectionAdded] = await ReadUserExtendedProperties({ Type: "ConnectionsList", "Content.ConnectionList": ConnectionId, UserId }, undefined, 1, undefined);
+    if (ConnectionAdded) {
+        return;
+    }
+    const [checkUserConnections] = await ReadUserExtendedProperties({ Type: "ConnectionsList", UserId, $expr: { $lt: [{ $size: "$Content.ConnectionsList" }, MAX_CONNECTIONLIST_SIZE] } }, undefined, 1, undefined);
+    if (checkUserConnections) {
+        return await Promise.all([
+            PushOnceInUserExtendedProperties({ "Content.ConnectionsList": ConnectionId }, checkUserConnections.DocId),
+            PushConnectionToUserActivities(ConnectionId, checkUserConnections.DocId, UserId)
+        ]);
+    }
+    const ConnectionListId = await CreateUserExtendedProperties(UserExtendedPropertiesInit({ UserId, Type: "ConnectionsList", Content: { ConnectionsList: [ConnectionId] } }));
+    await PushConnectionToUserActivities(ConnectionId, ConnectionListId, UserId);
+    return;
+}
+
+/**
+ * 
+ * @param {string} UserId 
+ * @param {string} ConnectionId 
+ */
+const RemoveConnectionsToUser = async (UserId, ConnectionId) => {
+    const [[Follow], [Connection]] = await Promise.all([
+        ReadFollows({ FolloweeId: UserId, FollowerId: ConnectionId }, undefined, 1, undefined),
+        ReadConnections({ UserIds: { "$all": [UserId, ConnectionId], }, Status: "Connected" }, undefined, 1, undefined)
+    ])
+    if (Follow || Connection) {
+        return;
+    }
+    const [checkUserConnections] = await ReadUserExtendedProperties({ Type: "ConnectionsList", UserId, "Content.ConnectionsList": ConnectionId }, undefined, 1, undefined);
+    return Promise.all([
+        PullUserExtendedProperties({ "Content.ConnectionsList": ConnectionId }, checkUserConnections.DocId),
+        PullManyActivityExtendedProperties({ "Content.ConnectionsList": ConnectionId }, { UserId })
+    ])
+}
+
+/**
+ * 
  * @param {e.Request} req 
  * @param {e.Response} res 
  * @returns 
  */
 const AddUserAsAdmin = async (req, res) => {
     const { UserIds } = req.body;
-    const objectIds = UserIds.map(id => new ObjectId(id));
-
+    const objectIds = await Promise.all(UserIds.map(async id => {
+        const [RefreshToken] = await ReadRefreshTokens({ 'SignObject.UserId': id }, undefined, 1, { Index: "desc" })
+        await UpdateRefreshToken(RefreshToken.DocId, { 'SignObject.Role': ["Admin", "User"] });
+        await MaintainAdminRoleArray(id, "push")
+        return new ObjectId(id)
+    }));
     await UpdateManyUsers({ Roles: ["Admin", "User"] }, { "_id": { $in: objectIds } })
     return res.json(true);
 }
@@ -299,6 +352,9 @@ const AddUserAsAdmin = async (req, res) => {
  */
 const RemoveUserAsAdmin = async (req, res) => {
     const { UserId } = req.body;
+    const [RefreshToken] = await ReadRefreshTokens({ 'SignObject.UserId': UserId }, undefined, 1, { Index: "desc" })
+    await UpdateRefreshToken(RefreshToken.DocId, { 'SignObject.Role': ["User"] });
+    await MaintainAdminRoleArray(UserId, "pull");
     await UpdateUsers({ Roles: ["User"] }, UserId);
     return res.json(true);
 }
@@ -318,7 +374,7 @@ const GetUsersByRole = async (req, res) => {
         ]
     }
     // @ts-ignore
-    Filter.Roles = Filter.Role === "User" ? ["User"] : { $all: ["User", "Admin"] };
+    Filter.Roles = Filter.Role === "User" ?  ["User"]  : { $all: ["User", "Admin"] };
     delete Filter.Role;
     // @ts-ignore
     const Users = await ReadUsers(Filter, NextId, Limit, OrderBy);
@@ -374,5 +430,5 @@ export {
     UserLogin, VerifyRegistrationOTP, CheckUsernameAvailability,
     ViewOtherUserRelations, ViewOtherUserData, SendForgotPasswordOTP,
     PatchPassword, CheckIfUserWithMailExists, AddUserAsAdmin, RemoveUserAsAdmin,
-    GetUsersByRole
+    GetUsersByRole, AddConnectionstoUser, RemoveConnectionsToUser
 }
