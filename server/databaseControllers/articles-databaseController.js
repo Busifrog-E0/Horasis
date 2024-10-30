@@ -16,6 +16,7 @@ import dataHandling from './functions.js'
  * @property {number} NoOfComments
  * @property {UserData} UserDetails
  * @property {object[]} Languages
+ * @property {string[]} Tags
  */
 
 

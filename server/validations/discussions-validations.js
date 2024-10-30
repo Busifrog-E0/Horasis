@@ -8,7 +8,7 @@ const PostDiscussionSchema = Joi.object({
     Brief: Joi.string().required(),
     Privacy: Joi.string().valid("Public", "Private").required(),
     CoverPicture: Joi.string().required(),
-
+    Tags: Joi.array().items(Joi.string()).default([]),
 });
 
 const UpdatePermissionSchema = Joi.object({

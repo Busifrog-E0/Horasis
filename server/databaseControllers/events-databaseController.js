@@ -42,6 +42,7 @@ import dataHandling from './functions.js'
  * @property {number} CreatedIndex
  * @property {PermissionData} MemberPermissions
  * @property {object[]} Languages
+ * @property {string[]} Tags
  */
 
 
