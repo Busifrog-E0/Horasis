@@ -6,21 +6,18 @@ import {
 	usePublish,
 	useRTCClient,
 } from 'agora-rtc-react'
+import AgoraRTM from 'agora-rtm-sdk'
 import { useEffect, useState } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import close from '../assets/icons/closewhite.svg'
+import NewStreamParticipantList from '../components/NewStreaming/NewStreamParticipantList'
+import NewStreamUsersList from '../components/NewStreaming/NewStreamUsersList'
+import JoinToStream from '../components/Streaming/JoinToStream'
 import { useToast } from '../components/Toast/ToastService'
+import Modal from '../components/ui/Modal'
+import Spinner from '../components/ui/Spinner'
 import { getItem } from '../constants/operations'
 import { useAuth } from '../utils/AuthProvider'
-import AgoraRTM from 'agora-rtm-sdk'
-import Button from '../components/ui/Button'
-import StreamParticipantList from '../components/Streaming/StreamParticipantList'
-import StreamUsersList from '../components/Streaming/StreamUsersList'
-import NewStreamParticipantList from '../components/NewStreaming/NewStreamParticipantList'
-import JoinToStream from '../components/Streaming/JoinToStream'
-import NewStreamUsersList from '../components/NewStreaming/NewStreamUsersList'
-import Modal from '../components/ui/Modal'
-import close from '../assets/icons/closewhite.svg'
-import Spinner from '../components/ui/Spinner'
 
 const NewStreaming = () => {
 	const location = useLocation()
@@ -69,7 +66,7 @@ const NewStreaming = () => {
 			(result) => {
 				setIsLoadingUser(false)
 				setUser(result)
-				console.log(result,'single user')
+				console.log(result, 'single user')
 			},
 			(err) => {
 				setIsLoadingUser(false)
@@ -188,7 +185,12 @@ const NewStreaming = () => {
 
 			if (channelName === eventid) {
 				const messageData = JSON.parse(message)
-				setMessages((prev) => [...prev, messageData])
+				if (messageData.action === 'MUTE') {
+					setMic(false)
+					setCamera(false)
+				} else {
+					setMessages((prev) => [...prev, messageData])
+				}
 			}
 		})
 
@@ -320,6 +322,21 @@ const NewStreaming = () => {
 		}
 	}
 
+	// Function to send a mute command to a specific user
+	const sendMuteMessage = async (userId) => {
+		const muteMessage = JSON.stringify({ action: 'MUTE', UserId: userId })
+		try {
+			const result = await rtmClient.publish(eventid, muteMessage) // Send the message to the specific user
+			console.log(`Mute message sent to user ${userId}`)
+		} catch (error) {
+			console.error('Error sending mute message:', error)
+		}
+	}
+
+	const onMuteUserClick = (userId) => {
+		sendMuteMessage(userId)
+	}
+
 	// initialize rtc
 	const {} = useJoin(
 		{ uid: currentUserData.CurrentUser.UserId, appid: appId, channel: channel, token: rtcToken ? rtcToken : null },
@@ -365,6 +382,7 @@ const NewStreaming = () => {
 									participants={participants}
 									setModalOpen={setModalOpen}
 									speakers={speakers}
+									muteUser={onMuteUserClick}
 								/>
 							</div>
 

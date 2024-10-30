@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react'
 import ScrollableRemoteUsersList from './ScrollableRemoteUsersList'
 import StickyLocalUserView from './StickyLocalUserView'
 
-const NewStreamUsersList = ({ participants, event, cameraOn, micOn, setCamera, isConnected, calling, setCalling, setMic, role, localCameraTrack, localMicrophoneTrack, currentUser, setModalOpen,speakers }) => {
+const NewStreamUsersList = ({ participants, event, cameraOn, micOn, setCamera, isConnected, calling, setCalling, setMic, role, localCameraTrack, localMicrophoneTrack, currentUser, setModalOpen,speakers,muteUser }) => {
 	const remoteUsers = useRemoteUsers()
 	const [mainScreenUser, setMainScreenUser] = useState(null)
 
@@ -47,10 +47,12 @@ const NewStreamUsersList = ({ participants, event, cameraOn, micOn, setCamera, i
 								<div className='absolute right-0 rounded-full m-2 bottom-0 font-semibold text-brand-secondary bg-system-primary-accent px-3'>
 									{participants.find((participant) => participant.UserId === mainScreenUser.uid)?.UserName} {mainScreenUser.hasAudio ? <img className='inline-block h-4' src={mic}></img> : <img src={mic_off} className='inline-block h-4'></img>}
 								</div>
+								<button onClick={()=>muteUser(speakers.find((participant) => participant.UserId === mainScreenUser.uid)?.UserRtcUid)} className='bg-red-600'>Turn of mic</button>
+								
 							</RemoteUser>
 						)}
 					</div>
-					<ScrollableRemoteUsersList participants={participants} mainScreenUser={mainScreenUser} remoteUsers={remoteUsers} setMainScreenUser={setMainScreenUser} speakers={speakers} />
+					<ScrollableRemoteUsersList participants={participants} mainScreenUser={mainScreenUser} remoteUsers={remoteUsers} setMainScreenUser={setMainScreenUser} speakers={speakers} muteUser={muteUser} />
 				</div>
 			</div>
 		</div>

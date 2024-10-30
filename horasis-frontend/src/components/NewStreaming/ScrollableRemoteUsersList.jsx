@@ -7,7 +7,7 @@ import mic_off from '../../assets/icons/streaming/mic_off.svg'
 import right from '../../assets/icons/streaming/right.svg'
 import left from '../../assets/icons/streaming/left.svg'
 
-const ScrollableRemoteUsersList = ({ participants, remoteUsers, setMainScreenUser, mainScreenUser, speakers }) => {
+const ScrollableRemoteUsersList = ({ participants, remoteUsers, setMainScreenUser, mainScreenUser, speakers,muteUser }) => {
 	const [isScrollable, setIsScrollable] = useState(false)
 	const [atStart, setAtStart] = useState(true) // Track if at the left end
 	const [atEnd, setAtEnd] = useState(false) // Track if at the right end
@@ -78,6 +78,7 @@ const ScrollableRemoteUsersList = ({ participants, remoteUsers, setMainScreenUse
 											{participant?.UserName}
 											{user.hasAudio ? <img className='inline-block h-3' src={mic} alt='Mic On' /> : <img src={mic_off} className='inline-block h-3' alt='Mic Off' />}
 										</div>
+											<button onClick={()=>muteUser(participant?.UserRtcUid)} className='bg-red-600'>Turn of mic</button>
 									</RemoteUser>
 								</div>
 							)
