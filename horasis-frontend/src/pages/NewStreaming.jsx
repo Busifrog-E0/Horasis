@@ -185,8 +185,9 @@ const NewStreaming = () => {
 
 			if (channelName === eventid) {
 				const messageData = JSON.parse(message)
-				if (messageData.action === 'MUTE') {
+				if (messageData.action === 'MICTOGGLE') {
 					setMic(false)
+				} else if (messageData.action === 'CAMERATOGGLE') {
 					setCamera(false)
 				} else {
 					setMessages((prev) => [...prev, messageData])
@@ -323,18 +324,17 @@ const NewStreaming = () => {
 	}
 
 	// Function to send a mute command to a specific user
-	const sendMuteMessage = async (userId) => {
-		const muteMessage = JSON.stringify({ action: 'MUTE', UserId: userId })
+	const sendMuteMessage = async (userId, action) => {
+		const muteMessage = JSON.stringify({ action: action, UserId: userId })
 		try {
 			const result = await rtmClient.publish(eventid, muteMessage) // Send the message to the specific user
-			console.log(`Mute message sent to user ${userId}`)
 		} catch (error) {
 			console.error('Error sending mute message:', error)
 		}
 	}
 
-	const onMuteUserClick = (userId) => {
-		sendMuteMessage(userId)
+	const onMuteUserClick = (userId, action) => {
+		sendMuteMessage(userId, action)
 	}
 
 	// initialize rtc
@@ -383,6 +383,7 @@ const NewStreaming = () => {
 									setModalOpen={setModalOpen}
 									speakers={speakers}
 									muteUser={onMuteUserClick}
+									isPermitted={currentUserData.CurrentUser.Role.includes('Admin')}
 								/>
 							</div>
 
