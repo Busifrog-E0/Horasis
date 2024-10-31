@@ -1,5 +1,6 @@
 import Joi from 'joi';
 import { QueryParametersSchema } from './common.js';
+import { GetTags } from '../controllers/tags-controller.js';
 
 
 const ArticleSchema = Joi.object({
@@ -7,6 +8,7 @@ const ArticleSchema = Joi.object({
     Description: Joi.string().required(),
     CoverPicture: Joi.string().required(),
     AuthorId: Joi.string().required(),
+    Tags : Joi.array().items(Joi.string()).default([]),
 });
 
 
@@ -41,6 +43,7 @@ const ValidatePatchArticles = async (req, res, next) => {
     const Result = Joi.object({
         ArticleName: Joi.string(),
         Description: Joi.string(),
+        Tags : ArticleSchema.extract("Tags"),
     }).validate(req.body, { stripUnknown: true });
     if (Result.error) {
         const message = Result.error.details.map((detail) => detail.message).join(',');

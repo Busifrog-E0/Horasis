@@ -13,6 +13,7 @@ const UserSchema = Joi.object({
     Industry: Joi.string(),
     CompanyName: Joi.string(),
     About: Joi.string().max(500).allow(""),
+    Interests : Joi.array().items(Joi.string()).default([]),
 });
 
 const InvitationDataSchema = Joi.object({
@@ -102,6 +103,7 @@ const ValidatePatchUsers = async (req, res, next) => {
         CompanyName: UserSchema.extract("CompanyName"),
         About: UserSchema.extract("About"),
         JobTitle: UserSchema.extract("JobTitle"),
+        Interests : UserSchema.extract("Interests"),
     }).validate(req.body, { stripUnknown: true });
     if (Result.error) {
         const message = Result.error.details.map((detail) => detail.message).join(', ');

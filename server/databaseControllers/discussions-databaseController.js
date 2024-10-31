@@ -21,6 +21,7 @@ import dataHandling from './functions.js'
  * @property {number} NoOfMembers
  * @property {PermissionData} MemberPermissions
  * @property {object[]} Languages
+ * @property {string[]} Tags
  */
 
 
