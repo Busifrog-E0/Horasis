@@ -52,6 +52,7 @@ const NewStreaming = () => {
 	const [isLoadingEvent, setIsLoadingEvent] = useState(false)
 
 	// mic and camera
+	const [blocked, setBlocked] = useState(false)
 	const [micOn, setMic] = useState(false)
 	const [cameraOn, setCamera] = useState(false)
 	const { localMicrophoneTrack } = useLocalMicrophoneTrack(micOn)
@@ -189,6 +190,15 @@ const NewStreaming = () => {
 					setMic(false)
 				} else if (messageData.action === 'CAMERATOGGLE') {
 					setCamera(false)
+				} else if (messageData.action === 'BLOCK') {
+					setMic(false)
+					setCamera(false)
+					setBlocked(true)
+					toast.open(
+						'info',
+						'Camera and microphone muted',
+						'Your camera and microphone has been permanently muted by the moderator.'
+					)
 				} else {
 					setMessages((prev) => [...prev, messageData])
 				}
@@ -272,7 +282,6 @@ const NewStreaming = () => {
 			UserAvatar: user?.ProfilePicture,
 			Role: role,
 		}
-		console.log(newState)
 		try {
 			const result = await rtmClient.presence.setState(eventid, 'MESSAGE', newState)
 			// console.log(result)
@@ -384,6 +393,7 @@ const NewStreaming = () => {
 									speakers={speakers}
 									muteUser={onMuteUserClick}
 									isPermitted={currentUserData.CurrentUser.Role.includes('Admin')}
+									blocked={blocked}
 								/>
 							</div>
 

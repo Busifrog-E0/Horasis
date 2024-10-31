@@ -2,7 +2,7 @@ import { RemoteUser, useRemoteUsers } from 'agora-rtc-react'
 import arrowl from '../../assets/icons/arrowl.svg'
 import avatar from '../../assets/icons/avatar.svg'
 import people from '../../assets/icons/people.svg'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import ScrollableRemoteUsersList from './ScrollableRemoteUsersList'
 import StickyLocalUserView from './StickyLocalUserView'
 import Button from '../ui/Button'
@@ -11,6 +11,7 @@ import mic_off from '../../assets/icons/streaming/mic_off.svg'
 import camera from '../../assets/icons/streaming/camera.svg'
 import camera_off from '../../assets/icons/streaming/camera_off.svg'
 import call_end from '../../assets/icons/streaming/call_end.svg'
+import { useNavigate } from 'react-router-dom'
 
 const NewStreamUsersList = ({
 	participants,
@@ -30,6 +31,7 @@ const NewStreamUsersList = ({
 	speakers,
 	muteUser,
 	isPermitted,
+	blocked,
 }) => {
 	const remoteUsers = useRemoteUsers()
 	const [mainScreenUser, setMainScreenUser] = useState(null)
@@ -79,6 +81,7 @@ const NewStreamUsersList = ({
 							setMic={setMic}
 							currentUser={currentUser}
 							speakers={speakers}
+							blocked={blocked}
 						/>
 						{mainScreenUser !== null && (
 							<RemoteUser
@@ -97,7 +100,7 @@ const NewStreamUsersList = ({
 										<img src={mic_off} className='inline-block h-4'></img>
 									)}
 								</div>
-								{isPermitted && role==='Speaker' && (
+								{isPermitted && role === 'Speaker' && (
 									<div className='absolute left-1/2 bottom-10 flex flex-col lg:flex-row gap-2 lg:gap-10 -translate-x-1/2'>
 										<button
 											className='bg-white/15 py-2 px-4 rounded-full hover:bg-white/30 flex text-system-secondary-bg gap-2 items-center'
@@ -112,7 +115,7 @@ const NewStreamUsersList = ({
 											) : (
 												<img src={camera_off} className='h-6' />
 											)}
-											{mainScreenUser.hasVideo ? 'Turn off camera' :'Turned off'}
+											{mainScreenUser.hasVideo ? 'Turn off camera' : 'Turned off'}
 										</button>
 
 										<button
@@ -130,6 +133,15 @@ const NewStreamUsersList = ({
 											)}
 											{mainScreenUser.hasAudio ? 'Turn off microphone' : 'Turned off'}
 										</button>
+
+										<MyComponent
+											muteUser={() =>
+												muteUser(
+													speakers.find((participant) => participant.UserId === mainScreenUser.uid)?.UserRtcUid,
+													'BLOCK'
+												)
+											}
+										/>
 										{/* <button
 										onClick={() =>
 											muteUser(speakers.find((participant) => participant.UserId === mainScreenUser.uid)?.UserRtcUid)
@@ -155,6 +167,128 @@ const NewStreamUsersList = ({
 				</div>
 			</div>
 		</div>
+	)
+}
+
+const Dropdown = ({ buttonLabel = '•••', items = [], onItemSelect = () => {}, btnStyles, itemsStyle }) => {
+	const dropdownRef = useRef(null)
+	const buttonRef = useRef(null)
+	const [isOpen, setIsOpen] = useState(false)
+
+	const handleClickOutside = (event) => {
+		if (
+			dropdownRef.current &&
+			!dropdownRef.current.contains(event.target) &&
+			!buttonRef.current.contains(event.target)
+		) {
+			setIsOpen(false)
+		}
+	}
+
+	const adjustDropdownPosition = () => {
+		if (!dropdownRef.current || !buttonRef.current) return
+
+		const dropdown = dropdownRef.current
+		const button = buttonRef.current
+		const rect = dropdown.getBoundingClientRect()
+		const buttonRect = button.getBoundingClientRect()
+
+		// Reset position styles
+		dropdown.style.left = 'auto'
+		dropdown.style.right = 'auto'
+		dropdown.style.top = 'auto'
+		dropdown.style.bottom = 'auto'
+
+		// Check horizontal boundaries
+		if (rect.right > window.innerWidth) {
+			dropdown.style.right = '0'
+		} else if (rect.left < 0) {
+			dropdown.style.left = '0'
+		} else {
+			dropdown.style.left = 'auto'
+		}
+		dropdown.style.bottom = `${buttonRect.height + 10}px`
+		// Check vertical boundaries
+		// if (rect.bottom > window.innerHeight) {
+		// 	dropdown.style.bottom = `${buttonRect.height}px`
+		// } else {
+		// 	dropdown.style.top = `${buttonRect.height}px`
+		// }
+	}
+
+	useEffect(() => {
+		document.addEventListener('mousedown', handleClickOutside)
+		return () => {
+			document.removeEventListener('mousedown', handleClickOutside)
+		}
+	}, [])
+
+	useEffect(() => {
+		if (isOpen) {
+			adjustDropdownPosition()
+		}
+	}, [isOpen])
+
+	return (
+		<div className='relative inline-block text-left' ref={buttonRef}>
+			<button
+				className={
+					btnStyles
+						? btnStyles
+						: 'inline-flex justify-center w-full rounded-md border-none bg-system-secondary-bg text-md px-0 font-medium text-brand-gray-dim'
+				}
+				type='button'
+				onClick={() => setIsOpen(!isOpen)}>
+				{buttonLabel}
+			</button>
+			{isOpen && (
+				<div
+					className={`origin-top-right absolute z-10 w-56 rounded-md shadow-lg ${
+						itemsStyle ? '' : 'bg-system-secondary-bg'
+					} ring-1 ring-black ring-opacity-5`}
+					ref={dropdownRef}>
+					<div className='py-1 flex flex-col gap-2' role='menu' aria-orientation='vertical'>
+						{items.map((item, index) => (
+							<span
+								key={index}
+								className={
+									itemsStyle
+										? itemsStyle
+										: 'cursor-pointer block px-4 py-2 text-sm text-system-secondary-text bg-system-secondary-bg hover:bg-system-primary-bg'
+								}
+								role='menuitem'
+								onClick={() => {
+									onItemSelect(item)
+									setIsOpen(false) // Close dropdown after selection
+								}}>
+								{item.label}
+							</span>
+						))}
+					</div>
+				</div>
+			)}
+		</div>
+	)
+}
+
+const MyComponent = ({ muteUser }) => {
+	const handleItemSelect = (item) => {
+		muteUser()
+	}
+
+	const dropdownItems = [{ label: 'Permanently mute microphone and camera' }]
+
+	return (
+		<Dropdown
+			btnStyles={
+				'bg-white/15 py-2 px-4 rounded-full hover:bg-white/30 flex text-system-secondary-bg gap-2 items-center'
+			}
+			itemsStyle={
+				'bg-white/15 py-2 px-4 rounded-md hover:bg-white/30 flex text-system-secondary-bg gap-2 items-center text-sm cursor-pointer'
+			}
+			items={dropdownItems}
+			onItemSelect={handleItemSelect}
+		/>
 	)
 }
 
