@@ -45,11 +45,15 @@ const generateTokenForInvitedUser = async (req, res) => {
  * @returns 
  */
 const generateAgoraToken = async (EventId, UserId) => {
-    const [[Speaker], [Member]] = await Promise.all([
+    const [[Speaker], [Member], Event] = await Promise.all([
         ReadSpeakers({ SpeakerId: UserId, EventId, MembershipStatus: "Accepted" }, undefined, 1, undefined),
-        ReadMembers({ MemberId: UserId, EntityId: EventId, MembershipStatus: "Accepted" }, undefined, 1, undefined)
+        ReadMembers({ MemberId: UserId, EntityId: EventId, MembershipStatus: "Accepted" }, undefined, 1, undefined),
+        ReadOneFromEvents(EventId)
     ]);
-    const Role = Speaker ? RtcRole.PUBLISHER : (Member ? RtcRole.SUBSCRIBER : undefined);
+    let Role = Speaker ? RtcRole.PUBLISHER : (Member ? RtcRole.SUBSCRIBER : undefined);
+    if (Event.OrganiserId === UserId) {
+        Role = RtcRole.PUBLISHER
+    }
     if (!Role) {
         throw new Error("No Access");
     }
