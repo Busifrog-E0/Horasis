@@ -21,6 +21,8 @@ import membersRoutes from './members-routes.js'
 import analyticsRoutes from './analytics-routes.js'
 import agoraRoutes from './agora-routes.js'
 import likesRoutes from './likes-routes.js'
+import tagsRoutes from './tags-routes.js'
+import podcastRoutes from './podcasts-routes.js'
 
 router.use("/api", authRoutes);
 router.use("/api", adminRoutes);
@@ -41,6 +43,8 @@ router.use("/api", translationsRoutes);
 router.use("/api", membersRoutes);
 router.use("/api", analyticsRoutes);
 router.use("/api", agoraRoutes);
+router.use("/api", tagsRoutes);
+router.use("/api", podcastRoutes);
 
 
 

@@ -11,6 +11,7 @@ import dataHandling from './functions.js'
 /**
  * @typedef {object} SaveData
  * @property {string} EntityId
+ * @property {"Activity"|"User"|"Article"|"Podcast"} Type
  * @property {string} UserId
  * @property {number} CreatedIndex
  * @property {string} DocId

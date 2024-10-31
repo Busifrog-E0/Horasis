@@ -176,7 +176,7 @@ const ValidatePasswordReset = async (req, res, next) => {
 
 const ValidatePostUsersInvite = (req, res, next) => {
     const Result = Joi.object({
-        ActionType: Joi.string().valid("Discussion-Invite-Member", "Event-Invite-Member", "Event-Invite-Speaker").required(),
+        ActionType: Joi.string().valid("Discussion-Invite-Member", "Event-Invite-Member", "Event-Invite-Speaker","Podcast-Invite-Member").required(),
         InvitationData: Joi.array().items(InvitationDataSchema).max(5).required(),
         EntityId: Joi.string().required()
     }).validate(req.body, { stripUnknown: true, convert: true });

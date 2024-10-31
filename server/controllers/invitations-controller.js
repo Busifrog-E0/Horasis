@@ -127,7 +127,7 @@ const AddUserDetailsAfterInvited = async (UserData, UserId) => {
 
 /**
  * 
- * @param {"Event-Invite-Speaker"|"Discussion-Invite-Member"|"Event-Invite-Member"} ActionType 
+ * @param {"Event-Invite-Speaker"|"Discussion-Invite-Member"|"Event-Invite-Member"|"Podcast-Invite-Member"} ActionType 
  * @param {string} EntityId 
  * @param {UserData} UserData 
  * @param {string} UserId
@@ -149,6 +149,7 @@ const CreateEntitiesBasedOnActionType = async (ActionType, EntityId, UserData, U
         }
         case "Discussion-Invite-Member":
         case "Event-Invite-Member":
+        case "Podcast-Invite-Member":
             {
                 const [Member] = await ReadMembers({ MemberId: UserId, EntityId }, undefined, 1, undefined);
                 if (Member) {
