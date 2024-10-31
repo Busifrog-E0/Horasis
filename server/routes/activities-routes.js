@@ -5,7 +5,7 @@ import {
 import asyncHandler from 'express-async-handler';
 
 import { decodeIDToken, ensureAuthorized } from '../middleware/auth-middleware.js';
-import { ValidatePostActivities, ValidatePatchActivities } from '../validations/activities-validations.js';
+import { ValidatePostActivities, ValidatePatchActivities, ValidateGetActivities } from '../validations/activities-validations.js';
 import SwaggerDocs from '../swaggerDocs/activities-swaggerDocs.js'
 import e from 'express';
 import { CheckSameUser, QueryParameterFormatting, ValidateGetEntity } from '../middleware/common.js';
@@ -14,21 +14,21 @@ import { DeleteLikes, GetLikes, PostLikes } from '../controllers/likes-controlle
 import { DeleteSaves, GetSaves, PostSaves } from '../controllers/saves-controller.js';
 const router = e.Router();
 
-router.get('/activities', decodeIDToken, ensureAuthorized("User"), ValidateGetEntity, QueryParameterFormatting, GetFeedActivitiesMiddleware, SwaggerDocs.get_Activities,
+router.get('/activities', decodeIDToken, ensureAuthorized("User"), ValidateGetActivities, QueryParameterFormatting, GetFeedActivitiesMiddleware, SwaggerDocs.get_Activities,
     //@ts-ignore
     asyncHandler(GetActivities));
 
-router.get('/user/:UserId/activities', decodeIDToken, ensureAuthorized("User"), GetFeedActivitiesMiddleware, ValidateGetEntity, QueryParameterFormatting,
+router.get('/user/:UserId/activities', decodeIDToken, ensureAuthorized("User"), GetFeedActivitiesMiddleware, ValidateGetActivities, QueryParameterFormatting,
     GetUserActivitiesMiddleware, SwaggerDocs.get_Activities,
     //@ts-ignore
     asyncHandler(GetFilteredActivities));
 
-router.get('/user/:UserId/mentions/activities', decodeIDToken, ensureAuthorized("User"), GetFeedActivitiesMiddleware, ValidateGetEntity, QueryParameterFormatting,
+router.get('/user/:UserId/mentions/activities', decodeIDToken, ensureAuthorized("User"), GetFeedActivitiesMiddleware, ValidateGetActivities, QueryParameterFormatting,
     GetMentionedActivitiesMiddleware, SwaggerDocs.get_Activities,
     //@ts-ignore
     asyncHandler(GetFilteredActivities));
 
-router.get('/activities/search', decodeIDToken, ensureAuthorized("User"), GetFeedActivitiesMiddleware, ValidateGetEntity, QueryParameterFormatting,
+router.get('/activities/search', decodeIDToken, ensureAuthorized("User"), GetFeedActivitiesMiddleware, ValidateGetActivities, QueryParameterFormatting,
     //@ts-ignore
     asyncHandler(GetFilteredActivities))
 

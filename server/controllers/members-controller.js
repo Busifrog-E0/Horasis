@@ -7,6 +7,7 @@ import { ReadOneFromUsers, } from '../databaseControllers/users-databaseControll
 import { AggregateConnections } from '../databaseControllers/connections-databaseController.js';
 import { SendNotificationForMemberInvitation, SendNotificationForMemberJoin, SendNotificationForMemberRequest, SendNotificationForMemberRequestStatus } from './notifications-controller.js';
 import { IncrementEvents, ReadOneFromEvents, } from '../databaseControllers/events-databaseController.js';
+import { IncrementPodcasts, ReadOneFromPodcasts } from '../databaseControllers/podcasts-databaseController.js';
 /**
  * @typedef {import('./../databaseControllers/members-databaseController.js').MemberData} MemberData 
  */
@@ -77,7 +78,8 @@ const PostMembers = async (req, res) => {
     }
 
     const UserDetails = await ReadOneFromUsers(UserId);;
-    const Entity = Type === "Discussion" ? await ReadOneFromDiscussions(EntityId) : await ReadOneFromEvents(EntityId);
+    const Entity = Type === "Discussion" ? await ReadOneFromDiscussions(EntityId) :
+        (Type === "Event" ? await ReadOneFromEvents(EntityId) : await ReadOneFromPodcasts(EntityId));
 
     if (Entity.Privacy === "Private") {
         req.body = MemberInit({ MemberId: UserId, EntityId, UserDetails }, "Requested")
@@ -92,8 +94,8 @@ const PostMembers = async (req, res) => {
         await Promise.all([
             SendNotificationForMemberJoin(Type, EntityId, UserId),
             CreateMembers({ ...req.body, MemberId: UserId, EntityId, UserDetails }),
-            Type === "Discussion" ? IncrementDiscussions({ NoOfMembers: 1 }, EntityId) :
-                IncrementEvents({ NoOfMembers: 1 }, EntityId)
+            Type === "Discussion" ? IncrementDiscussions({ NoOfMembers: 1 }, EntityId) : (
+                Type === "Event" ? IncrementEvents({ NoOfMembers: 1 }, EntityId) : IncrementPodcasts({ NoOfMembers: 1 }, EntityId))
         ])
         return res.json(true);
     }
@@ -120,6 +122,9 @@ const AcceptJoinRequest = async (req, res) => {
     }
     if (req.body.Type === "Event") {
         await IncrementEvents({ NoOfMembers: 1 }, EntityId);
+    }
+    if(req.body.Type === "Podcast"){
+        await IncrementPodcasts({ NoOfMembers: 1 }, EntityId);
     }
     //@ts-ignore
     await SendNotificationForMemberRequestStatus(req.body.Type, EntityId, UserId, "Accepted", req.user.User);
@@ -154,7 +159,7 @@ const InviteMembers = async (req, res) => {
                 req.body.Type === "Discussion" ?
                     await IncrementDiscussions({ NoOfMembers: 1 }, EntityId)
                     :
-                    await IncrementEvents({ NoOfMembers: 1 }, EntityId);
+                   ( req.body.Type === "Event" ? await IncrementEvents({ NoOfMembers: 1 }, EntityId) : await IncrementPodcasts({ NoOfMembers: 1 }, EntityId));
                 return res.json(true);
 
             case "Invited":
@@ -194,7 +199,7 @@ const AcceptMemberInvitation = async (req, res) => {
     req.body.Type === "Discussion" ?
         await IncrementDiscussions({ NoOfMembers: 1 }, EntityId)
         :
-        await IncrementEvents({ NoOfMembers: 1 }, EntityId);
+        (req.body.Type === "Event" ? await IncrementEvents({ NoOfMembers: 1 }, EntityId) : await IncrementPodcasts({ NoOfMembers: 1 }, EntityId));
     return res.json(true);
 }
 
@@ -333,7 +338,7 @@ const RemoveMemberPermissions = async (req, res) => {
         req.body.Type === "Discussion" ?
             ReadOneFromDiscussions(EntityId)
             :
-            ReadOneFromEvents(EntityId),
+            ( req.body.Type === "Event" ? ReadOneFromEvents(EntityId) : ReadOneFromPodcasts(EntityId)),
         ReadMembers({ MemberId: MemberId, EntityId }, undefined, 1, undefined),
         ReadMembers({ MemberId: UserId, EntityId }, undefined, 1, undefined)
     ]);
@@ -388,19 +393,31 @@ const DeleteMembers = async (req, res) => {
     if (Member.length === 0) {
         return res.status(444).json(AlertBoxObject("Cannot leave", "You are not an member of this discussion"));
     }
-    if (req.body.Type === "Discussion") {
-        const Discussion = await ReadOneFromDiscussions(EntityId);
-        if (Discussion.OrganiserId === UserId) {
-            return res.status(444).json(AlertBoxObject("Cannot leave", "Organiser cannot leave the discussion"));
+    switch(req.body.Type) {
+        case "Discussion": {
+            const Discussion = await ReadOneFromDiscussions(EntityId);
+            if (Discussion.OrganiserId === UserId) {
+                return res.status(444).json(AlertBoxObject("Cannot leave", "Organiser cannot leave the discussion"));
+            }
+            await IncrementDiscussions({ NoOfMembers: -1 }, EntityId);
+            break;
         }
-        await IncrementDiscussions({ NoOfMembers: -1 }, EntityId);
-    }
-    else {
-        const Event = await ReadOneFromEvents(EntityId);
-        if (Event.OrganiserId === UserId) {
-            return res.status(444).json(AlertBoxObject("Cannot leave", "Organiser cannot leave the event"));
-        }
-        await IncrementEvents({ NoOfMembers: -1 }, EntityId);
+        case "Event": {
+            const Event = await ReadOneFromEvents(EntityId);
+            if (Event.OrganiserId === UserId) {
+                return res.status(444).json(AlertBoxObject("Cannot leave", "Organiser cannot leave the event"));
+            }
+            await IncrementEvents({ NoOfMembers: -1 }, EntityId);
+            break;
+         }
+        case "Podcast": {
+            const Podcast = await ReadOneFromPodcasts(EntityId);
+            if (Podcast.OrganiserId === UserId) {
+                return res.status(444).json(AlertBoxObject("Cannot leave", "Organiser cannot leave the podcast"));
+            }
+            await IncrementPodcasts({ NoOfMembers: -1 }, EntityId);
+            break;
+        }  
     }
     await RemoveMembers(Member[0].DocId);
     return res.json(true);

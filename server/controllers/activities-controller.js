@@ -16,6 +16,7 @@ import { IncrementEvents } from '../databaseControllers/events-databaseControlle
 import { ReadUserExtendedProperties } from '../databaseControllers/userExtendedProperties-databaseController.js';
 import { ActivityExtendedPropertiesInit, CreateActivityExtendedProperties, PushOnceInManyActivityExtendedProperties, ReadActivityExtendedProperties } from '../databaseControllers/activityExtendedProperties-databaseController.js';
 import moment from 'moment';
+import { IncrementPodcasts } from '../databaseControllers/podcasts-databaseController.js';
 
 /**
  * @typedef {import('../databaseControllers/activities-databaseController.js').ActivityData} ActivityData 
@@ -119,9 +120,8 @@ const PostActivities = async (req, res) => {
         PostMediasFromAttachments(Attachments, ActivityId, UserId),
         SendNotificationstoActivityMentions(Mentions, UserId, ActivityId),
         AddtoUserActivities({ ...data, ActivityId }),
-        req.body.Type !== "Feed" ?
-            req.body.Type === "Discussion" ?
-                IncrementDiscussions({ NoOfActivities: 1 }) : IncrementEvents({ NoOfActivities: 1 }) : null
+        req.body.Type === "Discussion" ? IncrementDiscussions({ NoOfActivities: 1 }) :
+            req.body.Type === "Event" ? IncrementEvents({ NoOfActivities: 1 }) : IncrementPodcasts({ NoOfActivities: 1 })
     ])
     return res.json(true);
 }
@@ -169,9 +169,8 @@ const DeleteActivities = async (req, res) => {
     }
     await RemoveActivities(ActivityId);
     await RemoveNotificationForEntity(ActivityId);
-    Activity.Type !== "Feed" ?
-        Activity.Type === "Discussion" ?
-            await IncrementDiscussions({ NoOfActivities: -1 }) : await IncrementEvents({ NoOfActivities: -1 }) : null
+    Activity.Type === "Discussion" ? await IncrementDiscussions({ NoOfActivities: -1 }) :
+        Activity.Type === "Event" ? await IncrementEvents({ NoOfActivities: -1 }) : await IncrementPodcasts({ NoOfActivities: -1 });
     return res.json(true);
 }
 

@@ -87,6 +87,14 @@ const doc = {
         {
             "name": "Admin",
             "description": "",
+        },
+        {
+            "name": "Tags",
+            "description": "",
+        },
+        {
+            "name": "Podcasts",
+            "description": "",
         }
     ],
     securityDefinitions: {

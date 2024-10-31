@@ -1,5 +1,7 @@
 const GetFeedActivitiesMiddleware = (req, res, next) => {
-    req.query.Filter = { Type: "Feed", ...req.query.Filter };
+    if (!req.query.Filter.Type) {
+        req.query.Filter = { Type: "Feed", ...req.query.Filter }
+    };
     return next();
 }
 
@@ -11,7 +13,7 @@ const GetEventActivitiesMiddleware = (req, res, next) => {
 
 
 const PostFeedActivitiesMiddleware = (req, res, next) => {
-    req.body = { Type: "Feed", EntityId : "Feed", ...req.body };
+    req.body = { Type: "Feed", EntityId: "Feed", ...req.body };
     return next();
 }
 
@@ -27,7 +29,7 @@ const GetUserActivitiesMiddleware = (req, res, next) => {
 }
 
 const GetMentionedActivitiesMiddleware = (req, res, next) => {
-    req.query.Filter = { Mentions : { $elemMatch: { UserId: req.params.UserId } }, ...req.query.Filter };
+    req.query.Filter = { Mentions: { $elemMatch: { UserId: req.params.UserId } }, ...req.query.Filter };
     return next();
 }
 
@@ -43,6 +45,6 @@ const InsertActivityTypeMiddleware = (req, res, next) => {
 
 export {
     GetFeedActivitiesMiddleware, GetEventActivitiesMiddleware, PostEventActivitiesMiddleware, PostFeedActivitiesMiddleware,
-    GetUserActivitiesMiddleware, GetMentionedActivitiesMiddleware, PostActivitiesLikeMiddleware,InsertActivityTypeMiddleware
-    
+    GetUserActivitiesMiddleware, GetMentionedActivitiesMiddleware, PostActivitiesLikeMiddleware, InsertActivityTypeMiddleware
+
 }
