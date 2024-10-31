@@ -101,12 +101,12 @@ const NewStreamUsersList = ({
 									)}
 								</div>
 								{isPermitted && role === 'Speaker' && (
-									<div className='absolute left-1/2 bottom-10 flex flex-col lg:flex-row gap-2 lg:gap-10 -translate-x-1/2'>
+									<div className='absolute left-2 lg:left-1/2 bottom-2 lg:bottom-4 flex flex-row gap-2 lg:gap-10 lg:-translate-x-1/2'>
 										<button
 											className='bg-white/15 py-2 px-4 rounded-full hover:bg-white/30 flex text-system-secondary-bg gap-2 items-center'
 											onClick={() =>
 												muteUser(
-													speakers.find((participant) => participant.UserId === mainScreenUser.uid)?.UserRtcUid,
+													speakers.find((participant) => participant.UserId === mainScreenUser.uid)?.UserId,
 													'CAMERATOGGLE'
 												)
 											}>
@@ -115,14 +115,17 @@ const NewStreamUsersList = ({
 											) : (
 												<img src={camera_off} className='h-6' />
 											)}
+											<span className='hidden lg:inline'>
+
 											{mainScreenUser.hasVideo ? 'Turn off camera' : 'Turned off'}
+											</span>
 										</button>
 
 										<button
 											className='bg-white/15 py-2 px-4 rounded-full hover:bg-white/30 flex text-system-secondary-bg gap-2 items-center'
 											onClick={() =>
 												muteUser(
-													speakers.find((participant) => participant.UserId === mainScreenUser.uid)?.UserRtcUid,
+													speakers.find((participant) => participant.UserId === mainScreenUser.uid)?.UserId,
 													'MICTOGGLE'
 												)
 											}>
@@ -131,13 +134,16 @@ const NewStreamUsersList = ({
 											) : (
 												<img src={mic_off} className='h-6' />
 											)}
+											<span className='hidden lg:inline'>
+
 											{mainScreenUser.hasAudio ? 'Turn off microphone' : 'Turned off'}
+											</span>
 										</button>
 
-										<MyComponent
+										<PermanentBlockUser
 											muteUser={() =>
 												muteUser(
-													speakers.find((participant) => participant.UserId === mainScreenUser.uid)?.UserRtcUid,
+													speakers.find((participant) => participant.UserId === mainScreenUser.uid)?.UserId,
 													'BLOCK'
 												)
 											}
@@ -207,7 +213,8 @@ const Dropdown = ({ buttonLabel = '•••', items = [], onItemSelect = () => 
 		} else {
 			dropdown.style.left = 'auto'
 		}
-		dropdown.style.bottom = `${buttonRect.height + 10}px`
+	
+		dropdown.style.bottom = `${buttonRect.height}px`
 		// Check vertical boundaries
 		// if (rect.bottom > window.innerHeight) {
 		// 	dropdown.style.bottom = `${buttonRect.height}px`
@@ -271,12 +278,12 @@ const Dropdown = ({ buttonLabel = '•••', items = [], onItemSelect = () => 
 	)
 }
 
-const MyComponent = ({ muteUser }) => {
+export const PermanentBlockUser = ({ muteUser }) => {
 	const handleItemSelect = (item) => {
 		muteUser()
 	}
 
-	const dropdownItems = [{ label: 'Permanently mute microphone and camera' }]
+	const dropdownItems = [{ label: 'Permanently mute.' }]
 
 	return (
 		<Dropdown

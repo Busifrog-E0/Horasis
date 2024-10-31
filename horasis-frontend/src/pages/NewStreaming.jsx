@@ -186,19 +186,21 @@ const NewStreaming = () => {
 
 			if (channelName === eventid) {
 				const messageData = JSON.parse(message)
-				if (messageData.action === 'MICTOGGLE') {
-					setMic(false)
-				} else if (messageData.action === 'CAMERATOGGLE') {
-					setCamera(false)
-				} else if (messageData.action === 'BLOCK') {
-					setMic(false)
-					setCamera(false)
-					setBlocked(true)
-					toast.open(
-						'info',
-						'Camera and microphone muted',
-						'Your camera and microphone has been permanently muted by the moderator.'
-					)
+				if (messageData?.UserId === currentUserData?.CurrentUser?.UserId) {
+					if (messageData.action === 'MICTOGGLE') {
+						setMic(false)
+					} else if (messageData.action === 'CAMERATOGGLE') {
+						setCamera(false)
+					} else if (messageData.action === 'BLOCK') {
+						setMic(false)
+						setCamera(false)
+						setBlocked(true)
+						toast.open(
+							'info',
+							'Camera and microphone muted',
+							'Your camera and microphone has been permanently muted by the moderator.'
+						)
+					}
 				} else {
 					setMessages((prev) => [...prev, messageData])
 				}

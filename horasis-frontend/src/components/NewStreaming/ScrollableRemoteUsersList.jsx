@@ -8,6 +8,7 @@ import right from '../../assets/icons/streaming/right.svg'
 import left from '../../assets/icons/streaming/left.svg'
 import camera from '../../assets/icons/streaming/camera.svg'
 import camera_off from '../../assets/icons/streaming/camera_off.svg'
+import { PermanentBlockUser } from './NewStreamUsersList'
 
 const ScrollableRemoteUsersList = ({
 	participants,
@@ -17,7 +18,7 @@ const ScrollableRemoteUsersList = ({
 	speakers,
 	muteUser,
 	isPermitted,
-	role
+	role,
 }) => {
 	const [isScrollable, setIsScrollable] = useState(false)
 	const [atStart, setAtStart] = useState(true) // Track if at the left end
@@ -99,12 +100,12 @@ const ScrollableRemoteUsersList = ({
 												<img src={mic_off} className='inline-block h-3' alt='Mic Off' />
 											)}
 										</div>
-										{isPermitted && role==='Speaker' && (
+										{isPermitted && role === 'Speaker' && (
 											<div className='absolute left-2 bottom-1 flex flex-row gap-2 '>
 												<button
 													className='bg-white/15 p-2 rounded-full hover:bg-white/30 flex text-system-secondary-bg gap-2 items-center'
 													onClick={() =>
-														muteUser(speakers.find((p) => p.UserId === participant.uid)?.UserRtcUid, 'CAMERATOGGLE')
+														muteUser(speakers.find((p) => p.UserId === participant.uid)?.UserId, 'CAMERATOGGLE')
 													}>
 													{user.hasVideo ? (
 														<img src={camera} className='h-4' />
@@ -117,15 +118,19 @@ const ScrollableRemoteUsersList = ({
 												<button
 													className='bg-white/15 p-2 rounded-full hover:bg-white/30 flex text-system-secondary-bg gap-2 items-center'
 													onClick={() =>
-														muteUser(speakers.find((p) => p.UserId === participant.uid)?.UserRtcUid, 'MICTOGGLE')
+														muteUser(speakers.find((p) => p.UserId === participant.uid)?.UserId, 'MICTOGGLE')
 													}>
-													{user.hasAudio ? (
-														<img src={mic} className='h-4' />
-													) : (
-														<img src={mic_off} className='h-4' />
-													)}
+													{user.hasAudio ? <img src={mic} className='h-4' /> : <img src={mic_off} className='h-4' />}
 													{/* {participant.hasAudio ? 'Turn off microphone' : 'Turned off'} */}
 												</button>
+												<PermanentBlockUser
+													muteUser={() =>
+														muteUser(
+															speakers.find((p) => participant.UserId === participant.uid)?.UserId,
+															'BLOCK'
+														)
+													}
+												/>
 											</div>
 										)}
 									</RemoteUser>
