@@ -44,7 +44,7 @@ const decodeIDToken = async (req, res, next) => {
 
 /**
  * 
- * @param  {...string} Roles 
+* @param  {...("Admin"|"User"|"SuperAdmin")} Roles 
  * @returns 
  */
 const ensureAuthorized = (...Roles) => (req, res, next) => {
