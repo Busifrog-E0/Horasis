@@ -4,12 +4,12 @@ import {
 import asyncHandler from 'express-async-handler';
 
 import { decodeIDToken, ensureAuthorized } from '../middleware/auth-middleware.js';
- import { ValidatePostTags,  } from '../validations/tags-validations.js';
+import { ValidatePostTags, } from '../validations/tags-validations.js';
 
 import e from 'express';
 const router = e.Router();
 
-router.get('/tags', decodeIDToken, ensureAuthorized("User", "Admin"),
+router.get('/tags', decodeIDToken, ensureAuthorized("User", "Admin", "SuperAdmin"),
     //@ts-ignore
     asyncHandler(GetTags));
 
@@ -17,7 +17,7 @@ router.get('/tags/:TagId',
     // @ts-ignore
     asyncHandler(GetOneFromTags));
 
-router.post('/tags', decodeIDToken, ensureAuthorized("Admin"),ValidatePostTags,
+router.post('/tags', decodeIDToken, ensureAuthorized("Admin", "SuperAdmin"), ValidatePostTags,
     // @ts-ignore
     asyncHandler(PostTags));
 
@@ -25,7 +25,7 @@ router.patch('/tags/:TagId',
     // @ts-ignore
     asyncHandler(PatchTags));
 
-router.delete('/tags/:TagId', decodeIDToken, ensureAuthorized("Admin"),
+router.delete('/tags/:TagId', decodeIDToken, ensureAuthorized("Admin", "SuperAdmin"),
     // @ts-ignore
     asyncHandler(DeleteTags));
 
