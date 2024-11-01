@@ -1,18 +1,15 @@
-import { useContext, useRef, useState } from 'react'
-import LoaderOverlay from '../components/Loader/LoaderOverlay'
-import LoginForm from '../components/Login/LoginForm'
+import { useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import Logo from '../components/Common/Logo'
-import { Link, useNavigate } from 'react-router-dom'
-import Input from '../components/ui/Input'
 import Button from '../components/ui/Button'
+import Input from '../components/ui/Input'
 
-import { postItem } from '../constants/operations'
-import { superLoginValidation } from '../utils/schema/superLoginValidation'
-import { useToast } from '../components/Toast/ToastService'
-import Select from '../components/ui/Select'
-import eyeon from '../assets/icons/eyeon.svg'
 import eyeoff from '../assets/icons/eyeoff.svg'
+import eyeon from '../assets/icons/eyeon.svg'
+import { useToast } from '../components/Toast/ToastService'
+import { postItem } from '../constants/operations'
 import { useSuperAuth } from '../context/SuperAdmin/SuperAuthService'
+import { superLoginValidation } from '../utils/schema/superLoginValidation'
 
 const logoText = {
 	fontSize: '1.7rem',

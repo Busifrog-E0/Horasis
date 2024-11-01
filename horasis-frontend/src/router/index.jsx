@@ -1,57 +1,61 @@
 // rrd
-import { Outlet, Route, createBrowserRouter, createRoutesFromElements } from 'react-router-dom'
+import { Navigate, Outlet, Route, createBrowserRouter, createRoutesFromElements } from 'react-router-dom'
 
 // layouts
-import RootLayout from '../layouts/RootLayout'
-import SuperAdminLayout from '../layouts/superadmin/SuperAdminLayout'
-import SuperAdminAuthLayout from '../layouts/superadmin/SuperAdminAuthLayout'
-import SuperAdminUnauthLayout from '../layouts/superadmin/SuperAdminUnauthLayout'
-import DashboardLayout from '../layouts/DashboardLayout'
 import AuthLayout from '../layouts/AuthLayout'
+import DashboardLayout from '../layouts/DashboardLayout'
+import RootLayout from '../layouts/RootLayout'
+import SuperAdminAuthLayout from '../layouts/superadmin/SuperAdminAuthLayout'
+import SuperAdminLayout from '../layouts/superadmin/SuperAdminLayout'
+import SuperAdminUnauthLayout from '../layouts/superadmin/SuperAdminUnauthLayout'
 import UnAuthLayout from '../layouts/UnAuthLayout'
 //pages
-import LogIn from '../pages/LogIn'
 import WelcomePage from '../components/Login/WelcomePage'
+import AdminProtected from '../layouts/AdminProtected'
+import ProfileTabLayout from '../layouts/ProfileTabLayout'
+import SuperAdminDashboardLayout from '../layouts/superadmin/SuperAdminDashboardLayout'
 import Activities from '../pages/Activities'
-import Events from '../pages/Events'
-import Discussions from '../pages/Discussions'
-import Connections from '../pages/Connections'
 import Analytics from '../pages/Analytics'
-import CreateEvent from '../pages/CreateEvent'
-import CreateDiscussion from '../pages/CreateDiscussion'
-import SingleEvent from '../pages/SingleEvent'
-import SingleDiscussion from '../pages/SingleDiscussion'
-import MyProfile from '../pages/MyProfile'
-import CreateArticle from '../pages/CreateArticle'
 import Articles from '../pages/Articles'
-import UniversalSearch from '../pages/UniversalSearch'
-import UniversalSearchDetails from '../pages/UniversalSearchDetails'
+import ChatPage from '../pages/ChatPage'
+import Connections from '../pages/Connections'
+import CreateArticle from '../pages/CreateArticle'
+import CreateDiscussion from '../pages/CreateDiscussion'
+import CreateEvent from '../pages/CreateEvent'
+import Discussions from '../pages/Discussions'
+import EnterEvent from '../pages/EnterEvent'
+import Events from '../pages/Events'
+import ForgotPassword from '../pages/ForgotPassword'
 import Home from '../pages/Home'
+import LogIn from '../pages/LogIn'
+import Mentions from '../pages/Mentions'
+import MyProfile from '../pages/MyProfile'
+import NewStreaming from '../pages/NewStreaming'
+import NotFoundPage from '../pages/NotFoundPage'
 import Register from '../pages/Register'
+import Saved from '../pages/Saved'
+import SavedArticlesPage from '../pages/SavedArticlesPage'
 import ShowUserProfile from '../pages/ShowUserProfile'
 import SingleActivity from '../pages/SingleActivity'
-import Mentions from '../pages/Mentions'
-import ChatPage from '../pages/ChatPage'
-import Saved from '../pages/Saved'
-import SuggestionsPage from '../pages/SuggestionsPage'
-import NotFoundPage from '../pages/NotFoundPage'
 import SingleArticles from '../pages/SingleArticles'
-import ForgotPassword from '../pages/ForgotPassword'
-import SavedArticlesPage from '../pages/SavedArticlesPage'
-import ProfileTabLayout from '../layouts/ProfileTabLayout'
-import Streaming from '../pages/Streaming'
-import NewStreaming from '../pages/NewStreaming'
-import SuperAdmin from '../pages/SuperAdmin'
+import SingleDiscussion from '../pages/SingleDiscussion'
+import SingleEvent from '../pages/SingleEvent'
+import SuggestionsPage from '../pages/SuggestionsPage'
+import AdminUsers from '../pages/superadmin/AdminUsers'
 import SuperAdminLogin from '../pages/SuperAdminLogin'
-import AdminProtected from '../layouts/AdminProtected'
-import EnterEvent from '../pages/EnterEvent'
+import UniversalSearchDetails from '../pages/UniversalSearchDetails'
+import AdminTags from '../pages/superadmin/AdminTags'
 
 export const router = createBrowserRouter(
 	createRoutesFromElements(
 		<Route path='/' element={<RootLayout />}>
 			<Route path='/SuperAdmin' element={<SuperAdminLayout />}>
 				<Route path='' element={<SuperAdminAuthLayout />}>
-					<Route index element={<SuperAdmin />} />
+					<Route path='' element={<SuperAdminDashboardLayout />}>
+						<Route index element={<Navigate to='admin-users' />} />
+						<Route path='admin-users' element={<AdminUsers />} />
+						<Route path='tags' element={<AdminTags />} />
+					</Route>
 				</Route>
 				<Route path='Login' element={<SuperAdminUnauthLayout />}>
 					<Route index element={<SuperAdminLogin />} />
