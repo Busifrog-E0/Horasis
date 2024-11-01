@@ -33,7 +33,7 @@ const AuthAdmin = async (req, res) => {
     let AdminData
 
     if (ModeOfDevelopment === "Debug") {
-        AdminData = { "Username": "Username", "Password": "Password" };
+        AdminData = { "Username": "Admin", "Password": "Horasis@#3559" };
     }
     else {
         AdminData = await GetAuthAdmin();
