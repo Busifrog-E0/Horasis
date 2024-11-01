@@ -13,7 +13,8 @@ const UserSchema = Joi.object({
     Industry: Joi.string(),
     CompanyName: Joi.string(),
     About: Joi.string().max(500).allow(""),
-    Interests : Joi.array().items(Joi.string()).default([]),
+    Interests: Joi.array().items(Joi.string()).default([]),
+    LinkedIn : Joi.string().allow(""),
 });
 
 const InvitationDataSchema = Joi.object({
