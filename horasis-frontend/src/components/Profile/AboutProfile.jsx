@@ -452,7 +452,7 @@ const AboutProfile = ({ user, getUserDetails, isCurrentUser }) => {
 	)
 }
 
-const SelectedTag = ({ tag, removeTag }) => {
+export const SelectedTag = ({ tag, removeTag }) => {
 	return (
 		<>
 			<div className=' flex justify-between items-center  py-1 px-3 rounded-full border border-system-primary-accent bg-system-primary-accent-light gap-2 '>
@@ -468,7 +468,7 @@ const SelectedTag = ({ tag, removeTag }) => {
 	)
 }
 
-const SearchTags = ({ placeholder = 'Add your interests', data, addTag = () => {} }) => {
+export const SearchTags = ({ placeholder = 'Add your interests', data, addTag = () => {} }) => {
 	const [searchKey, setSearchKey] = useState('') // Local state for search key
 	const [filteredData, setFilteredData] = useState(data) // State for filtered data
 

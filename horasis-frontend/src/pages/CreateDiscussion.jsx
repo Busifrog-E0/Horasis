@@ -35,6 +35,7 @@ const CreateDiscussion = () => {
 		OrganiserId: currentUserData.CurrentUser.UserId,
 		Privacy: 'Public',
 		CoverPicture: '',
+		Tags: [],
 	})
 	const [discussionId, setDiscussionId] = useState('')
 
