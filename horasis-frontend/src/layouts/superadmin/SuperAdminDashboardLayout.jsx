@@ -21,8 +21,8 @@ const SuperAdminDashboardLayout = () => {
 					{/* Sidebar */}
 					<div
 						className={`fixed inset-y-0 left-0 w-64 bg-system-secondary-bg text-system-primary-text transform ${
-							isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
-						} transition-transform duration-300 lg:relative lg:translate-x-0 lg:w-64 z-50`}>
+							isSidebarOpen ? 'translate-x-0 z-50' : '-translate-x-full z-10'
+						} transition-transform duration-300 lg:relative lg:translate-x-0 lg:w-64`}>
 						<SuperadminSidebar toggleSidebar={toggleSidebar} />
 					</div>
 
