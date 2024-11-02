@@ -43,7 +43,7 @@ const AboutProfile = ({ user, getUserDetails, isCurrentUser }) => {
 		Country: user?.Country,
 		About: user?.About,
 		LinkedIn: user?.LinkedIn,
-		Interests: [],
+		Interests: user?.Interests ? user?.Interests : [],
 	})
 
 	const validateSingle = (value, key, callback) => {
@@ -219,7 +219,7 @@ const AboutProfile = ({ user, getUserDetails, isCurrentUser }) => {
 						<div>
 							<h1 className='text-system-primary-text font-medium text-lg'>Interets</h1>
 							{updateFormValue.Interests && updateFormValue.Interests.length > 0 && (
-								<div className='flex gap-4 px-0 pb-4 my-2'>
+								<div className='flex gap-4 px-0 pb-4 my-2 flex-wrap'>
 									{updateFormValue.Interests.map((interest) => {
 										return <SelectedTag tag={interest} removeTag={removeTag} key={interest.DocId} />
 									})}
