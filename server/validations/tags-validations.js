@@ -1,5 +1,10 @@
 import Joi from "joi"
 
+const TagsSchema = Joi.object({
+    TagName: Joi.string().required(),
+    DocId : Joi.string().required()
+})
+
 const ValidatePostTags = async (req, res, next) => {
     const Result = Joi.object({
         TagName: Joi.string().required(),
@@ -15,5 +20,6 @@ const ValidatePostTags = async (req, res, next) => {
 }
 
 export {
-    ValidatePostTags
+    ValidatePostTags,
+    TagsSchema
 }

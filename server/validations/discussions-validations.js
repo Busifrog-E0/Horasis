@@ -1,4 +1,5 @@
 import Joi from "joi";
+import { TagsSchema } from "./tags-validations";
 
 const PostDiscussionSchema = Joi.object({
     DiscussionName: Joi.string().required(),
@@ -7,7 +8,7 @@ const PostDiscussionSchema = Joi.object({
     Brief: Joi.string().required(),
     Privacy: Joi.string().valid("Public", "Private").required(),
     CoverPicture: Joi.string().required(),
-    Tags: Joi.array().items(Joi.string()).default([]),
+    Tags: Joi.array().items(TagsSchema).default([]),
 });
 
 const UpdatePermissionSchema = Joi.object({
