@@ -20,7 +20,7 @@ const CreateDiscussionStep1 = ({ postDiscussionData, setPostDiscussionData, vali
 	}
 
 	const removeTag = (tag) => {
-		setUpdateFormValue((prev) => {
+		setPostDiscussionData((prev) => {
 			return { ...prev, Tags: prev.Tags.filter((interest) => interest.DocId !== tag.DocId) }
 		})
 	}

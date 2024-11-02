@@ -11,6 +11,8 @@ import { Description } from '@headlessui/react'
 import countries from '../../../../assets/json/countries-with-coords.json'
 import Select from '../../../ui/Select'
 import SelectDiscussionPrivacy from '../../../Discussions/CreateDiscussion/SelectDiscussionPrivacy'
+import { SearchTags, SelectedTag } from '../../../Profile/AboutProfile'
+import useGetList from '../../../../hooks/useGetList'
 
 const CreateEventStep1 = ({ postEventData, setPostEventData, validateSingle, errorObj }) => {
 	const [eventAgendas, setEventAgendas] = useState([1])
@@ -20,6 +22,23 @@ const CreateEventStep1 = ({ postEventData, setPostEventData, validateSingle, err
 	}
 
 	const [countryOptions, setCountryOptions] = useState(countries.countries.map((item) => item.name))
+
+	const addTag = (tag) => {
+		setPostEventData((prev) => {
+			const tagExists = prev.Tags.some((existingTag) => existingTag.DocId === tag.DocId)
+			if (tagExists) return prev
+
+			return { ...prev, Tags: [...prev.Tags, tag] }
+		})
+	}
+
+	const removeTag = (tag) => {
+		setPostEventData((prev) => {
+			return { ...prev, Tags: prev.Tags.filter((interest) => interest.DocId !== tag.DocId) }
+		})
+	}
+
+	const { data: tagsList } = useGetList('tags', { Limit: -1 })
 	return (
 		<div className='flex flex-col gap-4'>
 			<div>
@@ -333,6 +352,22 @@ const CreateEventStep1 = ({ postEventData, setPostEventData, validateSingle, err
 					/>
 				</div>
 			</div>
+
+			<div>
+				<h1 className='text-system-primary-text font-medium text-lg'>Tags</h1>
+				{postEventData.Tags && postEventData.Tags.length > 0 && (
+					<div className='flex gap-4 px-0 pb-4 my-2 flex-wrap'>
+						{postEventData.Tags.map((interest) => {
+							return <SelectedTag tag={interest} removeTag={removeTag} key={interest.DocId} />
+						})}
+					</div>
+				)}
+
+				<div className='px-0'>
+					<SearchTags data={tagsList} addTag={addTag} placeholder='Add tags to event' />
+				</div>
+			</div>
+
 			<div>
 				<h1 className='text-system-primary-text font-medium text-lg'>
 					Event Type<span className='text-brand-red'>*</span>

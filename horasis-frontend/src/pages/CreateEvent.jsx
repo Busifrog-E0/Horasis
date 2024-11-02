@@ -73,6 +73,7 @@ const CreateEvent = () => {
 		Type: 'Offline',
 		Country: 'United States',
 		HasDiscussion: true,
+		Tags: [],
 	})
 
 	// useEffect(() => {
