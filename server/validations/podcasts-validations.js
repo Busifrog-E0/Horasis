@@ -1,5 +1,5 @@
 import Joi from "joi";
-import { TagsSchema } from "./tags-validations";
+import { TagsSchema } from "./tags-validations.js";
 
 const PostPodcastSchema = Joi.object({
     PodcastName: Joi.string().required(),
