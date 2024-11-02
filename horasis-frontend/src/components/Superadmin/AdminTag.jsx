@@ -4,20 +4,25 @@ import { useToast } from '../Toast/ToastService'
 import { deleteItem, getItem, patchItem, postItem } from '../../constants/operations'
 import EmptyMembers from '../../components/Common/EmptyMembers'
 import deleteIcon from '../../assets/icons/delete.svg'
+import Spinner from '../ui/Spinner'
 const AdminTag = () => {
 	const { currentUserData, updateCurrentUser } = useSuperAuth()
 	const toast = useToast()
 
+	const [isLoading, setIsLoading] = useState(true)
 	const [tags, setTags] = useState([])
 	const [tagInput, setTagInput] = useState('')
 
 	const getTags = () => {
+		setIsLoading(true)
 		getItem(
 			`tags`,
 			(result) => {
 				setTags(result)
+				setIsLoading(false)
 			},
 			(err) => {
+				setIsLoading(false)
 				console.log(err)
 			},
 			updateCurrentUser,
@@ -81,33 +86,40 @@ const AdminTag = () => {
 					}}
 				/>
 				<button
+					disabled={isLoading}
 					type='submit'
 					className='bg-system-primary-accent text-white px-10 py-3 rounded-r-lg hover:bg-system-primary-accent-dim transition duration-200'>
 					Add Tag
 				</button>
 			</form>
 
-			{tags.length === 0 ? (
-				<>
-					<EmptyMembers emptyText={'No Tags'} />
-				</>
+			{isLoading ? (
+				<Spinner />
 			) : (
 				<>
-					<div className='flex flex-wrap gap-3'>
-						{tags.map((tag) => (
-							<div
-								key={tag.DocId}
-								className='flex justify-between items-center px-6 py-2 bg-gray-100 rounded-full gap-4 transition-transform transform w-auto'>
-								<span className='text-gray-800 font-medium'>{tag.TagName}</span>
-								<button
-									onClick={() => deleteTag(tag)}
-									className='text-red-600 hover:text-red-700 font-semibold transition duration-200'>
-									<img src={deleteIcon} alt='' className='h-6' />
-									{/* <span className='material-icons'>delete</span> */}
-								</button>
+					{tags.length === 0 ? (
+						<>
+							<EmptyMembers emptyText={'No Tags'} />
+						</>
+					) : (
+						<>
+							<div className='flex flex-wrap gap-3'>
+								{tags.map((tag) => (
+									<div
+										key={tag.DocId}
+										className='flex justify-between items-center px-6 py-2 bg-gray-100 rounded-full gap-4 transition-transform transform w-auto'>
+										<span className='text-gray-800 font-medium'>{tag.TagName}</span>
+										<button
+											onClick={() => deleteTag(tag)}
+											className='text-red-600 hover:text-red-700 font-semibold transition duration-200'>
+											<img src={deleteIcon} alt='' className='h-5' />
+											{/* <span className='material-icons'>delete</span> */}
+										</button>
+									</div>
+								))}
 							</div>
-						))}
-					</div>
+						</>
+					)}
 				</>
 			)}
 		</div>
