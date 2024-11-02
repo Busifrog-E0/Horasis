@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "site": "hsocialtest",
+    "site": "hsocial",
     "public": "dist",
     "ignore": [
       "firebase.json",
