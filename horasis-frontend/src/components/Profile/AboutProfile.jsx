@@ -12,6 +12,7 @@ import countries from '../../assets/json/countries-with-coords.json'
 import Select from '../ui/Select'
 import edit from '../../assets/icons/edit.svg'
 import close from '../../assets/icons/close.svg'
+import useGetList from '../../hooks/useGetList'
 
 export const extractLinkedInUsername = (url) => {
 	// Define the regular expression to match LinkedIn profile URLs
@@ -42,6 +43,7 @@ const AboutProfile = ({ user, getUserDetails, isCurrentUser }) => {
 		Country: user?.Country,
 		About: user?.About,
 		LinkedIn: user?.LinkedIn,
+		Interests: [],
 	})
 
 	const validateSingle = (value, key, callback) => {
@@ -123,6 +125,23 @@ const AboutProfile = ({ user, getUserDetails, isCurrentUser }) => {
 		)
 	}
 
+	const addTag = (tag) => {
+		setUpdateFormValue((prev) => {
+			const tagExists = prev.Interests.some((existingTag) => existingTag.DocId === tag.DocId)
+			if (tagExists) return prev
+
+			return { ...prev, Interests: [...prev.Interests, tag] }
+		})
+	}
+
+	const removeTag = (tag) => {
+		setUpdateFormValue((prev) => {
+			return { ...prev, Interests: prev.Interests.filter((interest) => interest.DocId !== tag.DocId) }
+		})
+	}
+
+	const { data: tagsList } = useGetList('tags', { Limit: -1 })
+
 	return (
 		<>
 			<Modal isOpen={isOpen} maxWidth={`max-w-4xl`}>
@@ -196,6 +215,22 @@ const AboutProfile = ({ user, getUserDetails, isCurrentUser }) => {
 							/>
 							{errorObj['LinkedIn'] != undefined && <p className='text-brand-red m-0'>{errorObj['LinkedIn']}</p>}
 						</div>
+
+						<div>
+							<h1 className='text-system-primary-text font-medium text-lg'>Interets</h1>
+							{updateFormValue.Interests && updateFormValue.Interests.length > 0 && (
+								<div className='flex gap-4 px-0 pb-4 my-2'>
+									{updateFormValue.Interests.map((interest) => {
+										return <SelectedTag tag={interest} removeTag={removeTag} key={interest.DocId} />
+									})}
+								</div>
+							)}
+
+							<div className='px-0'>
+								<SearchTags data={tagsList} addTag={addTag} />
+							</div>
+						</div>
+
 						{/* <div>
             <h1 className='text-system-primary-text font-medium text-lg'>
               Email
@@ -315,23 +350,6 @@ const AboutProfile = ({ user, getUserDetails, isCurrentUser }) => {
 				{isCurrentUser ? (
 					<div className='flex w-full items-start justify-end text-system-primary-text'>
 						<img src={edit} alt='' className='h-6 cursor-pointer' onClick={() => setIsOpen(true)} />
-						{/* <svg
-							className='w-6 h-6 cursor-pointer'
-							aria-hidden='true'
-							xmlns='http://www.w3.org/2000/svg'
-							fill='none'
-							viewBox='0 0 20 20'
-							onClick={() => {
-								setIsOpen(true)
-							}}>
-							<path
-								stroke='currentColor'
-								strokeLinecap='round'
-								strokeLinejoin='round'
-								strokeWidth='2'
-								d='M4 12.25V1m0 11.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M4 19v-2.25m6-13.5V1m0 2.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M10 19V7.75m6 4.5V1m0 11.25a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5ZM16 19v-2'
-							/>
-						</svg> */}
 					</div>
 				) : (
 					<></>
@@ -365,6 +383,7 @@ const AboutProfile = ({ user, getUserDetails, isCurrentUser }) => {
 							</div>
 						</>
 					)}
+
 					{isCurrentUser && (
 						<>
 							<div>
@@ -393,15 +412,102 @@ const AboutProfile = ({ user, getUserDetails, isCurrentUser }) => {
 					<div className='lg:col-span-3'>
 						<h4 className='font-medium text-system-primary-text'>{user && user.Country}</h4>
 					</div>
+
 					<div>
 						<h4 className='font-medium text-brand-gray-dim'>Bio</h4>
 					</div>
 					<div className='lg:col-span-3'>
 						<h4 className='font-medium text-system-primary-text whitespace-pre-line'>{user && user.About}</h4>
 					</div>
+
+					{isCurrentUser && (
+						<>
+							{user && user.Interests && user.Interests.length > 0 && (
+								<>
+									<div>
+										<h4 className='font-medium text-brand-gray-dim'>Interests</h4>
+									</div>
+									<div className='lg:col-span-3'>
+										<div className='flex flex-wrap gap-2'>
+											{' '}
+											{user.Interests.map((item) => (
+												<div
+													key={item.DocId}
+													className='cursor-pointer rounded-full px-6 py-1 bg-system-tertiary-bg hover:bg-system-secondary-bg border  transition duration-200 ease-in-out'
+													role='button' // For better accessibility
+													tabIndex={0} // Making it focusable
+												>
+													{item.TagName}
+												</div>
+											))}
+										</div>
+									</div>
+								</>
+							)}
+						</>
+					)}
 				</div>
 			</div>
 		</>
+	)
+}
+
+const SelectedTag = ({ tag, removeTag }) => {
+	return (
+		<>
+			<div className=' flex justify-between items-center  py-1 px-3 rounded-full border border-system-primary-accent bg-system-primary-accent-light gap-2 '>
+				<div className='text-system-primary-accent'>
+					<p className='text-sm font-semibold'>{tag.TagName}</p>
+					{/* <p className='text-sm text-system-primary-accent-transparent font-medium'>@{tag.UserDetails.Username}</p> */}
+				</div>
+				<div>
+					<img src={close} className='h-5 cursor-pointer' alt='' onClick={() => removeTag(tag)} />
+				</div>
+			</div>
+		</>
+	)
+}
+
+const SearchTags = ({ placeholder = 'Add your interests', data, addTag = () => {} }) => {
+	const [searchKey, setSearchKey] = useState('') // Local state for search key
+	const [filteredData, setFilteredData] = useState(data) // State for filtered data
+
+	// Effect to filter data whenever searchKey changes
+	useEffect(() => {
+		const filtered = data.filter((item) => item.TagName.toLowerCase().includes(searchKey.toLowerCase()))
+		setFilteredData(filtered)
+	}, [searchKey, data]) // Depend on searchKey and data
+
+	return (
+		<div>
+			<Input
+				className='py-3 rounded-xl border-2 border-system-secondary-accent'
+				placeholder={placeholder}
+				width='full'
+				value={searchKey}
+				onChange={(e) => setSearchKey(e.target.value)} // Update searchKey on input change
+			/>
+			{/* Optionally render the filtered results */}
+			{filteredData && filteredData.length > 0 && searchKey !== '' && (
+				<div className='mt-4'>
+					<div className='flex flex-wrap gap-2'>
+						{' '}
+						{/* Container for flex items */}
+						{filteredData.map((item, index) => (
+							<div
+								key={item.DocId}
+								onClick={() => addTag(item)}
+								className='cursor-pointer rounded-full px-6 py-1 bg-system-tertiary-bg hover:bg-system-secondary-bg border  transition duration-200 ease-in-out'
+								role='button' // For better accessibility
+								tabIndex={0} // Making it focusable
+							>
+								{item.TagName}
+							</div>
+						))}
+					</div>
+				</div>
+			)}
+		</div>
 	)
 }
 
