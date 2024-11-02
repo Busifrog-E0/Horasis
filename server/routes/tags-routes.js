@@ -7,9 +7,10 @@ import { decodeIDToken, ensureAuthorized } from '../middleware/auth-middleware.j
 import { ValidatePostTags, } from '../validations/tags-validations.js';
 
 import e from 'express';
+import { QueryParameterFormatting, ValidateGetEntity } from '../middleware/common.js';
 const router = e.Router();
 
-router.get('/tags', decodeIDToken, ensureAuthorized("User", "Admin", "SuperAdmin"),
+router.get('/tags', decodeIDToken, ensureAuthorized("User", "Admin", "SuperAdmin"),ValidateGetEntity,QueryParameterFormatting,
     //@ts-ignore
     asyncHandler(GetTags));
 
