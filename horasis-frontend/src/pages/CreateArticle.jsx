@@ -47,6 +47,7 @@ const CreateArticle = () => {
 		Description: '',
 		AuthorId: currentUserData.CurrentUser.UserId,
 		CoverPicture: '',
+		Tags: [],
 	})
 
 	const postArticle = () => {
@@ -175,55 +176,55 @@ const CreateArticle = () => {
 				
 				</div>
 			</div> */}
-				<div className='lg:col-span-2'>
-						<Steps changeStep={changeStep} activeStep={activeStep} steps={steps} />
-						<h4 className='font-medium text-2xl text-system-primary-accent mt-5 mb-4'>Create an Article</h4>
-						<div className='p-6 bg-system-secondary-bg rounded-lg'>
-							{activeStep === 1 && (
-								<CreateArticleStep1
-									postArticleData={postArticleData}
-									setPostArticleData={setPostArticleData}
-									validateSingle={validateSingle}
-									errorObj={errorObj}
-								/>
-							)}
-							{activeStep === 2 && (
-								<CreateArticleStep2
-									selectedImage={selectedCoverImage}
-									onImageSelect={onCoverImageSelect}
-									fileFieldName='CoverPicture'
-								/>
-							)}
+			<div className='lg:col-span-2'>
+				<Steps changeStep={changeStep} activeStep={activeStep} steps={steps} />
+				<h4 className='font-medium text-2xl text-system-primary-accent mt-5 mb-4'>Create an Article</h4>
+				<div className='p-6 bg-system-secondary-bg rounded-lg'>
+					{activeStep === 1 && (
+						<CreateArticleStep1
+							postArticleData={postArticleData}
+							setPostArticleData={setPostArticleData}
+							validateSingle={validateSingle}
+							errorObj={errorObj}
+						/>
+					)}
+					{activeStep === 2 && (
+						<CreateArticleStep2
+							selectedImage={selectedCoverImage}
+							onImageSelect={onCoverImageSelect}
+							fileFieldName='CoverPicture'
+						/>
+					)}
 
-							{/* {activeStep !== 2 && */}
-							<div className='grid grid-cols-2 lg:grid-cols-3 gap-4 py-8'>
-								<div className='hidden lg:block'></div>
-								<div className='col-span-1'>
-									{!isFirstStep && (
-										<Button onClick={() => changeStep(activeStep - 1)} variant='outline' width='full'>
-											Back
-										</Button>
-									)}
-								</div>
-								<div className='col-span-1'>
-									{isFirstStep && (
-										<Button onClick={() => validate(() => changeStep(activeStep + 1))} width='full' variant='black'>
-											Next
-										</Button>
-									)}
-									{isSecondStep && (
-										<Button onClick={() => setIsModalOpen(true)} width='full' variant='black'>
-											Publish
-										</Button>
-									)}
-								</div>
-							</div>
-							{/* } */}
+					{/* {activeStep !== 2 && */}
+					<div className='grid grid-cols-2 lg:grid-cols-3 gap-4 py-8'>
+						<div className='hidden lg:block'></div>
+						<div className='col-span-1'>
+							{!isFirstStep && (
+								<Button onClick={() => changeStep(activeStep - 1)} variant='outline' width='full'>
+									Back
+								</Button>
+							)}
+						</div>
+						<div className='col-span-1'>
+							{isFirstStep && (
+								<Button onClick={() => validate(() => changeStep(activeStep + 1))} width='full' variant='black'>
+									Next
+								</Button>
+							)}
+							{isSecondStep && (
+								<Button onClick={() => setIsModalOpen(true)} width='full' variant='black'>
+									Publish
+								</Button>
+							)}
 						</div>
 					</div>
-					<div>
-						<ArticleMiniSection />
-					</div>
+					{/* } */}
+				</div>
+			</div>
+			<div>
+				<ArticleMiniSection />
+			</div>
 		</>
 	)
 }
