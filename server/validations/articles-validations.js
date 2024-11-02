@@ -1,6 +1,7 @@
 import Joi from 'joi';
 import { QueryParametersSchema } from './common.js';
 import { GetTags } from '../controllers/tags-controller.js';
+import { TagsSchema } from './tags-validations.js';
 
 
 const ArticleSchema = Joi.object({
@@ -8,7 +9,7 @@ const ArticleSchema = Joi.object({
     Description: Joi.string().required(),
     CoverPicture: Joi.string().required(),
     AuthorId: Joi.string().required(),
-    Tags : Joi.array().items(Joi.string()).default([]),
+    Tags : Joi.array().items(TagsSchema).default([]),
 });
 
 

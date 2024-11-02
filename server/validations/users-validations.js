@@ -1,6 +1,9 @@
 import Joi from 'joi';
 import { QueryParametersSchema } from './common.js';
 import { AgendaDataSchema } from './events-validations.js';
+import { TagsSchema } from './tags-validations.js';
+
+
 
 const UserSchema = Joi.object({
     FullName: Joi.string().required(),
@@ -13,7 +16,7 @@ const UserSchema = Joi.object({
     Industry: Joi.string(),
     CompanyName: Joi.string(),
     About: Joi.string().max(500).allow(""),
-    Interests: Joi.array().items(Joi.string()).default([]),
+    Interests: Joi.array().items(TagsSchema).default([]),
     LinkedIn : Joi.string().allow(""),
 });
 

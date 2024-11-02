@@ -1,6 +1,7 @@
 import Joi from 'joi';
 import { QueryParametersSchema } from './common.js';
 import moment from 'moment';
+import { TagsSchema } from './tags-validations.js';
 
 const AgendaDataSchema = Joi.object({
     Name: Joi.string().required(),
@@ -23,7 +24,7 @@ const EventDataSchema = Joi.object({
     DisplayPicture: Joi.string().required(),
     CoverPicture: Joi.string().required(),
     HasDiscussion: Joi.boolean().required(),
-    Tags: Joi.array().items(Joi.string()).default([]),
+    Tags: Joi.array().items(TagsSchema).default([]),
 }).custom((value, helpers) => {
     const currentTime = moment().valueOf();  
 
