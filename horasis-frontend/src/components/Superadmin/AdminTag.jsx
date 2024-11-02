@@ -5,36 +5,14 @@ import { deleteItem, getItem, patchItem, postItem } from '../../constants/operat
 import EmptyMembers from '../../components/Common/EmptyMembers'
 import deleteIcon from '../../assets/icons/delete.svg'
 import Spinner from '../ui/Spinner'
+import useGetListSuperadmin from '../../hooks/useGetListSuperadmin'
 const AdminTag = () => {
 	const { currentUserData, updateCurrentUser } = useSuperAuth()
 	const toast = useToast()
 
-	const [isLoading, setIsLoading] = useState(true)
-	const [tags, setTags] = useState([])
 	const [tagInput, setTagInput] = useState('')
 
-	const getTags = () => {
-		setIsLoading(true)
-		getItem(
-			`tags`,
-			(result) => {
-				setTags(result)
-				setIsLoading(false)
-			},
-			(err) => {
-				setIsLoading(false)
-				console.log(err)
-			},
-			updateCurrentUser,
-			currentUserData,
-			toast,
-			'admin'
-		)
-	}
-
-	useEffect(() => {
-		getTags()
-	}, [])
+	const { data: tags, isLoading, getList: getTags, setData: setTags } = useGetListSuperadmin('tags', { Limit: -1 })
 
 	const addTag = (e) => {
 		e.preventDefault()
@@ -43,7 +21,7 @@ const AdminTag = () => {
 			'tags',
 			{ TagName: tagInput },
 			(result) => {
-				getTags()
+				getTags([])
 				setTagInput('')
 			},
 			(err) => {},
@@ -59,7 +37,7 @@ const AdminTag = () => {
 		deleteItem(
 			`tags/${tagToDelete.DocId}`,
 			(result) => {
-				getTags()
+				getTags([])
 			},
 			(err) => {},
 			updateCurrentUser,
