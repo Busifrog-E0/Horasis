@@ -1,6 +1,10 @@
 import e from 'express';
 
 import { ReadOneFromTags, ReadTags, UpdateTags, CreateTags, RemoveTags, } from './../databaseControllers/tags-databaseController.js';
+import { PullFromManyUsers } from '../databaseControllers/users-databaseController.js';
+import { PullFromManyDiscussions } from '../databaseControllers/discussions-databaseController.js';
+import { PullFromManyEvents } from '../databaseControllers/events-databaseController.js';
+import { PullFromManyPodcasts } from '../databaseControllers/podcasts-databaseController.js';
 /**
  * @typedef {import('./../databaseControllers/tags-databaseController.js').TagData} TagData 
  */
@@ -61,7 +65,14 @@ const PatchTags = async (req, res) => {
  */
 const DeleteTags = async (req, res) => {
     const { TagId } = req.params;
+    const Tag = await ReadOneFromTags(TagId);
     await RemoveTags(TagId);
+    await Promise.all([
+        PullFromManyUsers({ Interests: { DocId: TagId, TagName: Tag.TagName } }, { "Interests.DocId": TagId }),
+        PullFromManyDiscussions({ Tags: { DocId: TagId, TagName: Tag.TagName } }, { "Tags.DocId": TagId }),
+        PullFromManyEvents({ Tags: { DocId: TagId, TagName: Tag.TagName } }, { "Tags.DocId": TagId }),
+        PullFromManyPodcasts({ Tags: { DocId: TagId, TagName: Tag.TagName } }, { "Tags.DocId": TagId })
+    ])
     return res.json(true);
 }
 
