@@ -15,7 +15,7 @@ const ActivitySchema = Joi.object({
         otherwise: Joi.any().forbidden()
     }),
     UserId: Joi.string().required(),
-    Type : Joi.string().valid("Feed", "Discussion", "Podcast"),
+    Type: Joi.string().valid("Feed", "Discussion", "Podcast"),
 });
 
 
@@ -47,8 +47,12 @@ const ValidatePatchActivities = async (req, res, next) => {
 
 const ValidateGetActivities = async (req, res, next) => {
     const Result = QueryParametersSchema.keys({
-        Type: Joi.string().valid("Feed", "Discussion", "Podcast"),
-        EntityId : Joi.string(),
+        Type: Joi.string().valid("Discussion", "Podcast", "Event", "Feed").required(),
+        EntityId: Joi.when('Type', {
+            is: Joi.string().valid("Discussion", "Podcast", "Event"),
+            then: Joi.string().required(),
+            otherwise: Joi.any().forbidden()
+        }),
     }).validate(req.query, { stripUnknown: true });
     if (Result.error) {
         const message = Result.error.details.map((detail) => detail.message).join(', ');
@@ -59,6 +63,7 @@ const ValidateGetActivities = async (req, res, next) => {
         return next();
     }
 }
+
 
 export {
     ValidatePostActivities, ValidatePatchActivities, ValidateGetActivities
