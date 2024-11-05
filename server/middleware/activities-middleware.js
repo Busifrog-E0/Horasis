@@ -1,6 +1,6 @@
 const GetFeedActivitiesMiddleware = (req, res, next) => {
-    if (!req.query.Filter.Type) {
-        req.query.Filter = { Type: "Feed", ...req.query.Filter }
+    if (!req.query.Type) {
+        req.query = { Type: "Feed", ...req.query }
     };
     return next();
 }
