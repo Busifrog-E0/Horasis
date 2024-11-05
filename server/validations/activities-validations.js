@@ -48,6 +48,7 @@ const ValidatePatchActivities = async (req, res, next) => {
 const ValidateGetActivities = async (req, res, next) => {
     const Result = QueryParametersSchema.keys({
         Type: Joi.string().valid("Feed", "Discussion", "Podcast"),
+        EntityId : Joi.string(),
     }).validate(req.query, { stripUnknown: true });
     if (Result.error) {
         const message = Result.error.details.map((detail) => detail.message).join(', ');
