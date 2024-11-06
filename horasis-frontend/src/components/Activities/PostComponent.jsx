@@ -13,7 +13,6 @@ import send from '../../assets/icons/send.svg'
 import deleteIcon from '../../assets/icons/delete.svg'
 import document from '../../assets/icons/document.svg'
 
-
 const PostComponent = ({
 	onSuccess,
 	className = '',
@@ -26,6 +25,8 @@ const PostComponent = ({
 		CanCreateAlbum: true,
 	},
 	api = 'feed',
+	type = '',
+	entId=''
 }) => {
 	const { currentUserData, updateCurrentUser, scrollToTop } = useContext(AuthContext)
 	const imageFileInputRef = useRef(null)
@@ -303,10 +304,11 @@ const PostComponent = ({
 	}
 
 	const onSendBtnClicked = () => {
+		const dataToPost = type !== '' ? { ...newPost, Type: type,EntityId:entId } : { ...newPost }
 		setIsLoading(true)
 		postItem(
 			api,
-			newPost,
+			dataToPost,
 			(result) => {
 				console.log(result)
 				if (result === true) {
@@ -401,7 +403,11 @@ const PostComponent = ({
 
 				{user?.ProfilePicture ? (
 					<div className='w-12 h-12 mt-2 md:mt-0 md:w-16 md:h-16 rounded-full bg-black block'>
-						<img className='w-12 h-12  md:w-16 md:h-16  rounded-full object-cover' src={user?.ProfilePicture} alt='avatar' />
+						<img
+							className='w-12 h-12  md:w-16 md:h-16  rounded-full object-cover'
+							src={user?.ProfilePicture}
+							alt='avatar'
+						/>
 					</div>
 				) : (
 					<>
@@ -552,7 +558,7 @@ const PostComponent = ({
 												onClick={() => {
 													handleDocumentDeleteClick(index)
 												}}>
-													<img src={deleteIcon} alt='' className='h-5 cursor-pointer' />
+												<img src={deleteIcon} alt='' className='h-5 cursor-pointer' />
 
 												{/* <svg
 													aria-hidden='true'
@@ -570,8 +576,8 @@ const PostComponent = ({
 												</svg> */}
 											</div>
 											<div className='w-20 h-20 bg-system-secondary-bg rounded-md border border-system-secondary-accent overflow-hidden flex flex-col justify-center items-center'>
-											<img src={document} alt='' className='h-8 cursor-pointer' />
-												
+												<img src={document} alt='' className='h-8 cursor-pointer' />
+
 												{/* <svg
 													xmlns='http://www.w3.org/2000/svg'
 													aria-hidden='true'
