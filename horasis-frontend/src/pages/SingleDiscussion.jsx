@@ -104,11 +104,13 @@ const SingleDiscussion = () => {
 			render: () => (
 				<div className='bg-system-secondary-bg p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
 					<TimeLineTab
-						api={`discussions/${DocId}/activities`}
+						api={`activities`}
 						gapBnTabs='gap-7'
 						classNameForPost='py-5'
 						bordered={true}
 						permissions={Permissions}
+						type='Discussion'
+						entId={DocId}
 					/>
 				</div>
 			),
