@@ -13,7 +13,9 @@ const GetEventActivitiesMiddleware = (req, res, next) => {
 
 
 const PostFeedActivitiesMiddleware = (req, res, next) => {
-    req.body = { Type: "Feed", EntityId: "Feed", ...req.body };
+    if(!req.body.Type){
+        req.body = { Type: "Feed", EntityId: "Feed", ...req.body };
+    }
     return next();
 }
 
