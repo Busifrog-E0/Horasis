@@ -3,11 +3,7 @@ import { QueryParametersSchema } from "./common.js";
 
 
 const ActivitySchema = Joi.object({
-    Content: Joi.when('Type', {
-        is: Joi.string().valid("Feed", "Discussion"),
-        then: Joi.string().required(),
-        otherwise: Joi.any().forbidden
-    }),
+    Content:  Joi.string().required().default([]),
     MediaFiles: Joi.array().required(),
     Documents: Joi.when('Type', {
         is: Joi.string().valid("Feed", "Discussion"),
