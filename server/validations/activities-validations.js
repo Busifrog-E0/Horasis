@@ -8,7 +8,7 @@ const ActivitySchema = Joi.object({
     Documents: Joi.when('Type', {
         is: Joi.string().valid("Feed", "Discussion"),
         then: Joi.array().required(),
-        otherwise: Joi.any().forbidden()
+        otherwise: Joi.array().max(0)
     }),
     UserId: Joi.string().required(),
     Type: Joi.string().valid("Feed", "Discussion", "Podcast"),

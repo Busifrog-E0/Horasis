@@ -201,7 +201,7 @@ const PatchPodcasts = async (req, res) => {
 const DeletePodcasts = async (req, res) => {
     const { PodcastId } = req.params;
     //@ts-ignore
-    const UserId = req.user;
+    const { UserId } = req.user;
     const Podcast = await ReadOneFromPodcasts(PodcastId);
     if (Podcast.OrganiserId !== UserId) {
         return res.status(444).json(AlertBoxObject("Cannot Delete", "You are not the organiser of this podcast"))
