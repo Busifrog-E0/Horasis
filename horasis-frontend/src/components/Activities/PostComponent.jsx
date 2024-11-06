@@ -25,7 +25,7 @@ const PostComponent = ({
 		CanUploadVideo: true,
 		CanCreateAlbum: true,
 	},
-	api = 'activites',
+	api = 'feed',
 }) => {
 	const { currentUserData, updateCurrentUser, scrollToTop } = useContext(AuthContext)
 	const imageFileInputRef = useRef(null)

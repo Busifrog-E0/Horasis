@@ -15,7 +15,7 @@ const TimeLineTab = ({
 	bordered = false,
 	header,
 	classNameForPost = '',
-	api,
+	api='feed',
 	permissions = {
 		IsAdmin: true,
 		CanInviteOthers: true,
