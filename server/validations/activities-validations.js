@@ -16,6 +16,7 @@ const ActivitySchema = Joi.object({
     }),
     UserId: Joi.string().required(),
     Type: Joi.string().valid("Feed", "Discussion", "Podcast"),
+    EntityId : Joi.string()
 });
 
 
