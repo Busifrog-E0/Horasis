@@ -194,6 +194,12 @@ const PatchEvents = async (req, res) => {
  */
 const DeleteEvents = async (req, res) => {
     const { EventId } = req.params;
+    //@ts-ignore
+    const { UserId } = req.user;
+    const Event = await ReadOneFromEvents(EventId);
+    if (Event.OrganiserId !== UserId) {
+        return res.status(444).json(AlertBoxObject("Cannot Delete", "You are not the organiser of this event"))
+    }
     await Promise.all([
         RemoveEvents(EventId),
         RemoveNotificationForEntity(EventId),
