@@ -45,6 +45,9 @@ import AdminUsers from '../pages/superadmin/AdminUsers'
 import SuperAdminLogin from '../pages/SuperAdminLogin'
 import UniversalSearchDetails from '../pages/UniversalSearchDetails'
 import AdminTags from '../pages/superadmin/AdminTags'
+import Podcasts from '../pages/Podcasts'
+import SinglePodcast from '../pages/SinglePodcast'
+import CreatePodcast from '../pages/CreatePodcast'
 
 export const router = createBrowserRouter(
 	createRoutesFromElements(
@@ -86,6 +89,10 @@ export const router = createBrowserRouter(
 							}
 						/>
 						<Route path='/Search' element={<UniversalSearchDetails />} />
+
+						<Route path='/Podcasts' element={<Podcasts />} />
+						<Route path='/Podcasts/Create/New' element={<CreatePodcast />} />
+					<Route path='/Podcasts/:podcastid' element={<SinglePodcast />} />
 					</Route>
 
 					<Route path='/MyProfile' element={<MyProfile />} />

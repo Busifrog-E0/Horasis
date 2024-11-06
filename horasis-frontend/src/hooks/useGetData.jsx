@@ -7,21 +7,23 @@ export default function useGetData(endpoint, { onSuccess = () => {}, onError = (
 	const { updateCurrentUser, currentUserData } = useAuth()
 	const toast = useToast()
 	const [data, setData] = useState()
-	const [isLoading, setIsLoading] = useState(true)
+	const [isLoading, setIsLoading] = useState(fetchOnRender)
 
-	const getData = () => {
-		const query = endpoint
+	const getData = (endPoint = '',onsuccess=()=>{},onerror=()=>{}) => {
+		const query = endPoint !== '' ? endPoint : endpoint
 		setIsLoading(true)
 		getItem(
 			query,
 			(result) => {
 				setData(result)
+				onsuccess(result)
 				onSuccess(result)
 				setIsLoading(false)
 			},
 			(err) => {
 				console.log(err, 'error from get list')
 				onError(err)
+				onerror(err)
 				setIsLoading(false)
 			},
 			updateCurrentUser,
