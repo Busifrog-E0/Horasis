@@ -26,7 +26,8 @@ const PostComponent = ({
 	},
 	api = 'feed',
 	type = '',
-	entId=''
+	entId = '',
+	from = '',
 }) => {
 	const { currentUserData, updateCurrentUser, scrollToTop } = useContext(AuthContext)
 	const imageFileInputRef = useRef(null)
@@ -304,7 +305,7 @@ const PostComponent = ({
 	}
 
 	const onSendBtnClicked = () => {
-		const dataToPost = type !== '' ? { ...newPost, Type: type,EntityId:entId } : { ...newPost }
+		const dataToPost = type !== '' ? { ...newPost, Type: type, EntityId: entId } : { ...newPost }
 		setIsLoading(true)
 		postItem(
 			api,
@@ -381,15 +382,21 @@ const PostComponent = ({
 							let isAlbum = false
 							let isImageAllowed = false
 							let isVideoAllowed = false
-
-							if (permissions.IsAdmin || permissions.CanCreateAlbum) {
-								isAlbum = true
-								isImageAllowed = true
-								isVideoAllowed = true
+							if (from === 'podcast') {
+								isAlbum = false
+								isImageAllowed = false
+								isVideoAllowed = permissions?.CanUploadVideo
 							} else {
-								isImageAllowed = permissions.CanUploadPhoto
-								isVideoAllowed = permissions.CanUploadVideo
+								if (permissions.IsAdmin || permissions.CanCreateAlbum) {
+									isAlbum = true
+									isImageAllowed = true
+									isVideoAllowed = true
+								} else {
+									isImageAllowed = permissions.CanUploadPhoto
+									isVideoAllowed = permissions.CanUploadVideo
+								}
 							}
+			
 
 							// Only call handleImageOrVideoChange if any permissions allow uploading
 							if (isImageAllowed || isVideoAllowed) {
@@ -429,7 +436,9 @@ const PostComponent = ({
 								handleContentChange={(e) => validateSingle({ Content: e }, 'Content')}
 								newPost={newPost}
 							/>
-							<img src={attach} alt='' className='h-6 cursor-pointer' onClick={handleDocumentUploadClick} />
+							{from !== 'podcast' && (
+								<img src={attach} alt='' className='h-6 cursor-pointer' onClick={handleDocumentUploadClick} />
+							)}
 							{/* <svg
 								onClick={handleDocumentUploadClick}
 								xmlns='http://www.w3.org/2000/svg'

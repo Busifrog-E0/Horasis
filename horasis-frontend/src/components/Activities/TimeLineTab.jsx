@@ -26,6 +26,7 @@ const TimeLineTab = ({
 	},
 	type = '',
 	entId = '',
+	from=""
 }) => {
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
 	const toast = useToast()
@@ -115,6 +116,7 @@ const TimeLineTab = ({
 				api={api}
 				type={type}
 				entId={entId}
+				from={from}
 			/>
 
 			{header && <h4 className='font-medium text-2xl text-system-primary-text mt-3 lg:mt-9 mb-4'>All Updates</h4>}
