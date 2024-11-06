@@ -223,8 +223,6 @@ const PodcastInit = (Podcast) => {
             IsAdmin: false,
             CanPostActivity: false,
             CanInviteOthers: false,
-            CanUploadPhoto: false,
-            CanCreateAlbum: false,
             CanUploadVideo: false
         }
     }
