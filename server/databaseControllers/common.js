@@ -112,6 +112,15 @@ const ParentTypeInLikesAndComments = async () => {
     }))
 }
 
+const UserInComments = async () => {
+    const Comments = await ReadComments({ UserDetails: { $exists: false } }, undefined, -1, undefined);
+    await Promise.all(Comments.map(async Comment => {
+        const UserDetails = await ReadOneFromUsers(Comment.UserId);
+        await UpdateComments({ UserDetails }, Comment.DocId);
+    }))
+    console.log('finish')
+}
+
 function Shuffle(array) {
     let m = array.length, t, i;
 
@@ -133,5 +142,6 @@ export {
     CreateActivityExtendedProps,
     AddUserDetailstoLikes,
     TypeFeedInProfileChangeActivities,
-    ParentTypeInLikesAndComments
+    ParentTypeInLikesAndComments,
+    UserInComments
 }

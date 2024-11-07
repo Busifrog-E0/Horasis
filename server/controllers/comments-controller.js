@@ -36,11 +36,7 @@ const GetComments = async (req, res) => {
     // @ts-ignore
     Filter.ParentId = ParentId;
     // @ts-ignore
-    const Comments = await ReadComments(Filter, NextId, Limit, OrderBy);
-    const data = await Promise.all(Comments.map(async Comment => {
-        const UserDetails = await ReadOneFromUsers(Comment.UserId);
-        return { ...Comment, UserDetails }
-    }))
+    const data = await ReadComments(Filter, NextId, Limit, OrderBy);
     return res.json(data);
 }
 
@@ -55,7 +51,7 @@ const PostComments = async (req, res) => {
     req.body.Type = "Comment";
     const Mentions = await ExtractMentionedUsersFromContent(req.body.Content);
     req.body.OriginalLanguage = await DetectLanguage(req.body.Content);
-
+    req.body.UserDetails = await ReadOneFromUsers(req.body.UserId)
     if (req.body.ParentType === "Activity") {
         await IncrementActivities({ NoOfComments: 1 }, ActivityId,);
         await SendNotificationToUserOnCommentPost(ActivityId, req.body.UserId);

@@ -91,22 +91,6 @@ const GetArticleAnalytics = async (req, res) => {
     return res.json({ Articles, Engagements })
 }
 
-/**
- * 
- * @param {e.Request} req 
- * @param {e.Response} res 
- * @returns 
- */
-const GetDiscussionAnalytics = async (req, res) => {
-    const { Index, NoOfIntervals } = req.query
-    const [Discussions, Activities] = await Promise.all([
-        //@ts-ignore
-        GetAnalyticsWithinAnInterval("Discussions", {}, Index, NoOfIntervals),
-        //@ts-ignore
-        GetAnalyticsWithinAnInterval("Activities", { Type: "Discussion" }, Index, NoOfIntervals)
-    ])
-    return res.json({ Discussions, Activities })
-}
 
 /** 
  * 
@@ -205,7 +189,7 @@ const GetAnalyticsWithinAnInterval = async (
 
 /**
  * 
- * @param {"Activities"|"Events"|"Discussions"|"Articles"|"Users"} collectionName 
+ * @param {"Activities"|"Events"|"Discussions"|"Articles"|"Users"|"Likes"|"Comments"} collectionName 
  * @param {string} fieldName 
  * @param {object} where 
  * @param {number} Limit 
@@ -224,7 +208,7 @@ const GetDocumentCountByFields = async (collectionName, fieldName, where = {}, L
             }
         },
     ]
-    const data = await dataHandling.Aggregate(collectionName, pipeline, undefined, Limit, { Count: -1 });
+    let data = await dataHandling.Aggregate(collectionName, pipeline, undefined, Limit, { Count: -1 });
     return data;
 }
 
@@ -287,6 +271,70 @@ const GetArticleEngagementCount = async (StartDate, EndDate) => {
     return { TotalCount, PercentageChange };
 }
 
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ * @returns 
+ */
+const GetEngagementBreakdown = async (req, res) => {
+    //@ts-ignore
+    const { Type, Country } = req.query.Filter;
+    const LikeWhere = { ParentType: Type }
+    const CommentWhere = { RootParentType: Type }
+    const CountryFilter = Country ? { Country } : {}
+    const [TotalLikes, TotalComments, LikeCountryData, LikeCityData, LikeIndustryData,
+        LikeJobTitleData, CommentCountryData, CommentCityData, CommentIndustryData, CommentJobTitleData, CountryLikes, CountryComments] = await Promise.all([
+            CountLikes(LikeWhere),
+            CommentCount(CommentWhere),
+            GetDocumentCountByFields("Likes", "UserDetails.Country", LikeWhere,  -1),
+            GetDocumentCountByFields("Likes", "UserDetails.City", LikeWhere,  -1),
+            GetDocumentCountByFields("Likes", "UserDetails.Industry", { ...CountryFilter, ...LikeWhere },  -1),
+            GetDocumentCountByFields("Likes", "UserDetails.JobTitle", { ...CountryFilter, ...LikeWhere },  -1),
+            GetDocumentCountByFields("Comments", "UserDetails.Country", CommentWhere,  -1),
+            GetDocumentCountByFields("Comments", "UserDetails.City", CommentWhere,  -1),
+            GetDocumentCountByFields("Comments", "UserDetails.Industry", { ...CountryFilter, ...CommentWhere },  -1),
+            GetDocumentCountByFields("Comments", "UserDetails.JobTitle", { ...CountryFilter, ...CommentWhere },  -1),
+            CountLikes({ ...CountryFilter, ...LikeWhere }),
+            CommentCount({ ...CountryFilter, ...CommentWhere }),
+        ])
+    const CountryData = MergeTwoArrayCount(LikeCountryData, CommentCountryData);
+    const City = MergeTwoArrayCount(LikeCityData, CommentCityData);
+    const Industry = MergeTwoArrayCount(LikeIndustryData, CommentIndustryData);
+    const JobTitle = MergeTwoArrayCount(LikeJobTitleData, CommentJobTitleData);
+
+    const FilteredCount = Country ? CountryLikes + CountryComments : TotalComments + TotalLikes;
+    const CountryPercentage = CountryData.map(item => item.Count === 0 ? item : { ...item, Count: GetPercentageOfData(item.Count, FilteredCount) });
+    const CityPercentage = City.map(item => item.Count === 0 ? item : { ...item, Count: GetPercentageOfData(item.Count, FilteredCount) });
+    const IndustryPercentage = Industry.map(item => item.Count === 0 ? item : { ...item, Count: GetPercentageOfData(item.Count, FilteredCount) });
+    const JobTitlePercentage = JobTitle.map(item => item.Count === 0 ? item : { ...item, Count: GetPercentageOfData(item.Count, FilteredCount) });
+
+    return res.json({ Country: CountryPercentage, City: CityPercentage, Industry: IndustryPercentage, JobTitle: JobTitlePercentage })
+}
+
+
+const MergeTwoArrayCount = (data1, data2, Limit = 6) => {
+    const combinedResults = [...data1];
+
+    // Loop through data2 and add counts to combinedResults
+    data2.forEach(item2 => {
+        // Check if the EntityName already exists in combinedResults
+        const existingItem = combinedResults.find(item1 => item1.EntityName === item2.EntityName);
+
+        if (existingItem) {
+            // If it exists, add the counts
+            existingItem.Count += item2.Count;
+        } else {
+            // If it doesn't exist, add it as a new entry
+            combinedResults.push(item2);
+        }
+    });
+
+    // Sort by count in descending order and limit the size to the specified limit
+    return combinedResults
+        .sort((a, b) => b.Count - a.Count)
+        .slice(0, Limit);
+}
 
 
 export {
@@ -299,7 +347,8 @@ export {
     GetAnalyticsTopDiscussions,
     GetAnalyticsTopEvents,
     GetDiscussionAnalytics,
-    GetEventsAnalytics
+    GetEventsAnalytics,
+    GetEngagementBreakdown
 
 }
 
