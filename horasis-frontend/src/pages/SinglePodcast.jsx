@@ -10,6 +10,7 @@ import useGetData from '../hooks/useGetData'
 import usePostData from '../hooks/usePostData'
 import { useAuth } from '../utils/AuthProvider'
 import Spinner from '../components/ui/Spinner'
+import useTranslation from '../hooks/useTranslation'
 
 const SinglePodcast = () => {
 	const [activeTab, setActiveTab] = useState(0)
@@ -65,9 +66,7 @@ const SinglePodcast = () => {
 			key: key,
 			title: 'Join Podcast',
 			render: () => {
-				return (
-					<div className='bg-system-secondary-bg p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'></div>
-				)
+				return <div className='bg-system-secondary-bg p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'></div>
 			},
 		})
 
@@ -113,9 +112,38 @@ const SinglePodcast = () => {
 		})
 	}
 
+	const {
+		isTranslated: translated,
+		isTranslating: translating,
+		translate: translatePodcast,
+		showOriginal,
+		homeLanguage,
+	} = useTranslation({ data: podcast, setData: setPodcast, Type: 'Podcast' })
+
 	return (
 		<>
+		
 			<div className=' col-span-3 bg-system-primary-bg rounded-lg  my-2 p-4 flex flex-col gap-2'>
+			{/* {podcast?.OriginalLanguage !== homeLanguage && (
+				<>
+					<h4 className='text-2xl text-white'>•</h4>
+					{translating ? (
+						<h4 className='text-2xl text-white  cursor-pointer'>Translating...</h4>
+					) : (
+						<>
+							{translated ? (
+								<h4 className='text-2xl text-white  cursor-pointer' onClick={showOriginal}>
+									Show Original
+								</h4>
+							) : (
+								<h4 className='text-2xl text-white  cursor-pointer' onClick={translatePodcast}>
+									Translate this podcast
+								</h4>
+							)}
+						</>
+					)}
+				</>
+			)} */}
 				{/* Podcast Cover Image */}
 				<div className='flex items-start gap-6 bg-system-secondary-bg p-4'>
 					<img

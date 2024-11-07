@@ -14,18 +14,18 @@ const SavedPodcastTab = ({ bordered = false }) => {
 	const navigate = useNavigate()
 	const [isLoading, setIsLoading] = useState(true)
 	const [isLoadingMore, setIsLoadingMore] = useState(false)
-	const [discussions, setDiscussions] = useState([])
+	const [podcasts, setPodcasts] = useState([])
 	const [pageDisabled, setPageDisabled] = useState(true)
 	const [filters, setFilters] = useState({
 		OrderBy: 'Index',
 		Limit: 5,
 		Keyword: '',
-		Type: 'Discussion',
+		Type: 'Podcast',
 	})
 
 	const onDelete = (DocId) => {
 		console.log(DocId)
-		setDiscussions(discussions.filter((d) => d.DocId !== DocId))
+		setPodcasts(podcasts.filter((d) => d.DocId !== DocId))
 	}
 
 	const setLoadingCom = (tempArr, value) => {
@@ -38,8 +38,8 @@ const SavedPodcastTab = ({ bordered = false }) => {
 
 	const api = 'saves'
 
-	const getDiscussions = (tempActivites) => {
-		getData(`${api}?&${jsonToQuery(filters)}`, tempActivites, setDiscussions)
+	const getPodcasts = (tempActivites) => {
+		getData(`${api}?&${jsonToQuery(filters)}`, tempActivites, setPodcasts)
 	}
 	const getData = (endpoint, tempData, setData) => {
 		setLoadingCom(tempData, true)
@@ -80,19 +80,19 @@ const SavedPodcastTab = ({ bordered = false }) => {
 	}
 
 	const fetchData = (initialRender = false) => {
-		getDiscussions(initialRender ? [] : discussions)
+		getPodcasts(initialRender ? [] : podcasts)
 	}
 
 	const fetch = () => fetchData(true)
 	const fetchMore = () => fetchData(false)
 
-	const navigateToDiscussion = (id) => {
-		navigate(`/Discussions/${id}`)
+	const navigateToPodcast = (id) => {
+		navigate(`/Podcasts/${id}`)
 	}
 
 	useEffect(() => {
-		if (discussions.length > 0) hasAnyLeft(`${api}`, discussions)
-	}, [discussions])
+		if (podcasts.length > 0) hasAnyLeft(`${api}`, podcasts)
+	}, [podcasts])
 
 	useEffect(() => {
 		fetch()
@@ -101,49 +101,49 @@ const SavedPodcastTab = ({ bordered = false }) => {
 	return (
 		<div className='p-5 bg-system-secondary-bg rounded-lg'>
 			<div className='flex items-center justify-between gap-2 mb-1'>
-				<h4 className='font-medium text-2xl text-system-primary-text'>Saved Discussions</h4>
+				<h4 className='font-medium text-2xl text-system-primary-text'>Saved Podcasts</h4>
 				{/* arrow cursor-pointer */}
 			</div>
 			<div>
 				{isLoading ? (
 					<Spinner />
-				) : discussions.length > 0 ? (
+				) : podcasts.length > 0 ? (
 					<>
-						{discussions.map((discussion, index) => {
-							let lastItem = discussions.length - 1 === index
+						{podcasts.map((podcast, index) => {
+							let lastItem = podcasts.length - 1 === index
 							return (
-								<SavedDiscussionItem
-									discussion={discussion}
+								<SavedPodcastItem
+									podcast={podcast}
 									lastItem={lastItem}
-									navigateToDiscussion={navigateToDiscussion}
-									key={discussion.DocId}
+									navigateToPodcast={navigateToPodcast}
+									key={podcast.DocId}
 								/>
 							)
 						})}
 					</>
 				) : (
-					<EmptyMembers emptyText={'No saved discussions'} />
+					<EmptyMembers emptyText={'No saved podcasts'} />
 				)}
 			</div>
 		</div>
 	)
 }
 
-const SavedDiscussionItem = ({ discussion, lastItem, navigateToDiscussion }) => {
+const SavedPodcastItem = ({ podcast, lastItem, navigateToPodcast }) => {
 	return (
 		<>
 			<div
 				className={`mt-4 flex flex-row gap-2 cursor-pointer ${
 					!lastItem ? 'border-b' : ''
 				} pb-4 border-system-file-border`}
-				onClick={() => navigateToDiscussion(discussion.DocId)}>
+				onClick={() => navigateToPodcast(podcast.DocId)}>
 				<div className='h-16 w-28  overflow-hidden rounded-lg'>
-					<img src={discussion.CoverPicture} className='object-cover h-full w-full' />
+					<img src={podcast.CoverPicture} className='object-cover h-full w-full' />
 				</div>
 				<div className='flex-1'>
-					<h4 className='font-semibold text-sm text-system-primary-text'>{discussion.DiscussionName}</h4>
+					<h4 className='font-semibold text-sm text-system-primary-text'>{podcast.PodcastName}</h4>
 					<div className='flex flex-row gap-3'>
-						<p className='text-xs text-brand-gray-dim mt-1 line-clamp-1'>{discussion.Description}</p>
+						<p className='text-xs text-brand-gray-dim mt-1 line-clamp-1'>{podcast.Description}</p>
 						{/* <svg
 					className='cursor-pointer w-12 h-12 text-system-primary-text'
 					aria-hidden='true'

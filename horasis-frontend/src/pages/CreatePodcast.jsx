@@ -36,10 +36,10 @@ const CreatePodcast = () => {
 	const [podcastId, setPodcastId] = useState('')
 
 	const changeStep = (step) => {
-		if (step >= 1 && step <= 4) {
+		if (step >= 1 && step <= 3) {
 			setActiveStep(step)
 		}
-		if (step === 5) {
+		if (step === 4) {
 			navigate(`/Podcasts/${podcastId}`)
 		}
 	}
@@ -47,14 +47,13 @@ const CreatePodcast = () => {
 	const steps = [
 		{ title: 'Details', no: 1 },
 		{ title: 'Cover', no: 2 },
-		{ title: 'Invites', no: 3 },
-		{ title: 'Settings', no: 4 },
+		{ title: 'Settings', no: 3 },
 	]
 
 	const isFirstStep = activeStep === 1
 	const isSecondStep = activeStep === 2
 	const isThirdStep = activeStep === 3
-	const isFourthStep = activeStep === 4
+	// const isFourthStep = activeStep === 4
 
 	const postPodcast = () => {
 		setIsModalOpen(false)
@@ -201,8 +200,8 @@ const CreatePodcast = () => {
 							fileFieldName='CoverPicture'
 						/>
 					)}
-					{activeStep === 3 && <CreatePodcastStep3 podcastId={podcastId} />}
-					{activeStep === 4 && <PodcastSettings podcastId={podcastId} from='create' />}
+					{/* {activeStep === 3 && <CreatePodcastStep3 podcastId={podcastId} />} */}
+					{activeStep === 3 && <PodcastSettings podcastId={podcastId} from='create' />}
 
 					{/* {activeStep !== 4 && */}
 					<div className='flex justify-end gap-4 py-8'>
@@ -229,12 +228,12 @@ const CreatePodcast = () => {
 									Create Podcast
 								</Button>
 							)}
-							{isThirdStep && (
+							{/* {isThirdStep && (
 								<Button onClick={() => changeStep(activeStep + 1)} width='full' className='px-10' variant='black'>
 									Next
 								</Button>
-							)}
-							{isFourthStep && (
+							)} */}
+							{isThirdStep && (
 								<Button onClick={() => changeStep(activeStep + 1)} width='full' className='px-10' variant='black'>
 									Done
 								</Button>

@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom'
 import PodcastsSection from '../components/Podcasts/PodcastsSection'
 import Button from '../components/ui/Button'
 import SavedDiscussionTab from '../components/Discussions/Saved/SavedDiscussionTab'
+import SavedPodcastTab from '../components/Podcasts/Saved/SavedPodcastTab'
 
 const Podcasts = ({ onSelectPodcast, onCreatePodcast }) => {
 	const navigate = useNavigate()
