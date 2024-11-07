@@ -260,7 +260,7 @@ const PostActivityForProfilePatch = async (Data, UserId) => {
         return;
     }
     let Activity = Data.CoverPicture ? { Content: "Updated their Cover Photo", MediaFiles: [{ FileUrl: Data.CoverPicture, Type: "image" }], UserId } :
-        { Content: "Updated their Profile Photo", MediaFiles: [{ FileUrl: Data.ProfilePicture, Type: "image" }], UserId }
+        { Content: "Updated their Profile Photo", MediaFiles: [{ FileUrl: Data.ProfilePicture, Type: "image" }], UserId, Type: "Feed" , EntityId : "Feed" };
     Activity = ActivityInit(Activity);
     await CreateActivities(Activity);
 }

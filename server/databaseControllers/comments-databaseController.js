@@ -11,6 +11,8 @@ import dataHandling from './functions.js'
  * @property {{Username : string,UserId: string,FullName : string}[]} Mentions
  * @property {'Comment'|'Reply'} Type
  * @property {'Activity'|'Article'} ParentType
+ * @property {'Feed'|'Discussion'|'Event'|'Podcast'|'Article'} RootParentType
+ * @property {string} RootParentId
  * @property {object} Languages
  */
 

@@ -1,14 +1,18 @@
 import e from 'express';
 
 import { ReadOneFromLikes, ReadLikes, UpdateLikes, CreateLikes, RemoveLikes, } from './../databaseControllers/likes-databaseController.js';
-import { IncrementActivities } from '../databaseControllers/activities-databaseController.js';
+import { IncrementActivities, ReadOneFromActivities } from '../databaseControllers/activities-databaseController.js';
 import { ReadOneFromUsers } from '../databaseControllers/users-databaseController.js';
-import { AlertBoxObject } from './common.js';
-import { IncrementComments } from '../databaseControllers/comments-databaseController.js';
+import { AlertBoxObject, GetParentTypeFromEntity } from './common.js';
+import { IncrementComments, ReadOneFromComments } from '../databaseControllers/comments-databaseController.js';
 import { RemoveNotificationForActivityLikes, SendNotificationsforActivityLikes } from './notifications-controller.js';
 import { IncrementArticles } from '../databaseControllers/articles-databaseController.js';
 /**
  * @typedef {import('./../databaseControllers/likes-databaseController.js').LikeData} LikeData 
+ */
+
+/**
+ * @typedef {import('../databaseControllers/users-databaseController.js').UserData} UserData
  */
 
 /**
@@ -54,19 +58,26 @@ const PostLikes = async (req, res) => {
     if (CheckLike.length > 0) {
         return res.status(444).json(AlertBoxObject("Cannot Like", "You cannot like twice"));
     }
+
     const UserDetails = await ReadOneFromUsers(UserId)
-    const data = { EntityId, UserId, Type: req.body.Type, UserDetails };
-    await CreateLikes(data);
-    if (data.Type === 'Activity') {
-        await IncrementActivities({ NoOfLikes: 1 }, data.EntityId);
+    const { Type } = req.body;
+    const { ParentId, ParentType } = await GetParentTypeFromEntity(EntityId, Type);
+    if (Type === 'Activity') {
+        await IncrementActivities({ NoOfLikes: 1 }, EntityId);
         await SendNotificationsforActivityLikes(UserId, EntityId);
     }
-    if (data.Type === 'Comment') {
-        await IncrementComments({ NoOfLikes: 1 }, data.EntityId);
+    if (Type === 'Comment') {
+        await IncrementComments({ NoOfLikes: 1 }, EntityId);
     }
-    if (data.Type === 'Article') {
-        await IncrementArticles({ NoOfLikes: 1 }, data.EntityId);
+    if (Type === 'Article') {
+        await IncrementArticles({ NoOfLikes: 1 }, EntityId);
     }
+    const data = LikeInit({
+        EntityId, UserId, Type: req.body.Type, UserDetails, ParentId,
+        //@ts-ignore
+        ParentType
+    });
+    await CreateLikes(data);
     return res.json(true);
 }
 
@@ -111,6 +122,22 @@ const DeleteLikes = async (req, res) => {
     return res.json(true);
 }
 
+/**
+ * 
+ * @param {object} Data
+ * @param {'Activity'|'Comment'|'Article'} Data.Type
+ * @param {string} Data.EntityId
+ * @param {string} Data.UserId
+ * @param {UserData} Data.UserDetails
+ * @param {string} Data.ParentId
+ * @param {'Activity'|'Article'|'Discussion'|'Event'|'Podcast'} Data.ParentType
+ *  
+ */
+const LikeInit = (Data) => {
+    return {
+        ...Data
+    }
+}
 
 export {
     GetOneFromLikes, GetLikes, PostLikes, PatchLikes, DeleteLikes

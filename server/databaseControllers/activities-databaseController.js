@@ -91,7 +91,12 @@ const CountActivities = async (where) => {
   return dataHandling.ReadCountCount("Activities", where);
 }
 
+const UpdateManyActivities = async (data, where = {}) => {
+  return dataHandling.UpdateMany("Activities", data, where);
+}
+
 export {
   ReadActivities, ReadOneFromActivities, UpdateActivities, CreateActivities, RemoveActivities,
-  IncrementActivities, UpdateAndIncrementActivities, AggregateActivities, CountActivities
+  IncrementActivities, UpdateAndIncrementActivities, AggregateActivities, CountActivities,
+  UpdateManyActivities
 };

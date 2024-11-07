@@ -1,13 +1,16 @@
 import { ObjectId } from "mongodb";
 import { ReadFollows, ReadOneFromFollows, UpdateFollows } from "./follow-databaseController.js";
 import { ReadOneFromUsers, ReadUsers } from "./users-databaseController.js";
-import { ReadActivities, UpdateActivities } from "./activities-databaseController.js";
+import { ReadActivities, UpdateActivities, UpdateManyActivities } from "./activities-databaseController.js";
 import { ReadDiscussions, UpdateDiscussions } from "./discussions-databaseController.js";
 import { CreateActiveUsers, ReadActiveUsers } from "./activeUsers-databaseController.js";
 import moment from "moment";
 import { AddConnectionstoUser } from "../controllers/users-controller.js";
 import { AddtoUserActivities } from "../controllers/activities-controller.js";
 import { ReadLikes, UpdateLikes } from "./likes-databaseController.js";
+import { GetLikes } from "../controllers/likes-controller.js";
+import { GetParentTypeFromEntity } from "../controllers/common.js";
+import { ReadComments, UpdateComments } from "./comments-databaseController.js";
 
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
 
@@ -63,7 +66,7 @@ const CreateActiveUsersDocument = async () => {
 
 const CreateUserExtendedProperties = async () => {
     const Users = await ReadUsers({}, undefined, -1, undefined);
-    for (let j = 0; j < Users.length; j++){
+    for (let j = 0; j < Users.length; j++) {
         const User = Users[j];
         await AddConnectionstoUser(User.DocId, User.DocId);
     }
@@ -77,7 +80,7 @@ const CreateUserExtendedProperties = async () => {
 }
 
 const CreateActivityExtendedProps = async () => {
-    const Activities = await ReadActivities({Type : "Feed"}, undefined, -1, undefined);
+    const Activities = await ReadActivities({ Type: "Feed" }, undefined, -1, undefined);
     await Promise.all(Activities.map(async Act => {
         await AddtoUserActivities(Act);
     }))
@@ -96,6 +99,18 @@ const AddUserDetailstoLikes = async () => {
 
 //UserDetailsinFollow()
 //TypeFeedInActivities()
+
+const TypeFeedInProfileChangeActivities = async () => {
+    await UpdateManyActivities({ Type: "Feed", EntityId: "Feed" }, { Type: { $exists: false } })
+}
+
+const ParentTypeInLikesAndComments = async () => {
+    const Comments = await ReadComments({ RootParentId: { $exists: false } }, undefined, -1, undefined);
+    await Promise.all(Comments.map(async Comment => {
+        const { ParentId: RootParentId, ParentType: RootParentType } = await GetParentTypeFromEntity(Comment.DocId, "Comment");
+        await UpdateComments({ RootParentId, RootParentType }, Comment.DocId);
+    }))
+}
 
 function Shuffle(array) {
     let m = array.length, t, i;
@@ -116,5 +131,7 @@ export {
     Shuffle,
     CreateUserExtendedProperties,
     CreateActivityExtendedProps,
-    AddUserDetailstoLikes
+    AddUserDetailstoLikes,
+    TypeFeedInProfileChangeActivities,
+    ParentTypeInLikesAndComments
 }
