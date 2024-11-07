@@ -1,6 +1,6 @@
 const GetFeedActivitiesMiddleware = (req, res, next) => {
-    if (!req.query.Filter.Type) {
-        req.query.Filter = { Type: "Feed", ...req.query.Filter }
+    if (!req.query.Type) {
+        req.query = { Type: "Feed", ...req.query }
     };
     return next();
 }
@@ -13,7 +13,9 @@ const GetEventActivitiesMiddleware = (req, res, next) => {
 
 
 const PostFeedActivitiesMiddleware = (req, res, next) => {
-    req.body = { Type: "Feed", EntityId: "Feed", ...req.body };
+    if(!req.body.Type){
+        req.body = { Type: "Feed", EntityId: "Feed", ...req.body };
+    }
     return next();
 }
 

@@ -14,7 +14,7 @@ const MembersGetSchema = QueryParametersSchema.keys({
 
 const ValidatePostMembers = async (req, res, next) => {
     const Result = Joi.object({
-        Type: Joi.string().valid("Discussion", "Event"),
+        Type: Joi.string().valid("Discussion", "Event", "Podcast").required(),
     }).validate(req.body, { stripUnknown: true, convert: true });
     if (Result.error) {
         const message = Result.error.details.map((detail) => detail.message).join(', ');
@@ -41,7 +41,7 @@ const ValidateGetMembers = async (req, res, next) => {
 
 const ValidateInviteMembers = async (req, res, next) => {
     const Result = Joi.object({
-        Type : Joi.string().valid("Discussion","Event").required(),
+        Type: Joi.string().valid("Discussion", "Event", "Podcast").required(),
     }).validate(req.body, { stripUnknown: true, convert: true });
     if (Result.error) {
         const message = Result.error.details.map((detail) => detail.message).join(', ');

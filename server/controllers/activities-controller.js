@@ -119,7 +119,7 @@ const PostActivities = async (req, res) => {
         CreateActivities(data, ActivityId),
         PostMediasFromAttachments(Attachments, ActivityId, UserId),
         SendNotificationstoActivityMentions(Mentions, UserId, ActivityId),
-        AddtoUserActivities({ ...data, ActivityId }),
+        req.body.Type === "Feed" ? AddtoUserActivities({ ...data, ActivityId }) : null,
         req.body.Type === "Discussion" ? IncrementDiscussions({ NoOfActivities: 1 }) :
             req.body.Type === "Event" ? IncrementEvents({ NoOfActivities: 1 }) : IncrementPodcasts({ NoOfActivities: 1 })
     ])

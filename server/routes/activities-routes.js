@@ -14,9 +14,13 @@ import { DeleteLikes, GetLikes, PostLikes } from '../controllers/likes-controlle
 import { DeleteSaves, GetSaves, PostSaves } from '../controllers/saves-controller.js';
 const router = e.Router();
 
-router.get('/activities', decodeIDToken, ensureAuthorized("User"), ValidateGetActivities, QueryParameterFormatting, GetFeedActivitiesMiddleware, SwaggerDocs.get_Activities,
+router.get('/feed', decodeIDToken, ensureAuthorized("User"), ValidateGetEntity, QueryParameterFormatting, GetFeedActivitiesMiddleware, SwaggerDocs.get_Activities,
     //@ts-ignore
     asyncHandler(GetActivities));
+
+router.get('/activities', decodeIDToken, ensureAuthorized("User"), ValidateGetActivities, QueryParameterFormatting,  SwaggerDocs.get_Activities,
+    //@ts-ignore
+    asyncHandler(GetFilteredActivities));
 
 router.get('/user/:UserId/activities', decodeIDToken, ensureAuthorized("User"), GetFeedActivitiesMiddleware, ValidateGetActivities, QueryParameterFormatting,
     GetUserActivitiesMiddleware, SwaggerDocs.get_Activities,

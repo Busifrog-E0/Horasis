@@ -201,7 +201,13 @@ const PatchDiscussions = async (req, res) => {
  */
 const DeleteDiscussions = async (req, res) => {
     const { DiscussionId } = req.params;
-    await Promise.all([
+    //@ts-ignore
+    const { UserId } = req.user;
+    const Discussion = await ReadOneFromDiscussions(DiscussionId);
+    if (Discussion.OrganiserId !== UserId) {
+        return res.status(444).json(AlertBoxObject("Cannot Delete", "You are not the organiser of this discussion"))
+    }
+        await Promise.all([
         RemoveDiscussions(DiscussionId),
         DeleteMembersOfEntity(DiscussionId),
         RemoveNotificationForEntity(DiscussionId)

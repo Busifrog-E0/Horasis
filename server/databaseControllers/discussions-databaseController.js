@@ -89,6 +89,10 @@ const CountDiscussions = async (where) => {
     return dataHandling.ReadCount('Discussions', where);
 }
 
+const PullFromManyDiscussions = async (data, where = {}, updateOptions = {}) => {
+    return dataHandling.UpdateMany('Discussions', data, where, ["$pull"], updateOptions);
+}
+
 export {
     ReadDiscussions,
     ReadOneFromDiscussions,
@@ -96,5 +100,6 @@ export {
     CreateDiscussions,
     RemoveDiscussions,
     IncrementDiscussions,
-    AggregateDiscussions
+    AggregateDiscussions,
+    PullFromManyDiscussions
 }

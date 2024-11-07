@@ -85,6 +85,11 @@ const AggregatePodcasts = async (AggregateArray, NextIndex, Limit, OrderBy) => {
 const IncrementPodcasts = async (data, DocId) => {
     return dataHandling.Update("Podcasts", data, DocId, ["$inc"], false);
 }
+
+const PullFromManyPodcasts = async (data, where = {}, updateOptions = {}) => {
+    return dataHandling.UpdateMany('Podcasts', data, where, ["$pull"], updateOptions);
+}
+
 export {
     ReadPodcasts,
     ReadOneFromPodcasts,
@@ -92,5 +97,6 @@ export {
     CreatePodcasts,
     RemovePodcasts,
     AggregatePodcasts,
-    IncrementPodcasts
+    IncrementPodcasts,
+    PullFromManyPodcasts
 }

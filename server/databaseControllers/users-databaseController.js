@@ -122,6 +122,11 @@ const UpdateManyUsers = async (data, where = {}, updateOptions = {}) => {
 }
 
 
+const PullFromManyUsers = async (data, where = {}, updateOptions = {}) => {
+    return dataHandling.UpdateMany('Users', data, where, ["$pull"], updateOptions);
+}
+
+
 export {
     ReadUsers,
     ReadOneFromUsers,
@@ -130,5 +135,6 @@ export {
     RemoveUsers,
     CountUsers,
     AggregateUsers,
-    UpdateManyUsers
+    UpdateManyUsers,
+    PullFromManyUsers
 }
