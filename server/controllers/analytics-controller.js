@@ -92,6 +92,23 @@ const GetArticleAnalytics = async (req, res) => {
 }
 
 
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ * @returns 
+ */
+const GetDiscussionAnalytics = async (req, res) => {
+    const { Index, NoOfIntervals } = req.query
+    const [Discussions, Activities] = await Promise.all([
+        //@ts-ignore
+        GetAnalyticsWithinAnInterval("Discussions", {}, Index, NoOfIntervals),
+        //@ts-ignore
+        GetAnalyticsWithinAnInterval("Activities", { Type: "Discussion" }, Index, NoOfIntervals)
+    ])
+    return res.json({ Discussions, Activities })
+}
+
 /** 
  * 
  * @param {e.Request} req 
