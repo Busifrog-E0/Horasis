@@ -103,9 +103,29 @@
     "/api/ModelLogin": {
       "post": {
         "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "EnrollmentId": {
+                  "example": "any"
+                },
+                "PhoneNumber": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "403": {
+            "description": "Forbidden"
           }
         }
       }
@@ -2223,7 +2243,7 @@
         ]
       }
     },
-    "/api/activities": {
+    "/api/feed": {
       "get": {
         "tags": [
           "Activities"
@@ -2256,7 +2276,67 @@
             "type": "string"
           },
           {
-            "name": "Filter",
+            "name": "Type",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Activity Data",
+            "schema": {
+              "$ref": "#/definitions/ActivityGetDataArray"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "402": {
+            "description": "Payment Required"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/activities": {
+      "get": {
+        "tags": [
+          "Activities"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "NextId",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "Limit",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "Keyword",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "OrderBy",
             "in": "query",
             "type": "string"
           }
@@ -2346,7 +2426,7 @@
             "type": "string"
           },
           {
-            "name": "Filter",
+            "name": "Type",
             "in": "query",
             "type": "string"
           },
@@ -2367,6 +2447,11 @@
           },
           {
             "name": "OrderBy",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "Filter",
             "in": "query",
             "type": "string"
           }
@@ -2417,7 +2502,7 @@
             "type": "string"
           },
           {
-            "name": "Filter",
+            "name": "Type",
             "in": "query",
             "type": "string"
           },
@@ -2438,6 +2523,11 @@
           },
           {
             "name": "OrderBy",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "Filter",
             "in": "query",
             "type": "string"
           }
@@ -2479,7 +2569,7 @@
             "type": "string"
           },
           {
-            "name": "Filter",
+            "name": "Type",
             "in": "query",
             "type": "string"
           },
@@ -8872,6 +8962,60 @@
         ]
       }
     },
+    "/api/analytics/engagement/breakdown": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "NextId",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "Limit",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "Keyword",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "OrderBy",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "Filter",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "402": {
+            "description": "Payment Required"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      }
+    },
     "/api/event/{EventId}/videoCall/join": {
       "get": {
         "description": "",
@@ -8974,9 +9118,32 @@
             "name": "authorization",
             "in": "header",
             "type": "string"
+          },
+          {
+            "name": "NextId",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "Limit",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "Keyword",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "OrderBy",
+            "in": "query",
+            "type": "string"
           }
         ],
         "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
           "401": {
             "description": "Unauthorized"
           },
