@@ -144,7 +144,7 @@ const UserLogin = async (req, res) => {
     const { Email, Password } = req.body;
     const Users = await ReadUsers({ Email: Email }, undefined, 1, undefined, false);
     if (Users.length === 0) {
-        res.redirect(RegisterUrl);
+        return res.json("REGISTER_REDIRECT");
     }
     const [User] = Users
     if (await ComparePassword(Password, User.Password) === false) {
