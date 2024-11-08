@@ -31,9 +31,15 @@ const branding = {
 const LogIn = () => {
 	const navigate = useNavigate()
 	const { updateCurrentUser } = useAuth()
+	const toast = useToast()
 	const { isLoading, postData } = usePostData({
 		onSuccess: (result) => {
-			updateCurrentUser(result)
+			if (result === 'REGISTER_REDIRECT') {
+				navigate('/Register')
+				toast.open('error', 'No user found', 'Redirecting to registration')
+			} else {
+				updateCurrentUser(result)
+			}
 		},
 	})
 
