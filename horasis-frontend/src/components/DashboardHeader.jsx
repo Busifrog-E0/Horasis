@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import avatar from '../assets/icons/avatar.svg'
 import logoutIcon from '../assets/icons/logout.svg'
@@ -169,33 +169,147 @@ const DashboardHeader = () => {
 						<ChatList />
 						<AlertList />
 
-						<button className='inline-flex md:hidden' onClick={openLogoutModal}>
-							<img src={logoutIcon} alt='' className='h-7' />
-						</button>
-						{user && (
-							<>
-								{user?.ProfilePicture ? (
-									<div className='rounded-full overflow-hidden cursor-pointer' onClick={navigateToProfile}>
-										<img src={user?.ProfilePicture} alt='' className='object-cover h-10 w-10 ' />
-									</div>
-								) : (
-									<>
+						<div className='hidden lg:block'>
+							{user && (
+								<>
+									{user?.ProfilePicture ? (
 										<div className='rounded-full overflow-hidden cursor-pointer' onClick={navigateToProfile}>
-											<img src={avatar} alt='' className='object-cover h-10 w-10 ' />
+											<img src={user?.ProfilePicture} alt='' className='object-cover h-10 w-10 ' />
 										</div>
-									</>
-								)}
-							</>
-						)}
+									) : (
+										<>
+											<div className='rounded-full overflow-hidden cursor-pointer' onClick={navigateToProfile}>
+												<img src={avatar} alt='' className='object-cover h-10 w-10 ' />
+											</div>
+										</>
+									)}
+								</>
+							)}
+						</div>
+
+						<div className='block lg:hidden'>
+							<UserProfile
+								user={user}
+								avatar={avatar}
+								isPermitted={isPermitted}
+								navigateToProfile={navigateToProfile}
+								openLogoutModal={openLogoutModal}
+							/>
+						</div>
+
+						{/* <button className='inline-flex md:hidden' onClick={openLogoutModal}>
+							<img src={logoutIcon} alt='' className='h-7' />
+						</button> */}
 						<button
 							type='button'
-							className='hidden md:inline-flex justify-center rounded-full border-2 border-system-error bg-system-secondary-bg text-md px-6 py-1 font-medium text-brand-red'
+							className='hidden lg:inline-flex justify-center rounded-full border-2 border-system-error bg-system-secondary-bg text-md px-6 py-1 font-medium text-brand-red'
 							onClick={openLogoutModal}>
 							Logout
 						</button>
 					</div>
 				</div>
 			</div>
+		</>
+	)
+}
+
+const UserProfile = ({ user, avatar, isPermitted, navigateToProfile, openLogoutModal }) => {
+	const navigate = useNavigate()
+	const [isDropdownOpen, setIsDropdownOpen] = useState(false)
+	const dropdownRef = useRef(null)
+
+	const handleDropdownToggle = () => {
+		setIsDropdownOpen(!isDropdownOpen)
+	}
+
+	const handleClickOutside = (event) => {
+		if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+			setIsDropdownOpen(false) // Close the dropdown if clicked outside
+		}
+	}
+
+	const OnClickMenu = (path) => {
+		window.scrollTo({ top: 0, behavior: 'smooth' })
+		// scrollToTop()
+		navigate(path)
+	}
+
+	useEffect(() => {
+		// Add event listener to detect clicks outside
+		document.addEventListener('mousedown', handleClickOutside)
+		return () => {
+			// Cleanup the event listener when the component unmounts
+			document.removeEventListener('mousedown', handleClickOutside)
+		}
+	}, [])
+
+	return (
+		<>
+			{user && (
+				<>
+					{user?.ProfilePicture ? (
+						<div className='relative' ref={dropdownRef}>
+							<div className='rounded-full overflow-hidden cursor-pointer' onClick={handleDropdownToggle}>
+								<img src={user?.ProfilePicture} alt='' className='object-cover h-10 w-10' />
+							</div>
+
+							{isDropdownOpen && (
+								<div className='absolute right-0 mt-2 w-48 bg-system-secondary-bg overflow-hidden rounded-lg shadow-lg font-medium z-50'>
+									<p
+										onClick={() => {
+											navigateToProfile()
+											handleDropdownToggle()
+										}}
+										className='block px-4 py-2 text-system-primary-text hover:bg-gray-100 border-b cursor-pointer'>
+										View Profile
+									</p>
+									{isPermitted && (
+										<>
+											<p
+												onClick={() => {
+													handleDropdownToggle()
+													OnClickMenu('/Analytics')
+												}}
+												className='block px-4 py-2 text-system-primary-text hover:bg-gray-100 border-b cursor-pointer'>
+												Analytics
+											</p>
+										</>
+									)}
+									<p
+										onClick={() => {
+											openLogoutModal()
+											handleDropdownToggle()
+										}}
+										className='block px-4 py-2 text-system-error hover:bg-gray-100 cursor-pointer'>
+										Logout
+									</p>
+								</div>
+							)}
+						</div>
+					) : (
+						<div className='relative' ref={dropdownRef}>
+							<div className='rounded-full overflow-hidden cursor-pointer' onClick={handleDropdownToggle}>
+								<img src={avatar} alt='' className='object-cover h-10 w-10' />
+							</div>
+
+							{isDropdownOpen && (
+								<div className='absolute right-0 mt-2 w-48 bg-system-secondary-bg overflow-hidden rounded-lg shadow-lg font-medium z-50'>
+									<p
+										onClick={navigateToProfile}
+										className='block px-4 py-2 text-system-primary-text hover:bg-system-primary-bg border-b cursor-pointer'>
+										View Profile
+									</p>
+									<p
+										onClick={openLogoutModal}
+										className='block px-4 py-2 text-system-error hover:bg-system-primary-bg cursor-pointer'>
+										Logout
+									</p>
+								</div>
+							)}
+						</div>
+					)}
+				</>
+			)}
 		</>
 	)
 }
