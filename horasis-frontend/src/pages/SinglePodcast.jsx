@@ -157,7 +157,7 @@ const SinglePodcast = () => {
 
 								{/* Podcast Description */}
 								<p className='text-lg text-system-secondary-text leading-relaxed'>{podcast?.Description}</p>
-								<p className='text-md text-system-primary-text italic'>{podcast?.Brief}</p>
+								{/* <p className='text-md text-system-primary-text italic'>{podcast?.Brief}</p> */}
 							</div>
 							<div>
 								{podcast?.OriginalLanguage !== homeLanguage && (

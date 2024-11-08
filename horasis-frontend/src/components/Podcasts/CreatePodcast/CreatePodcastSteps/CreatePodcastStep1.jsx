@@ -43,7 +43,7 @@ const CreatePodcastStep1 = ({ postPodcastData, setPostPodcastData, validateSingl
 				/>
 				{errorObj['PodcastName'] != undefined && <p className='text-brand-red m-0'>{errorObj['PodcastName']}</p>}
 			</div>
-			<div>
+			{/* <div>
 				<h1 className='text-system-primary-text font-medium text-lg'>
 					Podcast Brief<span className='text-brand-red'>*</span>
 				</h1>
@@ -58,7 +58,7 @@ const CreatePodcastStep1 = ({ postPodcastData, setPostPodcastData, validateSingl
 					}}
 				/>
 				{errorObj['Brief'] != undefined && <p className='text-brand-red m-0'>{errorObj['Brief']}</p>}
-			</div>
+			</div> */}
 			<div>
 				<h1 className='text-system-primary-text font-medium text-lg'>
 					Podcast Description<span className='text-brand-red'>*</span>
