@@ -72,7 +72,7 @@ const RefreshToken = async (req, res) => {
             jwt.decode(RefreshTokenData.Token, { complete: true });
             const responseObject = await GenerateToken(RefreshTokenData.SignObject);
             await Delete("RefreshToken", RefreshTokenData.DocId);
-            res.json(responseObject);
+            res.json({ ...responseObject, CurrentUser: RefreshTokenData.SignObject });
         } catch (error) {
             res.status(445).json(error.message);
         }

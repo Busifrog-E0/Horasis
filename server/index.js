@@ -15,7 +15,7 @@ const app = express();
 import router from "./routes/index.js";
 
 app.use(cors({ origin: true }));
-app.use(express.json({ "limit": "20mb" }));
+app.use(express.json({ "limit": "25mb" }));
 
 app.use(json());
 app.use(urlencoded({
@@ -33,6 +33,8 @@ import { ConnectSocket } from "./controllers/socket-controller.js";
 import { CreateActiveUsers } from "./databaseControllers/activeUsers-databaseController.js";
 
 
+
+
 app.use('/doc', swaggerUi.serve, swaggerUi.setup(swaggerFile));
 
 app.use((req, res, next) => {
@@ -48,8 +50,6 @@ app.use(errorHandler);
 
 
 
-
-
 const expressServer = app.listen(PORT, async (err) => {
     await db.init();
     // await FirstSetupAdminInfo();
@@ -58,8 +58,8 @@ const expressServer = app.listen(PORT, async (err) => {
     const CurrentUser = {
         // Role: 'Admin',
         // UserId: "Admin",
-        Role: ['User'],
-        UserId: "669a235e525967c06f6bfc06",
+        Role: ['Admin', 'User'],
+        UserId: "669a2369525967c06f6bfc0a",
         RegistrationStatus: "",
         Subscription: null
     }

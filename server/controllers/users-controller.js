@@ -144,7 +144,7 @@ const UserLogin = async (req, res) => {
     const { Email, Password } = req.body;
     const Users = await ReadUsers({ Email: Email }, undefined, 1, undefined, false);
     if (Users.length === 0) {
-        res.redirect(RegisterUrl);
+        return res.json("REGISTER_REDIRECT");
     }
     const [User] = Users
     if (await ComparePassword(Password, User.Password) === false) {
@@ -354,7 +354,7 @@ const RemoveUserAsAdmin = async (req, res) => {
     const { UserId } = req.body;
     const [RefreshToken] = await ReadRefreshTokens({ 'SignObject.UserId': UserId }, undefined, 1, { Index: "desc" })
     await UpdateRefreshToken(RefreshToken.DocId, { 'SignObject.Role': ["User"] });
-    await MaintainAdminRoleArray(UserId, "pull");
+    await MaintainAdminRoleArray(UserId, "push");
     await UpdateUsers({ Roles: ["User"] }, UserId);
     return res.json(true);
 }
