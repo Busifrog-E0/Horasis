@@ -17,6 +17,7 @@ const DateAndTimePicker = ({
 	timeIntervals,
 	timeCaption,
 	dateFormat,
+	minDate='',
 	...props
 }) => {
 	return (
@@ -32,7 +33,7 @@ const DateAndTimePicker = ({
 				className={twMerge(inputVariants({ variant, size, width, withIcon, className }))}
 				calendarClassName='custom-calendar'
 				onChange={setValue}
-				minDate={new Date()}
+				minDate={minDate}
 				{...props}
 			/>
 		</div>

@@ -77,6 +77,7 @@ const CreateEventStep1 = ({ postEventData, setPostEventData, validateSingle, err
 					Event Date<span className='text-brand-red'>*</span>
 				</h1>
 				<DateAndTimePicker
+					minDate={new Date()}
 					selected={new Date(postEventData.Date)}
 					onChange={(date) => {
 						const selectedStartTime = new Date(postEventData.StartTime)
@@ -121,6 +122,7 @@ const CreateEventStep1 = ({ postEventData, setPostEventData, validateSingle, err
 				<div className='flex flex-col md:flex-row gap-4 md:gap-16 items-center'>
 					<div className='flex-1 w-full'>
 						<DateAndTimePicker
+							minDate={new Date()}
 							showTimeSelect={true}
 							showTimeSelectOnly={true}
 							timeIntervals={15}
@@ -157,6 +159,7 @@ const CreateEventStep1 = ({ postEventData, setPostEventData, validateSingle, err
 					</div>
 					<div className='flex-1 w-full'>
 						<DateAndTimePicker
+							minDate={new Date()}
 							showTimeSelect={true}
 							showTimeSelectOnly={true}
 							timeIntervals={15}
@@ -219,6 +222,7 @@ const CreateEventStep1 = ({ postEventData, setPostEventData, validateSingle, err
 									</div>
 									<div className='flex-1 w-full'>
 										<DateAndTimePicker
+											minDate={new Date()}
 											showTimeSelect={true}
 											showTimeSelectOnly={true}
 											timeIntervals={15}
@@ -262,6 +266,7 @@ const CreateEventStep1 = ({ postEventData, setPostEventData, validateSingle, err
 											timeIntervals={15}
 											timeCaption='Time'
 											dateFormat='h:mm aa'
+											minDate={new Date()}
 											selected={new Date(item.EndTime)}
 											onChange={(date) => {
 												if (postEventData.Date) {

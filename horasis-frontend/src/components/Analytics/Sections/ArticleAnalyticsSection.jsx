@@ -7,7 +7,8 @@ import { getItem } from '../../../constants/operations'
 import { jsonToQuery } from '../../../utils/searchParams/extractSearchParams'
 import ArticlesList from '../../Articles/ArticlesList'
 import arrowfor from '../../../assets/icons/arrowfor.svg'
-
+import MiniTab from '../../ui/MiniTab'
+import MiniProgressBar from '../MiniProgressBar'
 
 const ArticleAnalyticsSection = ({ filters, setFilters }) => {
 	const { updateCurrentUser, currentUserData } = useAuth()
@@ -48,12 +49,74 @@ const ArticleAnalyticsSection = ({ filters, setFilters }) => {
 		)
 	}
 
+	const miniLocationTabs = (userBreakDown) => [
+		{
+			title: 'Country',
+			render: () => (
+				<div className='flex flex-col gap-2 mt-3'>
+					{userBreakDown?.Country?.map((country) => {
+						return <MiniProgressBar color='bg-system-primary-btn' title={country.EntityName} value={country.Count} />
+					})}
+				</div>
+			),
+		},
+		{
+			title: 'City',
+			render: () => (
+				<div className='flex flex-col gap-2 mt-3'>
+					{userBreakDown?.City?.map((city) => {
+						return <MiniProgressBar color='bg-system-primary-btn' title={city.EntityName} value={city.Count} />
+					})}
+				</div>
+			),
+		},
+	]
+
+	const miniJobTabs = (userBreakDown) => [
+		{
+			title: 'Industry',
+			render: () => (
+				<div className='flex flex-col gap-2 mt-3'>
+					{userBreakDown?.Industry?.map((industry) => {
+						return <MiniProgressBar color='bg-brand-orange' title={industry.EntityName} value={industry.Count} />
+					})}
+				</div>
+			),
+		},
+		{
+			title: 'Job Title',
+			render: () => (
+				<div className='flex flex-col gap-2 mt-3'>
+					{userBreakDown?.JobTitle?.map((jobTitle) => {
+						return <MiniProgressBar color='bg-brand-orange' title={jobTitle.EntityName} value={jobTitle.Count} />
+					})}
+				</div>
+			),
+		},
+	]
+	const [userBreakDown, setUserBreakDown] = useState({})
+	const getUserBreakDown = () => {
+		getItem(
+			`analytics/engagement/breakdown?Type=Article&${jsonToQuery(filters)}`,
+			(result) => {
+				setUserBreakDown(result)
+			},
+			(err) => {
+				console.log(err)
+			},
+			updateCurrentUser,
+			currentUserData,
+			toast
+		)
+	}
+
 	useEffect(() => {
 		getTopArticles()
 	}, [topFilter])
 
 	useEffect(() => {
 		getArticlesdata()
+		getUserBreakDown()
 	}, [filters])
 	return (
 		<>
@@ -76,7 +139,7 @@ const ArticleAnalyticsSection = ({ filters, setFilters }) => {
 								placeholder='Start date'
 								className='w-24 border-none'
 							/>
-							<img src={arrowfor} alt="" className='h-6' />
+							<img src={arrowfor} alt='' className='h-6' />
 							<DateAndTimePicker
 								dateFormat='MMM dd'
 								selected={new Date(filters.EndDate)}
@@ -155,6 +218,20 @@ const ArticleAnalyticsSection = ({ filters, setFilters }) => {
 						{/* <ArticleTab />
                     <ArticleTab />
                     <ArticleTab /> */}
+					</div>
+				</div>
+			</div>
+			<div className='bg-system-secondary-bg rounded-lg p-3 px-6 mt-3 lg:mt-6'>
+				<div className='flex items-center gap-2 mb-2'>
+					{/* icon goes here */}
+					<h4 className='font-semibold text-xl text-system-primary-text'>User Breakdown</h4>
+				</div>
+				<div className='grid lg:grid-cols-2 gap-10'>
+					<div className=''>
+						<MiniTab tabs={miniLocationTabs(userBreakDown)} />
+					</div>
+					<div className=''>
+						<MiniTab tabs={miniJobTabs(userBreakDown)} />
 					</div>
 				</div>
 			</div>
