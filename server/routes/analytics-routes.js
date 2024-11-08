@@ -4,6 +4,7 @@ import {
     GetAnalyticsTopEvents,
     GetArticleAnalytics,
     GetDiscussionAnalytics,
+    GetEngagementBreakdown,
     GetEventsAnalytics,
     GetUserBreakdown,
     GetUserInsightsAnalytics,
@@ -16,7 +17,7 @@ import SwaggerDocs from '../swaggerDocs/analytics-swaggerDocs.js'
 import e from 'express';
 import { decode } from 'jsonwebtoken';
 import { QueryParameterFormatting, ValidateGetEntity } from '../middleware/common.js';
-import { ValidateGetIntervalAnalytics, ValidateGetUserBreakdownAnalytics } from '../validations/analytics-validations.js';
+import { ValidateGetEngagement, ValidateGetIntervalAnalytics, ValidateGetUserBreakdownAnalytics } from '../validations/analytics-validations.js';
 const router = e.Router();
 router.route
 
@@ -64,5 +65,10 @@ router.get('/analytics/topDiscussions', decodeIDToken, ensureAuthorized("Admin")
     SwaggerDocs.get_Analytics_TopDiscussions,
     // @ts-ignore
     asyncHandler(GetAnalyticsTopDiscussions))
+
+router.get('/analytics/engagement/breakdown', decodeIDToken, ensureAuthorized("Admin"), ValidateGetEngagement, QueryParameterFormatting,
+    // SwaggerDocs.get_Analytics_EngagementBreakdown,
+    // @ts-ignore
+    asyncHandler(GetEngagementBreakdown))
 
 export default router;

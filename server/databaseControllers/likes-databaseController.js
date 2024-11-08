@@ -9,6 +9,8 @@ import dataHandling from './functions.js'
  * @property {string} UserId
  * @property {UserData} UserDetails
  * @property {number} CreatedIndex
+ * @property {string} ParentId
+ * @property {"Feed"|"Discussion"|"Event"|"Podcast"|"Article"} ParentType
  * @property {string} DocId
  * @property {'Activity'|'Comment'|'Article'} Type
  */
