@@ -13,25 +13,25 @@ import { ValidatePostLikes } from '../validations/likes-validations.js';
 const router = e.Router();
 router.route
 
-router.get('/likes/:EntityId', decodeIDToken, ensureAuthorized("User"),ValidateGetEntity,QueryParameterFormatting,
+router.get('/likes/:EntityId', decodeIDToken, ensureAuthorized("User"), ValidateGetEntity, QueryParameterFormatting,
     //@ts-ignore
     asyncHandler(GetLikes));
 
-router.get('/likes/:LikeId',decodeIDToken,ensureAuthorized("User"),
+router.get('/likes/:LikeId', decodeIDToken, ensureAuthorized("User"),
     // @ts-ignore
     asyncHandler(GetOneFromLikes));
 
-router.post('/likes/:EntityId',decodeIDToken,ensureAuthorized("User"),ValidatePostLikes,
+router.post('/likes', decodeIDToken, ensureAuthorized("User"), ValidatePostLikes,
     // @ts-ignore
     asyncHandler(PostLikes));
 
-router.patch('/likes/:LikeId',decodeIDToken,ensureAuthorized("User"),
+router.patch('/likes/:LikeId', decodeIDToken, ensureAuthorized("User"),
     // @ts-ignore
     asyncHandler(PatchLikes));
 
-router.delete('/likes/:EntityId',decodeIDToken,ensureAuthorized("User"),
+router.delete('/likes/:EntityId', decodeIDToken, ensureAuthorized("User"),
     // @ts-ignore
     asyncHandler(DeleteLikes));
- 
+
 
 export default router;
