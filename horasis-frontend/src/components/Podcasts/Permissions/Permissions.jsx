@@ -74,7 +74,7 @@ const Permissions = ({ permissionType, discussionId, discussion, from = 'setting
 		)
 	}
 
-	const api = `discussions/${discussionId}/members`
+	const api = `podcasts/${discussionId}/members`
 	const getPermittedUsers = (tempArr) => {
 		getData(`${api}?&${jsonToQuery(permittedFilters)}`, tempArr, setPermittedUsers)
 	}
@@ -104,7 +104,7 @@ const Permissions = ({ permissionType, discussionId, discussion, from = 'setting
 	const removeUserPermission = (member) => {
 		setIsRemoving(true)
 		patchItem(
-			`discussions/${discussionId}/member/${member.UserDetails.DocId}/permissions/remove`,
+			`podcasts/${discussionId}/member/${member.UserDetails.DocId}/permissions/remove`,
 			{
 				PermissionField: `${permissionType}`,
 			},
@@ -162,7 +162,7 @@ const Permissions = ({ permissionType, discussionId, discussion, from = 'setting
 
 	const permissionForEveryone = () => {
 		patchItem(
-			`discussions/${discussionId}/member/permissions/everyone`,
+			`podcasts/${discussionId}/member/permissions/everyone`,
 			{
 				[`MemberPermissions.${permissionType}`]: true,
 			},
@@ -179,7 +179,7 @@ const Permissions = ({ permissionType, discussionId, discussion, from = 'setting
 
 	const removePermissionForEveryone = () => {
 		patchItem(
-			`discussions/${discussionId}/member/permissions/everyone`,
+			`podcasts/${discussionId}/member/permissions/everyone`,
 			{
 				[`MemberPermissions.${permissionType}`]: false,
 			},
@@ -317,7 +317,7 @@ const Permissions = ({ permissionType, discussionId, discussion, from = 'setting
 								</Button>
 							</>
 						)}
-						{permissionType !== 'IsAdmin' && (
+						{/* {permissionType !== 'IsAdmin' && (
 							<div
 								className={`flex items-center gap-2 border-2 ${
 									permitEveryone
@@ -337,7 +337,7 @@ const Permissions = ({ permissionType, discussionId, discussion, from = 'setting
 									}}
 								/>
 							</div>
-						)}
+						)} */}
 					</div>
 				</div>
 				{isLoading || isRemoving ? (

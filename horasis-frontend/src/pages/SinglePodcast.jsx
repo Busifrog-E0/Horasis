@@ -59,7 +59,7 @@ const SinglePodcast = () => {
 							api={`activities`}
 							gapBnTabs='gap-7'
 							classNameForPost='py-5'
-							bordered={true}
+							bordered={false}
 							// permissions={Permissions}
 							entId={DocId}
 							type='Podcast'
