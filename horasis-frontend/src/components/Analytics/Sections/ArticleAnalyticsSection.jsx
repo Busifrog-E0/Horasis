@@ -224,7 +224,7 @@ const ArticleAnalyticsSection = ({ filters, setFilters }) => {
 			<div className='bg-system-secondary-bg rounded-lg p-3 px-6 mt-3 lg:mt-6'>
 				<div className='flex items-center gap-2 mb-2'>
 					{/* icon goes here */}
-					<h4 className='font-semibold text-xl text-system-primary-text'>User Breakdown</h4>
+					<h4 className='font-semibold text-xl text-system-primary-text'>User Engagements Breakdown</h4>
 				</div>
 				<div className='grid lg:grid-cols-2 gap-10'>
 					<div className=''>
