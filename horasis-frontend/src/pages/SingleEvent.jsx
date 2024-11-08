@@ -126,12 +126,42 @@ const SingleEvent = () => {
 			),
 		})
 
+		const getDicussionNotStarted = (key) => ({
+			key: key,
+			title: 'Activities',
+			render: () => (
+				<>
+					<div className='bg-system-secondary-bg p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden h-96'>
+						<div className={`rounded-lg  max-h-96 overflow-hidden relative   h-full`}>
+							<div className='absolute top-0 right-0 left-0 bottom-0 p-4 lg:px-10 lg:py-6 bg-system-primary-accent-light h-100 overflow-hidden overflow-y-auto z-10'>
+								<div className='flex flex-col justify-center items-center mt-6'>
+									<h4 className='font-bold text-center text-3xl text-system-primary-accent mb-3'>
+										Join the Discussions
+									</h4>
+									<h4 className='text-md text-center text-system-primary-accent'>
+										Get ready for insightful conversations! Our discussions platform will be active 10 days
+										before,during and 10 days after the event?. Check in closer to the date to connect with peers, share
+										perspectives and share most of your event experience.
+									</h4>
+									<h4 className='text-md text-center text-system-primary-accent mt-4 mb-6'>
+										Let the anticipation build - meaningful discussions await!
+									</h4>
+								</div>
+							</div>
+						</div>
+					</div>
+				</>
+			),
+		})
+
 		// Start with key 0
 		let tabsArray = []
 
 		// Add activity tab if within the specified date range and has discussion
 		if (isWithinTenDays && HasDiscussion) {
 			tabsArray.push(getActivityTab(0)) // Key for Activity tab is 0
+		} else if (!isWithinTenDays && HasDiscussion) {
+			tabsArray.push(getDicussionNotStarted(0))
 		}
 
 		// Add other tabs, incrementing keys accordingly
