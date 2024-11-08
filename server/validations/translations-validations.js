@@ -4,7 +4,7 @@ import Joi from "joi"
 const ValidateTranslation = (req, res, next) => {
     const Result = Joi.object({
         TargetLanguage: Joi.string().required(),
-        Type: Joi.string().valid('Activity', 'Discussion', 'Article', 'Comment', 'Event').required(),
+        Type: Joi.string().valid('Activity', 'Discussion', 'Article', 'Comment', 'Event','Podcast').required(),
         EntityId: Joi.string().required()
     }).validate(req.body, { stripUnknown: true });
     if (Result.error) {

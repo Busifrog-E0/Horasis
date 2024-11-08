@@ -6,6 +6,7 @@ import { ReadOneFromComments, UpdateComments } from '../databaseControllers/comm
 import { ReadOneFromDiscussions, UpdateDiscussions } from '../databaseControllers/discussions-databaseController.js';
 import { ReadOneFromEvents, UpdateEvents } from '../databaseControllers/events-databaseController.js';
 import { ReadOneFromArticles, UpdateArticles } from '../databaseControllers/articles-databaseController.js';
+import { ReadOneFromPodcasts, UpdatePodcasts } from '../databaseControllers/podcasts-databaseController.js';
 
 const LanguageCodes = {
     "Afrikaans": "af",
@@ -261,13 +262,26 @@ const TranslateData = async (req, res) => {
             }
             break;
         }
+        case "Podcast": {
+            const Podcast = await ReadOneFromPodcasts(EntityId);
+            OriginalContent = { Description: Podcast.Description, Brief: Podcast.Brief }
+            if (Podcast.Languages && Podcast.Languages[TargetLanguage]) {
+                TranslatedContent = Podcast.Languages[TargetLanguage];
+            }
+            else {
+                const TranslatedData = await TranslateFieldsToLanguage({ Description: Podcast.Description, Brief: Podcast.Brief }, TargetLanguage);
+                await UpdatePodcasts({ [`Languages.${TargetLanguage}`]: TranslatedData }, Podcast.DocId);
+                TranslatedContent = TranslatedData;
+            }
+            break;
+        }
     }
-    return res.json({ TranslatedContent, OriginalContent })
-}
+            return res.json({ TranslatedContent, OriginalContent })
+    }
 
-export {
-    TranslateText,
-    DetectLanguage,
-    TranslateFieldsToLanguage,
-    TranslateData
-}
+    export {
+        TranslateText,
+        DetectLanguage,
+        TranslateFieldsToLanguage,
+        TranslateData
+    }
