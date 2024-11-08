@@ -122,30 +122,9 @@ const SinglePodcast = () => {
 
 	return (
 		<>
-		
-			<div className=' col-span-3 bg-system-primary-bg rounded-lg  my-2 p-4 flex flex-col gap-2'>
-			{/* {podcast?.OriginalLanguage !== homeLanguage && (
-				<>
-					<h4 className='text-2xl text-white'>•</h4>
-					{translating ? (
-						<h4 className='text-2xl text-white  cursor-pointer'>Translating...</h4>
-					) : (
-						<>
-							{translated ? (
-								<h4 className='text-2xl text-white  cursor-pointer' onClick={showOriginal}>
-									Show Original
-								</h4>
-							) : (
-								<h4 className='text-2xl text-white  cursor-pointer' onClick={translatePodcast}>
-									Translate this podcast
-								</h4>
-							)}
-						</>
-					)}
-				</>
-			)} */}
+			<div className='lg:col-span-3 bg-system-primary-bg rounded-lg  my-2 lg:p-4 flex flex-col gap-2'>
 				{/* Podcast Cover Image */}
-				<div className='flex items-start gap-6 bg-system-secondary-bg p-4'>
+				<div className='flex flex-col sm:flex-row items-start gap-6 bg-system-secondary-bg p-4'>
 					<img
 						src={podcast?.CoverPicture}
 						alt='Podcast Cover'
@@ -153,13 +132,37 @@ const SinglePodcast = () => {
 					/>
 
 					<div className='flex flex-col justify-between  flex-1 gap-10'>
-						<div>
-							{/* Podcast Title */}
-							<h1 className='text-4xl font-bold text-system-primary-text'>{podcast?.PodcastName}</h1>
+						<div className='flex flex-col justify-between gap-6 h-full'>
+							<div>
+								{/* Podcast Title */}
+								<h1 className='text-4xl font-bold text-system-primary-text'>{podcast?.PodcastName}</h1>
 
-							{/* Podcast Description */}
-							<p className='text-lg text-system-secondary-text leading-relaxed'>{podcast?.Description}</p>
-							<p className='text-md text-system-primary-text mt-4 italic'>{podcast?.Brief}</p>
+								{/* Podcast Description */}
+								<p className='text-lg text-system-secondary-text leading-relaxed'>{podcast?.Description}</p>
+								<p className='text-md text-system-primary-text italic'>{podcast?.Brief}</p>
+							</div>
+							<div>
+								{podcast?.OriginalLanguage !== homeLanguage && (
+									<>
+										{/* <h4 className='text-sm text-system-secondary-text'>•</h4> */}
+										{translating ? (
+											<h4 className='text-sm text-system-secondary-text  cursor-pointer'>Translating...</h4>
+										) : (
+											<>
+												{translated ? (
+													<h4 className='text-sm text-system-secondary-text  cursor-pointer' onClick={showOriginal}>
+														Show Original
+													</h4>
+												) : (
+													<h4 className='text-sm text-system-secondary-text  cursor-pointer' onClick={translatePodcast}>
+														Translate this podcast
+													</h4>
+												)}
+											</>
+										)}
+									</>
+								)}
+							</div>
 						</div>
 						<div>
 							<div className='flex items-center justify-start my-2 gap-2'>
