@@ -33,6 +33,7 @@ const ActivityComponent = ({
 	iconSize = '6',
 	openComment = false,
 	onSaveRemoveCallback = () => {},
+	from = '',
 }) => {
 	const navigate = useNavigate()
 	const [showComment, setShowComment] = useState(openComment)
@@ -280,8 +281,6 @@ const ActivityComponent = ({
 		Type: 'Activity',
 	})
 
-
-
 	if (singleActivity)
 		return (
 			<div className={className}>
@@ -294,7 +293,7 @@ const ActivityComponent = ({
 				)}
 
 				<div
-					className='flex items-start gap-2 cursor-pointer'
+					className={`${from === 'podcast' ? 'hidden' : 'flex'} items-start gap-2 cursor-pointer`}
 					onClick={() => {
 						navigate(`/ViewProfile/${singleActivity.UserDetails?.DocId}`)
 					}}>
@@ -330,7 +329,7 @@ const ActivityComponent = ({
 						</div>
 					</div>
 				</div>
-				<div className='mt-5'>
+				<div className={`${from === 'podcast' ? '' : 'mt-5'}`}>
 					{translating ? (
 						<p className='text-sm text-system-secondary-text'>Translating... </p>
 					) : (
@@ -366,13 +365,13 @@ const ActivityComponent = ({
 						) : (
 							<>
 								<p className='text-sm text-system-secondary-text cursor-pointer' onClick={translateThisPost}>
-									Translate this post
+									{from === 'podcast' ? 'Translate podcast description' : 'Translate this post'}
 								</p>
 							</>
 						)}
 					</div>
 				)}
-				<div className='flex items-center justify-between gap-10 mt-2'>
+				<div className={`flex items-center justify-between gap-10 mt-2`}>
 					<div className='flex flex-wrap items-start justify-between gap-10'>
 						{isLiking ? (
 							<Spinner />
@@ -390,7 +389,9 @@ const ActivityComponent = ({
 								<ViewLikedMembers activity={singleActivity} timeSize={timeSize} />
 							</div>
 						)}
-						<div className='flex items-center gap-2 cursor-pointer' onClick={() => setShowComment((prev) => !prev)}>
+						<div
+							className={`${from === 'podcast' ? 'hidden' : 'flex'} items-center gap-2 cursor-pointer`}
+							onClick={() => setShowComment((prev) => !prev)}>
 							<img src={reply} className={`h-${iconSize} w-${iconSize} `} />
 							<p className={`text-brand-gray-dim mt-1 ${timeSize}`}>{singleActivity.NoOfComments} replies</p>
 						</div>
@@ -402,12 +403,14 @@ const ActivityComponent = ({
 							</div>
 						)} */}
 					</div>
-					<ActivityDropdown
-						onRemoveClicked={OnRemoveClicked}
-						onSaveClicked={onSaveClicked}
-						activity={singleActivity}
-						isSaving={isSaving}
-					/>
+					{from !== 'podcast' && (
+						<ActivityDropdown
+							onRemoveClicked={OnRemoveClicked}
+							onSaveClicked={onSaveClicked}
+							activity={singleActivity}
+							isSaving={isSaving}
+						/>
+					)}
 				</div>
 				{showComment && (
 					<ActivityCommentList

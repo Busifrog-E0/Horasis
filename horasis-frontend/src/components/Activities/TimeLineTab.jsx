@@ -17,12 +17,12 @@ const TimeLineTab = ({
 	classNameForPost = '',
 	api = 'feed',
 	permissions = {
-		IsAdmin: true,
-		CanInviteOthers: true,
-		CanPostActivity: true,
-		CanUploadPhoto: true,
-		CanUploadVideo: true,
-		CanCreateAlbum: true,
+		IsAdmin: false,
+		CanInviteOthers: false,
+		CanPostActivity: false,
+		CanUploadPhoto: false,
+		CanUploadVideo: false,
+		CanCreateAlbum: false,
 	},
 	type = '',
 	entId = '',
@@ -135,6 +135,7 @@ const TimeLineTab = ({
 						gapBnTabs={gapBnTabs}
 						bordered={bordered}
 						activitiesData={activitiesData}
+						from={from}
 					/>
 					{isLoadingMore && (
 						<div className='bg-system-secondary-bg p-4 rounded-b-lg '>
