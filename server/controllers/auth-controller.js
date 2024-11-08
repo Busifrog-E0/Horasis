@@ -8,6 +8,13 @@ import moment from "moment";
 import { ReadUsers } from "../databaseControllers/users-databaseController.js";
 const { Read, Create, Delete, Update } = dataHandling;
 
+
+/**
+ * @type {Array<{UserId: string, Index: number, Type: "Add" | "Remove"}>}
+ */
+let AdminRoleArray = [];
+
+
 const TestUsers = [
     "qwertyui@tgmail.com",
 ]
@@ -221,28 +228,28 @@ const UpdateRefreshToken = async (DocId, data) => {
     return await Update("RefreshTokens", data, DocId);
 }
 
-const ReadAdminRoleArray = async (UserId) => {
-    return (await Read("PendingAdminRoles", undefined, undefined, undefined, { "AdminArray": UserId }))[0];
-}
-
 /**
  * 
  * @param {string} UserId 
- * @param {"pull"|"push"} action 
+ * @param {"Add"|"Remove"} action 
  */
-const MaintainAdminRoleArray = async (UserId, action) => {
-    const [AdminArrayDoc] = await Read("PendingAdminRoles", undefined, undefined, 1);
-    switch (action) {
-        case "push": {
-            return await Update("PendingAdminRoles", { "AdminArray": UserId }, AdminArrayDoc.DocId, ["$push"], false);
+const MaintainAdminRoleArray = (UserId, action) => {
+    const Item = AdminRoleArray.find(item => item.UserId === UserId);
+    if (Item) {
+        if (action !== Item.Type) {
+            AdminRoleArray.splice(AdminRoleArray.findIndex(item => item.UserId === UserId), 1);
         }
-        case "pull": {
-            return await Update("PendingAdminRoles", { "AdminArray": UserId }, AdminArrayDoc.DocId, ["$pull"], false);
-        }
-        default: {
+        else {
             return;
         }
     }
+    AdminRoleArray.push({ UserId, Index: moment().valueOf(), Type: action });
+    return;
+}
+
+const ClearAdminRoleArray = () => {
+    AdminRoleArray = AdminRoleArray.filter(item => moment().valueOf() - item.Index > 2 * 60 * 60 * 1000);
+    console.log("run")
 }
 
 /**
@@ -273,6 +280,7 @@ export {
     VerifyOTP, SendRegisterOTP, TokenData,
     SendPasswordOTP, ReadOneFromOTP, CheckOTP,
     ReadRefreshTokens, UpdateRefreshToken,
-    MaintainAdminRoleArray, ReadAdminRoleArray
+    MaintainAdminRoleArray, AdminRoleArray,
+    ClearAdminRoleArray
 };
 

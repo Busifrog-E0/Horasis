@@ -238,7 +238,7 @@ const SetPodcastDataForGet = async (Podcast, UserId) => {
     const [Member, UserDetails, Save] = await Promise.all([
         ReadMembers({ MemberId: UserId, EntityId: Podcast.DocId }, undefined, 1, undefined),
         ReadOneFromUsers(Podcast.OrganiserId),
-        ReadSaves({ EntityId: Podcast.DocId, UserId }, undefined, 1, undefined)
+        ReadSaves({ EntityId: Podcast.DocId, UserId }, undefined, 1, undefined),
     ])
     //@ts-ignore
     Podcast = GetPermissionOfMember(Member[0], Podcast);

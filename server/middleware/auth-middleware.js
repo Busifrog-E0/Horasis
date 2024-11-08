@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import ENV from "./../Env.js";
 import e from "express";
 import { SocketError } from "../controllers/common.js";
-import { MaintainAdminRoleArray, ReadAdminRoleArray } from "../controllers/auth-controller.js";
+
 
 
 /**
@@ -24,10 +24,7 @@ const decodeIDToken = async (req, res, next) => {
     try {
         const user = jwt.verify(token, ENV.TOKEN_KEY);
         //@ts-ignore
-        const ArrayAdminDoc = await ReadAdminRoleArray(user.UserId);
-        if (ArrayAdminDoc) {
-            //@ts-ignore
-            await MaintainAdminRoleArray(user.UserId, "pull");
+        if (AdminRoleArray.find(e => e.UserId === user.UserId)) {
             return res.status(401).send("Role Changed")
         }
         // @ts-ignore

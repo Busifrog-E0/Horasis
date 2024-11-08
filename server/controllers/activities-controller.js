@@ -54,16 +54,7 @@ const GetActivities = async (req, res) => {
         //@ts-ignore
         return { ...ActivityData, NextId: Activity.NextId }
     }));
-    const data = await Promise.all(Activities.map(async Activity => {
-        const [UserDetails, checkLike, checkSave] = await Promise.all([
-            ReadOneFromUsers(Activity.UserId),
-            ReadLikes({ EntityId: Activity.DocId, UserId }, undefined, 1, undefined),
-            ReadSaves({ EntityId: Activity.DocId, UserId }, undefined, 1, undefined)
-        ])
-        const HasSaved = checkSave.length > 0;
-        const HasLiked = checkLike.length > 0;
-        return { ...Activity, UserDetails, HasLiked, HasSaved }
-    }))
+    const data = await Promise.all(Activities.map(async Activity => await SetActivityDataForGet(Activity, UserId)))
     return res.json(data);
 };
 

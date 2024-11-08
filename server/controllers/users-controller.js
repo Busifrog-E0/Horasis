@@ -1,6 +1,6 @@
 import e from 'express';
 import { ReadOneFromUsers, ReadUsers, UpdateUsers, CreateUsers, UpdateManyUsers } from './../databaseControllers/users-databaseController.js';
-import { MaintainAdminRoleArray, ReadOneFromOTP, ReadRefreshTokens, SendPasswordOTP, SendRegisterOTP, TokenData, UpdateRefreshToken, VerifyOTP } from './auth-controller.js';
+import { AdminRoleArray, MaintainAdminRoleArray, ReadOneFromOTP, ReadRefreshTokens, SendPasswordOTP, SendRegisterOTP, TokenData, UpdateRefreshToken, VerifyOTP } from './auth-controller.js';
 import { AlertBoxObject, ComparePassword, GetUserNonEmptyFieldsPercentage, hashPassword } from './common.js';
 import { ReadConnections, UpdateManyConnections } from '../databaseControllers/connections-databaseController.js';
 import { ReadFollows, UpdateManyFollows } from '../databaseControllers/follow-databaseController.js';
@@ -337,7 +337,7 @@ const AddUserAsAdmin = async (req, res) => {
     const objectIds = await Promise.all(UserIds.map(async id => {
         const [RefreshToken] = await ReadRefreshTokens({ 'SignObject.UserId': id }, undefined, 1, { Index: "desc" })
         await UpdateRefreshToken(RefreshToken.DocId, { 'SignObject.Role': ["Admin", "User"] });
-        await MaintainAdminRoleArray(id, "push")
+        MaintainAdminRoleArray(id, "Add");
         return new ObjectId(id)
     }));
     await UpdateManyUsers({ Roles: ["Admin", "User"] }, { "_id": { $in: objectIds } })
@@ -354,7 +354,7 @@ const RemoveUserAsAdmin = async (req, res) => {
     const { UserId } = req.body;
     const [RefreshToken] = await ReadRefreshTokens({ 'SignObject.UserId': UserId }, undefined, 1, { Index: "desc" })
     await UpdateRefreshToken(RefreshToken.DocId, { 'SignObject.Role': ["User"] });
-    await MaintainAdminRoleArray(UserId, "push");
+    MaintainAdminRoleArray(UserId, "Remove");
     await UpdateUsers({ Roles: ["User"] }, UserId);
     return res.json(true);
 }
@@ -374,7 +374,7 @@ const GetUsersByRole = async (req, res) => {
         ]
     }
     // @ts-ignore
-    Filter.Roles = Filter.Role === "User" ?  ["User"]  : { $all: ["User", "Admin"] };
+    Filter.Roles = Filter.Role === "User" ? ["User"] : { $all: ["User", "Admin"] };
     delete Filter.Role;
     // @ts-ignore
     const Users = await ReadUsers(Filter, NextId, Limit, OrderBy);
