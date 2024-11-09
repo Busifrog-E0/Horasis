@@ -31,6 +31,7 @@ import useDeleteData from '../hooks/useDeleteData'
 import useUpdateData from '../hooks/useUpdateData'
 import usePatchItem from '../hooks/useUpdateData'
 import useEntitySaveManager from '../hooks/useEntitySaveManager'
+import useEntityMembershipManager from '../hooks/useEntityMembershipManager'
 
 const SingleDiscussion = () => {
 	const [activeTab, setActiveTab] = useState(0)
@@ -38,7 +39,7 @@ const SingleDiscussion = () => {
 	const toast = useToast()
 	const { discussionid } = useParams()
 	const {
-		isLoading,
+		isLoading: isLoadingDiscussion,
 		data: discussion,
 		getData: getDiscussion,
 		setData: setDiscussion,
@@ -144,43 +145,24 @@ const SingleDiscussion = () => {
 		}
 	}
 
-	const successCallback = (result) => {
-		if (result === true || typeof result === 'object') {
-			getDiscussion()
-			onTabChange(tabs(discussion)[0])
-		}
+	const successCallback = () => {
+		getDiscussion()
+		onTabChange(tabs(discussion)[0])
 	}
 
-	const { updateData: updateAcceptInvite } = useUpdateData({ onSuccess: successCallback })
-	const { postData: postJoinDiscussion } = usePostData({ onSuccess: successCallback })
-	const { deleteData } = useDeleteData('', { onSuccess: successCallback })
-
-	const acceptInvite = () => {
-		return updateAcceptInvite({
-			endpoint: `discussions/${discussion?.DocId}/invite/accept`,
-			payload: {},
-		})
-	}
-	const joinDiscussion = () => {
-		return postJoinDiscussion({
-			endpoint: `discussions/${discussion?.DocId}/join`,
-			payload: {},
-		})
-	}
-	const unFollowDiscussion = () => {
-		return deleteData({ endPoint: `discussions/${discussion?.DocId}/leave` })
-	}
-	const rejectInvite = () => {
-		return deleteData({
-			endPoint: `discussions/${discussion?.DocId}/invite/${currentUserData.CurrentUser.UserId}/reject`,
-		})
-	}
-
-	const cancelJoinRequest = () => {
-		return deleteData({
-			endPoint: `discussions/${discussion?.DocId}/join/${currentUserData.CurrentUser.UserId}/cancel`,
-		})
-	}
+	const {
+		isLoading,
+		subscribeEntityMembership: joinDiscussion,
+		unsubscribeEntityMembership: unFollowDiscussion,
+		cancelEntityMembershipSubscription: cancelJoinRequest,
+		acceptEntityMembershipInvitation: acceptInvite,
+		rejectEntityMembershipInvitation: rejectInvite,
+	} = useEntityMembershipManager({
+		EntityId: discussion?.DocId,
+		Type: 'Discussion',
+		successCallback: successCallback,
+		errorCallback: () => {},
+	})
 
 	// cover photo upload logic
 	const [selectedCoverImage, setSelectedCoverImage] = useState(null)
@@ -329,7 +311,7 @@ const SingleDiscussion = () => {
 				</div>
 			</div>
 			<div>
-				{isLoading ? (
+				{isLoading || isLoadingDiscussion ? (
 					<div className='h-20 w-full flex items-center justify-center'>
 						<Spinner />
 					</div>
