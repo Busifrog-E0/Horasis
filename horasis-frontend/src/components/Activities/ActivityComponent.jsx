@@ -386,7 +386,7 @@ const ActivityComponent = ({
 								) : (
 									<img src={like} className={`h-${iconSize} w-${iconSize} cursor-pointer`} onClick={onLikeBtnClicked} />
 								)}
-								<ViewLikedMembers activity={singleActivity} timeSize={timeSize} />
+								<ViewLikedMembers entity={singleActivity} timeSize={timeSize} />
 							</div>
 						)}
 						<div

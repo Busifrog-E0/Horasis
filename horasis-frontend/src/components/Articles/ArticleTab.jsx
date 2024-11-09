@@ -64,7 +64,7 @@ const ArticleTab = ({
 													}}
 												/>
 											)}
-											<ViewLikedMembers activity={article} />
+											<ViewLikedMembers entity={article} />
 										</div>
 									)}
 								</div>

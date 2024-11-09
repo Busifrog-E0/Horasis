@@ -1,101 +1,34 @@
-import { useContext, useEffect, useState } from 'react'
-import { AuthContext } from '../../../utils/AuthProvider'
-import { useToast } from '../../Toast/ToastService'
-import { jsonToQuery } from '../../../utils/searchParams/extractSearchParams'
-import { getNextId } from '../../../utils/URLParams'
-import { getItem } from '../../../constants/operations'
-import Modal from '../../ui/Modal'
-import MembersSection from '../../Connections/MembersSection'
-import Spinner from '../../ui/Spinner'
-import EmptyMembers from '../../Common/EmptyMembers'
+import { useState } from 'react'
 import close from '../../../assets/icons/close.svg'
+import useGetList from '../../../hooks/useGetList'
+import EmptyMembers from '../../Common/EmptyMembers'
+import MembersSection from '../../Connections/MembersSection'
+import Modal from '../../ui/Modal'
+import Spinner from '../../ui/Spinner'
 
-const ViewLikedMembers = ({ activity, timeSize = 'text-md' }) => {
-	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
-	const toast = useToast()
-	const [isLoading, setIsLoading] = useState(false)
-	const [isLoadingMore, setIsLoadingMore] = useState(false)
+const ViewLikedMembers = ({ entity, timeSize = 'text-md' }) => {
 	const [isModalOpen, setIsModalOpen] = useState(false)
-	const [membersData, setMembersData] = useState([])
-	const [pageDisabled, setPageDisabled] = useState(true)
-	const [filters, setFilters] = useState({
-		OrderBy: 'Index',
-		Limit: 10,
-	})
+	
+	const {
+		data: likedUsers,
+		isLoading,
+		isLoadingMore,
+		isPageDisabled,
+		getList: getLikedUsers,
+	} = useGetList(`likes/${entity.DocId}`, {}, true, false, false, [])
 
-	const openMembersList = () => {
+	const openModal = (e) => {
+		e.stopPropagation()
 		setIsModalOpen(true)
-		fetch()
+		getLikedUsers([])
 	}
-
-	const setLoadingCom = (tempArr, value) => {
-		if (tempArr.length > 0) {
-			setIsLoadingMore(value)
-		} else {
-			setIsLoading(value)
-		}
-	}
-
-	const getAllActivities = (tempActivites) => {
-		getData(`activities/${activity.DocId}/likedUsers?&${jsonToQuery(filters)}`, tempActivites, setMembersData)
-	}
-
-	const getData = (endpoint, tempData, setData) => {
-		setLoadingCom(tempData, true)
-		getItem(
-			`${endpoint}&NextId=${getNextId(tempData)}`,
-			(data) => {
-				setData([...tempData, ...data])
-				setLoadingCom(tempData, false)
-			},
-			(err) => {
-				setLoadingCom(tempData, false)
-				// console.log(err)
-			},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
-	}
-	const hasAnyLeft = (endpoint, tempData) => {
-		getItem(
-			`${endpoint}?NextId=${getNextId(tempData)}&${jsonToQuery({ ...filters, Limit: 1 })}`,
-			(data) => {
-				if (data?.length > 0) {
-					setPageDisabled(false)
-				} else {
-					setPageDisabled(true)
-				}
-			},
-			(err) => {
-				setPageDisabled(true)
-			},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
-	}
-
-	const fetchData = (initialRender = false) => {
-		getAllActivities(initialRender ? [] : membersData)
-	}
-
-	const fetch = () => fetchData(true)
-	const fetchMore = () => fetchData(false)
-
-	useEffect(() => {
-		if (membersData.length > 0) hasAnyLeft(`activities/${activity.DocId}/likedUsers`, membersData)
-	}, [membersData])
 
 	return (
 		<>
 			<Modal isOpen={isModalOpen} maxWidth={`max-w-4xl`}>
 				<Modal.Header>
 					<p className='text-lg font-medium'>Liked Members</p>
-					<button
-						onClick={() => {
-							setIsModalOpen(false)
-						}}>
+					<button onClick={() => setIsModalOpen(false)}>
 						<img src={close} className='h-6  cursor-pointer' alt='' />
 					</button>
 				</Modal.Header>
@@ -105,15 +38,15 @@ const ViewLikedMembers = ({ activity, timeSize = 'text-md' }) => {
 							<div className='w-full lg:w-full h-24 rounded-md flex items-center justify-center  '>
 								<Spinner />
 							</div>
-						) : membersData.length > 0 ? (
+						) : likedUsers.length > 0 ? (
 							<MembersSection
-								members={membersData.map((d) => ({ ...d.UserDetails, CreatedIndex: d.CreatedIndex }))}
+								members={likedUsers.map((d) => ({ ...d.UserDetails, CreatedIndex: d.CreatedIndex }))}
 								emptyText={'No members '}
 								updateList={() => {}}
 								whichTime='member'
-								fetchMore={fetchMore}
+								fetchMore={() => getLikedUsers(likedUsers, false)}
 								isLoadingMore={isLoadingMore}
-								pageDisabled={pageDisabled}
+								pageDisabled={isPageDisabled}
 								tabName='members'
 							/>
 						) : (
@@ -122,13 +55,8 @@ const ViewLikedMembers = ({ activity, timeSize = 'text-md' }) => {
 					</div>
 				</Modal.Body>
 			</Modal>
-			<p
-				className={`${timeSize} text-brand-gray-dim mt-1 cursor-pointer hover:underline `}
-				onClick={(e) => {
-					e.stopPropagation()
-					openMembersList()
-				}}>
-				{activity.NoOfLikes} likes
+			<p className={`${timeSize} text-brand-gray-dim mt-1 cursor-pointer hover:underline `} onClick={openModal}>
+				{entity.NoOfLikes} likes
 			</p>
 		</>
 	)

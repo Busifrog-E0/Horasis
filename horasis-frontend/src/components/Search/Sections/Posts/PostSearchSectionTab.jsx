@@ -314,7 +314,7 @@ const PostSearchSectionTab = ({
 								) : (
 									<img src={like} className='h-6 w-6 cursor-pointer' onClick={onLikeBtnClicked} />
 								)}
-								<ViewLikedMembers activity={singleActivity} />
+								<ViewLikedMembers entity={singleActivity} />
 							</div>
 						)}
 						<div className='flex items-center gap-2 cursor-pointer' onClick={() => setShowComment((prev) => !prev)}>
