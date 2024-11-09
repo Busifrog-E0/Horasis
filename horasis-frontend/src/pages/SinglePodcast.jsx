@@ -20,13 +20,85 @@ import { postItem } from '../constants/operations'
 import useEntitySaveManager from '../hooks/useEntitySaveManager'
 import saved from '../assets/icons/graysavefill.svg'
 import save from '../assets/icons/graysave.svg'
+import useEntityMembershipManager from '../hooks/useEntityMembershipManager'
+
+const tabs = (podcast) => {
+	const { Privacy, IsMember, MembershipStatus, Permissions, DocId } = podcast
+	const isPrivate = Privacy === 'Private'
+	const isMember = IsMember && MembershipStatus === 'Accepted'
+	const isAdmin = Permissions?.IsAdmin
+	const canInvite = Permissions?.CanInviteOthers
+
+	const getActivitiesTab = (key) => ({
+		key: key,
+		title: 'Episodes',
+		render: () => {
+			const [refresh, setRefresh] = useState(true)
+			useEffect(() => {}, [refresh])
+			return (
+				<div className='bg-system-secondary-bg p-4 rounded-b-lg overflow-hidden'>
+					{Permissions.IsAdmin && (
+						<UploadEpisodeModal
+							permissions={Permissions}
+							entId={DocId}
+							type='Podcast'
+							reloadFn={() => setRefresh((prev) => !prev)}
+						/>
+					)}
+					<TimeLineTab
+						api={`activities`}
+						gapBnTabs='gap-7'
+						classNameForPost='py-5'
+						bordered={false}
+						// permissions={Permissions}
+						entId={DocId}
+						type='Podcast'
+						from='podcast'
+					/>
+				</div>
+			)
+		},
+	})
+
+	const getSettingsTab = (key) => ({
+		key: key,
+		title: 'Settings',
+		render: () => (
+			<div className='bg-system-secondary-bg p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
+				<PodcastSettings podcastId={DocId} podcast={podcast} />
+			</div>
+		),
+	})
+
+	const getEmptyTab = (key) => ({
+		key: key,
+		title: 'Join Podcast',
+		render: () => {
+			return <div className='bg-system-secondary-bg p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'></div>
+		},
+	})
+
+	if (isAdmin && isPrivate) {
+		return [getActivitiesTab(0), getSettingsTab(1)]
+	} else if (isAdmin && !isPrivate) {
+		return [getActivitiesTab(0), getSettingsTab(1)]
+	} else if (!isPrivate || isMember) {
+		return [getActivitiesTab(0)]
+	} else {
+		return [getEmptyTab(0)]
+	}
+}
 
 const SinglePodcast = () => {
 	const [activeTab, setActiveTab] = useState(0)
 	const { currentUserData } = useAuth()
-	const toast = useToast()
 	const { podcastid } = useParams()
-	const { isLoading, data: podcast, getData: getPodcast, setData: setPodcast } = useGetData(`podcasts/${podcastid}`)
+	const {
+		isLoading: isLoadingPodcast,
+		data: podcast,
+		getData: getPodcast,
+		setData: setPodcast,
+	} = useGetData(`podcasts/${podcastid}`)
 
 	const navigate = useNavigate()
 	const handleGoBack = () => navigate(-1)
@@ -42,103 +114,19 @@ const SinglePodcast = () => {
 		errorCallback: () => {},
 	})
 
-	const tabs = (podcast) => {
-		const { Privacy, IsMember, MembershipStatus, Permissions, DocId } = podcast
-		const isPrivate = Privacy === 'Private'
-		const isMember = IsMember && MembershipStatus === 'Accepted'
-		const isAdmin = Permissions?.IsAdmin
-		const canInvite = Permissions?.CanInviteOthers
-
-		const getActivitiesTab = (key) => ({
-			key: key,
-			title: 'Episodes',
-			render: () => {
-				const [refresh, setRefresh] = useState(true)
-				useEffect(() => {}, [refresh])
-				return (
-					<div className='bg-system-secondary-bg p-4 rounded-b-lg overflow-hidden'>
-						{Permissions.IsAdmin && (
-							<UploadEpisodeModal
-								permissions={Permissions}
-								entId={DocId}
-								type='Podcast'
-								reloadFn={() => setRefresh((prev) => !prev)}
-							/>
-						)}
-						<TimeLineTab
-							api={`activities`}
-							gapBnTabs='gap-7'
-							classNameForPost='py-5'
-							bordered={false}
-							// permissions={Permissions}
-							entId={DocId}
-							type='Podcast'
-							from='podcast'
-						/>
-					</div>
-				)
-			},
-		})
-
-		const getSettingsTab = (key) => ({
-			key: key,
-			title: 'Settings',
-			render: () => (
-				<div className='bg-system-secondary-bg p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
-					<PodcastSettings podcastId={DocId} podcast={podcast} />
-				</div>
-			),
-		})
-
-		const getEmptyTab = (key) => ({
-			key: key,
-			title: 'Join Podcast',
-			render: () => {
-				return <div className='bg-system-secondary-bg p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'></div>
-			},
-		})
-
-		if (isAdmin && isPrivate) {
-			return [getActivitiesTab(0), getSettingsTab(1)]
-		} else if (isAdmin && !isPrivate) {
-			return [getActivitiesTab(0), getSettingsTab(1)]
-		} else if (!isPrivate || isMember) {
-			return [getActivitiesTab(0)]
-		} else {
-			return [getEmptyTab(0)]
-		}
-	}
-
-	const { postData: postFn, isLoading: isPostLoading } = usePostData()
-	const { deleteData: deleteFn, isLoading: isDeleteLoading } = useDeleteData('', {})
-
-	const followPodcast = (podcast) => {
-		postFn({
-			endpoint: `members/${podcast.DocId}/join`,
-			payload: { Type: 'Podcast' },
-			onsuccess: (result) => {
-				if (result === true) {
-					getPodcast()
-				} else if (typeof result === 'object') {
-					getPodcast()
-				}
-			},
-		})
-	}
-
-	const unFollowPodcast = (podcast) => {
-		deleteFn({
-			endPoint: `members/${podcast.DocId}/leave`,
-			payload: {},
-			onsuccess: (result) => {
-				if (result === true) {
-					getPodcast()
-				} else if (typeof result === 'object') {
-					getPodcast()
-				}
-			},
-		})
-	}
+	const {
+		isLoading,
+		subscribeEntityMembership: followPodcast,
+		unsubscribeEntityMembership: unFollowPodcast,
+		cancelEntityMembershipSubscription,
+		acceptEntityMembershipInvitation,
+		rejectEntityMembershipInvitation,
+	} = useEntityMembershipManager({
+		EntityId: podcast?.DocId,
+		Type: 'Podcast',
+		successCallback: getPodcast,
+		errorCallback: () => {},
+	})
 
 	const {
 		isTranslated: translated,
@@ -152,7 +140,7 @@ const SinglePodcast = () => {
 		<>
 			<div className='lg:col-span-3 bg-system-primary-bg rounded-lg  my-2 lg:p-4 flex flex-col gap-2'>
 				{/* Podcast Cover Image */}
-				<div className='flex flex-col sm:flex-row items-start gap-6 bg-system-secondary-bg p-4'>
+				<div className='flex flex-col sm:flex-row items-start gap-6 bg-system-secondary-bg rounded-md p-4'>
 					<img
 						src={podcast?.CoverPicture}
 						alt='Podcast Cover'
@@ -194,7 +182,7 @@ const SinglePodcast = () => {
 						</div>
 						<div>
 							<div className='flex items-center justify-start my-2 gap-2'>
-								{isPostLoading || isDeleteLoading || isLoading ? (
+								{isLoadingPodcast || isLoading ? (
 									<Spinner />
 								) : (
 									<>

@@ -25,22 +25,27 @@ import useTranslation from '../hooks/useTranslation'
 import useUpdateData from '../hooks/useUpdateData'
 import { useAuth } from '../utils/AuthProvider'
 import { getDateInWordsFormat, gettimenow } from '../utils/date'
+import useEntityMembershipManager from '../hooks/useEntityMembershipManager'
 
 const SingleEvent = () => {
 	const { eventid } = useParams()
-	const [activeTab, setActiveTab] = useState(0)
+	const navigate = useNavigate()
 	const { currentUserData } = useAuth()
 
-	const { isLoading, data: event, getData: getEvent, setData: setEvent } = useGetData(`events/${eventid}`)
-	const navigate = useNavigate()
-	const handleGoBack = () => {
-		navigate(-1)
-	}
-
+	const [activeTab, setActiveTab] = useState(0)
 	const onTabChange = (item) => {
 		setActiveTab(item.key)
 	}
-	const [joined, setJoined] = useState(false)
+
+	const {
+		isLoading: isLoadingEvent,
+		data: event,
+		getData: getEvent,
+		setData: setEvent,
+	} = useGetData(`events/${eventid}`)
+	const handleGoBack = () => {
+		navigate(-1)
+	}
 
 	const tabs = (event) => {
 		const { Privacy, IsMember, Permissions, HasDiscussion, DocId, Date: EventDate } = event // Assuming EventDate is part of the event object
@@ -217,39 +222,24 @@ const SingleEvent = () => {
 		},
 	]
 
-	const successCallback = (result) => {
-		if (result === true || typeof result === 'object') {
-			getEvent()
-			onTabChange(tabs(event)[0])
-		}
+	const successCallback = () => {
+		getEvent()
+		onTabChange(tabs(event)[0])
 	}
 
-	const { updateData: updateAcceptInvite } = useUpdateData({ onSuccess: successCallback })
-	const { postData: postJoinEvent } = usePostData({ onSuccess: successCallback })
-	const { deleteData } = useDeleteData('', { onSuccess: successCallback })
-
-	const acceptInvite = () => {
-		return updateAcceptInvite({
-			endpoint: `events/${event?.DocId}/invite/accept`,
-			payload: {},
-		})
-	}
-	const joinEvent = () => {
-		return postJoinEvent({
-			endpoint: `events/${event?.DocId}/join`,
-			payload: {},
-		})
-	}
-	const unRegisterEvent = () => {
-		return deleteData({ endPoint: `events/${event?.DocId}/leave` })
-	}
-	const rejectInvite = () => {
-		return deleteData({ endPoint: `events/${event?.DocId}/invite/${currentUserData.CurrentUser.UserId}/reject` })
-	}
-
-	const cancelRegistrationRequest = () => {
-		return deleteData({ endPoint: `events/${event?.DocId}/join/${currentUserData.CurrentUser.UserId}/cancel` })
-	}
+	const {
+		isLoading,
+		subscribeEntityMembership: joinEvent,
+		unsubscribeEntityMembership: unRegisterEvent,
+		cancelEntityMembershipSubscription: cancelRegistrationRequest,
+		acceptEntityMembershipInvitation: acceptInvite,
+		rejectEntityMembershipInvitation: rejectInvite,
+	} = useEntityMembershipManager({
+		EntityId: event?.DocId,
+		Type: 'Event',
+		successCallback: successCallback,
+		errorCallback: () => {},
+	})
 
 	const {
 		isTranslated: translated,
@@ -258,7 +248,7 @@ const SingleEvent = () => {
 		homeLanguage,
 	} = useTranslation({ data: event, setData: setEvent, Type: 'Event' })
 
-	if (isLoading) return <Spinner />
+	if (isLoadingEvent || isLoading) return <Spinner />
 	return (
 		<>
 			<div className='overflow-hidden bg-system-primary-bg h-80 lg:h-96 relative'>
@@ -391,7 +381,7 @@ const SingleEvent = () => {
 							/>
 						)}
 						{event && !event?.IsMember && (
-							<div className={`rounded-lg ${!joined && 'max-h-96 overflow-hidden relative h-full'}`}>
+							<div className={`rounded-lg ${!event?.IsMember && 'max-h-96 overflow-hidden relative h-full'}`}>
 								{!event?.IsMember && (
 									<div className='absolute top-0 right-0 left-0 bottom-0 p-4 lg:px-10 lg:py-6 bg-system-primary-accent-light h-100 overflow-hidden overflow-y-auto z-10'>
 										<div className='flex flex-col justify-center items-center mt-6'>
