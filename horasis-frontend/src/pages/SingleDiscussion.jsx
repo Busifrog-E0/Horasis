@@ -30,6 +30,7 @@ import usePostData from '../hooks/usePostData'
 import useDeleteData from '../hooks/useDeleteData'
 import useUpdateData from '../hooks/useUpdateData'
 import usePatchItem from '../hooks/useUpdateData'
+import useEntitySaveManager from '../hooks/useEntitySaveManager'
 
 const SingleDiscussion = () => {
 	const [activeTab, setActiveTab] = useState(0)
@@ -52,31 +53,12 @@ const SingleDiscussion = () => {
 		setActiveTab(item.key)
 	}
 
-	const saveSuccessCallback = (result) => {
-		if (result === true) {
-			getDiscussion()
-		}
-	}
-	const { isLoading: isSaving, postData: postSaveDiscussion } = usePostData({ onSuccess: saveSuccessCallback })
-	const { isLoading: isUnsaving, deleteData: deleteSaveDiscussion } = useDeleteData('', {
-		onSuccess: saveSuccessCallback,
+	const { isSaving, isUnsaving, saveEntity, unsaveEntity } = useEntitySaveManager({
+		EntityId: discussion?.DocId,
+		Type: 'Discussion',
+		successCallback: getDiscussion,
+		errorCallback: () => {},
 	})
-
-	const saveDiscussion = (id) => {
-		postSaveDiscussion({
-			endpoint: `saves`,
-			payload: {
-				EntityId: id,
-				Type: 'Discussion',
-			},
-		})
-	}
-
-	const removeDiscussion = (id) => {
-		deleteSaveDiscussion({
-			endPoint: `saves/${id}`,
-		})
-	}
 
 	const tabs = (discussion) => {
 		const { Privacy, IsMember, MembershipStatus, Permissions, DocId } = discussion
@@ -91,8 +73,8 @@ const SingleDiscussion = () => {
 			render: () => (
 				<DiscussionAbout
 					discussion={discussion}
-					saveDiscussion={saveDiscussion}
-					removeDiscussion={removeDiscussion}
+					saveDiscussion={saveEntity}
+					removeDiscussion={unsaveEntity}
 					isSaving={isSaving || isUnsaving || isLoading}
 				/>
 			),
