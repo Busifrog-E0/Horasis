@@ -66,7 +66,7 @@ const GetActivities = async (req, res) => {
  * @returns 
  */
 const GetFilteredActivities = async (req, res) => {
-    const { UserId } = req.params;
+    const UserId = req.params.UserId ?? req.user.UserId;
     const { Filter, NextId, Limit, OrderBy, Keyword } = req.query;
     if (Keyword) {
         //@ts-ignore
