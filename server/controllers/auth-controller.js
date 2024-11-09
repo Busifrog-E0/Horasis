@@ -10,7 +10,7 @@ const { Read, Create, Delete, Update } = dataHandling;
 
 
 /**
- * @type {Array<{UserId: string, Index: number, Type: "Add" | "Remove"}>}
+ * @type {Array<{UserId: string, Index: number, Type: "Add" | "Remove",Role : string[] } >}
  */
 let AdminRoleArray = [];
 
@@ -243,7 +243,8 @@ const MaintainAdminRoleArray = (UserId, action) => {
             return;
         }
     }
-    AdminRoleArray.push({ UserId, Index: moment().valueOf(), Type: action });
+    const Role = action === "Add" ? ["Admin", "User"] : ["User"];
+    AdminRoleArray.push({ UserId, Index: moment().valueOf(), Type: action, Role });
     return;
 }
 

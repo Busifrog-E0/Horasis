@@ -8,6 +8,8 @@ import { ReadOneFromArticles } from '../databaseControllers/articles-databaseCon
 import { SetActivityDataForGet } from './activities-controller.js';
 import { SetDiscussionDataForGet } from './discussions-controller.js';
 import { SetArticleDataForGet } from './articles-controller.js';
+import { SetPodcastDataForGet } from './podcasts-controller.js';
+import { ReadOneFromPodcasts } from '../databaseControllers/podcasts-databaseController.js';
 /**
  * @typedef {import('./../databaseControllers/saves-databaseController.js').SaveData} SaveData 
  */
@@ -41,6 +43,8 @@ const GetSaves = async (req, res) => {
             case "Article":
                 Entity = await SetArticleDataForGet(await ReadOneFromArticles(Save.EntityId), UserId);
                 break;
+            case "Podcast":
+                Entity = await SetPodcastDataForGet(await ReadOneFromPodcasts(Save.EntityId), UserId);
             default:
                 break;
         }
