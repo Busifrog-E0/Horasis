@@ -16,6 +16,7 @@ import ViewLikedMembers from '../../../Activities/Likes/ViewLikedMembers'
 import ActivityDropdown from '../../../Activities/ActivityDropdown'
 import MentionTextLink from '../../../Activities/Mentions/MentionTextLink'
 import ActivityDocuments from '../../../Activities/ActivityDocuments'
+import useEntityLikeManager from '../../../../hooks/useEntityLikeManager'
 const PostSearchSectionTab = ({
 	titleSize,
 	bordered,
@@ -32,7 +33,6 @@ const PostSearchSectionTab = ({
 	const toast = useToast()
 	const [isDeleting, setIsDeleting] = useState(false)
 	const [isSaving, setIsSaving] = useState(false)
-	const [isLiking, setIsLiking] = useState(false)
 	const [isLoading, setIsLoading] = useState(false)
 	const [isLoadingMore, setIsLoadingMore] = useState(false)
 	const [commentsData, setCommentsData] = useState([])
@@ -44,28 +44,6 @@ const PostSearchSectionTab = ({
 	})
 	const [isLoadingActivity, setIsLoadingActivity] = useState(true)
 	const [singleActivity, setSingleActivity] = useState(activity)
-
-	const onLikeBtnClicked = () => {
-		setIsLiking(true)
-		postItem(
-			`users/${currentUserData.CurrentUser.UserId}/activities/${singleActivity.DocId}/like`,
-			{},
-			(result) => {
-				console.log(result)
-				if (result === true) {
-					getSingleActivity()
-				}
-				setIsLiking(false)
-			},
-			(err) => {
-				setIsLiking(false)
-				console.error(err)
-			},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
-	}
 
 	const onSaveClicked = () => {
 		setIsSaving(true)
@@ -109,26 +87,7 @@ const PostSearchSectionTab = ({
 			toast
 		)
 	}
-	const onUnLikeBtnClicked = () => {
-		setIsLiking(true)
-		deleteItem(
-			`users/${currentUserData.CurrentUser.UserId}/activities/${singleActivity.DocId}/disLike`,
-			(result) => {
-				console.log(result)
-				if (result === true) {
-					getSingleActivity()
-				}
-				setIsLiking(false)
-			},
-			(err) => {
-				setIsLiking(false)
-				console.error(err)
-			},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
-	}
+
 	const onDeleteBtnClicked = () => {
 		setIsDeleting(true)
 		deleteItem(
@@ -238,10 +197,18 @@ const PostSearchSectionTab = ({
 		else setIsLoadingActivity(false)
 	}, [activityId])
 
+	const { isLiking, isUnliking, likeEntity, unlikeEntity } = useEntityLikeManager({
+		EntityId: singleActivity ? singleActivity.DocId : activityId,
+		Type: 'Activity',
+		successCallback: getSingleActivity,
+		errorCallback: () => {},
+	})
 	// if (isLoadingActivity) {
 	// 	return <div className={`p-5 bg-system-secondary-bg rounded-lg ${bordered && 'border border-system-file-border'}`}>
 	// 	</div>
 	// }
+
+
 	if (singleActivity)
 		return (
 			<div className={className}>
@@ -291,7 +258,7 @@ const PostSearchSectionTab = ({
 						<p className='text-system-primary-text font-normal text-xs m-0'>{singleActivity.Mentions?.length} Mentions</p>
 					</div>
 				} */}
-				{ }
+				{}
 				{ShowImage && singleActivity?.MediaFiles && singleActivity.MediaFiles.length > 0 && (
 					<div>
 						<ActivityCarousel slides={singleActivity.MediaFiles} />
@@ -305,14 +272,14 @@ const PostSearchSectionTab = ({
 				)}
 				<div className='flex items-center justify-between gap-10 mt-2'>
 					<div className='flex flex-wrap items-start justify-between gap-10'>
-						{isLiking ? (
+						{isLiking || isUnliking ? (
 							<Spinner />
 						) : (
 							<div className='flex items-center gap-2'>
 								{singleActivity.HasLiked ? (
-									<img src={liked} className='h-6 w-6 cursor-pointer text-system-error' onClick={onUnLikeBtnClicked} />
+									<img src={liked} className='h-6 w-6 cursor-pointer text-system-error' onClick={unlikeEntity} />
 								) : (
-									<img src={like} className='h-6 w-6 cursor-pointer' onClick={onLikeBtnClicked} />
+									<img src={like} className='h-6 w-6 cursor-pointer' onClick={likeEntity} />
 								)}
 								<ViewLikedMembers entity={singleActivity} />
 							</div>

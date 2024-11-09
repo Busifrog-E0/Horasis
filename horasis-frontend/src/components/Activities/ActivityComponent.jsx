@@ -19,6 +19,7 @@ import ActivityDocuments from './ActivityDocuments'
 import { useNavigate } from 'react-router-dom'
 import { _retrieveData } from '../../utils/LocalStorage'
 import useTranslation from '../../hooks/useTranslation'
+import useEntityLikeManager from '../../hooks/useEntityLikeManager'
 const ActivityComponent = ({
 	titleSize,
 	bordered,
@@ -41,7 +42,6 @@ const ActivityComponent = ({
 	const toast = useToast()
 	const [isDeleting, setIsDeleting] = useState(false)
 	const [isSaving, setIsSaving] = useState(false)
-	const [isLiking, setIsLiking] = useState(false)
 	const [isLoading, setIsLoading] = useState(false)
 	const [isLoadingMore, setIsLoadingMore] = useState(false)
 	const [commentsData, setCommentsData] = useState([])
@@ -53,30 +53,6 @@ const ActivityComponent = ({
 	})
 	const [isLoadingActivity, setIsLoadingActivity] = useState(true)
 	const [singleActivity, setSingleActivity] = useState(activity)
-
-	const onLikeBtnClicked = () => {
-		const actId = singleActivity ? singleActivity.DocId : activityId
-
-		setIsLiking(true)
-		postItem(
-			`users/${currentUserData.CurrentUser.UserId}/activities/${actId}/like`,
-			{},
-			(result) => {
-				console.log(result)
-				if (result === true) {
-					getSingleActivity()
-				}
-				setIsLiking(false)
-			},
-			(err) => {
-				setIsLiking(false)
-				console.error(err)
-			},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
-	}
 
 	const onSaveClicked = () => {
 		const actId = singleActivity ? singleActivity.DocId : activityId
@@ -128,28 +104,7 @@ const ActivityComponent = ({
 			toast
 		)
 	}
-	const onUnLikeBtnClicked = () => {
-		const actId = singleActivity ? singleActivity.DocId : activityId
 
-		setIsLiking(true)
-		deleteItem(
-			`users/${currentUserData.CurrentUser.UserId}/activities/${actId}/disLike`,
-			(result) => {
-				console.log(result)
-				if (result === true) {
-					getSingleActivity()
-				}
-				setIsLiking(false)
-			},
-			(err) => {
-				setIsLiking(false)
-				console.error(err)
-			},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
-	}
 	const onDeleteBtnClicked = () => {
 		const actId = singleActivity ? singleActivity.DocId : activityId
 
@@ -269,6 +224,13 @@ const ActivityComponent = ({
 	// 	</div>
 	// }
 
+	const { isLiking, isUnliking, likeEntity, unlikeEntity } = useEntityLikeManager({
+		EntityId: singleActivity ? singleActivity.DocId : activityId,
+		Type: 'Activity',
+		successCallback: getSingleActivity,
+		errorCallback: () => {},
+	})
+
 	const {
 		isTranslated: translated,
 		translate: translateThisPost,
@@ -373,7 +335,7 @@ const ActivityComponent = ({
 				)}
 				<div className={`flex items-center justify-between gap-10 mt-2`}>
 					<div className='flex flex-wrap items-start justify-between gap-10'>
-						{isLiking ? (
+						{isLiking || isUnliking ? (
 							<Spinner />
 						) : (
 							<div className='flex items-center gap-2'>
@@ -381,10 +343,10 @@ const ActivityComponent = ({
 									<img
 										src={liked}
 										className={`h-${iconSize} w-${iconSize} cursor-pointer text-system-error`}
-										onClick={onUnLikeBtnClicked}
+										onClick={unlikeEntity}
 									/>
 								) : (
-									<img src={like} className={`h-${iconSize} w-${iconSize} cursor-pointer`} onClick={onLikeBtnClicked} />
+									<img src={like} className={`h-${iconSize} w-${iconSize} cursor-pointer`} onClick={likeEntity} />
 								)}
 								<ViewLikedMembers entity={singleActivity} timeSize={timeSize} />
 							</div>
