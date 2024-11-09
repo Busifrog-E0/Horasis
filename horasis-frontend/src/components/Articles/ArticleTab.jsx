@@ -1,19 +1,14 @@
-import { relativeTime } from '../../utils/date'
-import DropdownMenu from '../ui/DropdownMenu'
+import { useState } from 'react'
 import save from '../../assets/icons/graysave.svg'
 import saved from '../../assets/icons/graysavefill.svg'
-import Spinner from '../ui/Spinner'
-import liked from '../../assets/icons/liked.svg'
 import like from '../../assets/icons/like.svg'
-import reply from '../../assets/icons/reply.svg'
+import liked from '../../assets/icons/liked.svg'
 import ViewLikedMembers from '../../components/Activities/Likes/ViewLikedMembers'
-import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { getItem } from '../../constants/operations'
 import useEntityLikeManager from '../../hooks/useEntityLikeManager'
-import { useAuth } from '../../utils/AuthProvider'
-import { useToast } from '../Toast/ToastService'
 import useEntitySaveManager from '../../hooks/useEntitySaveManager'
+import useGetData from '../../hooks/useGetData'
+import { relativeTime } from '../../utils/date'
+import Spinner from '../ui/Spinner'
 
 const ArticleTab = ({
 	article,
@@ -27,33 +22,15 @@ const ArticleTab = ({
 	likeArticle,
 	unLikeArticle,
 }) => {
-	const { updateCurrentUser, currentUserData } = useAuth()
-	const toast = useToast()
 	const [singleArticle, setSingleArticle] = useState(article)
-	const navigate = useNavigate()
-	const [isLoadingArticle, setIsLoadingArticle] = useState(false)
 
-	const getSingleArticle = () => {
-		getArticle(`articles/${singleArticle ? singleArticle.DocId : article.DocId}`, setSingleArticle)
-	}
-	const getArticle = (endpoint, setData) => {
-		setIsLoadingArticle(true)
-		getItem(
-			`${endpoint}`,
-			(data) => {
-				setData(data)
-				setIsLoadingArticle(false)
-			},
-			(err) => {
-				navigate('/NotFound', { replace: true })
-				setIsLoadingArticle(false)
-				// console.log(err)
-			},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
-	}
+	const { isLoading: isLoadingArticle, getData: getSingleArticle } = useGetData(
+		`articles/${singleArticle ? singleArticle.DocId : article.DocId}`,
+		{
+			onSuccess: (result) => setSingleArticle(result),
+		},
+		false
+	)
 
 	const { isLiking, isUnliking, likeEntity, unlikeEntity } = useEntityLikeManager({
 		EntityId: singleArticle ? singleArticle.DocId : article.DocId,

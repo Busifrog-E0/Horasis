@@ -4,7 +4,7 @@ import Button from '../components/ui/Button'
 import SavedDiscussionTab from '../components/Discussions/Saved/SavedDiscussionTab'
 import SavedPodcastTab from '../components/Podcasts/Saved/SavedPodcastTab'
 
-const Podcasts = ({ onSelectPodcast, onCreatePodcast }) => {
+const Podcasts = () => {
 	const navigate = useNavigate()
 
 	return (
@@ -16,8 +16,9 @@ const Podcasts = ({ onSelectPodcast, onCreatePodcast }) => {
 				<Button onClick={() => navigate('/Podcasts/Create/New')} width='full' variant='black'>
 					Create Podcast
 				</Button>
-				<SavedDiscussionTab bordered={true} />
+				{/* <SavedDiscussionTab bordered={true} /> */}
 				{/* <SavedActivityTab/> */}
+				<SavedPodcastTab bordered={true} />
 			</div>
 		</>
 	)
