@@ -21,12 +21,7 @@ const useEntityLikeManager = ({ EntityId, Type, successCallback, errorCallback }
 
 	const unlikeEntity = () => deleteData({})
 
-	return {
-		isLiking,
-		isUnliking,
-		likeEntity,
-		unlikeEntity,
-	}
+	return { isLiking, isUnliking, likeEntity, unlikeEntity }
 }
 
 export default useEntityLikeManager

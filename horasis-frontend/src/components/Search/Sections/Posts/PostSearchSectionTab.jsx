@@ -17,6 +17,7 @@ import ActivityDropdown from '../../../Activities/ActivityDropdown'
 import MentionTextLink from '../../../Activities/Mentions/MentionTextLink'
 import ActivityDocuments from '../../../Activities/ActivityDocuments'
 import useEntityLikeManager from '../../../../hooks/useEntityLikeManager'
+import useEntitySaveManager from '../../../../hooks/useEntitySaveManager'
 const PostSearchSectionTab = ({
 	titleSize,
 	bordered,
@@ -32,7 +33,6 @@ const PostSearchSectionTab = ({
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
 	const toast = useToast()
 	const [isDeleting, setIsDeleting] = useState(false)
-	const [isSaving, setIsSaving] = useState(false)
 	const [isLoading, setIsLoading] = useState(false)
 	const [isLoadingMore, setIsLoadingMore] = useState(false)
 	const [commentsData, setCommentsData] = useState([])
@@ -44,49 +44,6 @@ const PostSearchSectionTab = ({
 	})
 	const [isLoadingActivity, setIsLoadingActivity] = useState(true)
 	const [singleActivity, setSingleActivity] = useState(activity)
-
-	const onSaveClicked = () => {
-		setIsSaving(true)
-		postItem(
-			`users/${currentUserData.CurrentUser.UserId}/activities/${singleActivity.DocId}/save`,
-			{},
-			(result) => {
-				console.log(result)
-				if (result === true) {
-					getSingleActivity()
-				}
-				setIsSaving(false)
-			},
-			(err) => {
-				setIsSaving(false)
-				console.error(err)
-			},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
-	}
-
-	const OnRemoveClicked = () => {
-		setIsSaving(true)
-		deleteItem(
-			`users/${currentUserData.CurrentUser.UserId}/activities/${singleActivity.DocId}/save`,
-			(result) => {
-				console.log(result)
-				if (result === true) {
-					getSingleActivity()
-				}
-				setIsSaving(false)
-			},
-			(err) => {
-				setIsSaving(false)
-				console.error(err)
-			},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
-	}
 
 	const onDeleteBtnClicked = () => {
 		setIsDeleting(true)
@@ -203,11 +160,17 @@ const PostSearchSectionTab = ({
 		successCallback: getSingleActivity,
 		errorCallback: () => {},
 	})
+
+	const { isSaving, isUnsaving, saveEntity, unsaveEntity } = useEntitySaveManager({
+		EntityId: singleActivity ? singleActivity.DocId : activityId,
+		Type: 'Activity',
+		successCallback: getSingleActivity,
+		errorCallback: () => {},
+	})
 	// if (isLoadingActivity) {
 	// 	return <div className={`p-5 bg-system-secondary-bg rounded-lg ${bordered && 'border border-system-file-border'}`}>
 	// 	</div>
 	// }
-
 
 	if (singleActivity)
 		return (
@@ -297,10 +260,10 @@ const PostSearchSectionTab = ({
 						)} */}
 					</div>
 					<ActivityDropdown
-						onRemoveClicked={OnRemoveClicked}
-						onSaveClicked={onSaveClicked}
+						onRemoveClicked={unsaveEntity}
+						onSaveClicked={saveEntity}
 						activity={singleActivity}
-						isSaving={isSaving}
+						isSaving={isSaving || isUnsaving}
 					/>
 				</div>
 				{showComment && (

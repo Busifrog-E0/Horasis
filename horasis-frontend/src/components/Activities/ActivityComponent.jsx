@@ -20,6 +20,7 @@ import { useNavigate } from 'react-router-dom'
 import { _retrieveData } from '../../utils/LocalStorage'
 import useTranslation from '../../hooks/useTranslation'
 import useEntityLikeManager from '../../hooks/useEntityLikeManager'
+import useEntitySaveManager from '../../hooks/useEntitySaveManager'
 const ActivityComponent = ({
 	titleSize,
 	bordered,
@@ -41,7 +42,6 @@ const ActivityComponent = ({
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
 	const toast = useToast()
 	const [isDeleting, setIsDeleting] = useState(false)
-	const [isSaving, setIsSaving] = useState(false)
 	const [isLoading, setIsLoading] = useState(false)
 	const [isLoadingMore, setIsLoadingMore] = useState(false)
 	const [commentsData, setCommentsData] = useState([])
@@ -53,57 +53,6 @@ const ActivityComponent = ({
 	})
 	const [isLoadingActivity, setIsLoadingActivity] = useState(true)
 	const [singleActivity, setSingleActivity] = useState(activity)
-
-	const onSaveClicked = () => {
-		const actId = singleActivity ? singleActivity.DocId : activityId
-
-		setIsSaving(true)
-		postItem(
-			`saves`,
-			{
-				EntityId: actId,
-				Type: 'Activity',
-			},
-			(result) => {
-				console.log(result)
-				if (result === true) {
-					getSingleActivity()
-				}
-				setIsSaving(false)
-			},
-			(err) => {
-				setIsSaving(false)
-				console.error(err)
-			},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
-	}
-
-	const OnRemoveClicked = () => {
-		const actId = singleActivity ? singleActivity.DocId : activityId
-
-		setIsSaving(true)
-		deleteItem(
-			`saves/${actId}`,
-			(result) => {
-				console.log(result)
-				if (result === true) {
-					getSingleActivity()
-					onSaveRemoveCallback()
-				}
-				setIsSaving(false)
-			},
-			(err) => {
-				setIsSaving(false)
-				console.error(err)
-			},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
-	}
 
 	const onDeleteBtnClicked = () => {
 		const actId = singleActivity ? singleActivity.DocId : activityId
@@ -224,6 +173,8 @@ const ActivityComponent = ({
 	// 	</div>
 	// }
 
+	// CUSTOM HOOKS USED BELOW
+
 	const { isLiking, isUnliking, likeEntity, unlikeEntity } = useEntityLikeManager({
 		EntityId: singleActivity ? singleActivity.DocId : activityId,
 		Type: 'Activity',
@@ -231,12 +182,19 @@ const ActivityComponent = ({
 		errorCallback: () => {},
 	})
 
+	const { isSaving, isUnsaving, saveEntity, unsaveEntity } = useEntitySaveManager({
+		EntityId: singleActivity ? singleActivity.DocId : activityId,
+		Type: 'Activity',
+		successCallback: getSingleActivity,
+		errorCallback: () => {},
+	})
+
 	const {
-		isTranslated: translated,
-		translate: translateThisPost,
+		isTranslated,
+		translate: translateActivity,
 		showOriginal,
 		homeLanguage,
-		isTranslating: translating,
+		isTranslating,
 	} = useTranslation({
 		data: singleActivity,
 		setData: setSingleActivity,
@@ -292,7 +250,7 @@ const ActivityComponent = ({
 					</div>
 				</div>
 				<div className={`${from === 'podcast' ? '' : 'mt-5'}`}>
-					{translating ? (
+					{isTranslating ? (
 						<p className='text-sm text-system-secondary-text'>Translating... </p>
 					) : (
 						<MentionTextLink descriptionSize={descriptionSize} singleActivity={singleActivity} />
@@ -318,7 +276,7 @@ const ActivityComponent = ({
 				)}
 				{singleActivity.OriginalLanguage !== homeLanguage && (
 					<div className='mt-6 mb-2 select-none'>
-						{translated ? (
+						{isTranslated ? (
 							<>
 								<p className='text-sm text-system-secondary-text cursor-pointer' onClick={showOriginal}>
 									Show Original
@@ -326,7 +284,7 @@ const ActivityComponent = ({
 							</>
 						) : (
 							<>
-								<p className='text-sm text-system-secondary-text cursor-pointer' onClick={translateThisPost}>
+								<p className='text-sm text-system-secondary-text cursor-pointer' onClick={translateActivity}>
 									{from === 'podcast' ? 'Translate podcast description' : 'Translate this post'}
 								</p>
 							</>
@@ -367,10 +325,10 @@ const ActivityComponent = ({
 					</div>
 					{from !== 'podcast' && (
 						<ActivityDropdown
-							onRemoveClicked={OnRemoveClicked}
-							onSaveClicked={onSaveClicked}
+							onRemoveClicked={unsaveEntity}
+							onSaveClicked={saveEntity}
 							activity={singleActivity}
-							isSaving={isSaving}
+							isSaving={isSaving || isUnsaving}
 						/>
 					)}
 				</div>
