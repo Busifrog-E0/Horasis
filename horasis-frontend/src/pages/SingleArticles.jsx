@@ -18,6 +18,7 @@ import usePostData from '../hooks/usePostData'
 import useTranslation from '../hooks/useTranslation'
 import useUpdateData from '../hooks/useUpdateData'
 import { getDateInWordsFormat } from '../utils/date'
+import useEntitySaveManager from '../hooks/useEntitySaveManager'
 
 const SingleArticles = () => {
 	const navigate = useNavigate()
@@ -70,28 +71,14 @@ const SingleArticles = () => {
 		}
 	}
 
-	const saveSuccessCallback = (result) => {
-		if (result === true) getArticle()
-	}
 
-	const { isLoading: isSaving, postData: postSaveArticle } = usePostData({ onSuccess: saveSuccessCallback })
-	const { isLoading: isUnsaving, deleteData: deleteSaveArticle } = useDeleteData('', { onSuccess: saveSuccessCallback })
+	const { isSaving, isUnsaving, saveEntity, unsaveEntity } = useEntitySaveManager({
+		EntityId: article?.DocId,
+		Type: 'Article',
+		successCallback: getArticle,
+		errorCallback: () => {},
+	})
 
-	const saveArticle = (id) => {
-		postSaveArticle({
-			endpoint: 'saves',
-			payload: {
-				EntityId: id,
-				Type: 'Article',
-			},
-		})
-	}
-
-	const removeSaveArticle = (id) => {
-		deleteSaveArticle({
-			endPoint: `saves/${id}`,
-		})
-	}
 
 	const {
 		isTranslated: translated,
@@ -179,14 +166,14 @@ const SingleArticles = () => {
 													src={graysavefill}
 													alt=''
 													className='h-6 cursor-pointer'
-													onClick={() => removeSaveArticle(article?.DocId)}
+													onClick={unsaveEntity}
 												/>
 											) : (
 												<img
 													src={graysave}
 													alt=''
 													className='h-6 cursor-pointer'
-													onClick={() => saveArticle(article?.DocId)}
+													onClick={saveEntity}
 												/>
 											)}
 										</>

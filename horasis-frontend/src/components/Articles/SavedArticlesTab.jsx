@@ -10,6 +10,7 @@ import EmptyMembers from '../Common/EmptyMembers'
 import saveFill from '../../assets/icons/graysavefill.svg'
 import saveOutline from '../../assets/icons/graysave.svg'
 import arrowfor from '../../assets/icons/arrowfor.svg'
+import useEntitySaveManager from '../../hooks/useEntitySaveManager'
 
 const SavedArticlesTab = ({ bordered = false, loadMoreEnabled = false, iconPresent = true }) => {
 	const { updateCurrentUser, currentUserData } = useAuth()
@@ -100,67 +101,13 @@ const SavedArticlesTab = ({ bordered = false, loadMoreEnabled = false, iconPrese
 	useEffect(() => {
 		fetch()
 	}, [filters])
-
-	const getSingleArticle = (id) => {
-		setSaving(id)
-		getItem(
-			`articles/${id}`,
-			(result) => {
-				setSaving(null)
-				setArticles(articles.filter((article) => article.DocId !== result.DocId))
-			},
-			(err) => {
-				setSaving(null)
-			},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
-	}
-
-	const [saving, setSaving] = useState(null)
-	const saveArticle = (id) => {
-		setSaving(id)
-		postItem(
-			`saves`,
-			{ EntityId: id, Type: 'Article' },
-			(result) => {
-				if (result === true) {
-					getSingleArticle(id)
-				}
-			},
-			(err) => {
-				setSaving(null)
-			},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
-	}
-
-	const removeSaveArticle = (id) => {
-		setSaving(id)
-		deleteItem(
-			`saves/${id}`,
-			(result) => {
-				if (result === true) {
-					getSingleArticle(id)
-				}
-			},
-			(err) => {
-				setSaving(null)
-			},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
-	}
-
+	
+	
 	return (
 		<div className='p-5 bg-system-secondary-bg rounded-lg'>
 			<div className='flex items-center justify-between gap-2 mb-1'>
 				<h4 className='font-medium text-2xl text-system-primary-text'>Saved Articles</h4>
-				{iconPresent && articles.length>0 && (
+				{iconPresent && articles.length > 0 && (
 					<img src={arrowfor} alt='' className='h-6 w-6 cursor-pointer' onClick={() => navigate('/SavedArticles')} />
 				)}
 				{/* arrow cursor-pointer */}
@@ -178,9 +125,6 @@ const SavedArticlesTab = ({ bordered = false, loadMoreEnabled = false, iconPrese
 									lastItem={lastItem}
 									navigateToArticle={navigateToArticle}
 									key={article.DocId}
-									removeSaveArticle={removeSaveArticle}
-									saveArticle={saveArticle}
-									saving={saving}
 								/>
 							)
 						})}
@@ -213,59 +157,83 @@ const SavedArticlesTab = ({ bordered = false, loadMoreEnabled = false, iconPrese
 	)
 }
 
-const SavedArticleItem = ({ article, lastItem, navigateToArticle, saving, removeSaveArticle, saveArticle }) => {
-	return (
-		<>
-			<div
-				className={`mt-4 flex flex-row gap-2 cursor-pointer ${
-					!lastItem ? 'border-b' : ''
-				} pb-4 border-system-file-border`}
-				onClick={() => navigateToArticle(article.DocId)}>
-				<div className='h-16 w-28  overflow-hidden rounded-lg'>
-					<img src={article.CoverPicture} className='object-cover h-full w-full' />
-				</div>
-				<div className='flex-1'>
-					<h4 className='font-semibold text-sm text-system-primary-text'>{article.ArticleName}</h4>
-					<div className='flex flex-row gap-3'>
-						<p className='text-xs text-brand-gray-dim mt-1 line-clamp-1'>{article.Description}</p>
+const SavedArticleItem = ({ article, lastItem, navigateToArticle }) => {
+	const { updateCurrentUser, currentUserData } = useAuth()
+	const toast = useToast()
+	const [singleArticle, setSingleArticle] = useState(article)
+
+	const getSingleArticle = () => {
+		getItem(
+			`articles/${article.DocId}`,
+			(result) => {
+				setSingleArticle(result)
+			},
+			(err) => {},
+			updateCurrentUser,
+			currentUserData,
+			toast
+		)
+	}
+	const { isSaving, isUnsaving, saveEntity, unsaveEntity } = useEntitySaveManager({
+		EntityId: singleArticle ? singleArticle.DocId : article.DocId,
+		Type: 'Article',
+		successCallback: getSingleArticle,
+		errorCallback: () => {},
+	})
+	if (singleArticle) {
+		return (
+			<>
+				<div
+					className={`mt-4 flex flex-row gap-2 cursor-pointer ${
+						!lastItem ? 'border-b' : ''
+					} pb-4 border-system-file-border`}
+					onClick={() => navigateToArticle(singleArticle.DocId)}>
+					<div className='h-16 w-28  overflow-hidden rounded-lg'>
+						<img src={singleArticle.CoverPicture} className='object-cover h-full w-full' />
 					</div>
-				</div>
-				{saving === article.DocId ? (
-					<div className=' self-end'>
-						<Spinner />
+					<div className='flex-1'>
+						<h4 className='font-semibold text-sm text-system-primary-text'>{singleArticle.ArticleName}</h4>
+						<div className='flex flex-row gap-3'>
+							<p className='text-xs text-brand-gray-dim mt-1 line-clamp-1'>{singleArticle.Description}</p>
+						</div>
 					</div>
-				) : (
-					<>
-						{article.HasSaved ? (
-							<>
-								<img
-									src={saveFill}
-									alt=''
-									className='h-6 cursor-pointer self-end'
-									onClick={(e) => {
-										e.stopPropagation()
-										removeSaveArticle(article.DocId)
-									}}
-								/>
-							</>
-						) : (
-							<>
-								<img
-									src={saveOutline}
-									alt=''
-									className='h-6 cursor-pointer self-end'
-									onClick={(e) => {
-										e.stopPropagation()
-										saveArticle(article.DocId)
-									}}
-								/>
-							</>
-						)}
-					</>
-				)}
-			</div>
-		</>
-	)
+					{isSaving || isUnsaving ? (
+						<div className=' self-end'>
+							<Spinner />
+						</div>
+					) : (
+						<>
+							{singleArticle.HasSaved ? (
+								<>
+									<img
+										src={saveFill}
+										alt=''
+										className='h-6 cursor-pointer self-end'
+										onClick={(e) => {
+											e.stopPropagation()
+											unsaveEntity()
+										}}
+									/>
+								</>
+							) : (
+								<>
+									<img
+										src={saveOutline}
+										alt=''
+										className='h-6 cursor-pointer self-end'
+										onClick={(e) => {
+											e.stopPropagation()
+											saveEntity()
+										}}
+									/>
+								</>
+							)}
+						</>
+					)}
+				</div>
+			</>
+		)
+	}
 }
 
 export default SavedArticlesTab

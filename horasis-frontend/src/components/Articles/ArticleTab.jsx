@@ -13,6 +13,7 @@ import { getItem } from '../../constants/operations'
 import useEntityLikeManager from '../../hooks/useEntityLikeManager'
 import { useAuth } from '../../utils/AuthProvider'
 import { useToast } from '../Toast/ToastService'
+import useEntitySaveManager from '../../hooks/useEntitySaveManager'
 
 const ArticleTab = ({
 	article,
@@ -55,6 +56,12 @@ const ArticleTab = ({
 	}
 
 	const { isLiking, isUnliking, likeEntity, unlikeEntity } = useEntityLikeManager({
+		EntityId: singleArticle ? singleArticle.DocId : article.DocId,
+		Type: 'Article',
+		successCallback: getSingleArticle,
+		errorCallback: () => {},
+	})
+	const { isSaving, isUnsaving, saveEntity, unsaveEntity } = useEntitySaveManager({
 		EntityId: singleArticle ? singleArticle.DocId : article.DocId,
 		Type: 'Article',
 		successCallback: getSingleArticle,
@@ -128,7 +135,7 @@ const ArticleTab = ({
 						</div>
 					</div>
 					<div className={`${from === 'article' ? 'block' : 'hidden'}`}>
-						{saving === singleArticle.DocId ? (
+						{isSaving || isUnsaving ? (
 							<>
 								<Spinner />
 							</>
@@ -142,7 +149,7 @@ const ArticleTab = ({
 											className='h-8'
 											onClick={(e) => {
 												e.stopPropagation()
-												removeSaveArticle(singleArticle.DocId)
+												unsaveEntity()
 											}}
 										/>
 									</>
@@ -154,7 +161,7 @@ const ArticleTab = ({
 											className='h-8'
 											onClick={(e) => {
 												e.stopPropagation()
-												saveArticle(singleArticle.DocId)
+												saveEntity()
 											}}
 										/>
 									</>
