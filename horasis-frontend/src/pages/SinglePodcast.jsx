@@ -17,6 +17,9 @@ import deleteIcon from '../assets/icons/delete.svg'
 import TextArea from '../components/ui/TextArea'
 import { activityValidation } from '../utils/schema/users/activityValidation'
 import { postItem } from '../constants/operations'
+import useEntitySaveManager from '../hooks/useEntitySaveManager'
+import saved from '../assets/icons/graysavefill.svg'
+import save from '../assets/icons/graysave.svg'
 
 const SinglePodcast = () => {
 	const [activeTab, setActiveTab] = useState(0)
@@ -31,6 +34,13 @@ const SinglePodcast = () => {
 	const onTabChange = (item) => {
 		setActiveTab(item.key)
 	}
+
+	const { isSaving, isUnsaving, saveEntity, unsaveEntity } = useEntitySaveManager({
+		EntityId: podcast?.DocId,
+		Type: 'Podcast',
+		successCallback: getPodcast,
+		errorCallback: () => {},
+	})
 
 	const tabs = (podcast) => {
 		const { Privacy, IsMember, MembershipStatus, Permissions, DocId } = podcast
@@ -240,6 +250,24 @@ const SinglePodcast = () => {
 							</div>
 						</div>
 					</div>
+
+					{isSaving || isUnsaving ? (
+						<div className='self-end'>
+							<Spinner />
+						</div>
+					) : (
+						<>
+							{podcast?.HasSaved ? (
+								<>
+									<img src={saved} alt='' className='h-8 self-end cursor-pointer' onClick={unsaveEntity} />
+								</>
+							) : (
+								<>
+									<img src={save} alt='' className='h-8 self-end cursor-pointer' onClick={saveEntity} />
+								</>
+							)}
+						</>
+					)}
 				</div>
 				<div className='lg:col-span-3'>
 					{podcast && (
@@ -269,7 +297,7 @@ const UploadEpisodeModal = ({
 	from = 'podcast',
 	type,
 	entId,
-	reloadFn=()=>{},
+	reloadFn = () => {},
 }) => {
 	const { currentUserData, updateCurrentUser } = useAuth()
 	const toast = useToast()
