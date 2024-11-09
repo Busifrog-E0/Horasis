@@ -7,17 +7,17 @@ const fileFormats = {
     document: {
         extensions: [
             'pdf'],
-        size: 123456789
+        size: 5242880 //5mb
     },
     image: {
         extensions: [
             'jpeg', 'jpg', 'png'],
-        size: 2097152
+        size: 2097152 //2mb
     },
     video: {
         extensions: [
             'mp4'],
-        size: 20971520
+        size: 20971520 //20mb
     }
 }
 /**

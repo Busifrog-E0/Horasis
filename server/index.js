@@ -27,7 +27,7 @@ import errorHandler from './middleware/errorHandling-middleware.js';
 import swaggerUi from 'swagger-ui-express';
 import swaggerFile from './swaggerOutput.json' assert { type: 'json' };
 // import { FirstSetupAdminInfo } from "./databaseControllers/admins-databaseController.js";
-import { GenerateToken } from "./controllers/auth-controller.js";
+import { ClearAdminRoleArray, GenerateToken } from "./controllers/auth-controller.js";
 import { decodeSocketIdToken } from "./middleware/auth-middleware.js";
 import { ConnectSocket } from "./controllers/socket-controller.js";
 import { CreateActiveUsers } from "./databaseControllers/activeUsers-databaseController.js";
@@ -46,6 +46,9 @@ app.use(router);
 
 app.use(errorHandler);
 
+setInterval(() => {
+    ClearAdminRoleArray();
+}, 1000 * 60 * 60 * 12);
 
 
 
