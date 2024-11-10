@@ -1,9 +1,11 @@
 import { useState } from 'react'
 import { deleteItem } from '../constants/operations'
 import { useAuth } from '../utils/AuthProvider'
+import { useToast } from '../components/Toast/ToastService'
 
 export default function useDeleteData(endpoint = '', { onSuccess = () => {}, onError = () => {} } = {}) {
 	const { updateCurrentUser, currentUserData } = useAuth()
+	const toast = useToast()
 	const [isLoading, setIsLoading] = useState(false)
 
 	const deleteData = ({ endPoint = '', onsuccess = () => {}, onerror = () => {} } = {}) => {
@@ -23,7 +25,8 @@ export default function useDeleteData(endpoint = '', { onSuccess = () => {}, onE
 				setIsLoading(false)
 			},
 			updateCurrentUser,
-			currentUserData
+			currentUserData,
+			toast
 		)
 	}
 	return {

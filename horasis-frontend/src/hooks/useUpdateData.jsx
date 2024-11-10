@@ -25,7 +25,8 @@ export default function useUpdateData({ onSuccess = () => {}, onError = () => {}
 				setIsLoading(false)
 			},
 			updateCurrentUser,
-			currentUserData
+			currentUserData,
+			toast
 		)
 	}
 

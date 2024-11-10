@@ -26,7 +26,7 @@ const CreatePodcast = () => {
 	const [errorObj, setErrorObj] = useState({})
 	const [postPodcastData, setPostPodcastData] = useState({
 		PodcastName: '',
-		Brief: '',
+		// Brief: '',
 		Description: '',
 		OrganiserId: currentUserData.CurrentUser.UserId,
 		Privacy: 'Public',
