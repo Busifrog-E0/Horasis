@@ -71,7 +71,7 @@ export default function useGetList(
 	}
 
 	const checkMoreLeft = (temp) => {
-		const query = `${endpoint}?${jsonToQuery({ ...filters, ...extraParams })}&NextId=${getNextId(temp)}`
+		const query = `${endpoint}?${jsonToQuery({ ...filters, ...extraParams, Limit: 1 })}&NextId=${getNextId(temp)}`
 		getItem(
 			query,
 			(result) => {

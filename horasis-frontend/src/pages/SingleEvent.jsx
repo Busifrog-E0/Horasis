@@ -171,7 +171,10 @@ const SingleEvent = () => {
 
 		// Add other tabs, incrementing keys accordingly
 		tabsArray.push(getParticipantsTab(tabsArray.length)) // Participants tab key will be 1
-		tabsArray.push(getRegistrationTab(tabsArray.length)) // Registration Requests key will be 2
+
+		if (isAdmin && isPrivate) {
+			tabsArray.push(getRegistrationTab(tabsArray.length)) // Registration Requests key will be 2
+		}
 
 		// Add invite speakers tab and settings tab
 		if (isAdmin) {
