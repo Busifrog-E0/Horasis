@@ -5,7 +5,6 @@ const PostPodcastSchema = Joi.object({
     PodcastName: Joi.string().required(),
     Description: Joi.string().required(),
     OrganiserId: Joi.string().required(),
-    Brief: Joi.string().required(),
     Privacy: Joi.string().valid("Public", "Private").required(),
     CoverPicture: Joi.string().required(),
     Tags: Joi.array().items(TagsSchema).default([]),

@@ -11,7 +11,6 @@ import dataHandling from './functions.js'
 /**
  * @typedef {object} PodcastData
  * @property {string} PodcastName
- * @property {string} Brief
  * @property {string} OrganiserId
  * @property {UserData} UserDetails
  * @property {string} Description
