@@ -48,7 +48,7 @@ router.patch('/activities/:ActivityId', decodeIDToken, ensureAuthorized("User"),
     // @ts-ignore
     asyncHandler(PatchActivities));
 
-router.post('/users/:UserId/activities/:EntityId/like', decodeIDToken, ensureAuthorized("User"), CheckSameUser,
+/* router.post('/users/:UserId/activities/:EntityId/like', decodeIDToken, ensureAuthorized("User"), CheckSameUser,
     InsertActivityTypeMiddleware, SwaggerDocs.post_Activities_ActivityId_Like,
     // @ts-ignore
     asyncHandler(PostLikes));
@@ -74,7 +74,7 @@ router.get('/activities/:EntityId/likedUsers', decodeIDToken, ensureAuthorized("
 router.get('/user/:UserId/activities/save', decodeIDToken, ensureAuthorized("User"), ValidateGetEntity, QueryParameterFormatting,
     InsertActivityTypeMiddleware, SwaggerDocs.get_User_UserId_Activities_Save,
     //@ts-ignore
-    asyncHandler(GetSaves))
+    asyncHandler(GetSaves)) */
 
 router.delete('/activities/:ActivityId', decodeIDToken, ensureAuthorized("User"), SwaggerDocs.delete_Activities_ActivityId,
     // @ts-ignore
