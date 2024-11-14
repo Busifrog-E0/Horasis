@@ -7,6 +7,8 @@ import avatar from '../../assets/icons/avatar.svg'
 import { deleteItem, patchItem } from '../../constants/operations'
 import { AuthContext } from '../../utils/AuthProvider'
 import { useToast } from '../Toast/ToastService'
+import useEntityMembershipManager from '../../hooks/useEntityMembershipManager'
+import useEntityOrganizationManager from '../../hooks/useEntityOrganizationManager'
 
 const Alert = ({ notification, setIsOpen, getSingleNotification }) => {
 	const navigate = useNavigate()
@@ -59,67 +61,97 @@ const Alert = ({ notification, setIsOpen, getSingleNotification }) => {
 		)
 	}
 
-	const acceptJoinRequest = () => {
-		patchItem(
-			`discussions/${notification.EntityId}/join/${notification.UserDetails.DocId}/accept`,
-			{},
-			(result) => {
-				if (result) {
-					getSingleNotification(notification, 'UPDATE')
-				}
-			},
-			(err) => {},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
-	}
+	const { acceptEntityMembershipInvitation: acceptInvite } = useEntityMembershipManager({
+		EntityId: notification.EntityId,
+		Type: notification.EntityType,
+		successCallback: () => getSingleNotification(notification, 'UPDATE'),
+		errorCallback: () => {},
+	})
 
-	const rejectJoinRequest = () => {
-		deleteItem(
-			`discussions/${notification.EntityId}/join/${notification.UserDetails.DocId}/reject`,
-			(result) => {
-				if (result) {
-					getSingleNotification(notification, 'REMOVE')
-				}
-			},
-			(err) => {},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
-	}
+	const { rejectEntityMembershipInvitation: rejectInvite } = useEntityMembershipManager({
+		EntityId: notification.EntityId,
+		Type: notification.EntityType,
+		successCallback: () => getSingleNotification(notification, 'REMOVE'),
+		errorCallback: () => {},
+	})
 
-	const acceptInvite = () => {
-		patchItem(
-			`discussions/${notification.EntityId}/invite/accept`,
-			{},
-			(result) => {
-				if (result) {
-					getSingleNotification(notification, 'UPDATE')
-				}
-			},
-			(err) => {},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
-	}
+	const { acceptEntityMembershipRequest: acceptJoinRequest } = useEntityOrganizationManager({
+		UserId:notification.UserDetails.DocId,
+		EntityId: notification.EntityId,
+		Type: notification.EntityType,
+		successCallback: () => getSingleNotification(notification, 'UPDATE'),
+		errorCallback: () => {},
+	})
 
-	const rejectInvite = () => {
-		deleteItem(
-			`discussions/${notification.EntityId}/invite/${currentUserData.CurrentUser.UserId}/reject`,
-			(result) => {
-				if (result) {
-					getSingleNotification(notification, 'REMOVE')
-				}
-			},
-			(err) => {},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
-	}
+	const { rejectEntityMembershipRequest: rejectJoinRequest } = useEntityOrganizationManager({
+		UserId:notification.UserDetails.DocId,
+		EntityId: notification.EntityId,
+		Type: notification.EntityType,
+		successCallback: () => getSingleNotification(notification, 'REMOVE'),
+		errorCallback: () => {},
+	})
+
+	// const acceptJoinRequest = () => {
+	// 	patchItem(
+	// 		`discussions/${notification.EntityId}/join/${notification.UserDetails.DocId}/accept`,
+	// 		{},
+	// 		(result) => {
+	// 			if (result) {
+	// 				getSingleNotification(notification, 'UPDATE')
+	// 			}
+	// 		},
+	// 		(err) => {},
+	// 		updateCurrentUser,
+	// 		currentUserData,
+	// 		toast
+	// 	)
+	// }
+
+	// const rejectJoinRequest = () => {
+	// 	deleteItem(
+	// 		`discussions/${notification.EntityId}/join/${notification.UserDetails.DocId}/reject`,
+	// 		(result) => {
+	// 			if (result) {
+	// 				getSingleNotification(notification, 'REMOVE')
+	// 			}
+	// 		},
+	// 		(err) => {},
+	// 		updateCurrentUser,
+	// 		currentUserData,
+	// 		toast
+	// 	)
+	// }
+
+	// const acceptInvite = () => {
+	// 	patchItem(
+	// 		`discussions/${notification.EntityId}/invite/accept`,
+	// 		{},
+	// 		(result) => {
+	// 			if (result) {
+	// 				getSingleNotification(notification, 'UPDATE')
+	// 			}
+	// 		},
+	// 		(err) => {},
+	// 		updateCurrentUser,
+	// 		currentUserData,
+	// 		toast
+	// 	)
+	// }
+
+	// const rejectInvite = () => {
+	// 	deleteItem(
+	// 		`discussions/${notification.EntityId}/invite/${currentUserData.CurrentUser.UserId}/reject`,
+	// 		(result) => {
+	// 			if (result) {
+	// 				getSingleNotification(notification, 'REMOVE')
+	// 			}
+	// 		},
+	// 		(err) => {},
+	// 		updateCurrentUser,
+	// 		currentUserData,
+	// 		toast
+	// 	)
+	// }
 
 	const acceptSpeakerInvite = () => {
 		patchItem(

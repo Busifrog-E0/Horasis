@@ -51,31 +51,34 @@ const AlertList = () => {
 	}
 
 	const getSingleNotification = (notification, actionType) => {
-		getItem(
-			`${api}/${notification.DocId}`,
-			(result) => {
-				
-				if (actionType === 'REMOVE') {
-					setNotifications(
-						notifications.filter((singleNotification) => singleNotification.DocId !== notification.DocId)
-					)
-				} else if (actionType === 'UPDATE') {
-					setNotifications(
-						notifications.map((singleNotification) =>
-							singleNotification.DocId === notification.DocId
-								? { ...singleNotification, ...result }
-								: singleNotification
+		if (actionType === 'REMOVE') {
+			setNotifications(notifications.filter((singleNotification) => singleNotification.DocId !== notification.DocId))
+		} else if (actionType === 'UPDATE') {
+			getItem(
+				`${api}/${notification.DocId}`,
+				(result) => {
+					if (actionType === 'REMOVE') {
+						setNotifications(
+							notifications.filter((singleNotification) => singleNotification.DocId !== notification.DocId)
 						)
-					)
-				}
-			},
-			(err) => {
-				console.log(err)
-			},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
+					} else if (actionType === 'UPDATE') {
+						setNotifications(
+							notifications.map((singleNotification) =>
+								singleNotification.DocId === notification.DocId
+									? { ...singleNotification, ...result }
+									: singleNotification
+							)
+						)
+					}
+				},
+				(err) => {
+					console.log(err)
+				},
+				updateCurrentUser,
+				currentUserData,
+				toast
+			)
+		}
 	}
 
 	const getNotifications = (tempArr) => {
@@ -135,17 +138,15 @@ const AlertList = () => {
 	return (
 		<>
 			<div className='relative inline-block text-left' ref={dropdownRef}>
-				<div className="relative flex">
-
-				<button
-					type='button'
-					className='inline-flex justify-center rounded-md border-none bg-system-secondary-bg text-md px-0 font-medium text-brand-gray-dim'
-					onClick={() => setIsOpen(!isOpen)}>
-					<img src={notification} alt="" className='h-7' />
-
-				</button>
+				<div className='relative flex'>
+					<button
+						type='button'
+						className='inline-flex justify-center rounded-md border-none bg-system-secondary-bg text-md px-0 font-medium text-brand-gray-dim'
+						onClick={() => setIsOpen(!isOpen)}>
+						<img src={notification} alt='' className='h-7' />
+					</button>
 				</div>
-				
+
 				{isOpen && (
 					<div className='overflow-hidden origin-top-right absolute z-[999] right-0 mt-10 w-80 lg:w-96 rounded-md shadow-lg bg-system-secondary-bg ring-1 ring-black ring-opacity-5'>
 						<div className='bg-system-primary-accent p-3 px-5'>
@@ -169,7 +170,7 @@ const AlertList = () => {
 								})
 							) : (
 								<>
-								<EmptyMembers emptyText={'No new notifications'} />
+									<EmptyMembers emptyText={'No new notifications'} />
 								</>
 							)}
 							{/* <AlertDetailsItem /> */}
