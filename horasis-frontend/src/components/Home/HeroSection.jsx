@@ -1,8 +1,5 @@
-import { useNavigate } from 'react-router-dom'
-import people from '../../assets/tempimages/people.jpg'
 import heroImage from '../../assets/images/hero-right-image.png'
 const HeroSection = () => {
-	const navigate = useNavigate()
 	return (
 		<>
 			<div className='bg-system-primary-accent-transparent px-4 sm:px-8 md:px-16 lg:px-20 h-[calc(100vh-5rem)] flex items-center justify-center overflow-hidden'>

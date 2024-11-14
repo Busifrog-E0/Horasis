@@ -1,4 +1,3 @@
-import people from '../../assets/tempimages/people.jpg'
 import AboutUsImage from '../../assets/images/about-us-image.png'
 import GlobalEventImage from '../../assets/images/global-event-image.png'
 import experttraining  from '../../assets/images/home/experttraining.svg'
