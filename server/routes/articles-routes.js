@@ -7,8 +7,7 @@ import e from 'express';
 import { decodeIDToken, ensureAuthorized } from '../middleware/auth-middleware.js';
 import { ValidateGetArticles, ValidatePatchArticles, ValidatePatchArticlesCoverPicture, ValidatePostArticles } from '../validations/articles-validations.js';
 import { QueryParameterFormatting, ValidateGetEntity } from '../middleware/common.js';
-import { InsertArticleTypeMiddleware } from '../middleware/articles-middleware.js';
-import { DeleteSaves, GetSaves, PostSaves } from '../controllers/saves-controller.js';
+
 const router = e.Router();
 
 router.get('/articles', decodeIDToken, ensureAuthorized("User"), ValidateGetArticles, QueryParameterFormatting,
