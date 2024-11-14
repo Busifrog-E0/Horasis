@@ -554,8 +554,8 @@ const SendNotificationForMemberInvitation = async (Type, EntityId, UserId, Sende
 }
 
 const RemoveNotificationForMember = async (EntityId, UserId) => {
-    const Notifications = await ReadNotifications({ EntityId, RecipientId: UserId, Type: { $in: ["Invitation", "Join-Status", "Join-Request"] } }, undefined, -1, undefined);
-    const NotificationsForAdmin = await ReadNotifications({ EntityId, NotifierId: UserId ,Type : "Join" }, undefined, -1, undefined);
+    const Notifications = await ReadNotifications({ EntityId, RecipientId: UserId, Type: { $in: ["Invitation", "Join-Status"] } }, undefined, -1, undefined);
+    const NotificationsForAdmin = await ReadNotifications({ EntityId, NotifierId: UserId, Type: { $in: ["Join", "Join-Request"] } }, undefined, -1, undefined);
     return Promise.all([...Notifications, ...NotificationsForAdmin].map(Notification => RemoveNotifications(Notification.DocId)));
 }
 
