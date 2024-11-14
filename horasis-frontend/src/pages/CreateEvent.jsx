@@ -20,6 +20,7 @@ import { useToast } from '../components/Toast/ToastService'
 import EventSettings from '../components/Events/EventsTabs/EventSettings'
 import UpcomingEvents from '../components/Events/UpcomingEvents'
 import Spinner from '../components/ui/Spinner'
+import Settings from '../components/Common/PermissionsManagement/Settings'
 
 const CreateEvent = () => {
 	const { currentUserData, updateCurrentUser } = useAuth()
@@ -353,7 +354,22 @@ const CreateEvent = () => {
 					{activeStep === 5 && (
 						<CreateEventStep5 changeStep={changeStep} activeStep={activeStep} eventId={eventId} event={event} />
 					)}
-					{activeStep === 6 && <EventSettings from='create' eventId={eventId} event={event} />}
+					{activeStep === 6 && (
+						<Settings
+							from='create'
+							EntityId={eventId}
+							Entity={event}
+							permissionsToShow={{
+								Invitation: true,
+								Activity: event?.HasDiscussion,
+								Photo: event?.HasDiscussion,
+								Video: event?.HasDiscussion,
+								Album: event?.HasDiscussion,
+								Admin: true,
+							}}
+							Type='Event'
+						/>
+					)}
 					{/* {activeStep !== 6 && */}
 					<div className='grid grid-cols-2 lg:grid-cols-3 gap-4 py-8'>
 						<div className='hidden lg:block'></div>

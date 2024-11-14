@@ -26,6 +26,7 @@ import useUpdateData from '../hooks/useUpdateData'
 import { useAuth } from '../utils/AuthProvider'
 import { getDateInWordsFormat, gettimenow } from '../utils/date'
 import useEntityMembershipManager from '../hooks/useEntityMembershipManager'
+import Settings from '../components/Common/PermissionsManagement/Settings'
 
 const SingleEvent = () => {
 	const { eventid } = useParams()
@@ -98,7 +99,20 @@ const SingleEvent = () => {
 			title: 'Settings',
 			render: () => (
 				<div className='bg-system-secondary-bg p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
-					<EventSettings eventId={DocId} event={event} />
+					<Settings
+						from='settings'
+						EntityId={DocId}
+						Entity={event}
+						permissionsToShow={{
+							Invitation: true,
+							Activity: event?.HasDiscussion,
+							Photo: event?.HasDiscussion,
+							Video: event?.HasDiscussion,
+							Album: event?.HasDiscussion,
+							Admin: true,
+						}}
+						Type='Event'
+					/>
 				</div>
 			),
 		})

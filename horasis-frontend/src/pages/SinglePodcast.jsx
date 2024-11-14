@@ -21,6 +21,7 @@ import useEntitySaveManager from '../hooks/useEntitySaveManager'
 import saved from '../assets/icons/graysavefill.svg'
 import save from '../assets/icons/graysave.svg'
 import useEntityMembershipManager from '../hooks/useEntityMembershipManager'
+import Settings from '../components/Common/PermissionsManagement/Settings'
 
 const tabs = (podcast) => {
 	const { Privacy, IsMember, MembershipStatus, Permissions, DocId } = podcast
@@ -65,7 +66,20 @@ const tabs = (podcast) => {
 		title: 'Settings',
 		render: () => (
 			<div className='bg-system-secondary-bg p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
-				<PodcastSettings podcastId={DocId} podcast={podcast} />
+				<Settings
+					EntityId={DocId}
+					from='settings'
+					Type='Podcast'
+					Entity={podcast}
+					permissionsToShow={{
+						Invitation: false,
+						Activity: true,
+						Photo: false,
+						Album: false,
+						Video: true,
+						Admin: true,
+					}}
+				/>
 			</div>
 		),
 	})

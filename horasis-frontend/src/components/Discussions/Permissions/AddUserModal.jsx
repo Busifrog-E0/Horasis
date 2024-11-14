@@ -1,15 +1,12 @@
-import Modal from '../../ui/Modal'
+import { useState } from 'react'
 import close from '../../../assets/icons/close.svg'
-import { useContext, useEffect, useState } from 'react'
-import { AuthContext } from '../../../utils/AuthProvider'
-import { useToast } from '../../Toast/ToastService'
-import { getItem, patchItem } from '../../../constants/operations'
+import useGetList from '../../../hooks/useGetList'
+import useUpdateData from '../../../hooks/useUpdateData'
 import SearchComponent from '../../Search/SearchBox/SearchComponent'
-import { MemberTab, SelectedMember } from './Permissions'
-import { jsonToQuery } from '../../../utils/searchParams/extractSearchParams'
-import { getNextId } from '../../../utils/URLParams'
 import Button from '../../ui/Button'
+import Modal from '../../ui/Modal'
 import Spinner from '../../ui/Spinner'
+import { MemberTab, SelectedMember } from './Permissions'
 
 const AddUserModal = ({
 	isAddPeopleModal,
@@ -18,55 +15,21 @@ const AddUserModal = ({
 	discussionId,
 	permissionChangeCallback = () => {},
 }) => {
-	const { currentUserData, updateCurrentUser } = useContext(AuthContext)
-	const toast = useToast()
+	const {
+		data: addUsers,
+		setData: setAddUsers,
+		filters,
+		setFilters,
+	} = useGetList(
+		`members/${discussionId}`,
+		{ Limit: 4, [`Permissions.${permissionType}`]: false },
+		false,
+		true,
+		true,
+		[]
+	)
 
-	const getData = (endpoint, tempData, setData) => {
-		setLoadingComAddUsers(tempData, true)
-		getItem(
-			`${endpoint}&NextId=${getNextId(tempData)}`,
-			(data) => {
-				setData([...tempData, ...data])
-				setLoadingComAddUsers(tempData, false)
-			},
-			(err) => {
-				setLoadingComAddUsers(tempData, false)
-				// console.log(err)
-			},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
-	}
-	const hasAnyLeft = (endpoint, tempData) => {
-		getItem(
-			`${endpoint}?NextId=${getNextId(tempData)}&${jsonToQuery({ ...addUserFilters, Limit: 1 })}`,
-			(data) => {
-				if (data?.length > 0) {
-					setPageDisabledAddUsers(false)
-				} else {
-					setPageDisabledAddUsers(true)
-				}
-			},
-			(err) => {
-				setPageDisabledAddUsers(true)
-			},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
-	}
-
-	const [isLoadingAddUsers, setIsLoadingAddUsers] = useState(true)
-	const [isLoadingMoreAddUsers, setIsLoadingMoreAddUsers] = useState(false)
-	const [pageDisabledAddUsers, setPageDisabledAddUsers] = useState(true)
-	const [addUsers, setAddUsers] = useState([])
-	const [addUserFilters, setAddUserFilters] = useState({
-		OrderBy: 'Index',
-		Limit: 4,
-		Keyword: '',
-		[`Permissions.${permissionType}`]: false,
-	})
+	const { isLoading: permissionLoading, updateData } = useUpdateData()
 
 	const [addedMembers, setAddedMembers] = useState([])
 	const onAddClick = (member) => {
@@ -85,33 +48,6 @@ const AddUserModal = ({
 		)
 		setAddUsers((prev) => [...prev, member])
 	}
-	const api = `discussions/${discussionId}/members`
-	const getAddUsers = (tempArr) => {
-		getData(`${api}?&${jsonToQuery(addUserFilters)}`, tempArr, setAddUsers)
-	}
-	const setLoadingComAddUsers = (tempArr, value) => {
-		if (tempArr.length > 0) {
-			setIsLoadingMoreAddUsers(value)
-		} else {
-			setIsLoadingAddUsers(value)
-		}
-	}
-
-	const fetchDataAdd = (initialRender = false) => {
-		getAddUsers(initialRender ? [] : addUsers)
-	}
-
-	const fetchAddUsers = () => fetchDataAdd(true)
-	const fetchMoreAddUsers = () => fetchDataAdd(false)
-	useEffect(() => {
-		if (addUsers.length > 0) hasAnyLeft(`${api}`, addUsers)
-	}, [addUsers])
-
-	useEffect(() => {
-		fetchAddUsers()
-	}, [addUserFilters])
-
-	const [permissionLoading, setPermissionLoading] = useState(false)
 
 	const handleSubmitPermissions = () => {
 		const memberIds = addedMembers.map((member) => {
@@ -121,25 +57,17 @@ const AddUserModal = ({
 			PermissionField: permissionType,
 			UserIds: memberIds,
 		}
-		setPermissionLoading(true)
-		patchItem(
-			`discussions/${discussionId}/member/permissions`,
-			dataToSend,
-			(result) => {
-				setPermissionLoading(false)
+		return updateData({
+			endpoint: `members/${discussionId}/permissions`,
+			payload: dataToSend,
+			onsuccess: (result) => {
 				if (result === true) {
 					permissionChangeCallback()
 					setAddedMembers([])
 					setAddPeopleModal(false)
 				}
 			},
-			(err) => {
-				setPermissionLoading(false)
-			},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
+		})
 	}
 
 	return (
@@ -147,10 +75,7 @@ const AddUserModal = ({
 			<Modal isOpen={isAddPeopleModal}>
 				<Modal.Header>
 					<p className='text-lg font-medium'>Add people</p>
-					<button
-						onClick={() => {
-							setAddPeopleModal(false)
-						}}>
+					<button onClick={() => setAddPeopleModal(false)}>
 						<img src={close} className='h-6  cursor-pointer' alt='' />
 					</button>
 				</Modal.Header>
@@ -164,8 +89,8 @@ const AddUserModal = ({
 					)}
 					<div className='px-4'>
 						<SearchComponent
-							searchKey={addUserFilters.Keyword}
-							setSearchKey={(value) => setAddUserFilters((prev) => ({ ...prev, Keyword: value }))}
+							searchKey={filters.Keyword}
+							setSearchKey={(value) => setFilters((prev) => ({ ...prev, Keyword: value }))}
 							placeholder='Search Members'
 						/>
 					</div>
@@ -195,9 +120,7 @@ const AddUserModal = ({
 									disabled={permissionLoading}
 									size='md'
 									variant='outline'
-									onClick={() => {
-										setAddPeopleModal(false)
-									}}>
+									onClick={() => setAddPeopleModal(false)}>
 									Cancel
 								</Button>
 								<Button disabled={permissionLoading} size='md' variant='black' onClick={handleSubmitPermissions}>

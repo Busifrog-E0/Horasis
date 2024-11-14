@@ -4,6 +4,7 @@ import { jsonToQuery } from '../utils/searchParams/extractSearchParams'
 import { getNextId } from '../utils/URLParams'
 import { getItem } from '../constants/operations'
 import { useToast } from '../components/Toast/ToastService'
+import { runOnce } from '../utils/runOnce'
 
 export default function useGetList(
 	endpoint,
@@ -47,7 +48,7 @@ export default function useGetList(
 	}
 	const dependencies = changeOnFilter ? [filters, ...extraDependencies] : [...extraDependencies]
 
-	const getList = (temp, fromUpdate = true) => {
+	const getList = runOnce((temp, fromUpdate = true) => {
 		const query = `${endpoint}?${jsonToQuery({ ...filters, ...extraParams })}&NextId=${getNextId(temp)}`
 		setLoadingState(temp, true)
 		getItem(
@@ -68,9 +69,9 @@ export default function useGetList(
 			currentUserData,
 			toast
 		)
-	}
+	})
 
-	const checkMoreLeft = (temp) => {
+	const checkMoreLeft = runOnce((temp) => {
 		const query = `${endpoint}?${jsonToQuery({ ...filters, ...extraParams, Limit: 1 })}&NextId=${getNextId(temp)}`
 		getItem(
 			query,
@@ -89,7 +90,7 @@ export default function useGetList(
 			currentUserData,
 			toast
 		)
-	}
+	})
 
 	useEffect(() => {
 		if (loadInitial) {

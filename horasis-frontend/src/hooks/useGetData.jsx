@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useToast } from '../components/Toast/ToastService'
 import { getItem } from '../constants/operations'
 import { useAuth } from '../utils/AuthProvider'
+import { runOnce } from '../utils/runOnce'
 
 export default function useGetData(endpoint, { onSuccess = () => {}, onError = () => {} } = {}, fetchOnRender = true) {
 	const { updateCurrentUser, currentUserData } = useAuth()
@@ -9,7 +10,7 @@ export default function useGetData(endpoint, { onSuccess = () => {}, onError = (
 	const [data, setData] = useState()
 	const [isLoading, setIsLoading] = useState(fetchOnRender)
 
-	const getData = (endPoint = '',onsuccess=()=>{},onerror=()=>{}) => {
+	const getData = runOnce((endPoint = '', onsuccess = () => {}, onerror = () => {}) => {
 		const query = endPoint !== '' ? endPoint : endpoint
 		setIsLoading(true)
 		getItem(
@@ -30,7 +31,7 @@ export default function useGetData(endpoint, { onSuccess = () => {}, onError = (
 			currentUserData,
 			toast
 		)
-	}
+	})
 
 	useEffect(() => {
 		if (fetchOnRender === true) {

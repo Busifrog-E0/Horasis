@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import TodaysEventTab from '../components/Events/TodaysEventTab'
 import PostTab from '../components/Posts/PostTab'
 import CurrentProfileTab from '../components/Profile/CurrentProfileTab'
@@ -11,7 +11,7 @@ import CreateDiscussionStep2 from '../components/Discussions/CreateDiscussion/Cr
 import CreateDiscussionStep3 from '../components/Discussions/CreateDiscussion/CreateDiscussionSteps/CreateDiscussionStep3'
 import CreateDiscussionStep4 from '../components/Discussions/CreateDiscussion/CreateDiscussionSteps/CreateDiscussionStep4'
 import Button from '../components/ui/Button'
-import { patchItem, postItem } from '../constants/operations'
+import { getItem, patchItem, postItem } from '../constants/operations'
 import { AuthContext } from '../utils/AuthProvider'
 import { useToast } from '../components/Toast/ToastService'
 import Spinner from '../components/ui/Spinner'
@@ -20,6 +20,7 @@ import { PostDiscussionSchema } from '../utils/schema/discussions/discussionVali
 import DiscussionSettings from '../components/Discussions/SingleDiscussionTabs/DiscussionSettings'
 import EmptyMembers from '../components/Common/EmptyMembers'
 import SavedDiscussionTab from '../components/Discussions/Saved/SavedDiscussionTab'
+import Settings from '../components/Common/PermissionsManagement/Settings'
 
 const CreateDiscussion = () => {
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
@@ -154,6 +155,24 @@ const CreateDiscussion = () => {
 			}
 		}
 	}
+
+	const [discussion, setDiscussion] = useState('')
+	const getEvent = () => {
+		getItem(
+			`discussions/${discussionId}`,
+			(result) => {
+				setDiscussion(result)
+			},
+			(err) => {},
+			updateCurrentUser,
+			currentUserData,
+			toast
+		)
+	}
+	useEffect(() => {
+		getEvent()
+	}, [discussionId])
+
 	return (
 		<>
 			<Modal isOpen={isModalOpen}>
@@ -206,7 +225,7 @@ const CreateDiscussion = () => {
 						/>
 					)}
 					{activeStep === 3 && <CreateDiscussionStep3 discussionId={discussionId} />}
-					{activeStep === 4 && <DiscussionSettings discussionId={discussionId} from='create' />}
+					{activeStep === 4 && <Settings EntityId={discussionId} from='create' Entity={discussion} Type='Discussion' />}
 
 					{/* {activeStep !== 4 && */}
 					<div className='flex justify-end gap-4 py-8'>

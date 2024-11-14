@@ -14,8 +14,8 @@ import Steps from '../components/ui/Steps'
 import { postItem } from '../constants/operations'
 import { AuthContext } from '../utils/AuthProvider'
 
-
 import { PostPodcastSchema } from '../utils/schema/podcasts/podcastValidation'
+import Settings from '../components/Common/PermissionsManagement/Settings'
 
 const CreatePodcast = () => {
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
@@ -149,6 +149,24 @@ const CreatePodcast = () => {
 			}
 		}
 	}
+
+	const [podcast, setpodcast] = useState('')
+	const getpodcast = () => {
+		getItem(
+			`podcasts/${podcastId}`,
+			(result) => {
+				setpodcast(result)
+			},
+			(err) => {},
+			updateCurrentUser,
+			currentUserData,
+			toast
+		)
+	}
+	useEffect(() => {
+		getpodcast()
+	}, [podcastId])
+
 	return (
 		<>
 			<Modal isOpen={isModalOpen}>
@@ -201,7 +219,22 @@ const CreatePodcast = () => {
 						/>
 					)}
 					{/* {activeStep === 3 && <CreatePodcastStep3 podcastId={podcastId} />} */}
-					{activeStep === 3 && <PodcastSettings podcastId={podcastId} from='create' />}
+					{activeStep === 3 && (
+						<Settings
+							EntityId={podcastId}
+							from='create'
+							Type='Podcast'
+							Entity={podcast}
+							permissionsToShow={{
+								Invitation: false,
+								Activity: true,
+								Photo: false,
+								Album: false,
+								Video: true,
+								Admin: true,
+							}}
+						/>
+					)}
 
 					{/* {activeStep !== 4 && */}
 					<div className='flex justify-end gap-4 py-8'>

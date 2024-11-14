@@ -1,202 +1,98 @@
-import { useContext, useEffect, useState } from 'react'
-import Button from '../../ui/Button'
+import { useState } from 'react'
 import avatar from '../../../assets/icons/avatar.svg'
-import deleteIcon from '../../../assets/icons/delete.svg'
-import Switch from '../../ui/Switch'
-import Modal from '../../ui/Modal'
-import Input from '../../ui/Input'
 import close from '../../../assets/icons/close.svg'
-import SearchComponent from '../../Search/SearchBox/SearchComponent'
-import { AuthContext } from '../../../utils/AuthProvider'
-import { useToast } from '../../Toast/ToastService'
-import { getNextId } from '../../../utils/URLParams'
-import { jsonToQuery } from '../../../utils/searchParams/extractSearchParams'
-import { getItem, patchItem } from '../../../constants/operations'
-import AddUserModal from './AddUserModal'
+import deleteIcon from '../../../assets/icons/delete.svg'
+import useGetList from '../../../hooks/useGetList'
+import useUpdateData from '../../../hooks/useUpdateData'
+import Button from '../../ui/Button'
+import Modal from '../../ui/Modal'
 import Spinner from '../../ui/Spinner'
+import Switch from '../../ui/Switch'
+import AddUserModal from './AddUserModal'
+
+const componentContent = {
+	CanInviteOthers: {
+		Title: 'Group Invitations',
+		Subtitle: 'Which members of this group are allowed to invite others?',
+	},
+	CanPostActivity: {
+		Title: 'Activity Feeds',
+		Subtitle: '	Which members of this group are allowed to post into the activity feed?',
+	},
+	CanUploadPhoto: {
+		Title: 'Group Photos',
+		Subtitle: 'Which members of this group are allowed to upload albums?',
+	},
+	CanCreateAlbum: {
+		Title: 'Group Albums',
+		Subtitle: 'Which members of this group are allowed to create albums?',
+	},
+	CanUploadVideo: {
+		Title: 'Group Videos',
+		Subtitle: 'Which members of this group are allowed to upload videos?',
+	},
+	IsAdmin: {
+		Title: 'Admin',
+		Subtitle: 'Which members of this group are allowed to admin permissions?',
+	},
+}
 
 const Permissions = ({ permissionType, discussionId, discussion, from = 'settings' }) => {
-	const { currentUserData, updateCurrentUser } = useContext(AuthContext)
-	const toast = useToast()
+	const {
+		data: users,
+		isLoading,
+		getList: fetchUsers,
+	} = useGetList(
+		`members/${discussionId}`,
+		{ Limit: 3, [`Permissions.${permissionType}`]: true },
+		false,
+		true,
+		true,
+		[]
+	)
 
-	const [isLoading, setIsLoading] = useState(true)
-	const [isLoadingMore, setIsLoadingMore] = useState(false)
-	const [pageDisabled, setPageDisabled] = useState(true)
-	const [permittedUsers, setPermittedUsers] = useState([])
-	const [permittedFilters, setPermittedFilters] = useState({
-		OrderBy: 'Index',
-		Limit: 3,
-		Keyword: '',
-		[`Permissions.${permissionType}`]: true,
-	})
+	const { isLoading: isRemoving, updateData } = useUpdateData()
 
-	const setLoadingCom = (tempArr, value) => {
-		if (tempArr.length > 0) {
-			setIsLoadingMore(value)
-		} else {
-			setIsLoading(value)
-		}
-	}
-
-	const getData = (endpoint, tempData, setData) => {
-		setLoadingCom(tempData, true)
-		getItem(
-			`${endpoint}&NextId=${getNextId(tempData)}`,
-			(data) => {
-				setData([...tempData, ...data])
-				setLoadingCom(tempData, false)
-			},
-			(err) => {
-				setLoadingCom(tempData, false)
-				// console.log(err)
-			},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
-	}
-	const hasAnyLeft = (endpoint, tempData) => {
-		getItem(
-			`${endpoint}?NextId=${getNextId(tempData)}&${jsonToQuery({ ...permittedFilters, Limit: 1 })}`,
-			(data) => {
-				if (data?.length > 0) {
-					setPageDisabled(false)
-				} else {
-					setPageDisabled(true)
-				}
-			},
-			(err) => {
-				setPageDisabled(true)
-			},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
-	}
-
-	const api = `discussions/${discussionId}/members`
-	const getPermittedUsers = (tempArr) => {
-		getData(`${api}?&${jsonToQuery(permittedFilters)}`, tempArr, setPermittedUsers)
-	}
-
-	const fetchDataPermitted = (initialRender = false) => {
-		getPermittedUsers(initialRender ? [] : permittedUsers)
-	}
-
-	const fetchPermittedUsers = () => fetchDataPermitted(true)
-	const fetchMorePermmittedUsers = () => fetchDataPermitted(false)
-	useEffect(() => {
-		if (permittedUsers.length > 0) hasAnyLeft(`${api}`, permittedUsers)
-	}, [permittedUsers])
-
-	useEffect(() => {
-		fetchPermittedUsers()
-	}, [permittedFilters])
-
-	const [addUserFilters, setAddUserFilters] = useState({
-		OrderBy: 'Index',
-		Limit: 3,
-		Keyword: '',
-		[`Permissions.${permissionType}`]: false,
-	})
-
-	const [isRemoving, setIsRemoving] = useState(false)
 	const removeUserPermission = (member) => {
-		setIsRemoving(true)
-		patchItem(
-			`discussions/${discussionId}/member/${member.UserDetails.DocId}/permissions/remove`,
-			{
-				PermissionField: `${permissionType}`,
-			},
-			(result) => {
+		updateData({
+			endpoint: `members/${discussionId}/permissions/${member.UserDetails.DocId}/remove`,
+			payload: { PermissionField: `${permissionType}` },
+			onsuccess: (result) => {
 				if (result === true) {
-					fetchPermittedUsers()
+					fetchUsers([])
 				}
-				setIsRemoving(false)
 			},
-			(err) => {
-				setIsRemoving(false)
-			},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
+			onerror: (err) => {},
+		})
 	}
 
-	const [permitEveryone, setPermitEveryone] = useState(() => {
-		if (from === 'settings') {
-			return discussion.MemberPermissions[`${permissionType}`]
-		} else {
-			return false
-		}
-	})
+	const [permitEveryone, setPermitEveryone] = useState(() => discussion.MemberPermissions[`${permissionType}`])
 	const [isEveryoneModal, setIsEveryoneModal] = useState(false)
 	const [isAddPeopleModal, setAddPeopleModal] = useState(false)
 
-	const componentContent = {
-		CanInviteOthers: {
-			Title: 'Group Invitations',
-			Subtitle: 'Which members of this group are allowed to invite others?',
-		},
-		CanPostActivity: {
-			Title: 'Activity Feeds',
-			Subtitle: '	Which members of this group are allowed to post into the activity feed?',
-		},
-		CanUploadPhoto: {
-			Title: 'Group Photos',
-			Subtitle: 'Which members of this group are allowed to upload albums?',
-		},
-		CanCreateAlbum: {
-			Title: 'Group Albums',
-			Subtitle: 'Which members of this group are allowed to create albums?',
-		},
-		CanUploadVideo: {
-			Title: 'Group Videos',
-			Subtitle: 'Which members of this group are allowed to upload videos?',
-		},
-		IsAdmin: {
-			Title: 'Admin',
-			Subtitle: 'Which members of this group are allowed to admin permissions?',
-		},
-	}
-
-	const permissionForEveryone = () => {
-		patchItem(
-			`discussions/${discussionId}/member/permissions/everyone`,
-			{
-				[`MemberPermissions.${permissionType}`]: true,
-			},
-			(result) => {
+	const permissionForEveryone = () =>
+		updateData({
+			endpoint: `/members/${discussionId}/members/permissions/everyone`,
+			payload: { [`MemberPermissions.${permissionType}`]: true },
+			onsuccess: (result) => {
 				setIsEveryoneModal(false)
 				setPermitEveryone(true)
 			},
-			(err) => {},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
-	}
+			onerror: (err) => {},
+		})
 
-	const removePermissionForEveryone = () => {
-		patchItem(
-			`discussions/${discussionId}/member/permissions/everyone`,
-			{
+	const removePermissionForEveryone = () =>
+		updateData({
+			endpoint: `/members/${discussionId}/members/permissions/everyone`,
+			payload: {
 				[`MemberPermissions.${permissionType}`]: false,
 			},
-			(result) => {
+			onsuccess: (result) => {
 				setIsEveryoneModal(false)
 				setPermitEveryone(false)
 			},
-			(err) => {},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
-	}
-
-	useEffect(() => {
-		// console.log(discussion)
-	}, [])
+			onerror: (err) => {},
+		})
 
 	return (
 		<>
@@ -205,94 +101,29 @@ const Permissions = ({ permissionType, discussionId, discussion, from = 'setting
 				setAddPeopleModal={setAddPeopleModal}
 				permissionType={permissionType}
 				discussionId={discussionId}
-				permissionChangeCallback={fetchPermittedUsers}
+				permissionChangeCallback={fetchUsers}
 			/>
-			{/* <Modal isOpen={isAddPeopleModal}>
-				<Modal.Header>
-					<p className='text-lg font-medium'>Add people</p>
-					<button
-						onClick={() => {
-							setAddPeopleModal(false)
-						}}>
-						<img src={close} className='h-6  cursor-pointer' alt='' />
-					</button>
-				</Modal.Header>
-				<Modal.Body>
-					{addedMembers && addedMembers.length > 0 && (
-						<>
-							<div className='flex flex-col gap-4 px-4 pb-4 mb-4'>
-								{addedMembers.map((member) => {
-									return (
-										<>
-											<SelectedMember member={member} removeSingleUser={removeSingleUser} key={member.DocId} />
-										</>
-									)
-								})}
-							</div>
-						</>
-					)}
-					<div className='px-4'>
-						<SearchComponent
-							// searchKey={filters.Keyword}
-							// setSearchKey={(value) => setFilters((prev) => ({ ...prev, Keyword: value }))}
-							placeholder='Search Members'
-						/>
-					</div>
-					{members && members.length > 0 && (
-						<>
-							<div className='flex flex-col px-4'>
-								{members.map((member, index) => {
-									const lastItem = members.length - 1 === index
-									return (
-										<MemberTab
-											connection={member}
-											lastItem={lastItem}
-											key={member.DocId}
-											hideDelete={false}
-											onAddClick={onAddClick}
-										/>
-									)
-								})}
-							</div>
-						</>
-					)}
-				</Modal.Body>
-			</Modal> */}
+
 			<Modal isOpen={isEveryoneModal}>
 				<Modal.Header>
 					{!permitEveryone && <p className='text-lg font-medium'>Grant permission to everyone?</p>}
 					{permitEveryone && <p className='text-lg font-medium'>Remove all member permission access?</p>}
-					<button
-						onClick={() => {
-							setIsEveryoneModal(false)
-						}}>
+					<button onClick={() => setIsEveryoneModal(false)}>
 						<img src={close} className='h-6  cursor-pointer' alt='' />
 					</button>
 				</Modal.Header>
 				<Modal.Body>
 					<div className='flex justify-end gap-2'>
-						<Button
-							variant='outline'
-							onClick={() => {
-								setIsEveryoneModal(false)
-							}}>
+						<Button variant='outline' onClick={() => setIsEveryoneModal(false)}>
 							Cancel
 						</Button>
 						{!permitEveryone && (
-							<Button
-								variant='black'
-								onClick={() => {
-									permissionForEveryone()
-								}}>
+							<Button variant='black' onClick={() => permissionForEveryone()}>
 								Grant
 							</Button>
 						)}
 						{permitEveryone && (
-							<Button
-								variant='black'
-								onClick={() => {
-									removePermissionForEveryone()
-								}}>
+							<Button variant='black' onClick={() => removePermissionForEveryone()}>
 								Remove
 							</Button>
 						)}
@@ -308,11 +139,7 @@ const Permissions = ({ permissionType, discussionId, discussion, from = 'setting
 					<div className='flex gap-4 items-start'>
 						{!permitEveryone && (
 							<>
-								<Button
-									variant='outline'
-									onClick={() => {
-										setAddPeopleModal(true)
-									}}>
+								<Button variant='outline' onClick={() => setAddPeopleModal(true)}>
 									Add People
 								</Button>
 							</>
@@ -329,13 +156,7 @@ const Permissions = ({ permissionType, discussionId, discussion, from = 'setting
 									setIsEveryoneModal(true)
 								}}>
 								<p className='font-medium'>Everyone</p>
-								<Switch
-									checked={permitEveryone}
-									onChange={(e) => {
-										// e.stopPropogation()
-										setIsEveryoneModal(true)
-									}}
-								/>
+								<Switch checked={permitEveryone} onChange={(e) => setIsEveryoneModal(true)} />
 							</div>
 						)}
 					</div>
@@ -349,8 +170,8 @@ const Permissions = ({ permissionType, discussionId, discussion, from = 'setting
 						{!permitEveryone && (
 							<>
 								<div className='flex flex-col'>
-									{permittedUsers.map((member, index) => {
-										const lastItem = permittedUsers.length - 1 === index
+									{users.map((member, index) => {
+										const lastItem = users.length - 1 === index
 										return (
 											<MemberTab
 												member={member}
