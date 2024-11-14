@@ -59,6 +59,7 @@ const ValidatePatchMemberPermission = async (req, res, next) => {
 const ValidatePatchRemovePermission = async (req, res, next) => {
     const Result = Joi.object({
         PermissionField: Joi.string().valid("CanInviteOthers", "CanPostActivity", "CanUploadPhoto", "CanCreateAlbum", "CanUploadVideo", "IsAdmin").required(),
+        Type : Joi.string().valid("Discussion","Event","Podcast")
     }).validate(req.body, { stripUnknown: true });
     if (Result.error) {
         const message = Result.error.details.map((detail) => detail.message).join(', ');
