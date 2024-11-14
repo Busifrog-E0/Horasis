@@ -20,22 +20,6 @@ router.get('/articles/:ArticleId', decodeIDToken, ensureAuthorized("User"),
     SwaggerDocs.get_Articles_ArticleId,
     // @ts-ignore
     asyncHandler(GetOneFromArticles));
-/* 
-router.post('/articles/:EntityId/save', decodeIDToken, ensureAuthorized("User"), InsertArticleTypeMiddleware,
-    SwaggerDocs.post_Articles_ArticleId_Save,
-    // @ts-ignore
-    asyncHandler(PostSaves));
-
-router.get('/users/:UserId/articles/save', decodeIDToken, ensureAuthorized("User"), InsertArticleTypeMiddleware,
-    SwaggerDocs.get_Articles_ArticleId_Save,
-    //@ts-ignore
-    asyncHandler(GetSaves));
-
-router.delete('/articles/:EntityId/save', decodeIDToken, ensureAuthorized("User"),
-    SwaggerDocs.delete_Articles_ArticleId_Save,
-    //@ts-ignore
-    asyncHandler(DeleteSaves));
- */
 
 router.post('/articles', decodeIDToken, ensureAuthorized("User"), ValidatePostArticles,
     SwaggerDocs.post_Articles,
