@@ -85,7 +85,7 @@ router.patch('/members/:EntityId/permissions', decodeIDToken, ensureAuthorized("
     //@ts-ignore
     asyncHandler(UpdateMemberPermissions));
 
-router.patch('/members/:EntityId/permissions/:EntityId/remove', decodeIDToken, ensureAuthorized("User"), ValidatePatchRemovePermission,
+router.patch('/members/:EntityId/permissions/:MemberId/remove', decodeIDToken, ensureAuthorized("User"), ValidatePatchRemovePermission,
     SwaggerDocs.patch_Members_EntityId_Member_Permissions_Remove,
     //@ts-ignore
     asyncHandler(RemoveMemberPermissions));
