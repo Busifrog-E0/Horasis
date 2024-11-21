@@ -58,7 +58,7 @@ const DashboardHeader = () => {
 					<div className='px-10 hidden lg:flex flex-row flex-wrap gap-8 flex-1'>
 						<div className='w-max flex flex-col items-center'>
 							<a
-								className={`cursor-pointer  font-medium text-xl  ${
+								className={`cursor-pointer  font-medium text-md  ${
 									location.pathname === '/Events' || location.pathname === '/events' || location.pathname === '/'
 										? 'text-system-primary-accent'
 										: 'text-system-primary-text'
@@ -75,7 +75,7 @@ const DashboardHeader = () => {
 						</div>
 						<div className='w-max flex flex-col items-center'>
 							<a
-								className={`cursor-pointer  font-medium text-xl  ${
+								className={`cursor-pointer  font-medium text-md  ${
 									location.pathname === '/Activities' ? 'text-system-primary-accent' : 'text-system-primary-text'
 								}`}
 								onClick={() => onClickItem('/Activities')}>
@@ -89,7 +89,7 @@ const DashboardHeader = () => {
 
 						<div className='w-max flex flex-col items-center'>
 							<a
-								className={`cursor-pointer  font-medium text-xl  ${
+								className={`cursor-pointer  font-medium text-md  ${
 									location.pathname === '/Discussions' ? 'text-system-primary-accent' : 'text-system-primary-text'
 								}`}
 								onClick={() => onClickItem('/Discussions')}>
@@ -102,7 +102,7 @@ const DashboardHeader = () => {
 						</div>
 						<div className='w-max flex flex-col items-center'>
 							<a
-								className={`cursor-pointer  font-medium text-xl  ${
+								className={`cursor-pointer  font-medium text-md  ${
 									location.pathname === '/Connections' ? 'text-system-primary-accent' : 'text-system-primary-text'
 								}`}
 								onClick={() => onClickItem('/Connections')}>
@@ -115,7 +115,7 @@ const DashboardHeader = () => {
 						</div>
 						<div className='w-max flex flex-col items-center'>
 							<a
-								className={`cursor-pointer  font-medium text-xl  ${
+								className={`cursor-pointer  font-medium text-md  ${
 									location.pathname === '/Articles' ? 'text-system-primary-accent' : 'text-system-primary-text'
 								}`}
 								onClick={() => onClickItem('/Articles')}>
@@ -128,7 +128,7 @@ const DashboardHeader = () => {
 						</div>
 						<div className='w-max flex flex-col items-center'>
 							<a
-								className={`cursor-pointer  font-medium text-xl  ${
+								className={`cursor-pointer  font-medium text-md  ${
 									location.pathname === '/Podcasts' ? 'text-system-primary-accent' : 'text-system-primary-text'
 								}`}
 								onClick={() => onClickItem('/Podcasts')}>
@@ -142,7 +142,7 @@ const DashboardHeader = () => {
 						{isPermitted && (
 							<div className='w-max flex flex-col items-center'>
 								<a
-									className={`cursor-pointer  font-medium text-xl  ${
+									className={`cursor-pointer  font-medium text-md  ${
 										location.pathname === '/Analytics' ? 'text-system-primary-accent' : 'text-system-primary-text'
 									}`}
 									onClick={() => onClickItem('/Analytics')}>

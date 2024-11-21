@@ -2,9 +2,7 @@ import { useContext, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import CreatePodcastStep1 from '../components/Podcasts/CreatePodcast/CreatePodcastSteps/CreatePodcastStep1'
 import CreatePodcastStep2 from '../components/Podcasts/CreatePodcast/CreatePodcastSteps/CreatePodcastStep2'
-import CreatePodcastStep3 from '../components/Podcasts/CreatePodcast/CreatePodcastSteps/CreatePodcastStep3'
 import SavedPodcastTab from '../components/Podcasts/Saved/SavedPodcastTab'
-import PodcastSettings from '../components/Podcasts/SinglePodcastTabs/PodcastSettings'
 
 import { useToast } from '../components/Toast/ToastService'
 import Button from '../components/ui/Button'
@@ -14,8 +12,8 @@ import Steps from '../components/ui/Steps'
 import { postItem } from '../constants/operations'
 import { AuthContext } from '../utils/AuthProvider'
 
-import { PostPodcastSchema } from '../utils/schema/podcasts/podcastValidation'
 import Settings from '../components/Common/PermissionsManagement/Settings'
+import { PostPodcastSchema } from '../utils/schema/podcasts/podcastValidation'
 
 const CreatePodcast = () => {
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
