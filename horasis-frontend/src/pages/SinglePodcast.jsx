@@ -48,7 +48,14 @@ const tabs = (podcast) => {
 						gapBnTabs='gap-7'
 						classNameForPost='py-5'
 						bordered={false}
-						// permissions={Permissions}
+						permissions={{
+							IsAdmin: false,
+							CanInviteOthers: false,
+							CanPostActivity: false,
+							CanUploadPhoto: false,
+							CanUploadVideo: false,
+							CanCreateAlbum: false,
+						}}
 						entId={DocId}
 						type='Podcast'
 						from='podcast'
@@ -400,9 +407,9 @@ const UploadEpisodeModal = ({
 			return false
 		})
 
-		const notAllow = filteredFiles.some((file) => file.size > 3000000)
+		const notAllow = filteredFiles.some((file) => file.size > 20000000)
 		if (notAllow) {
-			toast.open('error', 'Max File Size', 'File size should be less than 3MB')
+			toast.open('error', 'Max File Size', 'File size should be less than 20MB')
 			return
 		}
 
