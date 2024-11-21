@@ -6,7 +6,7 @@ import CurrentProfileTab from '../components/Profile/CurrentProfileTab'
 const ProfileTabLayout = () => {
 	const location = useLocation()
 	const checkHiddenInMobile = () => {
-		const arr = ['Connections', 'Articles', 'Discussions','Events']
+		const arr = ['Connections', 'Articles', 'Discussions','Events','Podcasts','TagsManager','']
 		let hide = arr.some((item) => location.pathname.includes(item))
 		return hide
 	}

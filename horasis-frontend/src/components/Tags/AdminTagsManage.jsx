@@ -1,18 +1,18 @@
-import { useEffect, useState } from 'react'
-import { useSuperAuth } from '../../context/SuperAdmin/SuperAuthService'
-import { useToast } from '../Toast/ToastService'
-import { deleteItem, getItem, patchItem, postItem } from '../../constants/operations'
-import EmptyMembers from '../../components/Common/EmptyMembers'
+import { useState } from 'react'
 import deleteIcon from '../../assets/icons/delete.svg'
+import EmptyMembers from '../../components/Common/EmptyMembers'
+import { deleteItem, postItem } from '../../constants/operations'
+import useGetList from '../../hooks/useGetList'
+import { useAuth } from '../../utils/AuthProvider'
+import { useToast } from '../Toast/ToastService'
 import Spinner from '../ui/Spinner'
-import useGetListSuperadmin from '../../hooks/useGetListSuperadmin'
-const AdminTag = () => {
-	const { currentUserData, updateCurrentUser } = useSuperAuth()
+const AdminTagsManage = () => {
+	const { currentUserData, updateCurrentUser } = useAuth()
 	const toast = useToast()
 
 	const [tagInput, setTagInput] = useState('')
 
-	const { data: tags, isLoading, getList: getTags, setData: setTags } = useGetListSuperadmin('tags', { Limit: -1 })
+	const { data: tags, isLoading, getList: getTags, setData: setTags } = useGetList('tags', { Limit: -1 },false)
 
 	const addTag = (e) => {
 		e.preventDefault()
@@ -27,8 +27,7 @@ const AdminTag = () => {
 			(err) => {},
 			updateCurrentUser,
 			currentUserData,
-			toast,
-			'admin'
+			toast
 		)
 	}
 
@@ -42,13 +41,12 @@ const AdminTag = () => {
 			(err) => {},
 			updateCurrentUser,
 			currentUserData,
-			toast,
-			'admin'
+			toast
 		)
 	}
 	return (
 		<div className='max-w-full mx-auto sm:p-6 bg-white rounded-lg '>
-			<h1 className='text-system-primary-text font-medium text-lg'>Tags Manager</h1>
+			<h1 className='text-system-primary-text font-medium text-2xl'>Tags Manager</h1>
 
 			<form onSubmit={addTag} className='flex my-4 flex-wrap gap-4 sm:gap-0'>
 				<input
@@ -104,4 +102,4 @@ const AdminTag = () => {
 	)
 }
 
-export default AdminTag
+export default AdminTagsManage

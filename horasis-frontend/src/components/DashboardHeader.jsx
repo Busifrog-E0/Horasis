@@ -143,6 +143,21 @@ const DashboardHeader = () => {
 							<div className='w-max flex flex-col items-center'>
 								<a
 									className={`cursor-pointer  font-medium text-md  ${
+										location.pathname === '/TagsManager' ? 'text-system-primary-accent' : 'text-system-primary-text'
+									}`}
+									onClick={() => onClickItem('/TagsManager')}>
+									Tags
+								</a>
+								<div
+									className={`h-1 w-10 rounded-full ${
+										location.pathname === '/TagsManager' ? 'bg-system-primary-accent' : 'bg-transparent'
+									}`}></div>
+							</div>
+						)}
+						{isPermitted && (
+							<div className='w-max flex flex-col items-center'>
+								<a
+									className={`cursor-pointer  font-medium text-md  ${
 										location.pathname === '/Analytics' ? 'text-system-primary-accent' : 'text-system-primary-text'
 									}`}
 									onClick={() => onClickItem('/Analytics')}>
@@ -263,6 +278,18 @@ const UserProfile = ({ user, avatar, isPermitted, navigateToProfile, openLogoutM
 										className='block px-4 py-2 text-system-primary-text hover:bg-gray-100 border-b cursor-pointer'>
 										View Profile
 									</p>
+									{isPermitted && (
+										<>
+											<p
+												onClick={() => {
+													handleDropdownToggle()
+													OnClickMenu('/TagsManager')
+												}}
+												className='block px-4 py-2 text-system-primary-text hover:bg-gray-100 border-b cursor-pointer'>
+												Tags
+											</p>
+										</>
+									)}
 									{isPermitted && (
 										<>
 											<p

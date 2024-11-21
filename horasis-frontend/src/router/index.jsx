@@ -48,6 +48,7 @@ import AdminTags from '../pages/superadmin/AdminTags'
 import Podcasts from '../pages/Podcasts'
 import SinglePodcast from '../pages/SinglePodcast'
 import CreatePodcast from '../pages/CreatePodcast'
+import Tags from '../pages/Tags'
 
 export const router = createBrowserRouter(
 	createRoutesFromElements(
@@ -81,6 +82,14 @@ export const router = createBrowserRouter(
 						<Route path='/Articles/Create/New' element={<CreateArticle />} />
 						<Route path='/Events' element={<Events />} />
 						<Route
+							path='/TagsManager'
+							element={
+								<AdminProtected>
+									<Tags />
+								</AdminProtected>
+							}
+						/>
+						<Route
 							path='/Events/Create/New'
 							element={
 								<AdminProtected>
@@ -92,7 +101,7 @@ export const router = createBrowserRouter(
 
 						<Route path='/Podcasts' element={<Podcasts />} />
 						<Route path='/Podcasts/Create/New' element={<CreatePodcast />} />
-					<Route path='/Podcasts/:podcastid' element={<SinglePodcast />} />
+						<Route path='/Podcasts/:podcastid' element={<SinglePodcast />} />
 					</Route>
 
 					<Route path='/MyProfile' element={<MyProfile />} />
