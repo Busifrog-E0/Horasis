@@ -17,7 +17,7 @@ const fileFormats = {
     video: {
         extensions: [
             'mp4'],
-        size: 20971520 //20mb
+        size: 52428800 //20mb
     }
 }
 /**
