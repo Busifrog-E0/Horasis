@@ -15,7 +15,7 @@ const app = express();
 import router from "./routes/index.js";
 
 app.use(cors({ origin: true }));
-app.use(express.json({ "limit": "25mb" }));
+app.use(express.json({ "limit": "60mb" }));
 
 app.use(json());
 app.use(urlencoded({
