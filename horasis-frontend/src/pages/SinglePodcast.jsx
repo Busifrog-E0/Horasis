@@ -175,6 +175,20 @@ const SinglePodcast = () => {
 								<p className='text-lg text-system-secondary-text leading-relaxed'>{podcast?.Description}</p>
 								{/* <p className='text-md text-system-primary-text italic'>{podcast?.Brief}</p> */}
 							</div>
+							{podcast?.Tags && podcast?.Tags.length > 0 && (
+								<div className='flex  gap-2 flex-wrap'>
+									{podcast?.Tags.map((item) => (
+										<div
+											key={item.DocId}
+											className='rounded-full text-system-primary-accent'
+											role='button' // For better accessibility
+											tabIndex={0} // Making it focusable
+										>
+											#{item.TagName}
+										</div>
+									))}
+								</div>
+							)}
 							<div>
 								{podcast?.OriginalLanguage !== homeLanguage && (
 									<>

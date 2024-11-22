@@ -71,14 +71,12 @@ const SingleArticles = () => {
 		}
 	}
 
-
 	const { isSaving, isUnsaving, saveEntity, unsaveEntity } = useEntitySaveManager({
 		EntityId: article?.DocId,
 		Type: 'Article',
 		successCallback: getArticle,
 		errorCallback: () => {},
 	})
-
 
 	const {
 		isTranslated: translated,
@@ -135,7 +133,7 @@ const SingleArticles = () => {
 						<div className='flex w-full items-start justify-between'>
 							<div
 								className={`inline-flex items-center justify-center w-12 h-12 p-3 overflow-hidden rounded-full border border-white bg-white cursor-pointer`}
-								onClick={()=>navigate(-1)}>
+								onClick={() => navigate(-1)}>
 								<img src={arrowback} alt='' className='h-6 cursor-pointer' />
 							</div>
 							<div className='flex gap-2'>
@@ -162,19 +160,9 @@ const SingleArticles = () => {
 									) : (
 										<>
 											{article?.HasSaved ? (
-												<img
-													src={graysavefill}
-													alt=''
-													className='h-6 cursor-pointer'
-													onClick={unsaveEntity}
-												/>
+												<img src={graysavefill} alt='' className='h-6 cursor-pointer' onClick={unsaveEntity} />
 											) : (
-												<img
-													src={graysave}
-													alt=''
-													className='h-6 cursor-pointer'
-													onClick={saveEntity}
-												/>
+												<img src={graysave} alt='' className='h-6 cursor-pointer' onClick={saveEntity} />
 											)}
 										</>
 									)}
@@ -212,6 +200,20 @@ const SingleArticles = () => {
 					</div>
 				</div>
 				<div className='lg:col-span-3 px-10 bg-system-secondary-bg py-10 rounded-b-2xl'>
+					{article?.Tags && article?.Tags.length > 0 && (
+						<div className='flex  gap-2 mb-6 flex-wrap'>
+							{article?.Tags.map((item) => (
+								<div
+									key={item.DocId}
+									className='rounded-full text-system-primary-accent'
+									role='button' // For better accessibility
+									tabIndex={0} // Making it focusable
+								>
+									#{item.TagName}
+								</div>
+							))}
+						</div>
+					)}
 					<h4 className='text-xl text-brand-gray  leading-8 whitespace-pre-line'>{article?.Description}</h4>
 				</div>
 			</div>

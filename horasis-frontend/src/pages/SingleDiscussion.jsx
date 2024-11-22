@@ -35,6 +35,7 @@ const SingleDiscussion = () => {
 		getData: getDiscussion,
 		setData: setDiscussion,
 	} = useGetData(`discussions/${discussionid}`)
+	console.log(discussion)
 
 	const navigate = useNavigate()
 	const handleGoBack = () => {
@@ -313,9 +314,22 @@ const SingleDiscussion = () => {
 								<div className='flex flex-row justify-between mt-1 lg:mt-3'>
 									<h4 className='font-semibold text-2xl text-system-primary-text'>Brief</h4>
 								</div>
-								<h4 className='text-xl text-brand-gray mt-2 mb-12 leading-8 whitespace-pre-line'>
-									{discussion?.Brief}
-								</h4>
+								<h4 className='text-xl text-brand-gray my-2 leading-8 whitespace-pre-line'>{discussion?.Brief}</h4>
+								{discussion.Tags && discussion.Tags.length > 0 && (
+									<div className='flex mt-2 mb-12 gap-2 flex-wrap'>
+										{discussion.Tags.map((item) => (
+											<div
+												key={item.DocId}
+												className='rounded-full text-system-primary-accent'
+												role='button' // For better accessibility
+												tabIndex={0} // Making it focusable
+											>
+												#{item.TagName}
+											</div>
+										))}
+									</div>
+								)}
+								<div className='mb-12'></div>
 								<div className='flex gap-2'>
 									{discussion?.IsMember ? (
 										<>
