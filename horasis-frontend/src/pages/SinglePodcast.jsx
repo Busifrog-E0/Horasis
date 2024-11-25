@@ -547,7 +547,7 @@ const UploadEpisodeModal = ({
 						)}
 						<input
 							type='file'
-							accept='image/jpeg, image/png, video/mp4'
+							accept='video/mp4'
 							onChange={(e) => {
 								let isAlbum = false
 								let isImageAllowed = false

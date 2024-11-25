@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import CreatePodcastStep1 from '../components/Podcasts/CreatePodcast/CreatePodcastSteps/CreatePodcastStep1'
 import CreatePodcastStep2 from '../components/Podcasts/CreatePodcast/CreatePodcastSteps/CreatePodcastStep2'
@@ -9,7 +9,7 @@ import Button from '../components/ui/Button'
 import Modal from '../components/ui/Modal'
 import Spinner from '../components/ui/Spinner'
 import Steps from '../components/ui/Steps'
-import { postItem } from '../constants/operations'
+import { getItem, postItem } from '../constants/operations'
 import { AuthContext } from '../utils/AuthProvider'
 
 import Settings from '../components/Common/PermissionsManagement/Settings'
@@ -150,7 +150,7 @@ const CreatePodcast = () => {
 
 	const [podcast, setpodcast] = useState('')
 	const getpodcast = () => {
-		getItem(
+		getItem	(
 			`podcasts/${podcastId}`,
 			(result) => {
 				setpodcast(result)
@@ -217,7 +217,7 @@ const CreatePodcast = () => {
 						/>
 					)}
 					{/* {activeStep === 3 && <CreatePodcastStep3 podcastId={podcastId} />} */}
-					{activeStep === 3 && (
+					{activeStep === 3 && podcast && (
 						<Settings
 							EntityId={podcastId}
 							from='create'
