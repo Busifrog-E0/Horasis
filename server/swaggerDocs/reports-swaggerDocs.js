@@ -3,7 +3,7 @@ const get_Reports = async (req, res, next) => {
     /* #swagger.tags = ['Reports'] */
     /* #swagger.responses[200] = {
              description: 'Report Data',
-             schema: { ref: '#/definitions/ReportDataArray' }
+             schema: { $ref: '#/definitions/ReportDataArray' }
      } */
     next();
 };
@@ -13,7 +13,7 @@ const get_Reports_ReportId = async (req, res, next) => {
     /* #swagger.tags = ['Reports'] */
     /* #swagger.responses[200] = {
              description: 'Report Data',
-             schema: { ref: '#/definitions/ReportData' }
+             schema: { $ref: '#/definitions/ReportData' }
      } */
     next();
 };
@@ -23,7 +23,7 @@ const post_Reports = async (req, res, next) => {
     /* #swagger.tags = ['Reports'] */
     /* #swagger.parameters['body'] = {
                in: 'body',
-               schema: { ref: '#/definitions/ReportData' }
+               schema: { $ref: '#/definitions/ReportData' }
    } */
     next();
 }
@@ -33,7 +33,7 @@ const patch_Reports_ReportId = async (req, res, next) => {
     /* #swagger.tags = ['Reports'] */
     /* #swagger.responses[200] = {
              description: 'Report Data',
-             schema: { ref: '#/definitions/ReportData' }
+             schema: { $ref: '#/definitions/ReportData' }
      } */
     next();
 }

@@ -7308,16 +7308,7 @@
           "200": {
             "description": "Report Data",
             "schema": {
-              "type": "object",
-              "properties": {
-                "ref": {
-                  "type": "string",
-                  "example": "#/definitions/ReportDataArray"
-                }
-              },
-              "xml": {
-                "name": "main"
-              }
+              "$ref": "#/definitions/ReportDataArray"
             }
           },
           "400": {
@@ -7354,13 +7345,7 @@
             "name": "body",
             "in": "body",
             "schema": {
-              "type": "object",
-              "properties": {
-                "ref": {
-                  "type": "string",
-                  "example": "#/definitions/ReportData"
-                }
-              }
+              "$ref": "#/definitions/ReportData"
             }
           }
         ],
@@ -7408,16 +7393,7 @@
           "200": {
             "description": "Report Data",
             "schema": {
-              "type": "object",
-              "properties": {
-                "ref": {
-                  "type": "string",
-                  "example": "#/definitions/ReportData"
-                }
-              },
-              "xml": {
-                "name": "main"
-              }
+              "$ref": "#/definitions/ReportData"
             }
           },
           "401": {
@@ -7458,16 +7434,7 @@
           "200": {
             "description": "Report Data",
             "schema": {
-              "type": "object",
-              "properties": {
-                "ref": {
-                  "type": "string",
-                  "example": "#/definitions/ReportData"
-                }
-              },
-              "xml": {
-                "name": "main"
-              }
+              "$ref": "#/definitions/ReportData"
             }
           },
           "400": {
