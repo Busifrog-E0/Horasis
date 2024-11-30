@@ -12,7 +12,7 @@ const DiscussionTab = ({ discussion, onClick, fetch, updateList, data }) => {
 
 	const { isLoading: isLoadingDiscussion, getData: getSingleDiscussion } = useGetData(
 		`discussions/${discussion?.DocId}`,
-		{ onSuccess: onsuccess, onError: () => {} }
+		{ onSuccess: onsuccess, onError: () => {} },false
 	)
 
 	const {

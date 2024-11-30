@@ -1,282 +1,152 @@
-import { useContext, useEffect, useState } from 'react'
-import { getItem } from '../../constants/operations'
-import { AuthContext, useAuth } from '../../utils/AuthProvider'
-import { useToast } from '../Toast/ToastService'
-import { _retrieveData, MAINTAB, _storeData } from '../../utils/LocalStorage'
-import Tab from '../ui/Tab'
-import SearchBar from '../SearchBar'
-import PostSectionTab from '../Posts/PostSectionTab'
-import TabItem from '../ui/TabItem'
-import { jsonToQuery } from '../../utils/searchParams/extractSearchParams'
-import { getNextId } from '../../utils/URLParams'
-import AllMembersSearchTab from './Tabs/AllMembersSearchTab'
-import EventsList from '../Events/EventsList'
-import EventsSearchTab from './Tabs/EventsSearchTab'
-import PostsSearchTab from './Tabs/PostsSearchTab'
-import DiscussionsSearchTab from './Tabs/DiscussionsSearchTab'
-import InsightsSearchTab from './Tabs/InsightsSearchTab'
-import PostsSearchSection from './Sections/Posts/PostsSearchSection'
-import useGetList from '../../hooks/useGetList'
+import { useEffect, useMemo, useState } from 'react'
 import { useLocation } from 'react-router-dom'
+import useGetList from '../../hooks/useGetList'
+import { useAuth } from '../../utils/AuthProvider'
+import SearchBar from '../SearchBar'
+import Tab from '../ui/Tab'
+import AllMembersSearchTab from './Tabs/AllMembersSearchTab'
+import DiscussionsSearchTab from './Tabs/DiscussionsSearchTab'
+import EventsSearchTab from './Tabs/EventsSearchTab'
+import InsightsSearchTab from './Tabs/InsightsSearchTab'
+import PostsSearchTab from './Tabs/PostsSearchTab'
 
 const UniversalSearchSection = () => {
 	const { currentUserData } = useAuth()
+	const location = useLocation()
 
+	const [filters, setFilters] = useState({
+		Keyword: location?.state?.TagName || '',
+	})
 	const [activeTab, setActiveTab] = useState(0)
 	const [eventTab, setEventTab] = useState('all')
 	const [discussionTab, setDiscussionTab] = useState('all')
-	const location = useLocation()
 
-	const apiEndpointForDiscussions =
-		discussionTab === 'all' ? 'discussions' : `user/${currentUserData.CurrentUser.UserId}/discussions`
+	const endpoints = useMemo(
+		() => ({
+			members: 'users',
+			posts: 'activities/search',
+			events: 'events',
+			discussions: discussionTab === 'all' ? 'discussions' : `user/${currentUserData.CurrentUser.UserId}/discussions`,
+			insights: 'articles',
+		}),
+		[currentUserData, discussionTab]
+	)
 
-	const [filters, setFilters] = useState({
-		Keyword: location?.state?.TagName ? location?.state?.TagName : '',
-	})
-
-	const {
-		isLoading: isLoadingMembers,
-		isLoadingMore: isLoadingMoreMembers,
-		isPageDisabled: isPageDisabledMembers,
-		data: members,
-		setData: setMembers,
-		getList: getAllMembers,
-	} = useGetList('users', { ...filters }, true, false)
-	const {
-		isLoading: isLoadingPosts,
-		isLoadingMore: isLoadingMorePosts,
-		isPageDisabled: isPageDisabledPosts,
-		data: posts,
-		setData: setPosts,
-		getList: getAllPosts,
-	} = useGetList('activities/search', { ...filters }, true, false)
-	const {
-		isLoading: isLoadingEvents,
-		isLoadingMore: isLoadingMoreEvents,
-		isPageDisabled: isPageDisabledEvents,
-		data: events,
-		setData: setEvents,
-		getList: getAllEvents,
-	} = useGetList('events', { OrderBy: eventTab === 'all' ? 'Index' : 'NoOfMembers', ...filters }, true, false)
-	const {
-		isLoading: isLoadingDiscussions,
-		isLoadingMore: isLoadingMoreDiscussions,
-		isPageDisabled: isPageDisabledDiscussions,
-		data: discussions,
-		setData: setDiscussions,
-		getList: getAllDiscussions,
-	} = useGetList(apiEndpointForDiscussions, { ...filters }, true, false)
-	const {
-		isLoading: isLoadingArticles,
-		isLoadingMore: isLoadingMoreArticles,
-		isPageDisabled: isPageDisabledArticles,
-		data: articles,
-		setData: setArticles,
-		getList: getAllArticles,
-	} = useGetList('articles', { ...filters }, true, false)
-
-	const onTabChange = (item) => {
-		setActiveTab(item.key)
-	}
-
-	const onKeyChanged = (value) => {
-		setFilters({ ...filters, Keyword: value })
+	const tabDataFetchers = {
+		members: useGetList(endpoints.members, { ...filters }, true, false),
+		posts: useGetList(endpoints.posts, { ...filters }, true, false),
+		events: useGetList(
+			endpoints.events,
+			{ OrderBy: eventTab === 'all' ? 'Index' : 'NoOfMembers', ...filters },
+			true,
+			false
+		),
+		discussions: useGetList(endpoints.discussions, { ...filters }, true, false),
+		insights: useGetList(endpoints.insights, { ...filters }, true, false),
 	}
 
 	const fetchData = () => {
-		switch (activeTab) {
-			case 0:
-				getAllMembers([])
-				getAllPosts([])
-				getAllEvents([])
-				getAllDiscussions([])
-				getAllArticles([])
-				break
-			case 1:
-				getAllMembers([])
-				break
-			case 2:
-				getAllPosts([])
-				break
-			case 3:
-				getAllEvents([])
-				break
-			case 4:
-				getAllDiscussions([])
-				break
-			case 5:
-				getAllArticles([])
-				break
-			default:
-				break
+		const allFetchers = Object.values(tabDataFetchers)
+		if (activeTab === 0) {
+			console.log(allFetchers)
+			allFetchers.forEach(({ getList }) => getList([]))
+		} else {
+			const activeFetcherKey = Object.keys(tabDataFetchers)[activeTab - 1]
+			tabDataFetchers[activeFetcherKey].getList([])
 		}
 	}
 
 	useEffect(() => {
-		getAllEvents([])
+		tabDataFetchers.events.getList([])
 	}, [eventTab])
 
 	useEffect(() => {
-		getAllDiscussions([])
+		tabDataFetchers.discussions.getList([])
 	}, [discussionTab])
 
 	useEffect(() => {
 		fetchData()
 	}, [activeTab])
 
-	const tabs = () => [
-		{
-			key: 0,
-			title: 'All',
-			render: () => (
-				<div className='bg-system-secondary-bg'>
-					<AllMembersSearchTab
-						getConnectionCount={() => {}}
-						data={members}
-						getAllData={() => getAllMembers([])}
-						isLoading={isLoadingMembers}
-						setData={setMembers}
-						fetchMore={() => getAllMembers(members, false)}
-						isLoadingMore={isLoadingMoreMembers}
-						pageDisabled={true}
-					/>
-					<div className='border-b border-system-file-border m-4'></div>
-					<PostsSearchTab
-						data={posts}
-						getAllData={() => getAllPosts([])}
-						isLoading={isLoadingPosts}
-						setData={setPosts}
-						fetchMore={() => getAllPosts(posts, false)}
-						isLoadingMore={isLoadingMorePosts}
-						pageDisabled={true}
-					/>
-					<div className='border-b border-system-file-border m-4'></div>
-					<EventsSearchTab
-						data={events}
-						getAllData={() => getAllEvents([])}
-						isLoading={isLoadingEvents}
-						setData={setEvents}
-						fetchMore={() => getAllEvents(events, false)}
-						isLoadingMore={isLoadingMoreEvents}
-						pageDisabled={true}
-						eventTab={eventTab}
-						setEventTab={setEventTab}
-					/>
-					<div className='border-b border-system-file-border m-4'></div>
+	const onTabChange = (item) => {
+		setActiveTab(item.key)
+	}
 
-					<DiscussionsSearchTab
-						data={discussions}
-						getAllData={() => getAllDiscussions([])}
-						isLoading={isLoadingDiscussions}
-						setData={setDiscussions}
-						fetchMore={() => getAllDiscussions(discussions, false)}
-						isLoadingMore={isLoadingMoreDiscussions}
-						pageDisabled={true}
-						discussionTab={discussionTab}
-						setDiscussionTab={setDiscussionTab}
+	const handleSearchChange = (value) => setFilters({ ...filters, Keyword: value })
+
+	const renderTabContent = (key) => {
+		const components = {
+			members: AllMembersSearchTab,
+			posts: PostsSearchTab,
+			events: EventsSearchTab,
+			discussions: DiscussionsSearchTab,
+			insights: InsightsSearchTab,
+		}
+		if (key === 0) {
+			return Object.keys(components).map((item, index) => {
+				const tabKey = Object.keys(components)[index]
+				const TabComponent = components[tabKey]
+				if (TabComponent) {
+					const { data, isLoading, isLoadingMore, setData, getList } = tabDataFetchers[tabKey]
+					return (
+						<TabComponent
+							data={data}
+							getAllData={() => getList([])}
+							isLoading={isLoading}
+							setData={setData}
+							fetchMore={() => getList(data, false)}
+							isLoadingMore={isLoadingMore}
+							pageDisabled={true}
+							eventTab={key === 3 ? eventTab : undefined}
+							setEventTab={key === 3 ? setEventTab : undefined}
+							discussionTab={key === 4 ? discussionTab : undefined}
+							setDiscussionTab={key === 4 ? setDiscussionTab : undefined}
+						/>
+					)
+				}
+				return null
+			})
+		} else {
+			const tabKey = Object.keys(components)[key - 1]
+			const TabComponent = components[tabKey]
+			if (TabComponent) {
+				const { data, isLoading, isLoadingMore, setData, getList, isPageDisabled } = tabDataFetchers[tabKey]
+				return (
+					<TabComponent
+						data={data}
+						getAllData={() => getList([])}
+						isLoading={isLoading}
+						setData={setData}
+						fetchMore={() => getList(data, false)}
+						isLoadingMore={isLoadingMore}
+						pageDisabled={isPageDisabled}
+						eventTab={key === 3 ? eventTab : undefined}
+						setEventTab={key === 3 ? setEventTab : undefined}
+						discussionTab={key === 4 ? discussionTab : undefined}
+						setDiscussionTab={key === 4 ? setDiscussionTab : undefined}
 					/>
-					<div className='border-b border-system-file-border m-4'></div>
-					<InsightsSearchTab
-						data={articles}
-						getAllData={() => getAllArticles([])}
-						isLoading={isLoadingArticles}
-						setData={setArticles}
-						fetchMore={() => getAllArticles(articles, false)}
-						isLoadingMore={isLoadingMoreArticles}
-						pageDisabled={true}
-					/>
-				</div>
-			),
-		},
-		{
-			key: 1,
-			title: 'Members',
-			render: () => (
-				<AllMembersSearchTab
-					getConnectionCount={() => {}}
-					data={members}
-					getAllData={() => getAllMembers([])}
-					isLoading={isLoadingMembers}
-					setData={setMembers}
-					fetchMore={() => getAllMembers(members, false)}
-					isLoadingMore={isLoadingMoreMembers}
-					pageDisabled={isPageDisabledMembers}
-				/>
-			),
-		},
-		{
-			key: 2,
-			title: 'Posts',
-			render: () => (
-				<PostsSearchTab
-					data={posts}
-					getAllData={() => getAllPosts([])}
-					isLoading={isLoadingPosts}
-					setData={setPosts}
-					fetchMore={() => getAllPosts(posts, false)}
-					isLoadingMore={isLoadingMorePosts}
-					pageDisabled={isPageDisabledPosts}
-				/>
-			),
-		},
-		{
-			key: 3,
-			title: 'Events',
-			render: () => (
-				<EventsSearchTab
-					data={events}
-					getAllData={() => getAllEvents([])}
-					isLoading={isLoadingEvents}
-					setData={setEvents}
-					fetchMore={() => getAllEvents(events, [])}
-					isLoadingMore={isLoadingMoreEvents}
-					pageDisabled={isPageDisabledEvents}
-					eventTab={eventTab}
-					setEventTab={setEventTab}
-				/>
-			),
-		},
-		{
-			key: 4,
-			title: 'Discussions',
-			render: () => (
-				<DiscussionsSearchTab
-					data={discussions}
-					getAllData={() => getAllDiscussions([])}
-					isLoading={isLoadingDiscussions}
-					setData={setDiscussions}
-					fetchMore={() => getAllDiscussions(discussions, false)}
-					isLoadingMore={isLoadingMoreDiscussions}
-					pageDisabled={isPageDisabledDiscussions}
-					discussionTab={discussionTab}
-					setDiscussionTab={setDiscussionTab}
-				/>
-			),
-		},
-		{
-			key: 5,
-			title: 'Insights',
-			render: () => (
-				<InsightsSearchTab
-					data={articles}
-					getAllData={() => getAllArticles([])}
-					isLoading={isLoadingArticles}
-					setData={setArticles}
-					fetchMore={() => getAllArticles(articles, false)}
-					isLoadingMore={isLoadingMoreArticles}
-					pageDisabled={isPageDisabledArticles}
-				/>
-			),
-		},
+				)
+			}
+			return null
+		}
+	}
+
+	const tabs = [
+		{ key: 0, title: 'All', render: () => renderTabContent(0) },
+		{ key: 1, title: 'Members', render: () => renderTabContent(1) },
+		{ key: 2, title: 'Posts', render: () => renderTabContent(2) },
+		{ key: 3, title: 'Events', render: () => renderTabContent(3) },
+		{ key: 4, title: 'Discussions', render: () => renderTabContent(4) },
+		{ key: 5, title: 'Insights', render: () => renderTabContent(5) },
 	]
 
 	return (
 		<>
 			<div className='mb-4 lg:mb-5 w-11/12 md:w-full lg:w-3/4'>
-				<SearchBar value={filters.Keyword} onChange={onKeyChanged} onClickSearch={fetchData} />
+				<SearchBar value={filters.Keyword} onChange={handleSearchChange} onClickSearch={fetchData} />
 			</div>
 
-			<Tab name='connections' activeTab={activeTab} onTabChange={onTabChange} tabs={tabs()} />
+			<Tab name='connections' activeTab={activeTab} onTabChange={onTabChange} tabs={tabs} />
 		</>
 	)
 }
