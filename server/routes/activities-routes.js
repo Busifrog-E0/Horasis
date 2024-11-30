@@ -3,15 +3,13 @@ import {
     GetFilteredActivities,
 } from '../controllers/activities-controller.js';
 import asyncHandler from 'express-async-handler';
-
 import { decodeIDToken, ensureAuthorized } from '../middleware/auth-middleware.js';
 import { ValidatePostActivities, ValidatePatchActivities, ValidateGetActivities } from '../validations/activities-validations.js';
 import SwaggerDocs from '../swaggerDocs/activities-swaggerDocs.js'
 import e from 'express';
-import { CheckSameUser, QueryParameterFormatting, ValidateGetEntity } from '../middleware/common.js';
-import { GetFeedActivitiesMiddleware, GetMentionedActivitiesMiddleware, GetUserActivitiesMiddleware, InsertActivityTypeMiddleware, PostActivitiesLikeMiddleware, PostFeedActivitiesMiddleware } from '../middleware/activities-middleware.js';
-import { DeleteLikes, GetLikes, PostLikes } from '../controllers/likes-controller.js';
-import { DeleteSaves, GetSaves, PostSaves } from '../controllers/saves-controller.js';
+import { QueryParameterFormatting, ValidateGetEntity } from '../middleware/common.js';
+import { GetFeedActivitiesMiddleware, GetMentionedActivitiesMiddleware, GetUserActivitiesMiddleware, InsertActivityTypeMiddleware , PostActivitiesLikeMiddleware,PostFeedActivitiesMiddleware } from '../middleware/activities-middleware.js';
+
 const router = e.Router();
 
 router.get('/feed', decodeIDToken, ensureAuthorized("User"), ValidateGetEntity, QueryParameterFormatting, GetFeedActivitiesMiddleware, SwaggerDocs.get_Activities,
@@ -48,33 +46,6 @@ router.patch('/activities/:ActivityId', decodeIDToken, ensureAuthorized("User"),
     // @ts-ignore
     asyncHandler(PatchActivities));
 
-/* router.post('/users/:UserId/activities/:EntityId/like', decodeIDToken, ensureAuthorized("User"), CheckSameUser,
-    InsertActivityTypeMiddleware, SwaggerDocs.post_Activities_ActivityId_Like,
-    // @ts-ignore
-    asyncHandler(PostLikes));
-
-router.delete('/users/:UserId/activities/:EntityId/dislike', decodeIDToken, ensureAuthorized("User"), CheckSameUser, SwaggerDocs.delete_Activities_ActivityId_Dislike,
-    // @ts-ignore
-    asyncHandler(DeleteLikes));
-
-
-router.post('/users/:UserId/activities/:EntityId/save', decodeIDToken, ensureAuthorized("User"), CheckSameUser,
-    InsertActivityTypeMiddleware, SwaggerDocs.post_Activities_ActivityId_Save,
-    // @ts-ignore
-    asyncHandler(PostSaves));
-
-router.delete('/users/:UserId/activities/:EntityId/save', decodeIDToken, ensureAuthorized("User"), CheckSameUser, SwaggerDocs.delete_Activities_ActivityId_Save,
-    // @ts-ignore
-    asyncHandler(DeleteSaves));
-
-router.get('/activities/:EntityId/likedUsers', decodeIDToken, ensureAuthorized("User"), ValidateGetEntity, QueryParameterFormatting, SwaggerDocs.get_Activities_ActivityId_LikedUsers,
-    //@ts-ignore
-    asyncHandler(GetLikes))
-
-router.get('/user/:UserId/activities/save', decodeIDToken, ensureAuthorized("User"), ValidateGetEntity, QueryParameterFormatting,
-    InsertActivityTypeMiddleware, SwaggerDocs.get_User_UserId_Activities_Save,
-    //@ts-ignore
-    asyncHandler(GetSaves)) */
 
 router.delete('/activities/:ActivityId', decodeIDToken, ensureAuthorized("User"), SwaggerDocs.delete_Activities_ActivityId,
     // @ts-ignore
