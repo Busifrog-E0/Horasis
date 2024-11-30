@@ -23,6 +23,7 @@ import usePostData from '../hooks/usePostData'
 import useTranslation from '../hooks/useTranslation'
 import useUpdateData from '../hooks/useUpdateData'
 import { AuthContext } from '../utils/AuthProvider'
+import TagsList from '../components/Tags/TagsList'
 
 const SingleDiscussion = () => {
 	const [activeTab, setActiveTab] = useState(0)
@@ -35,7 +36,6 @@ const SingleDiscussion = () => {
 		getData: getDiscussion,
 		setData: setDiscussion,
 	} = useGetData(`discussions/${discussionid}`)
-	console.log(discussion)
 
 	const navigate = useNavigate()
 	const handleGoBack = () => {
@@ -317,16 +317,7 @@ const SingleDiscussion = () => {
 								<h4 className='text-xl text-brand-gray my-2 leading-8 whitespace-pre-line'>{discussion?.Brief}</h4>
 								{discussion.Tags && discussion.Tags.length > 0 && (
 									<div className='flex mt-2 mb-12 gap-2 flex-wrap'>
-										{discussion.Tags.map((item) => (
-											<div
-												key={item.DocId}
-												className='rounded-full text-system-primary-accent'
-												role='button' // For better accessibility
-												tabIndex={0} // Making it focusable
-											>
-												#{item.TagName}
-											</div>
-										))}
+										<TagsList tags={discussion?.Tags} />
 									</div>
 								)}
 								<div className='mb-12'></div>

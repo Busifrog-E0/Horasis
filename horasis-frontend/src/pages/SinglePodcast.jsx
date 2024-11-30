@@ -19,6 +19,7 @@ import useGetData from '../hooks/useGetData'
 import useTranslation from '../hooks/useTranslation'
 import { defaultPostData, useAuth } from '../utils/AuthProvider'
 import { activityValidation } from '../utils/schema/users/activityValidation'
+import TagsList from '../components/Tags/TagsList'
 
 const tabs = (podcast) => {
 	const { Privacy, IsMember, MembershipStatus, Permissions, DocId } = podcast
@@ -177,16 +178,7 @@ const SinglePodcast = () => {
 							</div>
 							{podcast?.Tags && podcast?.Tags.length > 0 && (
 								<div className='flex  gap-2 flex-wrap'>
-									{podcast?.Tags.map((item) => (
-										<div
-											key={item.DocId}
-											className='rounded-full text-system-primary-accent'
-											role='button' // For better accessibility
-											tabIndex={0} // Making it focusable
-										>
-											#{item.TagName}
-										</div>
-									))}
+									<TagsList tags={podcast?.Tags} />
 								</div>
 							)}
 							<div>

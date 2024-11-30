@@ -17,6 +17,7 @@ import DiscussionsSearchTab from './Tabs/DiscussionsSearchTab'
 import InsightsSearchTab from './Tabs/InsightsSearchTab'
 import PostsSearchSection from './Sections/Posts/PostsSearchSection'
 import useGetList from '../../hooks/useGetList'
+import { useLocation } from 'react-router-dom'
 
 const UniversalSearchSection = () => {
 	const { currentUserData } = useAuth()
@@ -24,12 +25,13 @@ const UniversalSearchSection = () => {
 	const [activeTab, setActiveTab] = useState(0)
 	const [eventTab, setEventTab] = useState('all')
 	const [discussionTab, setDiscussionTab] = useState('all')
+	const location = useLocation()
 
 	const apiEndpointForDiscussions =
 		discussionTab === 'all' ? 'discussions' : `user/${currentUserData.CurrentUser.UserId}/discussions`
 
 	const [filters, setFilters] = useState({
-		Keyword: '',
+		Keyword: location?.state?.TagName ? location?.state?.TagName : '',
 	})
 
 	const {

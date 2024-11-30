@@ -19,6 +19,7 @@ import useTranslation from '../hooks/useTranslation'
 import useUpdateData from '../hooks/useUpdateData'
 import { getDateInWordsFormat } from '../utils/date'
 import useEntitySaveManager from '../hooks/useEntitySaveManager'
+import TagsList from '../components/Tags/TagsList'
 
 const SingleArticles = () => {
 	const navigate = useNavigate()
@@ -202,16 +203,7 @@ const SingleArticles = () => {
 				<div className='lg:col-span-3 px-10 bg-system-secondary-bg py-10 rounded-b-2xl'>
 					{article?.Tags && article?.Tags.length > 0 && (
 						<div className='flex  gap-2 mb-6 flex-wrap'>
-							{article?.Tags.map((item) => (
-								<div
-									key={item.DocId}
-									className='rounded-full text-system-primary-accent'
-									role='button' // For better accessibility
-									tabIndex={0} // Making it focusable
-								>
-									#{item.TagName}
-								</div>
-							))}
+							<TagsList tags={article?.Tags} />
 						</div>
 					)}
 					<h4 className='text-xl text-brand-gray  leading-8 whitespace-pre-line'>{article?.Description}</h4>

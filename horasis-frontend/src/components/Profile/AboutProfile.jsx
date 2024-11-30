@@ -13,6 +13,7 @@ import Select from '../ui/Select'
 import edit from '../../assets/icons/edit.svg'
 import close from '../../assets/icons/close.svg'
 import useGetList from '../../hooks/useGetList'
+import { useNavigate } from 'react-router-dom'
 
 export const extractLinkedInUsername = (url) => {
 	// Define the regular expression to match LinkedIn profile URLs
@@ -26,6 +27,12 @@ export const extractLinkedInUsername = (url) => {
 }
 
 const AboutProfile = ({ user, getUserDetails, isCurrentUser }) => {
+	const navigate = useNavigate()
+
+	const handleNavigate = (e, tagName) => {
+		e.preventDefault()
+		navigate('/Search', { state: { TagName: tagName } })
+	}
 	const [isOpen, setIsOpen] = useState(false)
 	const [errorObj, setErrorObj] = useState({})
 	const [usernameAvailable, setUsernameAvailable] = useState()
@@ -432,6 +439,7 @@ const AboutProfile = ({ user, getUserDetails, isCurrentUser }) => {
 											{' '}
 											{user.Interests.map((item) => (
 												<div
+													onClick={(e) => handleNavigate(e, item.TagName)}
 													key={item.DocId}
 													className='cursor-pointer rounded-full px-6 py-1 bg-system-tertiary-bg hover:bg-system-secondary-bg border  transition duration-200 ease-in-out'
 													role='button' // For better accessibility

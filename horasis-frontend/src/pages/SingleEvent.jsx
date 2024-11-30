@@ -23,6 +23,7 @@ import useGetData from '../hooks/useGetData'
 import useTranslation from '../hooks/useTranslation'
 import { useAuth } from '../utils/AuthProvider'
 import { getDateInWordsFormat, gettimenow } from '../utils/date'
+import TagsList from '../components/Tags/TagsList'
 
 const SingleEvent = () => {
 	const { eventid } = useParams()
@@ -304,21 +305,11 @@ const SingleEvent = () => {
 							<h4 className='font-medium text-md  text-system-secondary-text my-2 lg:my-2 leading-relaxed'>
 								{event?.Description}
 							</h4>
-							{
-								event.Tags && event.Tags.length>0&&
-							<div className='flex my-4 gap-2 flex-wrap'>
-								{event.Tags.map((item) => (
-									<div
-										key={item.DocId}
-										className='rounded-full text-system-primary-accent'
-										role='button' // For better accessibility
-										tabIndex={0} // Making it focusable
-									>
-										#{item.TagName}
-									</div>
-								))}
-							</div>
-							}
+							{event.Tags && event.Tags.length > 0 && (
+								<div className='flex my-4 gap-2 flex-wrap'>
+									<TagsList tags={event?.Tags} />
+								</div>
+							)}
 							{event?.OriginalLanguage !== homeLanguage && (
 								<>
 									{translated ? (
