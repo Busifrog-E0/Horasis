@@ -18,6 +18,7 @@ import Modal from '../components/ui/Modal'
 import Spinner from '../components/ui/Spinner'
 import { getItem } from '../constants/operations'
 import { useAuth } from '../utils/AuthProvider'
+import { AGORA_APP_ID } from '../utils/enums'
 
 const NewStreaming = () => {
 	const location = useLocation()
@@ -28,7 +29,7 @@ const NewStreaming = () => {
 	const navigate = useNavigate()
 
 	// join parameters
-	const [appId, setAppId] = useState('206c8a92da8d4676aabfb8314a21fa17')
+	const [appId, setAppId] = useState(AGORA_APP_ID)
 	const [channel, setChannel] = useState(eventid)
 	const [rtcToken, setRtcToken] = useState('')
 	const [rtmToken, setRtmToken] = useState('')
