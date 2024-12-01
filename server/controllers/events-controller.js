@@ -40,8 +40,8 @@ const GetEvents = async (req, res) => {
         //@ts-ignore
         Filter["$or"] = [
             { "EventName": { $regex: Keyword, $options: 'i' } },
-            { "Tags": { $regex: Keyword, $options: 'i' } }
-        ];
+            { "Tags.TagName": { $regex: Keyword, $options: 'i' } }
+        ]
     }
     // @ts-ignore
     const Events = await ReadEvents(Filter, NextId, Limit, OrderBy);
@@ -61,10 +61,7 @@ const GetUserEvents = async (req, res) => {
     const { Filter, NextId, Keyword, Limit, OrderBy } = req.query;
     if (Keyword) {
         // @ts-ignore
-        Filter["$or"] = [
-            { "EventName": { $regex: Keyword, $options: 'i' } },
-            { "Tags": { $regex: Keyword, $options: 'i' } }
-        ]
+        Filter["EventName"] = { $regex: Keyword, $options: 'i' };
     }
     // @ts-ignore
     const AggregateArray = [
