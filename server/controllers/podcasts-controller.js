@@ -42,7 +42,10 @@ const GetPodcasts = async (req, res) => {
     const { Filter, NextId, Keyword, Limit, OrderBy } = req.query;
     if (Keyword) {
         // @ts-ignore
-        Filter["PodcastName"] = { $regex: Keyword, $options: 'i' };
+        Filter["$or"] = [
+            { "PodcastName": { $regex: Keyword, $options: 'i' } },
+            { "Tags": { $regex: Keyword, $options: 'i' } }
+        ]
     }
     // @ts-ignore
     const Podcasts = await ReadPodcasts(Filter, NextId, Limit, OrderBy);
