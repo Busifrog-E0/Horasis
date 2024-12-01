@@ -20,6 +20,7 @@ import useTranslation from '../hooks/useTranslation'
 import { defaultPostData, useAuth } from '../utils/AuthProvider'
 import { activityValidation } from '../utils/schema/users/activityValidation'
 import TagsList from '../components/Tags/TagsList'
+import ReportEntity from '../components/Report/ReportEntity'
 
 const tabs = (podcast) => {
 	const { Privacy, IsMember, MembershipStatus, Permissions, DocId } = podcast
@@ -271,15 +272,18 @@ const SinglePodcast = () => {
 						<>
 							{podcast?.HasSaved ? (
 								<>
-									<img src={saved} alt='' className='h-8 self-end cursor-pointer' onClick={unsaveEntity} />
+									<img src={saved} alt='' className='h-7 self-end cursor-pointer' onClick={unsaveEntity} />
 								</>
 							) : (
 								<>
-									<img src={save} alt='' className='h-8 self-end cursor-pointer' onClick={saveEntity} />
+									<img src={save} alt='' className='h-7 self-end cursor-pointer' onClick={saveEntity} />
 								</>
 							)}
 						</>
 					)}
+					<div className='self-end'>
+						<ReportEntity EntityId={podcast.DocId} Type='Podcast' />
+					</div>
 				</div>
 				<div className='lg:col-span-3'>
 					{podcast && (

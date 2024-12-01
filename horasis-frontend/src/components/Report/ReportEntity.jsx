@@ -11,11 +11,11 @@ const ReportEntity = ({ renderComponent, EntityId, Type }) => {
 	const openReasonsModal = () => setIsModalOpen(true)
 	const closeReasonModal = () => setIsModalOpen(false)
 
-	const { isReporting, reportData, handleChange, reportEntity } = useEntityReportManager({
+	const { isReporting, reportData, handleChange, reportEntity,resetState } = useEntityReportManager({
 		EntityId: EntityId,
 		Type: Type,
-		successCallback: () => {
-			console.log('Reported', Type, EntityId)
+		successCallback: () =>{
+			resetState()
 			closeReasonModal()
 		},
 		errorCallback: () => {},
@@ -97,10 +97,9 @@ const ReportEntity = ({ renderComponent, EntityId, Type }) => {
 				<>
 					<span
 						onClick={openReasonsModal}
-						className='cursor-pointer flex items-center gap-2 px-4 py-2 text-sm text-brand-gray-dim hover:bg-system-primary-bg'
+						className='cursor-pointer flex items-center gap-2 text-sm text-brand-gray-dim'
 						role='menuitem'>
-						<img src={report} alt='' className='h-6' />
-						Report Content
+						<img src={report} alt='' className='h-7' /> 
 					</span>
 				</>
 			)}

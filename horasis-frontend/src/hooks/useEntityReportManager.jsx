@@ -16,7 +16,7 @@ const useEntityReportManager = ({ EntityId, Type, successCallback, errorCallback
 
 	const onsuccess = (result) => {
 		if (result === true) {
-			toast.open('success', 'Reported', 'The content has been reported')
+			toast.open('info', 'Reported', 'The content has been reported')
 			successCallback()
 		}
 	}
