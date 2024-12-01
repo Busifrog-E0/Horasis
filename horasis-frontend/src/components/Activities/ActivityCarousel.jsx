@@ -3,6 +3,7 @@ import outlinecircle from '../../assets/icons/outlinecircle.svg'
 import filledcircle from '../../assets/icons/filledcircle.svg'
 import left from '../../assets/icons/left.svg'
 import right from '../../assets/icons/right.svg'
+import VideoPlayer from '../../components/ui/VideoPlayer'
 
 const ActivityCarousel = ({ slides }) => {
 	const [currentIndex, setCurrentIndex] = useState(0)
@@ -24,12 +25,15 @@ const ActivityCarousel = ({ slides }) => {
 	}
 
 	return (
-		<div className='w-full h-96 m-auto mb-6 mt-3 relative bg-black'>
+		<div className='w-full h-96 m-auto mb-6 mt-3 relative bg-black rounded-md overflow-hidden'>
 			{slides[currentIndex].Type === 'image' && (
-				<img src={slides[currentIndex].FileUrl} className='w-full h-full rounded-2xl bg-center bg-cover duration-500 object-contain'></img>
+				<img
+					src={slides[currentIndex].FileUrl}
+					className='w-full h-full rounded-2xl bg-center bg-cover duration-500 object-contain'></img>
 			)}
 			{slides[currentIndex].Type === 'video' && (
-				<video
+				<>
+					{/* <video
 					key={slides[currentIndex].FileUrl}
 					playsInline
 					className='w-full h-full rounded-2xl bg-center bg-cover duration-500 bg-system-primary-text'
@@ -38,7 +42,9 @@ const ActivityCarousel = ({ slides }) => {
 					controls
 					controlsList='nodownload'>
 					<source src={slides[currentIndex].FileUrl} type='video/mp4' />
-				</video>
+				</video> */}
+					<VideoPlayer url={slides[currentIndex].FileUrl} />
+				</>
 			)}
 			{slides.length !== 1 && (
 				<>

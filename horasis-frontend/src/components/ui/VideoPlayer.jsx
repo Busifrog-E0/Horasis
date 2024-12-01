@@ -1,112 +1,116 @@
 import React, { useRef, useState } from 'react'
+import VideoControls from './VideoControls'
 
 const VideoPlayer = ({ url }) => {
-	const videoRef = useRef(null)
-	const progressRef = useRef(null)
-	const [playing, setPlaying] = useState(false)
-	const [volume, setVolume] = useState(1)
-	const [isControlsVisible, setControlsVisible] = useState(true)
+	const videoRef = useRef(null) // Reference to the video element
+	const containerRef = useRef(null) // Reference to the outer container
+	const [isPlaying, setIsPlaying] = useState(false)
+	const [isMuted, setIsMuted] = useState(false)
+	const [isFullscreen, setIsFullscreen] = useState(false)
+	const [volume, setVolume] = useState(1) // Volume range is 0 to 1
+	const [currentTime, setCurrentTime] = useState(0)
+	const [duration, setDuration] = useState(0)
 
 	const togglePlay = () => {
-		if (playing) {
+		if (isPlaying) {
 			videoRef.current.pause()
 		} else {
 			videoRef.current.play()
 		}
-		setPlaying(!playing)
+		setIsPlaying(!isPlaying)
 	}
 
-	const handleProgress = () => {
-		const progress = (videoRef.current.currentTime / videoRef.current.duration) * 100
-		progressRef.current.value = progress
+	const handleVolumeChange = (newVolume) => {
+		setVolume(newVolume)
+		videoRef.current.volume = newVolume
+		if (newVolume === 0) {
+			setIsMuted(true)
+		} else {
+			setIsMuted(false)
+		}
 	}
 
-	const handleVolumeChange = (e) => {
-		const volume = e.target.value
-		setVolume(volume)
-		videoRef.current.volume = volume
+	const handleMute = () => {
+		if (isMuted) {
+			setIsMuted(false)
+			setVolume(0.5) // Restore volume to a default level (e.g., 50%) when unmuting
+			videoRef.current.volume = 0.5
+		} else {
+			setIsMuted(true)
+			setVolume(0) // Set volume to 0 when muted
+			videoRef.current.volume = 0
+		}
 	}
 
-	const handleSeek = (e) => {
-		const seekTime = (e.target.value / 100) * videoRef.current.duration
-		videoRef.current.currentTime = seekTime
+	const handleTimeUpdate = () => {
+		setCurrentTime(videoRef.current.currentTime)
 	}
 
-	const showControls = () => {
-		setControlsVisible(true)
-
-		setTimeout(() => {
-			setControlsVisible(false)
-		}, 600)
+	const handleFullscreen = () => {
+		if (!isFullscreen) {
+			if (containerRef.current.requestFullscreen) {
+				containerRef.current.requestFullscreen()
+			} else if (containerRef.current.webkitRequestFullscreen) {
+				containerRef.current.webkitRequestFullscreen()
+			} else if (containerRef.current.mozRequestFullScreen) {
+				containerRef.current.mozRequestFullScreen()
+			} else if (containerRef.current.msRequestFullscreen) {
+				containerRef.current.msRequestFullscreen()
+			}
+		} else {
+			if (document.exitFullscreen) {
+				document.exitFullscreen()
+			} else if (document.webkitExitFullscreen) {
+				document.webkitExitFullscreen()
+			} else if (document.mozCancelFullScreen) {
+				document.mozCancelFullScreen()
+			} else if (document.msExitFullscreen) {
+				document.msExitFullscreen()
+			}
+		}
+		setIsFullscreen(!isFullscreen)
 	}
 
-	const playOnHover = () => {
+	const handleProgressChange = (newTime) => {
+		videoRef.current.currentTime = newTime
+		setCurrentTime(newTime)
+	}
+
+	const playOnEnter =()=>{
 		videoRef.current.play()
-		setPlaying(true)
+		setIsPlaying(true)
 	}
-	const pauseOnLeave = () => {
+
+	const pauseOnLeave = ()=>{
 		videoRef.current.pause()
-		setPlaying(false)
+		setIsPlaying(false)
 	}
 
 	return (
 		<div
-			className='relative group w-full max-w-lg mx-auto rounded-lg overflow-hidden'
-			onMouseMove={showControls}
-			onMouseEnter={playOnHover}
-			onMouseLeave={pauseOnLeave}>
-			{/* Video */}
-			<video ref={videoRef} onTimeUpdate={handleProgress} className='w-full' src={url} controls={false} />
-			{/* Controls */}
-			<div
-				className={`absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/70 to-transparent transition-opacity duration-300 ${
-					isControlsVisible ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
-				}`}>
-				<div className='px-4 py-2 flex items-center justify-between'>
-					{/* Play/Pause Button */}
-					<button onClick={togglePlay} className='text-white rounded-full'>
-						{playing ? (
-							<svg
-								xmlns='http://www.w3.org/2000/svg'
-								className='h-10 w-10'
-								fill='none'
-								viewBox='0 0 24 24'
-								stroke='currentColor'>
-								<path strokeLinecap='round' strokeLinejoin='round' strokeWidth='2' d='M10 9v6m4-6v6' />
-							</svg>
-						) : (
-							<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' className='h-10 w-10' fill='currentColor'>
-								<path d='M10 8.5L16 12L10 15.5V8.5Z' />
-							</svg>
-						)}
-					</button>
-
-					{/* Progress Slider */}
-					<div className='relative flex-grow mx-4'>
-						<input
-							type='range'
-							ref={progressRef}
-							onChange={handleSeek}
-							className='w-full h-2 appearance-none bg-gray-300 rounded-lg overflow-hidden  transition-all'
-							defaultValue='0'
-							max='100'
-						/>
-					</div>
-
-					{/* Volume Slider */}
-					<div className='relative w-24'>
-						<input
-							type='range'
-							className='w-full h-2 appearance-none bg-gray-300 rounded-lg overflow-hidden  transition-all '
-							value={volume}
-							onChange={handleVolumeChange}
-							step='0.01'
-							max='1'
-							min='0'
-						/>
-					</div>
-				</div>
-			</div>
+			ref={containerRef}
+			className={`relative bg-black rounded-md overflow-hidden ${isFullscreen ? 'w-full h-full fixed top-0 left-0 z-50' : 'w-full h-full'}`} >
+			<video
+				ref={videoRef}
+				src={url}
+				className='w-full h-full'
+				onTimeUpdate={handleTimeUpdate}
+				onLoadedMetadata={() => setDuration(videoRef.current.duration)}
+				controls={false} // Disable default controls
+			/>
+			<VideoControls
+				isPlaying={isPlaying}
+				onPlayPause={togglePlay}
+				isMuted={isMuted}
+				onMute={handleMute}
+				volume={volume}
+				onVolumeChange={handleVolumeChange}
+				currentTime={currentTime}
+				duration={duration}
+				onProgressChange={handleProgressChange}
+				onFullscreen={handleFullscreen}
+				isFullscreen={isFullscreen}
+			/>
 		</div>
 	)
 }
