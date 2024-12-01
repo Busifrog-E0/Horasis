@@ -85,111 +85,6 @@ const PostComponent = ({
 			toast
 		)
 	}
-	// const handleImageOrVideoChange = (e) => {
-	// 	const files = Array.from(e.target.files)
-
-	// 	const notAllow = files.some((file) => file.size > 3000000)
-	// 	if (notAllow) {
-	// 		toast.open('error', 'Max File Size', 'File size should be less than 3MB')
-	// 	} else {
-	// 		const promises = files.map((file) => {
-
-	// 			return new Promise((resolve) => {
-	// 				const reader = new FileReader()
-
-	// 				reader.onload = (event) => {
-	// 					const arrayBuffer = event.target.result
-	// 					const fileDataUint8Array = new Uint8Array(arrayBuffer)
-	// 					const fileDataByteArray = Array.from(fileDataUint8Array)
-	// 					const isVideo = file.type.startsWith('video/')
-	// 					resolve({
-	// 						FileType: file.type,
-	// 						FileData: fileDataByteArray,
-	// 						FileName: file.name,
-	// 						FileUrl: URL.createObjectURL(new Blob([new Uint8Array(fileDataByteArray)])),
-	// 					})
-	// 				}
-
-	// 				reader.readAsArrayBuffer(file)
-	// 			})
-	// 		})
-
-	// 		Promise.all(promises)
-	// 			.then((arr) => {
-	// 				if (arr.length === 1) {
-	// 					setNewPost({ ...newPost, ['MediaFiles']: [...newPost['MediaFiles'], arr[0]] })
-	// 				}
-	// 			})
-	// 			.catch((error) => {
-	// 				console.error('An error occurred:', error)
-	// 			})
-	// 	}
-	// }
-
-	// const handleImageOrVideoChange = (e, isAlbum) => {
-	// 	const files = Array.from(e.target.files)
-
-	// 	// Check if any file exceeds the size limit
-	// 	const notAllow = files.some((file) => file.size > 3000000)
-	// 	if (notAllow) {
-	// 		toast.open('error', 'Max File Size', 'File size should be less than 3MB')
-	// 		return
-	// 	}
-
-	// 	// Separate images and videos
-	// 	const images = files.filter((file) => file.type.startsWith('image/'))
-	// 	const videos = files.filter((file) => file.type.startsWith('video/'))
-
-	// 	const processFile = (file) => {
-	// 		return new Promise((resolve) => {
-	// 			const reader = new FileReader()
-
-	// 			reader.onload = (event) => {
-	// 				const arrayBuffer = event.target.result
-	// 				const fileDataUint8Array = new Uint8Array(arrayBuffer)
-	// 				const fileDataByteArray = Array.from(fileDataUint8Array)
-	// 				resolve({
-	// 					FileType: file.type,
-	// 					FileData: fileDataByteArray,
-	// 					FileName: file.name,
-	// 					FileUrl: URL.createObjectURL(new Blob([new Uint8Array(fileDataByteArray)])),
-	// 				})
-	// 			}
-
-	// 			reader.readAsArrayBuffer(file)
-	// 		})
-	// 	}
-
-	// 	const processFiles = (files) => {
-	// 		const promises = files.map(processFile)
-
-	// 		return Promise.all(promises)
-	// 	}
-
-	// 	Promise.all([processFiles(images), processFiles(videos)])
-	// 		.then(([imageResults, videoResults]) => {
-	// 			let newMediaFiles = []
-
-	// 			if (isAlbum) {
-	// 				// If isAlbum flag is true, append files to the existing MediaFiles array
-	// 				newMediaFiles = [...newPost['MediaFiles']]
-	// 				if (images.length > 0) newMediaFiles = [...newMediaFiles, ...imageResults]
-	// 				if (videos.length > 0) newMediaFiles = [...newMediaFiles, ...videoResults]
-	// 			} else {
-	// 				// If isAlbum flag is false, replace MediaFiles with the new files
-	// 				if (images.length > 0) newMediaFiles = [...imageResults]
-	// 				if (videos.length > 0) newMediaFiles = [...videoResults]
-	// 			}
-
-	// 			setNewPost((prevState) => ({
-	// 				...prevState,
-	// 				['MediaFiles']: newMediaFiles,
-	// 			}))
-	// 		})
-	// 		.catch((error) => {
-	// 			console.error('An error occurred:', error)
-	// 		})
-	// }
 
 	const handleImageOrVideoChange = (e, isAlbum, isImageAllowed, isVideoAllowed) => {
 		const files = Array.from(e.target.files)
@@ -214,9 +109,9 @@ const PostComponent = ({
 		})
 
 		// Check if any filtered file exceeds the size limit
-		const notAllow = filteredFiles.some((file) => file.size > 3000000)
+		const notAllow = filteredFiles.some((file) => file.size > 20000000)
 		if (notAllow) {
-			toast.open('error', 'Max File Size', 'File size should be less than 3MB')
+			toast.open('error', 'Max File Size', 'File size should be less than 20MB')
 			return
 		}
 
@@ -396,7 +291,6 @@ const PostComponent = ({
 									isVideoAllowed = permissions.CanUploadVideo
 								}
 							}
-			
 
 							// Only call handleImageOrVideoChange if any permissions allow uploading
 							if (isImageAllowed || isVideoAllowed) {

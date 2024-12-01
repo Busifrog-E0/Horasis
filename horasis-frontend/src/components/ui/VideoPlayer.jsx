@@ -106,8 +106,8 @@ const VideoPlayer = ({ url }) => {
 			}`}>
 			{/* Center play/pause button with transition */}
 			<div
-				className={`absolute inset-0 flex items-center justify-center  transition-all duration-500 ease-in-out  ${
-					!showCenterButton ? 'opacity-0 transform scale-100' : 'opacity-80 transform scale-150'
+				className={`absolute inset-0 flex items-center justify-center  transition-all duration-700 ease-in-out  ${
+					!showCenterButton ? 'opacity-0 scale-100' : 'opacity-80 scale-[2]'
 				}`}>
 				<button onClick={togglePlay} className='bg-transparent border-none'>
 					{isPlaying ? (
