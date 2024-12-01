@@ -26,19 +26,21 @@ const VideoControls = ({
 	}
 
 	return (
-		<div className='absolute bottom-0 left-0 right-0  text-white p-3'>
+		<div className='absolute bottom-0 left-0 right-0  text-white p-3 select-none'>
 			{/* Progress Bar */}
 			<div className='flex items-center space-x-3'>
 				{/* <span>{formatTime(currentTime)}</span> */}
 				<div
 					className='flex-grow h-1 hover:h-2 bg-system-secondary-bg-transparent rounded relative cursor-pointer'
 					onClick={(e) => {
+						e.stopPropagation()
+
 						const rect = e.target.getBoundingClientRect()
 						const percent = (e.clientX - rect.left) / rect.width
 						onProgressChange(duration * percent)
 					}}>
 					<div
-						className='h-full bg-system-secondary-bg rounded'
+						className='h-full bg-system-primary-accent-transparent rounded'
 						style={{ width: `${(currentTime / duration) * 100}%` }}
 					/>
 				</div>
@@ -61,6 +63,8 @@ const VideoControls = ({
 						<div
 							className=' h-1 hover:h-2 w-0 group-hover:w-24 bg-system-secondary-bg-transparent rounded relative cursor-pointer transition-all duration-300'
 							onClick={(e) => {
+								e.stopPropagation()
+
 								const rect = e.target.getBoundingClientRect()
 								const percent = (e.clientX - rect.left) / rect.width
 								onVolumeChange(percent)
@@ -70,7 +74,8 @@ const VideoControls = ({
 					</div>
 
 					<div className='flex items-center space-x-1 text-sm'>
-						<span className='text-sm'>{formatTime(currentTime)}</span> <span className='text-sm'>|</span> <span className='text-sm'>{formatTime(duration)}</span>
+						<span className='text-sm'>{formatTime(currentTime)}</span> <span className='text-sm'>|</span>{' '}
+						<span className='text-sm'>{formatTime(duration)}</span>
 					</div>
 				</div>
 

@@ -282,7 +282,7 @@ const SinglePodcast = () => {
 						</>
 					)}
 					<div className='self-end'>
-						<ReportEntity EntityId={podcast.DocId} Type='Podcast' />
+						<ReportEntity EntityId={podcast?.DocId} Type='Podcast' />
 					</div>
 				</div>
 				<div className='lg:col-span-3'>

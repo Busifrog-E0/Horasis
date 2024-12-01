@@ -1,23 +1,32 @@
 import React, { useRef, useState } from 'react'
 import VideoControls from './VideoControls'
+import play from '../../assets/icons/streaming/play.svg'
+import pause from '../../assets/icons/streaming/pause.svg'
 
 const VideoPlayer = ({ url }) => {
-	const videoRef = useRef(null) // Reference to the video element
-	const containerRef = useRef(null) // Reference to the outer container
+	const videoRef = useRef(null)
+	const containerRef = useRef(null)
 	const [isPlaying, setIsPlaying] = useState(false)
 	const [isMuted, setIsMuted] = useState(false)
 	const [isFullscreen, setIsFullscreen] = useState(false)
-	const [volume, setVolume] = useState(1) // Volume range is 0 to 1
+	const [volume, setVolume] = useState(1)
 	const [currentTime, setCurrentTime] = useState(0)
 	const [duration, setDuration] = useState(0)
 
-	const togglePlay = () => {
+	const [showCenterButton, setShowCenterButton] = useState(false)
+
+	const togglePlay = (e) => {
+		e.stopPropagation()
 		if (isPlaying) {
 			videoRef.current.pause()
 		} else {
 			videoRef.current.play()
 		}
 		setIsPlaying(!isPlaying)
+		setShowCenterButton(true)
+
+		// Hide the center button after 1 second
+		setTimeout(() => setShowCenterButton(false), 1000)
 	}
 
 	const handleVolumeChange = (newVolume) => {
@@ -30,14 +39,15 @@ const VideoPlayer = ({ url }) => {
 		}
 	}
 
-	const handleMute = () => {
+	const handleMute = (e) => {
+		e.stopPropagation()
 		if (isMuted) {
 			setIsMuted(false)
-			setVolume(0.5) // Restore volume to a default level (e.g., 50%) when unmuting
+			setVolume(0.5)
 			videoRef.current.volume = 0.5
 		} else {
 			setIsMuted(true)
-			setVolume(0) // Set volume to 0 when muted
+			setVolume(0)
 			videoRef.current.volume = 0
 		}
 	}
@@ -46,7 +56,8 @@ const VideoPlayer = ({ url }) => {
 		setCurrentTime(videoRef.current.currentTime)
 	}
 
-	const handleFullscreen = () => {
+	const handleFullscreen = (e) => {
+		e.stopPropagation()
 		if (!isFullscreen) {
 			if (containerRef.current.requestFullscreen) {
 				containerRef.current.requestFullscreen()
@@ -76,20 +87,45 @@ const VideoPlayer = ({ url }) => {
 		setCurrentTime(newTime)
 	}
 
-	const playOnEnter =()=>{
+	const playOnEnter = () => {
 		videoRef.current.play()
 		setIsPlaying(true)
 	}
 
-	const pauseOnLeave = ()=>{
+	const pauseOnLeave = () => {
 		videoRef.current.pause()
 		setIsPlaying(false)
 	}
 
 	return (
 		<div
+			onClick={togglePlay}
 			ref={containerRef}
-			className={`relative bg-black rounded-md overflow-hidden ${isFullscreen ? 'w-full h-full fixed top-0 left-0 z-50' : 'w-full h-full'}`} >
+			className={`relative bg-black rounded-md overflow-hidden ${
+				isFullscreen ? 'w-full h-full fixed top-0 left-0 z-50' : 'w-full h-full'
+			}`}>
+			{/* Center play/pause button with transition */}
+			<div
+				className={`absolute inset-0 flex items-center justify-center  transition-all duration-500 ease-in-out  ${
+					!showCenterButton ? 'opacity-0 transform scale-100' : 'opacity-80 transform scale-150'
+				}`}>
+				<button onClick={togglePlay} className='bg-transparent border-none'>
+					{isPlaying ? (
+						<img
+							src={pause}
+							alt='Pause'
+							className={`h-10 w-10 text-white transform transition-all duration-500 ease-in-out scale-150 opacity-100 bg-system-black-transparent rounded-full p-1`}
+						/>
+					) : (
+						<img
+							src={play}
+							alt='Play'
+							className={`h-10 w-10 text-white transform transition-all duration-500 ease-in-out scale-150 opacity-100 bg-system-black-transparent rounded-full p-1`}
+						/>
+					)}
+				</button>
+			</div>
+
 			<video
 				ref={videoRef}
 				src={url}
@@ -98,6 +134,7 @@ const VideoPlayer = ({ url }) => {
 				onLoadedMetadata={() => setDuration(videoRef.current.duration)}
 				controls={false} // Disable default controls
 			/>
+
 			<VideoControls
 				isPlaying={isPlaying}
 				onPlayPause={togglePlay}
