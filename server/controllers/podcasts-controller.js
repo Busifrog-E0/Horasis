@@ -44,7 +44,7 @@ const GetPodcasts = async (req, res) => {
         // @ts-ignore
         Filter["$or"] = [
             { "PodcastName": { $regex: Keyword, $options: 'i' } },
-            { "Tags": { $regex: Keyword, $options: 'i' } }
+            { "Tags.TagName": { $regex: Keyword, $options: 'i' } }
         ]
     }
     // @ts-ignore

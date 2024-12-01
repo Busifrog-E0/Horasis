@@ -45,7 +45,7 @@ const GetDiscussions = async (req, res) => {
         // @ts-ignore
         Filter["$or"] = [
             { "DiscussionName": { $regex: Keyword, $options: 'i' } },
-            { "Tags": { $regex: Keyword, $options: 'i' } }
+            { "Tags.TagName": { $regex: Keyword, $options: 'i' } }
         ]
     }
     // @ts-ignore
