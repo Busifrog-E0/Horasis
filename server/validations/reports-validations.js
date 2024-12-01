@@ -10,7 +10,6 @@ const ReportsSchema = Joi.object({
     Type: Joi.string().valid("Activity", "Comment", "Discussion", "Article", "Event", "Podcast").required(),
     UserId: Joi.string().required(),
     EntityId: Joi.string().required(),
-    CreatedIndex: Joi.number().integer().required()
 });
 
 
