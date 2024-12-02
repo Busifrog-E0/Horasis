@@ -42,7 +42,7 @@ const NewStreamUsersList = ({
 		} else {
 			setMainScreenUser(null)
 		}
-	}, [remoteUsers])
+	}, [remoteUsers, speakers, participants, role])
 
 	return (
 		<div className='flex flex-col h-full overflow-hidden '>
@@ -116,8 +116,7 @@ const NewStreamUsersList = ({
 												<img src={camera_off} className='h-6' />
 											)}
 											<span className='hidden lg:inline'>
-
-											{mainScreenUser.hasVideo ? 'Turn off camera' : 'Turned off'}
+												{mainScreenUser.hasVideo ? 'Turn off camera' : 'Turned off'}
 											</span>
 										</button>
 
@@ -135,8 +134,7 @@ const NewStreamUsersList = ({
 												<img src={mic_off} className='h-6' />
 											)}
 											<span className='hidden lg:inline'>
-
-											{mainScreenUser.hasAudio ? 'Turn off microphone' : 'Turned off'}
+												{mainScreenUser.hasAudio ? 'Turn off microphone' : 'Turned off'}
 											</span>
 										</button>
 
@@ -213,7 +211,7 @@ const Dropdown = ({ buttonLabel = '•••', items = [], onItemSelect = () => 
 		} else {
 			dropdown.style.left = 'auto'
 		}
-	
+
 		dropdown.style.bottom = `${buttonRect.height}px`
 		// Check vertical boundaries
 		// if (rect.bottom > window.innerHeight) {

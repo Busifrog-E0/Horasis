@@ -40,7 +40,7 @@ const ScrollableRemoteUsersList = ({
 		return () => {
 			window.removeEventListener('resize', handleResize)
 		}
-	}, [remoteUsers])
+	}, [remoteUsers,participants,speakers,role])
 
 	// Check scroll position and update the atStart and atEnd state
 	const checkScrollPosition = () => {

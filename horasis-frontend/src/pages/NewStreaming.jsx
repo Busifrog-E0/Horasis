@@ -68,7 +68,6 @@ const NewStreaming = () => {
 			(result) => {
 				setIsLoadingUser(false)
 				setUser(result)
-				console.log(result, 'single user')
 			},
 			(err) => {
 				setIsLoadingUser(false)
@@ -126,6 +125,40 @@ const NewStreaming = () => {
 		}
 		getRoleAndTokens()
 	}, [])
+
+	// Assuming rtcClient is already initialized
+	const subscribeToUser = async (userId) => {
+		if (rtcClient) {
+			try {
+				// You need to find the user's media track (audio/video)
+				const user = rtcClient.remoteUsers.find((user) => user.uid === userId)
+
+				if (user) {
+					// Subscribe to the user's stream (audio/video)
+					await rtcClient.subscribe(user)
+					console.log(`Subscribed to user ${userId}`)
+				}
+			} catch (error) {
+				console.error('Error subscribing to user:', error)
+			}
+		}
+	}
+
+	const unsubscribeFromUser = async (userId) => {
+		if (rtcClient) {
+			try {
+				const user = rtcClient.remoteUsers.find((user) => user.uid === userId)
+
+				if (user) {
+					// Unsubscribe from the user's stream (audio/video)
+					await rtcClient.unsubscribe(user)
+					console.log(`Unsubscribed from user ${userId}`)
+				}
+			} catch (error) {
+				console.error('Error unsubscribing from user:', error)
+			}
+		}
+	}
 
 	// initialize rtm
 	// initialize rtm
@@ -187,23 +220,55 @@ const NewStreaming = () => {
 
 			if (channelName === eventid) {
 				const messageData = JSON.parse(message)
-				if (messageData?.UserId === currentUserData?.CurrentUser?.UserId) {
-					if (messageData.action === 'MICTOGGLE') {
-						setMic(false)
-					} else if (messageData.action === 'CAMERATOGGLE') {
-						setCamera(false)
-					} else if (messageData.action === 'BLOCK') {
-						setMic(false)
-						setCamera(false)
-						setBlocked(true)
-						toast.open(
-							'info',
-							'Camera and microphone muted',
-							'Your camera and microphone has been permanently muted by the moderator.'
-						)
+				if (messageData.action === 'ROLE_CHANGE') {
+					const { userId, newRole } = messageData
+
+					if (newRole === 'Speaker') {
+						setParticipants((prevParticipants) => {
+							const participant = prevParticipants.find((p) => p.UserId === userId)
+							const updatedParticipants = prevParticipants.filter((p) => p.UserId !== userId)
+							// console.log(participant?.UserName,'removed from participants')
+
+							setSpeakers((prevSpeakers) => [...prevSpeakers, { ...participant, Role: newRole }])
+							subscribeToUser(userId);
+							if (participant.UserId === currentUserData?.CurrentUser?.UserId) {
+								setRole('Speaker')
+							}
+							return updatedParticipants
+						})
+					} else if (newRole === 'Member') {
+						setSpeakers((prevSpeakers) => {
+							const speaker = prevSpeakers.find((s) => s.UserId === userId)
+							const updatedSpeakers = prevSpeakers.filter((s) => s.UserId !== userId)
+							// console.log(speaker?.UserName,'removed from speakers')
+
+							setParticipants((prevParticipants) => [...prevParticipants, { ...speaker, Role: newRole }])
+							unsubscribeFromUser(userId);
+							if (speaker.UserId === currentUserData?.CurrentUser?.UserId) {
+								setRole('Member')
+							}
+							return updatedSpeakers
+						})
 					}
 				} else {
-					setMessages((prev) => [...prev, messageData])
+					if (messageData?.UserId === currentUserData?.CurrentUser?.UserId) {
+						if (messageData.action === 'MICTOGGLE') {
+							setMic(false)
+						} else if (messageData.action === 'CAMERATOGGLE') {
+							setCamera(false)
+						} else if (messageData.action === 'BLOCK') {
+							setMic(false)
+							setCamera(false)
+							setBlocked(true)
+							toast.open(
+								'info',
+								'Camera and microphone muted',
+								'Your camera and microphone has been permanently muted by the moderator.'
+							)
+						}
+					} else {
+						setMessages((prev) => [...prev, messageData])
+					}
 				}
 			}
 		})
@@ -320,6 +385,7 @@ const NewStreaming = () => {
 		await handleRtmLogout()
 		setIsCalling((a) => !a)
 		setRtmClient(null)
+		setRole('Member')
 		if (currentUserData.CurrentUser.Role.includes('Guest')) {
 			logout()
 			navigate('/home')
@@ -347,6 +413,64 @@ const NewStreaming = () => {
 
 	const onMuteUserClick = (userId, action) => {
 		sendMuteMessage(userId, action)
+	}
+
+	const handleRoleChange = async (userId, currentRole) => {
+		if (currentRole === 'Member') {
+			// Move from participants to speakers
+			const participant = participants.find((p) => p.UserId === userId)
+			const updatedParticipants = participants.filter((p) => p.UserId !== userId)
+			setParticipants(updatedParticipants)
+
+			// Add to speakers
+			setSpeakers([...speakers, { ...participant, Role: 'Speaker' }])
+
+			// Update RTC client to set the user as a speaker (host)
+			if (rtcClient) {
+				await rtcClient.setClientRole('host')
+			}
+
+			// Notify via RTM
+			if (rtmClient) {
+				const roleChangeMessage = JSON.stringify({
+					action: 'ROLE_CHANGE',
+					newRole: 'Speaker',
+					userId: userId,
+				})
+				try {
+					const result = await rtmClient.publish(eventid, roleChangeMessage)
+				} catch (error) {
+					console.error('Error sending role change message:', error)
+				}
+			}
+		} else {
+			// Move from speakers to participants
+			const speaker = speakers.find((s) => s.UserId === userId)
+			const updatedSpeakers = speakers.filter((s) => s.UserId !== userId)
+			setSpeakers(updatedSpeakers)
+
+			// Add to participants
+			setParticipants([...participants, { ...speaker, Role: 'Member' }])
+
+			// Update RTC client to set the user as an audience (viewer)
+			if (rtcClient) {
+				await rtcClient.setClientRole('audience')
+			}
+
+			// Notify via RTM
+			if (rtmClient) {
+				const roleChangeMessage = JSON.stringify({
+					action: 'ROLE_CHANGE',
+					newRole: 'Member',
+					userId: userId,
+				})
+				try {
+					const result = await rtmClient.publish(eventid, roleChangeMessage)
+				} catch (error) {
+					console.error('Error sending role change message:', error)
+				}
+			}
+		}
 	}
 
 	// initialize rtc
@@ -410,6 +534,7 @@ const NewStreaming = () => {
 									setMessages={setMessages}
 									speakers={speakers}
 									role={role}
+									onRoleChange={handleRoleChange}
 								/>
 							</div>
 
@@ -434,6 +559,7 @@ const NewStreaming = () => {
 										setMessages={setMessages}
 										speakers={speakers}
 										role={role}
+										onRoleChange={handleRoleChange}
 									/>
 								</Modal.Body>
 							</Modal>
