@@ -28,7 +28,7 @@ const EventJoinRequest = ({ eventId }) => {
 						{members.length > 0 ? (
 							<>
 								{members.map((item, index) => {
-									return <EventJoinMembers profile={item} key={item.DocId} eventId={eventId} fetch={fetch} />
+									return <EventJoinMembers profile={item} key={item.DocId} eventId={eventId} fetch={()=>getList([])} />
 								})}
 							</>
 						) : (
