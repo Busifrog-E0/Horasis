@@ -52,6 +52,7 @@ const Register = () => {
 		Industry: '',
 		CompanyName: '',
 		About: '',
+		IsPrivate: false,
 	})
 
 	const [usernameAvailable, setUsernameAvailable] = useState()

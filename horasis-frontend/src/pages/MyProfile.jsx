@@ -429,11 +429,11 @@ const MyProfile = () => {
 									{user && user.FullName}
 								</h4>
 								<h4 className='font-medium text-xl text-brand-gray-dim lg:text-center'>@{user && user.Username}</h4>
-								{currentUserData.CurrentUser.Role === 'Admin' && (
+								{currentUserData.CurrentUser.Role.includes('Admin') && (
 									<div className='flex justify-center items-center mt-2 lg:mt-6'>
 										<div className='w-full p-3 rounded-full bg-system-secondary-accent text-center inline-block'>
 											<span className='text-system-primary-accent text-md font-semibold'>
-												{currentUserData.CurrentUser.Role}
+												{currentUserData.CurrentUser.Role.find((role) => role === 'Admin')}
 											</span>
 										</div>
 									</div>
@@ -443,84 +443,24 @@ const MyProfile = () => {
 									<div className='flex items-center gap-2'>
 										<div className='justify-end text-system-primary-accent'>
 											<img src={altmail} alt='' className='h-6 cursor-pointer' />
-
-											{/* <svg
-												className='w-4 h-4 cursor-pointer'
-												aria-hidden='true'
-												xmlns='http://www.w3.org/2000/svg'
-												fill='none'
-												viewBox='0 0 20 20'>
-												<path
-													stroke='currentColor'
-													strokeLinecap='round'
-													strokeLinejoin='round'
-													strokeWidth='2'
-													d='M4 12.25V1m0 11.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M4 19v-2.25m6-13.5V1m0 2.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M10 19V7.75m6 4.5V1m0 11.25a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5ZM16 19v-2'
-												/>
-											</svg> */}
 										</div>
 										<h4 className='font-medium text-xl text-brand-gray-dim truncate'>{user && user.Email}</h4>
 									</div>
 									<div className='flex items-center gap-2'>
 										<div className='justify-end text-system-primary-accent'>
 											<img src={globe} alt='' className='h-6 cursor-pointer' />
-
-											{/* <svg
-												className='w-4 h-4 cursor-pointer'
-												aria-hidden='true'
-												xmlns='http://www.w3.org/2000/svg'
-												fill='none'
-												viewBox='0 0 20 20'>
-												<path
-													stroke='currentColor'
-													strokeLinecap='round'
-													strokeLinejoin='round'
-													strokeWidth='2'
-													d='M4 12.25V1m0 11.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M4 19v-2.25m6-13.5V1m0 2.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M10 19V7.75m6 4.5V1m0 11.25a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5ZM16 19v-2'
-												/>
-											</svg> */}
 										</div>
 										<h4 className='font-medium text-xl text-brand-gray-dim truncate'>{user && user.Country}</h4>
 									</div>
 									<div className='flex items-center gap-2'>
 										<div className='justify-end text-system-primary-accent'>
 											<img src={job} alt='' className='h-6 cursor-pointer' />
-
-											{/* <svg
-												className='w-4 h-4 cursor-pointer'
-												aria-hidden='true'
-												xmlns='http://www.w3.org/2000/svg'
-												fill='none'
-												viewBox='0 0 20 20'>
-												<path
-													stroke='currentColor'
-													strokeLinecap='round'
-													strokeLinejoin='round'
-													strokeWidth='2'
-													d='M4 12.25V1m0 11.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M4 19v-2.25m6-13.5V1m0 2.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M10 19V7.75m6 4.5V1m0 11.25a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5ZM16 19v-2'
-												/>
-											</svg> */}
 										</div>
 										<h4 className='font-medium text-xl text-brand-gray-dim truncate'>{user && user.JobTitle}</h4>
 									</div>
 									<div className='flex items-center gap-2'>
 										<div className='justify-end text-system-primary-accent'>
 											<img src={company} alt='' className='h-6 cursor-pointer' />
-
-											{/* <svg
-												className='w-4 h-4 cursor-pointer'
-												aria-hidden='true'
-												xmlns='http://www.w3.org/2000/svg'
-												fill='none'
-												viewBox='0 0 20 20'>
-												<path
-													stroke='currentColor'
-													strokeLinecap='round'
-													strokeLinejoin='round'
-													strokeWidth='2'
-													d='M4 12.25V1m0 11.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M4 19v-2.25m6-13.5V1m0 2.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M10 19V7.75m6 4.5V1m0 11.25a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5ZM16 19v-2'
-												/>
-											</svg> */}
 										</div>
 										<h4 className='font-medium text-xl text-brand-gray-dim truncate'>{user && user.CompanyName}</h4>
 									</div>

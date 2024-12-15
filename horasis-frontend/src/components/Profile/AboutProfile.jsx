@@ -14,6 +14,7 @@ import edit from '../../assets/icons/edit.svg'
 import close from '../../assets/icons/close.svg'
 import useGetList from '../../hooks/useGetList'
 import { useNavigate } from 'react-router-dom'
+import Switch from '../ui/Switch'
 
 export const extractLinkedInUsername = (url) => {
 	// Define the regular expression to match LinkedIn profile URLs
@@ -51,6 +52,7 @@ const AboutProfile = ({ user, getUserDetails, isCurrentUser }) => {
 		About: user?.About,
 		LinkedIn: user?.LinkedIn,
 		Interests: user?.Interests ? user?.Interests : [],
+		IsPrivate: user?.IsPrivate ? user?.IsPrivate : false,
 	})
 
 	const validateSingle = (value, key, callback) => {
@@ -338,6 +340,28 @@ const AboutProfile = ({ user, getUserDetails, isCurrentUser }) => {
 							/>
 							{errorObj['About'] != undefined && <p className='text-brand-red m-0'>{errorObj['About']}</p>}
 						</div>
+						<div>
+							<div
+								className={`flex items-center  gap-2 border   border-system-primary-bg justify-between  py-2 px-4 rounded-xl `}
+								onClick={(e) => {
+									e.stopPropagation()
+									// validateSingle({ ['IsPrivate']: !updateFormValue.IsPrivate })
+								}}>
+								<div>
+									<h1 className='text-system-primary-text font-medium '>Email & Location Privacy</h1>
+									<p className='text-brand-gray mt-1 mb-2 text-sm'>
+										Allow people visiting your profile to view your email and location.
+									</p>
+								</div>
+								<Switch
+									checked={updateFormValue?.IsPrivate}
+									onChange={(e) => {
+										e.stopPropagation()
+										validateSingle({ ['IsPrivate']: !updateFormValue.IsPrivate })
+									}}
+								/>
+							</div>
+						</div>
 					</div>
 					<div className='mt-4 flex items-end justify-end'>
 						<Button
@@ -391,7 +415,7 @@ const AboutProfile = ({ user, getUserDetails, isCurrentUser }) => {
 						</>
 					)}
 
-					{isCurrentUser && (
+					{isCurrentUser === true ? (
 						<>
 							<div>
 								<h4 className='font-medium text-brand-gray-dim'>Email</h4>
@@ -400,31 +424,105 @@ const AboutProfile = ({ user, getUserDetails, isCurrentUser }) => {
 								<h4 className='font-medium text-system-primary-text'>{user && user.Email}</h4>
 							</div>
 						</>
+					) : (
+						<>
+							{user && user?.IsPrivate && (
+								<>
+									{user?.IsPrivate === false ? (
+										<>
+											<div>
+												<h4 className='font-medium text-brand-gray-dim'>Email</h4>
+											</div>
+											<div className='lg:col-span-3'>
+												<h4 className='font-medium text-system-primary-text'>{user && user.Email}</h4>
+											</div>
+										</>
+									) : (
+										<></>
+									)}
+								</>
+							)}
+						</>
 					)}
+
 					<div>
 						<h4 className='font-medium text-brand-gray-dim'>Job Title</h4>
 					</div>
 					<div className='lg:col-span-3'>
 						<h4 className='font-medium text-system-primary-text'>{user && user.JobTitle}</h4>
 					</div>
+
 					<div>
 						<h4 className='font-medium text-brand-gray-dim'>Company Name</h4>
 					</div>
 					<div className='lg:col-span-3'>
 						<h4 className='font-medium text-system-primary-text'>{user && user.CompanyName}</h4>
 					</div>
-					<div>
-						<h4 className='font-medium text-brand-gray-dim'>Country</h4>
-					</div>
-					<div className='lg:col-span-3'>
-						<h4 className='font-medium text-system-primary-text'>{user && user.Country}</h4>
-					</div>
+					{isCurrentUser === true ? (
+						<>
+							<div>
+								<h4 className='font-medium text-brand-gray-dim'>City</h4>
+							</div>
+							<div className='lg:col-span-3'>
+								<h4 className='font-medium text-system-primary-text'>{user && user.City}</h4>
+							</div>
+						</>
+					) : (
+						<>
+							{user && user?.IsPrivate && (
+								<>
+									{user?.IsPrivate === false ? (
+										<>
+											<div>
+												<h4 className='font-medium text-brand-gray-dim'>City</h4>
+											</div>
+											<div className='lg:col-span-3'>
+												<h4 className='font-medium text-system-primary-text'>{user && user.City}</h4>
+											</div>
+										</>
+									) : (
+										<></>
+									)}
+								</>
+							)}
+						</>
+					)}
+
+					{isCurrentUser === true ? (
+						<>
+							<div>
+								<h4 className='font-medium text-brand-gray-dim'>Country</h4>
+							</div>
+							<div className='lg:col-span-3'>
+								<h4 className='font-medium text-system-primary-text'>{user && user.Country}</h4>
+							</div>
+						</>
+					) : (
+						<>
+							{user && user?.IsPrivate && (
+								<>
+									{user?.IsPrivate === false ? (
+										<>
+											<div>
+												<h4 className='font-medium text-brand-gray-dim'>Country</h4>
+											</div>
+											<div className='lg:col-span-3'>
+												<h4 className='font-medium text-system-primary-text'>{user && user.Country}</h4>
+											</div>
+										</>
+									) : (
+										<></>
+									)}
+								</>
+							)}
+						</>
+					)}
 
 					<div>
 						<h4 className='font-medium text-brand-gray-dim'>Bio</h4>
 					</div>
 					<div className='lg:col-span-3'>
-						<h4 className='font-medium text-system-primary-text whitespace-pre-line'>{user && user.About}</h4>
+						<h4 className='font-medium text-system-primary-text whitespace-pre-line'>{user && user?.About}</h4>
 					</div>
 
 					{isCurrentUser && (
@@ -452,6 +550,19 @@ const AboutProfile = ({ user, getUserDetails, isCurrentUser }) => {
 									</div>
 								</>
 							)}
+						</>
+					)}
+
+					{isCurrentUser === true && user && !user?.IsPrivate && (
+						<>
+							<div>
+								<h4 className='font-medium text-brand-gray-dim'>Email & Location Privacy</h4>
+							</div>
+							<div className='lg:col-span-3'>
+								<h4 className='font-medium text-system-primary-text whitespace-pre-line'>
+									{user && user?.IsPrivate && <>{user?.IsPrivate === true ? 'Private' : 'Public'}</>}
+								</h4>
+							</div>
 						</>
 					)}
 				</div>

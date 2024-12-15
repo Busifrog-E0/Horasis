@@ -271,20 +271,65 @@ const ShowUserProfile = () => {
 								</div>
 								<h4 className='font-semibold text-xl text-system-primary-text mt-3 lg:mt-6'>About</h4>
 								<div className='mt-4 flex  flex-col gap-4'>
-									{currentUserData.CurrentUser.UserId === userid && (
+									{currentUserData.CurrentUser.UserId === userid ? (
 										<div className='flex items-center gap-2'>
 											<div className='justify-end text-system-primary-accent'>
 												<img src={altmail} alt='' className='h-6 cursor-pointer' />
 											</div>
 											<h4 className='font-medium text-xl text-brand-gray-dim truncate'>{user && user.Email}</h4>
 										</div>
+									) : (
+										<>
+											{user && user?.IsPrivate && (
+												<>
+													{user?.IsPrivate === false ? (
+														<>
+															<div className='flex items-center gap-2'>
+																<div className='justify-end text-system-primary-accent'>
+																	<img src={altmail} alt='' className='h-6 cursor-pointer' />
+																</div>
+																<h4 className='font-medium text-xl text-brand-gray-dim truncate'>
+																	{user && user.Email}
+																</h4>
+															</div>
+														</>
+													) : (
+														<></>
+													)}
+												</>
+											)}
+										</>
 									)}
-									<div className='flex items-center gap-2'>
-										<div className='justify-end text-system-primary-accent'>
-											<img src={globe} alt='' className='h-6 cursor-pointer' />
+									{currentUserData.CurrentUser.UserId === userid ? (
+										<div className='flex items-center gap-2'>
+											<div className='justify-end text-system-primary-accent'>
+												<img src={globe} alt='' className='h-6 cursor-pointer' />
+											</div>
+											<h4 className='font-medium text-xl text-brand-gray-dim truncate'>{user && user.Country}</h4>
 										</div>
-										<h4 className='font-medium text-xl text-brand-gray-dim truncate'>{user && user.Country}</h4>
-									</div>
+									) : (
+										<>
+											{user && user?.IsPrivate && (
+												<>
+													{user?.IsPrivate === false ? (
+														<>
+															<div className='flex items-center gap-2'>
+																<div className='justify-end text-system-primary-accent'>
+																	<img src={globe} alt='' className='h-6 cursor-pointer' />
+																</div>
+																<h4 className='font-medium text-xl text-brand-gray-dim truncate'>
+																	{user && user.Country}
+																</h4>
+															</div>
+														</>
+													) : (
+														<></>
+													)}
+												</>
+											)}
+										</>
+									)}
+
 									<div className='flex items-center gap-2'>
 										<div className='justify-end text-system-primary-accent'>
 											<img src={job} alt='' className='h-6 cursor-pointer' />
