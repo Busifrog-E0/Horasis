@@ -57,6 +57,9 @@ const GetUsers = async (req, res) => {
         Filter['$or'] = [
             { 'FullName': { $regex: Keyword, $options: 'i' } },
             { 'Username': { $regex: Keyword, $options: 'i' } },
+            { 'IsPrivate': false, 'City': { $regex: Keyword, $options: 'i' } },
+            { 'IsPrivate': false, 'Country': { $regex: Keyword, $options: 'i' } },
+            { 'IsPrivate': false, 'Email': { $regex: Keyword, $options: 'i' } },
         ]
     }
     // @ts-ignore

@@ -18,6 +18,7 @@ const UserSchema = Joi.object({
     About: Joi.string().max(500).allow(""),
     Interests: Joi.array().items(TagsSchema).default([]),
     LinkedIn : Joi.string().allow(""),
+    IsPrivate: Joi.boolean(),
 });
 
 const InvitationDataSchema = Joi.object({
@@ -111,6 +112,7 @@ const ValidatePatchUsers = async (req, res, next) => {
         City: UserSchema.extract("City"),
         Industry: UserSchema.extract("Industry"),
         LinkedIn: UserSchema.extract("LinkedIn"),
+        IsPrivate: UserSchema.extract("IsPrivate"),
     }).validate(req.body, { stripUnknown: true });
     if (Result.error) {
         const message = Result.error.details.map((detail) => detail.message).join(', ');
