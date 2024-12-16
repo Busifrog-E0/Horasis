@@ -108,6 +108,9 @@ const ValidatePatchUsers = async (req, res, next) => {
         About: UserSchema.extract("About"),
         JobTitle: UserSchema.extract("JobTitle"),
         Interests : UserSchema.extract("Interests"),
+        City: UserSchema.extract("City"),
+        Industry: UserSchema.extract("Industry"),
+        LinkedIn: UserSchema.extract("LinkedIn"),
     }).validate(req.body, { stripUnknown: true });
     if (Result.error) {
         const message = Result.error.details.map((detail) => detail.message).join(', ');
