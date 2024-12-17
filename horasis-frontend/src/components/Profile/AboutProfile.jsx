@@ -51,6 +51,7 @@ const AboutProfile = ({ user, getUserDetails, isCurrentUser }) => {
 		Country: user?.Country,
 		About: user?.About,
 		LinkedIn: user?.LinkedIn,
+		City: user?.City,
 		Interests: user?.Interests ? user?.Interests : [],
 		IsPrivate: user?.IsPrivate ? user?.IsPrivate : false,
 	})
@@ -291,6 +292,22 @@ const AboutProfile = ({ user, getUserDetails, isCurrentUser }) => {
 							/>
 							{errorObj['CompanyName'] != undefined && <p className='text-brand-red m-0'>{errorObj['CompanyName']}</p>}
 						</div>
+						<div>
+							<h1 className='text-system-primary-text font-medium text-lg'>City</h1>
+							{/* {errorObj[field] != undefined ? { borderColor: 'red' } : {}} */}
+							<Input
+								className='px-4 py-3 rounded-xl'
+								width='full'
+								name='city'
+								placeholder='Ex. Melbourne'
+								setValue={(e) => {
+									validateSingle({ ['City']: e }, 'City')
+								}}
+								value={updateFormValue.City}
+								type='text'
+							/>
+							{errorObj['City'] != undefined && <p className='text-brand-red m-0'>{errorObj['City']}</p>}
+						</div>
 						{/* <div>
               <h1 className='text-system-primary-text font-medium text-lg'>Country</h1>
             
@@ -370,7 +387,7 @@ const AboutProfile = ({ user, getUserDetails, isCurrentUser }) => {
 							}}
 							size='md'
 							variant='black'
-							// width='full'
+						// width='full'
 						>
 							Submit
 						</Button>
@@ -587,7 +604,7 @@ export const SelectedTag = ({ tag, removeTag }) => {
 	)
 }
 
-export const SearchTags = ({ placeholder = 'Add your interests', data, addTag = () => {} }) => {
+export const SearchTags = ({ placeholder = 'Add your interests', data, addTag = () => { } }) => {
 	const [searchKey, setSearchKey] = useState('') // Local state for search key
 	const [filteredData, setFilteredData] = useState(data) // State for filtered data
 
