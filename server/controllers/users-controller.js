@@ -378,6 +378,7 @@ const GetUsersByRole = async (req, res) => {
     }
     // @ts-ignore
     Filter.Roles = Filter.Role === "User" ? ["User"] : { $all: ["User", "Admin"] };
+    // @ts-ignore
     delete Filter.Role;
     // @ts-ignore
     const Users = await ReadUsers(Filter, NextId, Limit, OrderBy);
