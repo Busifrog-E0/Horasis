@@ -24,7 +24,7 @@ export const extractLinkedInUsername = (url) => {
 	const match = url.match(pattern)
 
 	// Return the matched username or null if not found
-	return match ? `in @${match[1]}` : null
+	return match ? `@${match[1]}` : null
 }
 
 const AboutProfile = ({ user, getUserDetails, isCurrentUser }) => {
@@ -56,6 +56,7 @@ const AboutProfile = ({ user, getUserDetails, isCurrentUser }) => {
 		IsPrivate: user?.IsPrivate ? user?.IsPrivate : false,
 	})
 
+
 	const validateSingle = (value, key, callback) => {
 		setUpdateFormValue({ ...updateFormValue, ...value })
 		const { error, warning } = updateValidation.extract(key).validate(value[key], {
@@ -73,8 +74,8 @@ const AboutProfile = ({ user, getUserDetails, isCurrentUser }) => {
 			}
 		}
 	}
-	const validate = (callback) => {
-		const { error, warning } = updateValidation.validate(updateFormValue, {
+	const validate = (callback, formValue) => {
+		const { error, warning } = updateValidation.validate({ ...updateFormValue, ...formValue }, {
 			abortEarly: false,
 			stripUnknown: true,
 		})
@@ -85,7 +86,7 @@ const AboutProfile = ({ user, getUserDetails, isCurrentUser }) => {
 		} else {
 			setErrorObj({})
 			if (callback) {
-				callback()
+				callback({ ...updateFormValue, ...formValue })
 			}
 		}
 		// callback()
@@ -116,11 +117,11 @@ const AboutProfile = ({ user, getUserDetails, isCurrentUser }) => {
 		)
 	}
 
-	const updateProfile = () => {
+	const updateProfile = (formValue) => {
 		setIsLoading(true)
 		patchItem(
 			`users/${currentUserData.CurrentUser.UserId}`,
-			updateFormValue,
+			formValue ? formValue : updateFormValue,
 			(result) => {
 				getUserDetails()
 				setIsLoading(false)
@@ -357,7 +358,7 @@ const AboutProfile = ({ user, getUserDetails, isCurrentUser }) => {
 							/>
 							{errorObj['About'] != undefined && <p className='text-brand-red m-0'>{errorObj['About']}</p>}
 						</div>
-						<div>
+						{/* <div>
 							<div
 								className={`flex items-center  gap-2 border   border-system-primary-bg justify-between  py-2 px-4 rounded-xl `}
 								onClick={(e) => {
@@ -367,7 +368,7 @@ const AboutProfile = ({ user, getUserDetails, isCurrentUser }) => {
 								<div>
 									<h1 className='text-system-primary-text font-medium '>Email & Location Privacy</h1>
 									<p className='text-brand-gray mt-1 mb-2 text-sm'>
-										Allow people visiting your profile to view your email and location.
+										Restrict people visiting your profile to view your email and location.
 									</p>
 								</div>
 								<Switch
@@ -378,7 +379,7 @@ const AboutProfile = ({ user, getUserDetails, isCurrentUser }) => {
 									}}
 								/>
 							</div>
-						</div>
+						</div> */}
 					</div>
 					<div className='mt-4 flex items-end justify-end'>
 						<Button
@@ -425,14 +426,14 @@ const AboutProfile = ({ user, getUserDetails, isCurrentUser }) => {
 							<div className='lg:col-span-3'>
 								<h4
 									className='font-semibold text-system-primary-text cursor-pointer hover:text-blue-500'
-									onClick={() => window.open(user.LinkedIn, '_blank')}>
+									onClick={() => window.open("https://" + user.LinkedIn, '_blank')}>
 									{user && extractLinkedInUsername(user.LinkedIn)}
 								</h4>
 							</div>
 						</>
 					)}
 
-					{isCurrentUser === true ? (
+					{(isCurrentUser === true || user && user.IsPrivate == false) ? (
 						<>
 							<div>
 								<h4 className='font-medium text-brand-gray-dim'>Email</h4>
@@ -475,7 +476,7 @@ const AboutProfile = ({ user, getUserDetails, isCurrentUser }) => {
 					<div className='lg:col-span-3'>
 						<h4 className='font-medium text-system-primary-text'>{user && user.CompanyName}</h4>
 					</div>
-					{isCurrentUser === true ? (
+					{(isCurrentUser === true || user && user.IsPrivate == false) ? (
 						<>
 							<div>
 								<h4 className='font-medium text-brand-gray-dim'>City</h4>
@@ -505,7 +506,7 @@ const AboutProfile = ({ user, getUserDetails, isCurrentUser }) => {
 						</>
 					)}
 
-					{isCurrentUser === true ? (
+					{(isCurrentUser === true || user && user.IsPrivate == false) ? (
 						<>
 							<div>
 								<h4 className='font-medium text-brand-gray-dim'>Country</h4>
@@ -570,19 +571,30 @@ const AboutProfile = ({ user, getUserDetails, isCurrentUser }) => {
 						</>
 					)}
 
-					{isCurrentUser === true && user && !user?.IsPrivate && (
-						<>
-							<div>
-								<h4 className='font-medium text-brand-gray-dim'>Email & Location Privacy</h4>
-							</div>
-							<div className='lg:col-span-3'>
-								<h4 className='font-medium text-system-primary-text whitespace-pre-line'>
-									{user && user?.IsPrivate && <>{user?.IsPrivate === true ? 'Private' : 'Public'}</>}
-								</h4>
-							</div>
-						</>
-					)}
+
 				</div>
+				{isCurrentUser && <div className='mt-12'>
+					<div
+						className={`flex items-center  gap-2 border   border-system-primary-bg justify-between  py-2 px-4 rounded-xl `}
+						onClick={(e) => {
+							e.stopPropagation()
+							// validateSingle({ ['IsPrivate']: !updateFormValue.IsPrivate })
+						}}>
+						<div>
+							<h1 className='text-system-primary-text font-medium '>Email & Location Privacy</h1>
+							<p className='text-brand-gray mt-1 mb-2 text-sm'>
+								Restrict people visiting your profile to view your email and location.
+							</p>
+						</div>
+						<Switch
+							checked={updateFormValue?.IsPrivate}
+							onChange={(e) => {
+								e.stopPropagation()
+								validate(updateProfile, { ['IsPrivate']: !updateFormValue.IsPrivate })
+							}}
+						/>
+					</div>
+				</div>}
 			</div>
 		</>
 	)

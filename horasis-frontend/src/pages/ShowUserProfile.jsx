@@ -20,7 +20,7 @@ import useUpdateData from '../hooks/useUpdateData'
 import useWindowSize from '../hooks/useWindowSize'
 import { useAuth } from '../utils/AuthProvider'
 
-const UserProfileConnectComponent = ({ profile, connectCallback = () => {} }) => {
+const UserProfileConnectComponent = ({ profile, connectCallback = () => { } }) => {
 	const navigate = useNavigate()
 	const { addUser } = useChatPopup()
 	const { width } = useWindowSize()
@@ -141,15 +141,14 @@ const UserProfileConnectComponent = ({ profile, connectCallback = () => {} }) =>
 	return <>{renderButtons()}</>
 }
 
-const UserProfileFollowComponent = ({ profile, followCallback = () => {}, setIsLoading }) => {
+const UserProfileFollowComponent = ({ profile, followCallback = () => { }, setIsLoading }) => {
 	const { followUser, unFollowUser } = useFollow()
 	return (
 		<Button
 			variant={profile.IsFollowing ? 'white' : 'black'}
 			width='full'
-			className={`rounded-full font-semibold shadow-sm ${
-				profile.IsFollowing ? 'bg-system-secondary-accent text-system-primary-accent' : ''
-			}`}
+			className={`rounded-full font-semibold shadow-sm ${profile.IsFollowing ? 'bg-system-secondary-accent text-system-primary-accent' : ''
+				}`}
 			size='md'
 			onClick={() => {
 				profile.IsFollowing
@@ -231,13 +230,13 @@ const ShowUserProfile = () => {
 											className='w-24 lg:w-60 h-24 lg:h-60 rounded-full object-cover'
 											src={user.ProfilePicture}
 											alt='Rounded avatar'
-											onClick={() => {}}
+											onClick={() => { }}
 										/>
 									</div>
 								) : (
 									<div
 										className='w-24 lg:w-60 h-24 lg:h-60 rounded-full flex items-center justify-center border-2 border-dashed bg-brand-light-gray'
-										onClick={() => {}}>
+										onClick={() => { }}>
 										<img src={avatar} className='object-cover h-full w-full rounded-lg' />
 									</div>
 								)}
@@ -280,7 +279,7 @@ const ShowUserProfile = () => {
 										</div>
 									) : (
 										<>
-											{user && user?.IsPrivate && (
+											{user && (
 												<>
 													{user?.IsPrivate === false ? (
 														<>
@@ -305,11 +304,18 @@ const ShowUserProfile = () => {
 											<div className='justify-end text-system-primary-accent'>
 												<img src={globe} alt='' className='h-6 cursor-pointer' />
 											</div>
-											<h4 className='font-medium text-xl text-brand-gray-dim truncate'>{user && user.Country}</h4>
+											<h4 className='font-medium text-xl text-brand-gray-dim truncate'>
+												{user && (user.City || user.Country) && (
+													<>
+														{user.City && <span>{user.City}, </span>}
+														{user.Country && <span>{user.Country}</span>}
+													</>
+												)}
+											</h4>
 										</div>
 									) : (
 										<>
-											{user && user?.IsPrivate && (
+											{user && (
 												<>
 													{user?.IsPrivate === false ? (
 														<>
@@ -318,7 +324,12 @@ const ShowUserProfile = () => {
 																	<img src={globe} alt='' className='h-6 cursor-pointer' />
 																</div>
 																<h4 className='font-medium text-xl text-brand-gray-dim truncate'>
-																	{user && user.Country}
+																	{user && (user.City || user.Country) && (
+																		<>
+																			{user.City && <span>{user.City}, </span>}
+																			{user.Country && <span>{user.Country}</span>}
+																		</>
+																	)}
 																</h4>
 															</div>
 														</>
@@ -350,7 +361,7 @@ const ShowUserProfile = () => {
 											</div>
 											<h4
 												className='font-semibold text-xl text-brand-gray-dim truncate cursor-pointer hover:text-sky-600'
-												onClick={() => window.open(user.LinkedIn, '_blank')}>
+												onClick={() => window.open("https://" + user.LinkedIn, '_blank')}>
 												{user && extractLinkedInUsername(user.LinkedIn)}
 											</h4>
 										</div>
