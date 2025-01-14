@@ -230,7 +230,7 @@ const NewStreaming = () => {
 							// console.log(participant?.UserName,'removed from participants')
 
 							setSpeakers((prevSpeakers) => [...prevSpeakers, { ...participant, Role: newRole }])
-							subscribeToUser(userId);
+							subscribeToUser(userId)
 							if (participant.UserId === currentUserData?.CurrentUser?.UserId) {
 								setRole('Speaker')
 							}
@@ -243,7 +243,7 @@ const NewStreaming = () => {
 							// console.log(speaker?.UserName,'removed from speakers')
 
 							setParticipants((prevParticipants) => [...prevParticipants, { ...speaker, Role: newRole }])
-							unsubscribeFromUser(userId);
+							unsubscribeFromUser(userId)
 							if (speaker.UserId === currentUserData?.CurrentUser?.UserId) {
 								setRole('Member')
 							}
@@ -385,7 +385,7 @@ const NewStreaming = () => {
 		await handleRtmLogout()
 		setIsCalling((a) => !a)
 		setRtmClient(null)
-		setRole('Member')
+		// setRole('Member')
 		if (currentUserData.CurrentUser.Role.includes('Guest')) {
 			logout()
 			navigate('/home')
@@ -534,7 +534,7 @@ const NewStreaming = () => {
 									setMessages={setMessages}
 									speakers={speakers}
 									role={role}
-									onRoleChange={handleRoleChange}
+									onRoleChange={() => {}}
 								/>
 							</div>
 
@@ -559,7 +559,7 @@ const NewStreaming = () => {
 										setMessages={setMessages}
 										speakers={speakers}
 										role={role}
-										onRoleChange={handleRoleChange}
+										onRoleChange={() => {}}
 									/>
 								</Modal.Body>
 							</Modal>

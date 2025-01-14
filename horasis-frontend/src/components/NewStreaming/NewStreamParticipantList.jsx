@@ -73,7 +73,9 @@ const NewStreamParticipantList = ({
 											<div
 												key={user?.UserId}
 												className='flex flex-col items-center cursor-pointer'
-												onClick={() => onRoleChange(user?.UserId, user?.Role)}>
+												// onClick={() => onRoleChange(user?.UserId, user?.Role)}
+												
+												>
 												<img
 													src={user?.UserAvatar ? user?.UserAvatar : avatar}
 													alt=''
@@ -107,7 +109,9 @@ const NewStreamParticipantList = ({
 											<div
 												key={user?.UserId}
 												className='flex flex-col items-center cursor-pointer'
-												onClick={() => onRoleChange(user?.UserId, user?.Role)}>
+												// onClick={() => onRoleChange(user?.UserId, user?.Role)}
+												
+												>
 												<img
 													src={user?.UserAvatar ? user?.UserAvatar : avatar}
 													alt=''
