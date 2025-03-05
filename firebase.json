@@ -1,6 +1,7 @@
 {
   "hosting": {
-    "public": "dist",
+    "site": "tcs-networking",
+    "public": "horasis-frontend/dist",
     "ignore": [
       "firebase.json",
       "**/.*",
