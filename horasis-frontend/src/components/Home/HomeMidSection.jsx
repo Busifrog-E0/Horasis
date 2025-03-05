@@ -1,8 +1,8 @@
 import AboutUsImage from '../../assets/images/about-us-image.png'
 import GlobalEventImage from '../../assets/images/global-event-image.png'
-import experttraining  from '../../assets/images/home/experttraining.svg'
-import globalmeeting  from '../../assets/images/home/globalmeeting.svg'
-import wideconnections  from '../../assets/images/home/wideconnections.svg'
+import experttraining from '../../assets/images/home/experttraining.svg'
+import globalmeeting from '../../assets/images/home/globalmeeting.svg'
+import wideconnections from '../../assets/images/home/wideconnections.svg'
 
 const HomeMidSection = () => {
 	return (
@@ -11,7 +11,7 @@ const HomeMidSection = () => {
 				<div className='grid grid-cols-1 md:grid-cols-3 items-center md:items-baseline gap-10 w-11/12 md:w-9/12'>
 					<div className='bg-system-secondary-bg shadow-md w-full  md:max-w-96 rounded-md p-8 flex flex-col gap-4'>
 						<div className=' h-20 w-20 rounded-lg flex items-center justify-center text-white'>
-						<img src={globalmeeting} alt="" />
+							<img src={globalmeeting} alt="" />
 
 						</div>
 						<p className='text-xl font-medium'>Global Meeting</p>
@@ -28,7 +28,7 @@ const HomeMidSection = () => {
 					</div>
 					<div className='bg-system-secondary-bg shadow-md w-full  md:max-w-96 rounded-md p-8 flex flex-col gap-4'>
 						<div className=' h-20 w-20 rounded-lg flex items-center justify-center text-white'>
-						<img src={wideconnections} alt="" />
+							<img src={wideconnections} alt="" />
 						</div>
 						<p className='text-xl font-medium'>Wide Connection</p>
 						<div className='h-1 w-10 bg-system-primary-accent'></div>
@@ -62,7 +62,7 @@ const HomeMidSection = () => {
 							<p className='text-3xl font-bold text-[#252B42]'>Join the Global Event</p>
 							<p className='text-[#747474]'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Cumque harum tempora error voluptatem maxime officiis, earum hic quod non alias distinctio illo dolores quae.</p>
 							<button className='w-1/2 bg-system-secondary-bg text-system-primary-accent px-6 py-3 rounded-full font-semibold'>
-								Join Horasis
+								Join TCS Networking
 							</button>
 						</div>
 					</div>

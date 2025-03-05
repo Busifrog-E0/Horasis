@@ -1,4 +1,4 @@
-const SearchBar = ({ placeholder = 'Search Horasis', value, onClickSearch, onChange }) => {
+const SearchBar = ({ placeholder = 'Search TCS Networking Platform', value, onClickSearch, onChange }) => {
 	return (
 		<>
 			<div className='border border-system-primary-border bg-system-secondary-bg overflow-hidden rounded-lg w-full'>

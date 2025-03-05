@@ -2,7 +2,6 @@ import { useContext } from 'react'
 import EmptyMembers from '../Common/EmptyMembers'
 import { AuthContext } from '../../utils/AuthProvider'
 import { useNavigate } from 'react-router-dom'
-import InsightTab from './InsightTab'
 import ArticlesTab from '../Articles/ArticleTab'
 
 const InsightsList = ({ data = [], emptyText }) => {

@@ -7,7 +7,7 @@ const HeroSection = () => {
 					<div className='flex flex-col gap-10 justify-center order-last md:order-first'>
 						<div>
 							<div className='flex flex-col gap-4'>
-								<h4 className='font-bold text-6xl text-system-secondary-bg'>Horasis</h4>
+								<h4 className='font-bold text-6xl text-system-secondary-bg'>TCS Networking Platform</h4>
 								<h4 className=' text-3xl md:text-4xl text-system-secondary-bg'>Global Visions Community</h4>
 							</div>
 							<h4 className='text-md md:text-xl text-system-secondary-bg  md:w-4/5 lg:w-2/3'>
@@ -19,7 +19,7 @@ const HeroSection = () => {
 							<div className='rounded-full p-4 px-12 border border-system-secondary-bg bg-system-secondary-bg'>
 								<p
 									className='text-system-primary-accent text-xl font-bold cursor-pointer'
-									// onClick={() => navigate('/welcome')}
+								// onClick={() => navigate('/welcome')}
 								>
 									Learn More
 								</p>

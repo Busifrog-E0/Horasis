@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom"
-import LogoImage from '../../assets/images/logo-horasis.png'
+import LogoImage from '../../assets/images/logo-tcs.png'
 
 const Logo = ({ height = 50 }) => {
     return <NavLink to="/">

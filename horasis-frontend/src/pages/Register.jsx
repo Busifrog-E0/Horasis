@@ -264,7 +264,7 @@ const Register = () => {
 						<div>
 							<h1 className='text-3xl font-semibold text-system-primary-accent'>Register</h1>
 							<p className='text-system-primary-text text-lg font-medium'>
-								Login to your account to access all the features of Horasis!
+								Login to your account to access all the features of TCS Networking Platform!
 							</p>
 						</div>
 						{/* Name */}

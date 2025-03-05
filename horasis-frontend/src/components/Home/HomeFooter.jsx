@@ -15,10 +15,10 @@ const HomeFoot = (props, ref) => {
 			<div className='flex flex-col gap-10 items-center justify-center my-10 max-w-screen-2xl w-full'>
 				<div className='w-11/12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 text-system-secondary-bg gap-8 md:gap-8 lg:gap-4'>
 					<div className='flex flex-col gap-8'>
-						<h4 className='font-bold text-3xl'>Horasis</h4>
+						<h4 className='font-bold text-3xl'>TCS Networking Platform</h4>
 						<p>
-							Horasis is an independent, international think tank, headquartered in Zurich, Switzerland. Founded in
-							2005, by Frank-Jurgen Ritcher, former director of the World Economic Forum.
+							TCS Networking Platform is an independent, international think tank, headquartered in Paris, France. Founded in
+							2005, by John Doe.
 						</p>
 						<div className='flex gap-2 items-end'>
 							<img src={facebook} alt='' className='h-6' />
@@ -44,24 +44,24 @@ const HomeFoot = (props, ref) => {
 						<div className='flex flex-col gap-4'>
 							<div className='flex gap-2 items-center'>
 								<img src={telephone} alt='' className='h-5' />
-								<h1>: (406) 555-0120</h1>
+								<h1>: (313) 345-0120</h1>
 							</div>
 							<div className='flex gap-2 items-center'>
 								<img src={mailwhite} alt='' className='h-5' />
-								<h1>: mangcoding123@gmail.com</h1>
+								<h1>: mangc712@gmail.com</h1>
 							</div>
 							<div className='flex gap-2 items-start'>
 								<img src={locationwhite} alt='' className='h-5' />
 								<h1>
-									: 2972 Horasis Weistheimer Rd,
-									<br /> Zurich, Switzerland 85486
+									: 297 TCS Networking,  Weistheimer Rd,
+									<br /> Paris, Franc 8548
 								</h1>
 							</div>
 						</div>
 					</div>
 				</div>
 				<div>
-					<h1 className='text-system-secondary-bg'>Copyright &copy; 2024 Horasis</h1>
+					<h1 className='text-system-secondary-bg'>Copyright &copy; 2024 TCS Networking Platform</h1>
 				</div>
 			</div>
 		</div>

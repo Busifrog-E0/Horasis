@@ -15,7 +15,7 @@ const HomeHeader = ({ moveToDiscussions, moveToEvents, moveToContacts }) => {
 		<div className='flex items-center justify-center bg-system-primary-accent-transparent  px-4 sm:px-8 md:px-16 lg:px-20 py-4'>
 			<div className='flex items-center justify-between w-full max-w-screen-2xl'>
 				<div className='text-3xl font-bold  text-system-secondary-bg'>
-					<h4>Horasis</h4>
+					<h4>TCS Networking Platform</h4>
 				</div>
 				<div className='hidden md:flex gap-10 items-center justify-between'>
 					<nav className='flex text-system-secondary-bg gap-10'>

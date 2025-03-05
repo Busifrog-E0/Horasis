@@ -15,7 +15,7 @@ const ArticleMiniTab = () => {
                 </h4>
                 <div className="flex flex-row gap-3">
                     <p className="text-xs text-brand-gray-dim mt-1">
-                        Horasis Meeting Worldwide Barcelona
+                        TCS Networking Platform Meeting Worldwide Barcelona
                         Directly seated and inside for you to enjoy the show.
 
                     </p>

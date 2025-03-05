@@ -26,7 +26,7 @@ const EnterEvent = () => {
 	return (
 		<div className='flex flex-col items-center justify-center h-screen gap-2'>
 			<Spinner />
-			<p className='font-medium text-2xl text-system-primary-accent'>Connecting the Horasis Event...</p>
+			<p className='font-medium text-2xl text-system-primary-accent'>Connecting the TCS Networking Platform Event...</p>
 		</div>
 	)
 }
