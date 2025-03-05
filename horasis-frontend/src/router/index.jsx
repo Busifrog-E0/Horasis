@@ -122,7 +122,7 @@ export const router = createBrowserRouter(
 				</Route>
 				<Route path='/Events/:eventid/join' element={<NewStreaming />} />
 			</Route>
-			<Route path='/home' element={<Home />} />
+			{/* <Route path='/home' element={<Home />} /> */}
 			<Route path='EnterEvent' element={<Outlet />}>
 				<Route index path=':DocumentID' element={<EnterEvent />} />
 				<Route path='Events/:eventid/join' element={<NewStreaming />} />

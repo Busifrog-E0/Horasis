@@ -52,7 +52,7 @@ const DashboardHeader = () => {
 				<div className='flex flex-row justify-between items-center max-w-screen-2xl w-full px-2 xl:px-10'>
 					<div
 						className='text-4xl font-bold text-brand-violet scale-75 md:scale-90'
-						onClick={() => onClickItem('/home')}>
+						onClick={() => onClickItem('/login')}>
 						<Logo />
 					</div>
 					<div className='px-10 hidden lg:flex flex-row flex-wrap gap-8 flex-1'>

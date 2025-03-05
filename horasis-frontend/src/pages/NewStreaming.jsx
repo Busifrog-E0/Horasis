@@ -388,7 +388,7 @@ const NewStreaming = () => {
 		// setRole('Member')
 		if (currentUserData.CurrentUser.Role.includes('Guest')) {
 			logout()
-			navigate('/home')
+			navigate('/login')
 		}
 	}
 

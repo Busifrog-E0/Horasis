@@ -3,7 +3,7 @@ import { useAuth } from '../utils/AuthProvider'
 
 const AuthLayout = () => {
 	const { currentUserData } = useAuth()
-	return !currentUserData ? <Navigate to='home' /> : <Outlet />
+	return !currentUserData ? <Navigate to='login' /> : <Outlet />
 }
 
 export default AuthLayout
