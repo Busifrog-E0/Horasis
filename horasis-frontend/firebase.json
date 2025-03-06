@@ -1,7 +1,7 @@
 {
   "hosting": {
-    "site": "hsocialtest",
-    "public": "horasis-frontend/dist",
+    "site": "hsocial",
+    "public": "dist",
     "ignore": [
       "firebase.json",
       "**/.*",
