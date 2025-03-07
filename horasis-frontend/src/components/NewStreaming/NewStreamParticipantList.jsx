@@ -26,7 +26,6 @@ const NewStreamParticipantList = ({
 		}
 	}
 
-
 	// useEffect to run scrollToBottom when messages change
 	useEffect(() => {
 		scrollToBottom()
@@ -74,8 +73,7 @@ const NewStreamParticipantList = ({
 												key={user?.UserId}
 												className='flex flex-col items-center cursor-pointer'
 												// onClick={() => onRoleChange(user?.UserId, user?.Role)}
-												
-												>
+											>
 												<img
 													src={user?.UserAvatar ? user?.UserAvatar : avatar}
 													alt=''
@@ -110,8 +108,7 @@ const NewStreamParticipantList = ({
 												key={user?.UserId}
 												className='flex flex-col items-center cursor-pointer'
 												// onClick={() => onRoleChange(user?.UserId, user?.Role)}
-												
-												>
+											>
 												<img
 													src={user?.UserAvatar ? user?.UserAvatar : avatar}
 													alt=''
@@ -135,7 +132,7 @@ const NewStreamParticipantList = ({
 			)}
 			{activeTab === 'messages' && (
 				<>
-					<div className='overflow-y-auto flex-1 mb-20 w-full no-scrollbar'>
+					<div className='overflow-y-auto flex-1 mb-20 w-full '>
 						<div className='flex flex-col gap-2 my-2 '>
 							{messages.length > 0 &&
 								messages.map((message) => {

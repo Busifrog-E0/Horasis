@@ -1,16 +1,16 @@
 ﻿/* WebKit (Safari/Chrome) */
 ::-webkit-scrollbar {
-	height: 3px;
-	width: 10px;
+	width: 0.5rem;
 }
 
 ::-webkit-scrollbar-track {
-	background: #f1f1f1;
+	background: transparent;
+	margin: 0.5rem auto;
 	/* Track color */
 }
 
 ::-webkit-scrollbar-thumb {
-	background: #8c8c8c99;
+	background-color: rgba(126, 126, 126, 0.2);
 	/* Thumb color */
 	border-radius: 100px;
 	/* Rounded corners */
@@ -18,32 +18,32 @@
 
 /* Firefox */
 ::-moz-scrollbar {
-	height: 3px;
-	width: 10px;
+	/* height: 3px; */
+	width: 0.5rem;
 }
 
 /* Internet Explorer */
 ::-ms-scrollbar {
-	height: 3px;
-	width: 10px;
+	/* height: 3px; */
+	width: 0.5rem;
 }
 
 /* Edge */
 ::-ms-scrollbar {
-	height: 3px;
-	width: 10px;
+	/* height: 3px; */
+	width: 0.5rem;
 }
 
 /* Opera */
 ::-o-scrollbar {
-	height: 3px;
-	width: 10px;
+	/* height: 3px; */
+	width: 0.5rem;
 }
 
 /* Generic */
 scrollbar {
-	height: 3px;
-	width: 10px;
+	/* height: 3px; */
+	width: 0.5rem;
 }
 
 /* Hide scrollbar on mobile screens */

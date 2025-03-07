@@ -14,7 +14,7 @@ function DashboardLayout() {
 	return (
 		<div className='flex flex-col overflow-hidden w-full items-center' style={{ height: '100svh' }}>
 			<DashboardHeader />
-			<div className='h-full overflow-y-auto no-scrollbar overflow-x-hidden w-full max-w-screen-2xl '>
+			<div className='h-full overflow-y-auto  overflow-x-hidden w-full max-w-screen-2xl '>
 				<div ref={scrollRef}></div>
 				<Outlet />
 			</div>
