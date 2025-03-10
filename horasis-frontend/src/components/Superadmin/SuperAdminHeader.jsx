@@ -30,10 +30,10 @@ const SuperAdminHeader = () => {
 					</div>
 				</Modal.Body>
 			</Modal>
-			<div className='bg-system-secondary-bg py-2 md:py-3 px-1 lg:px-10  border-b border-system-file-border'>
+			<div className='bg-system-secondary-bg px-1 lg:px-10  border-b border-system-file-border'>
 				<div className='flex flex-row justify-between items-center'>
 					<div className='text-4xl font-bold text-brand-violet scale-75 md:scale-90'>
-						<Logo />
+						<Logo height={80} />
 					</div>
 					<div className='flex flex-row flex-wrap items-center gap-4 md:gap-4'>
 						<button type='button' className='inline-flex justify-center rounded-full border-2 border-system-error bg-system-secondary-bg text-md px-6 py-1 font-medium text-brand-red' onClick={openLogoutModal}>

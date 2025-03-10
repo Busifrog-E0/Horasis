@@ -259,7 +259,7 @@ const Register = () => {
 						style={{ borderRadius: 20 }}
 						className='bg-system-secondary-bg flex flex-col gap-4 login-form py-4 px-8 lg:px-16 lg:py-10 bg-red-500'>
 						<center>
-							<Logo height={80} />
+							<Logo height={100} />
 						</center>
 						<div>
 							<h1 className='text-3xl font-semibold text-system-primary-accent'>Register</h1>

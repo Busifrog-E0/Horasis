@@ -105,7 +105,7 @@ const SuperAdminLogin = () => {
 				style={{ borderRadius: 20 }}
 				className='bg-system-secondary-bg flex flex-col gap-4 login-form py-4 px-8 lg:px-16 lg:py-10'>
 				<center>
-					<Logo height={80} />
+					<Logo height={100} />
 				</center>
 
 				<div>

@@ -249,7 +249,7 @@ const ForgotPassword = () => {
 						style={{ borderRadius: 20 }}
 						className='bg-system-secondary-bg flex flex-col gap-4 login-form py-4 px-8 lg:px-16 lg:py-10'>
 						<center className='mb-10'>
-							<Logo height={60} />
+							<Logo height={80} />
 						</center>
 						{otpVerified ? (
 							<>
