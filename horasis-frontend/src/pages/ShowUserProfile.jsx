@@ -20,7 +20,7 @@ import useUpdateData from '../hooks/useUpdateData'
 import useWindowSize from '../hooks/useWindowSize'
 import { useAuth } from '../utils/AuthProvider'
 
-const UserProfileConnectComponent = ({ profile, connectCallback = () => { } }) => {
+const UserProfileConnectComponent = ({ profile, connectCallback = () => {} }) => {
 	const navigate = useNavigate()
 	const { addUser } = useChatPopup()
 	const { width } = useWindowSize()
@@ -31,9 +31,27 @@ const UserProfileConnectComponent = ({ profile, connectCallback = () => { } }) =
 			navigate(`/Chat/${profile.DocId}`)
 		}
 	}
-	const { isLoading: isPostLoading, postData } = usePostData({ onSuccess: connectCallback })
-	const { isLoading: isUpdateLoading, updateData } = useUpdateData({ onSuccess: connectCallback })
-	const { isLoading: isDeleteLoading, deleteData } = useDeleteData('', { onSuccess: connectCallback })
+	const { isLoading: isPostLoading, postData } = usePostData({
+		onSuccess: (result) => {
+			if (result === true) {
+				connectCallback()
+			}
+		},
+	})
+	const { isLoading: isUpdateLoading, updateData } = useUpdateData({
+		onSuccess: (result) => {
+			if (result === true) {
+				connectCallback()
+			}
+		},
+	})
+	const { isLoading: isDeleteLoading, deleteData } = useDeleteData('', {
+		onSuccess: (result) => {
+			if (result === true) {
+				connectCallback()
+			}
+		},
+	})
 
 	const sendConnectionRequest = () => {
 		return postData({
@@ -141,14 +159,15 @@ const UserProfileConnectComponent = ({ profile, connectCallback = () => { } }) =
 	return <>{renderButtons()}</>
 }
 
-const UserProfileFollowComponent = ({ profile, followCallback = () => { }, setIsLoading }) => {
+const UserProfileFollowComponent = ({ profile, followCallback = () => {}, setIsLoading }) => {
 	const { followUser, unFollowUser } = useFollow()
 	return (
 		<Button
 			variant={profile.IsFollowing ? 'white' : 'black'}
 			width='full'
-			className={`rounded-full font-semibold shadow-sm ${profile.IsFollowing ? 'bg-system-secondary-accent text-system-primary-accent' : ''
-				}`}
+			className={`rounded-full font-semibold shadow-sm ${
+				profile.IsFollowing ? 'bg-system-secondary-accent text-system-primary-accent' : ''
+			}`}
 			size='md'
 			onClick={() => {
 				profile.IsFollowing
@@ -230,13 +249,13 @@ const ShowUserProfile = () => {
 											className='w-24 lg:w-60 h-24 lg:h-60 rounded-full object-cover'
 											src={user.ProfilePicture}
 											alt='Rounded avatar'
-											onClick={() => { }}
+											onClick={() => {}}
 										/>
 									</div>
 								) : (
 									<div
 										className='w-24 lg:w-60 h-24 lg:h-60 rounded-full flex items-center justify-center border-2 border-dashed bg-brand-light-gray'
-										onClick={() => { }}>
+										onClick={() => {}}>
 										<img src={avatar} className='object-cover h-full w-full rounded-lg' />
 									</div>
 								)}
@@ -361,7 +380,7 @@ const ShowUserProfile = () => {
 											</div>
 											<h4
 												className='font-semibold text-xl text-brand-gray-dim truncate cursor-pointer hover:text-sky-600'
-												onClick={() => window.open("https://" + user.LinkedIn, '_blank')}>
+												onClick={() => window.open('https://' + user.LinkedIn, '_blank')}>
 												{user && extractLinkedInUsername(user.LinkedIn)}
 											</h4>
 										</div>
