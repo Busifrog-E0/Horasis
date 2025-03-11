@@ -31,9 +31,21 @@ const UserProfileConnectComponent = ({ profile, connectCallback = () => { } }) =
 			navigate(`/Chat/${profile.DocId}`)
 		}
 	}
-	const { isLoading: isPostLoading, postData } = usePostData({ onSuccess: connectCallback })
-	const { isLoading: isUpdateLoading, updateData } = useUpdateData({ onSuccess: connectCallback })
-	const { isLoading: isDeleteLoading, deleteData } = useDeleteData('', { onSuccess: connectCallback })
+	const { isLoading: isPostLoading, postData } = usePostData({ onSuccess:  (result) => {
+			if (result === true) {
+				connectCallback()
+			}
+		}, })
+	const { isLoading: isUpdateLoading, updateData } = useUpdateData({ onSuccess:  (result) => {
+			if (result === true) {
+				connectCallback()
+			}
+		}, })
+	const { isLoading: isDeleteLoading, deleteData } = useDeleteData('', { onSuccess:  (result) => {
+			if (result === true) {
+				connectCallback()
+			}
+		}, })
 
 	const sendConnectionRequest = () => {
 		return postData({

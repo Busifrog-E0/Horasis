@@ -111,7 +111,7 @@ const ArticleTab = ({
 							</div>
 						</div>
 					</div>
-					<div className={`${from === 'article' ? 'block' : 'hidden'}`}>
+					<div className={`${from === 'article' ? 'block' : 'hidden'} flex-shrink-0`}>
 						{isSaving || isUnsaving ? (
 							<>
 								<Spinner />
