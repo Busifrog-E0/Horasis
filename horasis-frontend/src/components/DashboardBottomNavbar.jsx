@@ -26,6 +26,18 @@ const DashboardBottomNavbar = () => {
 			<div className={`grid grid-cols-5 gap-3 p-2 `}>
 				<button
 					onClick={() => {
+						OnClickMenu('/Activities')
+					}}
+					type='button'
+					className={`py-2 inline-flex flex-col items-center justify-center px-5 gap-2 font-medium ${
+						location.pathname.includes('/Activities') ? 'bg-system-primary-accent-light rounded-md' : ''
+					}`}>
+					<img src={activity} alt='' className='h-8 cursor-pointer' />
+
+					<span className='text-xs -mb-1 text-system-primary-accent '>Activities</span>
+				</button>
+				<button
+					onClick={() => {
 						OnClickMenu('/Events')
 					}}
 					type='button'
@@ -42,18 +54,7 @@ const DashboardBottomNavbar = () => {
 
 					<span className='text-xs -mb-1 text-system-primary-accent '>Events</span>
 				</button>
-				<button
-					onClick={() => {
-						OnClickMenu('/Activities')
-					}}
-					type='button'
-					className={`py-2 inline-flex flex-col items-center justify-center px-5 gap-2 font-medium ${
-						location.pathname.includes('/Activities') ? 'bg-system-primary-accent-light rounded-md' : ''
-					}`}>
-					<img src={activity} alt='' className='h-8 cursor-pointer' />
 
-					<span className='text-xs -mb-1 text-system-primary-accent '>Activities</span>
-				</button>
 				<button
 					onClick={() => {
 						OnClickMenu('/Discussions')
