@@ -19,6 +19,14 @@ import usePostData from '../hooks/usePostData'
 import useUpdateData from '../hooks/useUpdateData'
 import useWindowSize from '../hooks/useWindowSize'
 import { useAuth } from '../utils/AuthProvider'
+import TimeLineTab from '../components/Activities/TimeLineTab'
+import AboutTab from '../components/Profile/Tabs/AboutTab'
+import MyConnectionsTab from '../components/Connections/MyConnectionsTab'
+import VideosTab from '../components/Profile/Tabs/VideosTab'
+import ImagesTab from '../components/Profile/Tabs/ImagesTab'
+import DiscussionsTab from '../components/Profile/Tabs/DiscussionsTab'
+import DocumentTab from '../components/Profile/Tabs/DocumentTab'
+import MyArticlesTab from '../components/Profile/Tabs/MyArticlesTab'
 
 const UserProfileConnectComponent = ({ profile, connectCallback = () => {} }) => {
 	const navigate = useNavigate()
@@ -193,13 +201,74 @@ const ShowUserProfile = () => {
 
 	const { scrollToTop } = useAuth()
 
-	const tabs = () => [
-		{
-			key: 0,
-			title: 'About',
-			render: () => <AboutProfile user={user} getUserDetails={getUser} isCurrentUser={false} />,
-		},
-	]
+	const tabs = () => {
+		if (user?.ConnectionStatus === 'Connected' || user?.IsFollowing === true) {
+			return [
+				{
+					key: 0,
+					title: 'Timeline',
+					render: () => (
+						<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
+							<TimeLineTab
+								api={`user/${user?.DocId}/activities`}
+								gapBnTabs='gap-7'
+								classNameForPost='py-5'
+								bordered={true}
+								showPostComponent={false}
+							/>
+						</div>
+					),
+				},
+				{
+					key: 1,
+					title: 'About',
+					render: () => <AboutProfile user={user} getUserDetails={getUser} isCurrentUser={false} />,
+				},
+				{
+					key: 2,
+					title: 'Connections',
+					render: () => <MyConnectionsTab showOther={true} userId={user.DocId} />,
+				},
+				{
+					key: 3,
+					title: 'Videos',
+					render: () => <VideosTab showOther={true} userId={user.DocId} />,
+				},
+				{
+					key: 4,
+					title: 'Photos',
+					render: () => <ImagesTab showOther={true} userId={user.DocId} />,
+				},
+				{
+					key: 5,
+					title: 'Discussions',
+					render: () => <DiscussionsTab showOther={true} userId={user.DocId} />,
+				},
+				{
+					key: 6,
+					title: 'Documents',
+					render: () => <DocumentTab showOther={true} userId={user.DocId} />,
+				},
+				{
+					key: 7,
+					title: 'Articles',
+					render: () => <MyArticlesTab showOther={true} userId={user.DocId} />,
+				},
+			]
+		} else {
+			return [
+				{
+					key: 0,
+					title: 'About',
+					render: () => <AboutProfile user={user} getUserDetails={getUser} isCurrentUser={false} />,
+				},
+			]
+		}
+	}
+
+	useEffect(() => {
+		setActiveTab(0)
+	}, [user])
 
 	const onTabChange = (item) => {
 		setActiveTab(item.key)
