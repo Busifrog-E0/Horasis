@@ -294,7 +294,7 @@ const AboutProfile = ({ user, getUserDetails, isCurrentUser }) => {
 							{errorObj['CompanyName'] != undefined && <p className='text-brand-red m-0'>{errorObj['CompanyName']}</p>}
 						</div>
 						<div>
-							<h1 className='text-system-primary-text font-medium text-lg'>City</h1>
+							<h1 className='text-system-primary-text font-medium text-lg'>City </h1>
 							{/* {errorObj[field] != undefined ? { borderColor: 'red' } : {}} */}
 							<Input
 								className='px-4 py-3 rounded-xl'
