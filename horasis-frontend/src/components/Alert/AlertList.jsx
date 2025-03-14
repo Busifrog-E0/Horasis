@@ -10,6 +10,7 @@ import { getNextId } from '../../utils/URLParams'
 import Spinner from '../ui/Spinner'
 import EmptyMembers from '../Common/EmptyMembers'
 import notification from '../../assets/icons/notification.svg'
+import { runOnce } from '../../utils/runOnce'
 
 const AlertList = () => {
 	const [isOpen, setIsOpen] = useState(false)
@@ -131,8 +132,29 @@ const AlertList = () => {
 		if (notifications.length > 0) hasAnyLeft(`${api}`, notifications)
 	}, [notifications])
 
+	const [unReadNotifications, setUnReadNotifications] = useState(10)
+	const getUnreadNotification = runOnce(() => {
+		getItem(
+			'unreadNotification',
+			(result) => {
+				setUnReadNotifications(result)
+			},
+			(err) => {
+				console.log(err)
+			},
+			updateCurrentUser,
+			currentUserData,
+			toast
+		)
+	})
+
 	useEffect(() => {
-		fetch()
+		if (isOpen === true) {
+			setUnReadNotifications(0)
+			fetch()
+		} else {
+			getUnreadNotification()
+		}
 	}, [filters, isOpen])
 
 	return (
@@ -145,6 +167,12 @@ const AlertList = () => {
 						onClick={() => setIsOpen(!isOpen)}>
 						<img src={notification} alt='' className='h-7' />
 					</button>
+					{unReadNotifications > 0 && (
+						<span
+							className={`min-w-4 w-auto h-4 bg-system-error rounded-full absolute top-0 right-0 flex items-center justify-center text-[10px] text-system-secondary-bg`}>
+							{unReadNotifications}
+						</span>
+					)}
 				</div>
 
 				{isOpen && (
