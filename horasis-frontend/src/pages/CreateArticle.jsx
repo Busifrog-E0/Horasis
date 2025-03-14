@@ -14,6 +14,7 @@ import Modal from '../components/ui/Modal'
 import { PostArticleSchema } from '../utils/schema/articles/articleValidation'
 import { postItem } from '../constants/operations'
 import ArticleMiniSection from '../components/Articles/ArticleMiniSection'
+import Spinner from '../components/ui/Spinner'
 
 const CreateArticle = () => {
 	const [activeStep, setActiveStep] = useState(1)
@@ -180,6 +181,11 @@ const CreateArticle = () => {
 				<Steps changeStep={changeStep} activeStep={activeStep} steps={steps} />
 				<h4 className='font-medium text-2xl text-system-primary-accent mt-5 mb-4'>Create an Article</h4>
 				<div className='p-6 bg-system-secondary-bg rounded-lg'>
+				{isImageUploading && (
+						<div className='absolute top-0 left-0 bg-system-secondary-bg-transparent w-full h-full flex items-center justify-center'>
+							<Spinner />
+						</div>
+					)}
 					{activeStep === 1 && (
 						<CreateArticleStep1
 							postArticleData={postArticleData}
