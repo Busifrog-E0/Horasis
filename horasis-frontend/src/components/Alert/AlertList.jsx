@@ -132,7 +132,7 @@ const AlertList = () => {
 		if (notifications.length > 0) hasAnyLeft(`${api}`, notifications)
 	}, [notifications])
 
-	const [unReadNotifications, setUnReadNotifications] = useState(10)
+	const [unReadNotifications, setUnReadNotifications] = useState(0)
 	const getUnreadNotification = runOnce(() => {
 		getItem(
 			'unreadNotification',
