@@ -30,12 +30,15 @@ import { ReadSpeakers } from '../databaseControllers/speakers-databaseController
 const GetNotifications = async (req, res) => {
     const { Filter, NextId, Limit, OrderBy } = req.query;
     // @ts-ignore
-    Filter.RecipientId = req.params.RecipientId;
+    const { UserId } = req.user;
+    const { RecipientId } = req.params;
+    // @ts-ignore
+    Filter.RecipientId = RecipientId;
     // @ts-ignore
     const Notifications = await ReadNotifications(Filter, NextId, Limit, OrderBy);
     const data = await Promise.all(Notifications.map(async Notification => await AddContentAndStatusToNotification(Notification)));
-    if (!NextId) {
-        UpdateManyNotifications({ HasSeen: true }, { HasSeen: false });
+    if (!NextId && UserId === RecipientId) {
+        UpdateManyNotifications({ HasSeen: true, RecipientId }, { HasSeen: false });
     }
     return res.json(data);
 }
@@ -72,7 +75,9 @@ const DeleteNotifications = async (req, res) => {
  * @returns {Promise<e.Response<number>>}
  */
 const GetUnreadNotification = async (req, res) => {
-    const Count = await CountNotifications({ HasSeen: false });
+    // @ts-ignore
+    const { UserId } = req.user;
+    const Count = await CountNotifications({ HasSeen: false, RecipientId: UserId });
     return res.json(Count);
 }
 
