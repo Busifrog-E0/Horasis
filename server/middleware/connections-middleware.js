@@ -2,7 +2,7 @@
 
 const GetConnections = (req, res, next) => {
     // @ts-ignore
-    req.query.Filter = { UserIds: req.user.UserId, Status: "Connected", ...req.query.Filter };
+    req.query.Filter = { UserIds: req.params.UserId, Status: "Connected", ...req.query.Filter };
     return next();
 }
 const GetConnectionsReceived = (req, res, next) => {
