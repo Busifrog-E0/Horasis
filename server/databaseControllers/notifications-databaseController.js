@@ -87,7 +87,7 @@ const RemoveNotifications = async (DocId) => {
 
 
 const CountNotifications = async (where) => {
-    return dataHandling.ReadCountCount("Notifications", where);
+    return dataHandling.ReadCount("Notifications", where);
 }
 
 export {
