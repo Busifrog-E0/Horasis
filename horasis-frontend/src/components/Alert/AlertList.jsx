@@ -135,7 +135,7 @@ const AlertList = () => {
 	const [unReadNotifications, setUnReadNotifications] = useState(0)
 	const getUnreadNotification = runOnce(() => {
 		getItem(
-			'unreadNotification',
+			`users/${currentUserData.CurrentUser.UserId}/unreadNotification`,
 			(result) => {
 				setUnReadNotifications(result)
 			},
