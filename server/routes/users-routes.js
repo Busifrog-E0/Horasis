@@ -67,7 +67,7 @@ router.patch('/users/:UserId/picture', decodeIDToken, ensureAuthorized("User"), 
     //@ts-ignore
     asyncHandler(PatchUsers))
 
-router.get('/users/:UserId/media', decodeIDToken, ensureAuthorized("User"), CheckSameUser, ValidateGetUserMedia, QueryParameterFormatting,
+router.get('/users/:UserId/media', decodeIDToken, ensureAuthorized("User"), ValidateGetUserMedia, QueryParameterFormatting,
     SwaggerDocs.get_Users_UserId_Media,
     //@ts-ignore
     asyncHandler(GetMedias))
