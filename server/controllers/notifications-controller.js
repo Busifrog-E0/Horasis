@@ -1,6 +1,6 @@
 import e from 'express';
 
-import { ReadOneFromNotifications, ReadNotifications, UpdateNotifications, CreateNotifications, RemoveNotifications, } from './../databaseControllers/notifications-databaseController.js';
+import { ReadOneFromNotifications, ReadNotifications, UpdateNotifications, CreateNotifications, RemoveNotifications, UpdateManyNotifications, CountNotifications, } from './../databaseControllers/notifications-databaseController.js';
 import { ReadOneFromUsers } from '../databaseControllers/users-databaseController.js';
 import { ReadOneFromActivities } from '../databaseControllers/activities-databaseController.js';
 import { ReadLikes } from '../databaseControllers/likes-databaseController.js';
@@ -33,7 +33,10 @@ const GetNotifications = async (req, res) => {
     Filter.RecipientId = req.params.RecipientId;
     // @ts-ignore
     const Notifications = await ReadNotifications(Filter, NextId, Limit, OrderBy);
-    const data = await Promise.all(Notifications.map(async Notification => await AddContentAndStatusToNotification(Notification)))
+    const data = await Promise.all(Notifications.map(async Notification => await AddContentAndStatusToNotification(Notification)));
+    if (!NextId) {
+        UpdateManyNotifications({ HasSeen: true }, { HasSeen: false });
+    }
     return res.json(data);
 }
 
@@ -48,6 +51,29 @@ const GetOneFromNotifications = async (req, res) => {
     const Notification = await ReadOneFromNotifications(NotificationId);
     const data = await AddContentAndStatusToNotification(Notification)
     return res.json(data);
+}
+
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ * @returns {Promise<e.Response<true>>}
+ */
+const DeleteNotifications = async (req, res) => {
+    const { NotificationId } = req.params;
+    await RemoveNotifications(NotificationId);
+    return res.json(true);
+}
+
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ * @returns {Promise<e.Response<number>>}
+ */
+const GetUnreadNotification = async (req, res) => {
+    const Count = await CountNotifications({ HasSeen: false });
+    return res.json(Count);
 }
 
 /**
@@ -594,21 +620,9 @@ const RemoveNotificationForEntity = async (EntityId) => {
     return Promise.all(Notifications.map(Notification => RemoveNotifications(Notification.DocId)));
 }
 
-/**
- * 
- * @param {e.Request} req 
- * @param {e.Response} res 
- * @returns {Promise<e.Response<true>>}
- */
-const DeleteNotifications = async (req, res) => {
-    const { NotificationId } = req.params;
-    await RemoveNotifications(NotificationId);
-    return res.json(true);
-}
-
 
 export {
-    GetNotifications, DeleteNotifications,
+    GetNotifications, DeleteNotifications, GetUnreadNotification,
     SendNotificationstoActivityMentions, SendNotificationstoCommentMentions, SendNotificationsforActivityLikes,
     SendNotificationsForFollow, SendNotificationForMemberRequest, SendNotificationForMemberRequestStatus, SendNotificationForMemberInvitation,
     SendNotificationToUser, SendNotificationForMemberJoin, SendNotificationsForConnectionAccept, SendNotificationsForConnectionRequest,
