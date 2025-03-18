@@ -6,6 +6,8 @@ import close from '../assets/icons/close.svg'
 import cover from '../assets/icons/cover.svg'
 import graysave from '../assets/icons/graysave.svg'
 import graysavefill from '../assets/icons/graysavefill.svg'
+import like from '../assets/icons/like.svg'
+import liked from '../assets/icons/liked.svg'
 import { useToast } from '../components/Toast/ToastService'
 import { useAuth } from '../utils/AuthProvider'
 
@@ -20,6 +22,8 @@ import useUpdateData from '../hooks/useUpdateData'
 import { getDateInWordsFormat } from '../utils/date'
 import useEntitySaveManager from '../hooks/useEntitySaveManager'
 import TagsList from '../components/Tags/TagsList'
+import ViewLikedMembers from '../components/Activities/Likes/ViewLikedMembers'
+import useEntityLikeManager from '../hooks/useEntityLikeManager'
 
 const SingleArticles = () => {
 	const navigate = useNavigate()
@@ -71,6 +75,13 @@ const SingleArticles = () => {
 			onCoverImageSet('')
 		}
 	}
+
+	const { isLiking, isUnliking, likeEntity, unlikeEntity } = useEntityLikeManager({
+		EntityId: article?.DocId,
+		Type: 'Article',
+		successCallback: getArticle,
+		errorCallback: () => {},
+	})
 
 	const { isSaving, isUnsaving, saveEntity, unsaveEntity } = useEntitySaveManager({
 		EntityId: article?.DocId,
@@ -152,6 +163,35 @@ const SingleArticles = () => {
 										<img src={camera} alt='' className='h-6 cursor-pointer' />
 									</div>
 								)}
+
+								<div
+									className={`inline-flex flex-col items-center justify-center w-12 h-12 p-3 overflow-hidden rounded-full border border-white bg-white cursor-pointer `}>
+									{isLiking || isUnliking ? (
+										<Spinner />
+									) : (
+										<div className='flex items-center gap-2'>
+											{article.HasLiked ? (
+												<img
+													src={liked}
+													className={`h-6 w-6 cursor-pointer text-system-error`}
+													onClick={(e) => {
+														e.stopPropagation()
+														unlikeEntity()
+													}}
+												/>
+											) : (
+												<img
+													src={like}
+													className={`h-6 w-6 cursor-pointer`}
+													onClick={(e) => {
+														e.stopPropagation()
+														likeEntity()
+													}}
+												/>
+											)}
+										</div>
+									)}
+								</div>
 								<div
 									className={`inline-flex items-center justify-center w-12 h-12 p-3 overflow-hidden rounded-full border border-white bg-white cursor-pointer `}>
 									{isSaving || isUnsaving ? (
