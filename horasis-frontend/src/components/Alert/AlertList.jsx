@@ -38,7 +38,7 @@ const AlertList = () => {
 	const [pageDisabled, setPageDisabled] = useState(true)
 	const [filters, setFilters] = useState({
 		OrderBy: 'Index',
-		Limit: 4,
+		Limit: 10,
 		Keyword: '',
 	})
 	const api = `users/${currentUserData.CurrentUser.UserId}/notifications`
@@ -181,7 +181,7 @@ const AlertList = () => {
 							<p className='text-brand-secondary text-md'>Notifications</p>
 						</div>
 						<div
-							className='max-h-96 overflow-y-auto'
+							className='max-h-[40rem] overflow-y-auto'
 							role='menu'
 							aria-orientation='vertical'
 							aria-labelledby='options-menu'>
