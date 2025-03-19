@@ -1,12 +1,13 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, forwardRef, useImperativeHandle } from 'react'
 import Cropper from 'react-easy-crop'
 
 import { getCroppedImg } from '../../../../utils/cropUtils'
 import { blobToUint8Array } from '../../../../utils/utils'
 import Button from '../../../ui/Button'
 import { useToast } from '../../../Toast/ToastService'
+import edit from '../../../../assets/icons/edit.svg'
 
-const CreatePodcastStep2 = ({ selectedImage, onImageSelect, fileFieldName }) => {
+const CreatePodcastStep2 = forwardRef(({ selectedImage, onImageSelect, fileFieldName }, ref) => {
 	const toast = useToast()
 	const fileInputRef = useRef(null)
 
@@ -57,6 +58,12 @@ const CreatePodcastStep2 = ({ selectedImage, onImageSelect, fileFieldName }) => 
 			})
 			setImageSrc(null)
 			setCropping(false) // Exit cropping mode
+			return {
+				FileType: 'image/jpeg',
+				FileData: fileDataByteArray,
+				FileName: 'cropped-podcast-image.jpg',
+				FileFieldName: fileFieldName,
+			}
 		} catch (e) {
 			console.error(e)
 			toast.open('error', 'Crop Error', 'An error occurred while cropping the image')
@@ -68,6 +75,15 @@ const CreatePodcastStep2 = ({ selectedImage, onImageSelect, fileFieldName }) => 
 		fileInputRef.current.click()
 	}
 
+	// Expose handleCropSave imperatively to parent components
+	useImperativeHandle(
+		ref,
+		() => ({
+			handleCropSave,
+		}),
+		[handleCropSave]
+	)
+
 	return (
 		<div className='flex flex-col gap-4'>
 			<div>
@@ -78,50 +94,49 @@ const CreatePodcastStep2 = ({ selectedImage, onImageSelect, fileFieldName }) => 
 					id='createDiscussionCoverPhotoPicker'
 					className='hidden'
 				/>
-				<div  className='flex  items-center justify-center'>
-
-				{cropping ? (
-					// Cropping UI
-					<div className='flex flex-col w-full gap-2'>
-						<div className='w-full h-60 rounded-md flex items-center justify-center relative'>
-							<Cropper
-								image={imageSrc}
-								crop={crop}
-								zoom={zoom}
-								aspect={1 / 1} // Aspect ratio for cover photo (1950x450)
-								onCropChange={setCrop}
-								onZoomChange={setZoom}
-								onCropComplete={onCropComplete}
-							/>
+				<div className='flex  items-center justify-center'>
+					{cropping ? (
+						// Cropping UI
+						<div className='flex flex-col w-full gap-2'>
+							<div className='w-full h-60 rounded-md flex items-center justify-center relative'>
+								<Cropper
+									image={imageSrc}
+									crop={crop}
+									zoom={zoom}
+									aspect={1 / 1} // Aspect ratio for cover photo (1950x450)
+									onCropChange={setCrop}
+									onZoomChange={setZoom}
+									onCropComplete={onCropComplete}
+								/>
+							</div>
+							{/* <Button onClick={handleCropSave} variant='black' width='full' className=' text-white py-2 px-4 rounded-md'>
+								Save Crop
+							</Button> */}
 						</div>
-						<Button onClick={handleCropSave} variant='black' width='full' className=' text-white py-2 px-4 rounded-md'>
-							Save Crop
-						</Button>
-					</div>
-				) : (
-					<div className='flex flex-row items-center justify-center mb-8'>
-						{selectedImage ? (
-							<label htmlFor='createDiscussionCoverPhotoPicker' className='w-full cursor-pointer'>
-								<div className='h-36 aspect-square bg-system-file-border rounded-lg flex flex-col items-center justify-center cursor-pointer overflow-hidden'>
-									<img src={selectedImage} className='object-cover h-full w-full' />
-								</div>
-							</label>
-						) : (
-							<label htmlFor='createDiscussionCoverPhotoPicker' className='w-full cursor-pointer'>
-								<div className='h-36 aspect-square bg-system-file-border rounded-lg flex flex-col items-center justify-center cursor-pointer overflow-hidden'>
-									<svg
-										className='text-brand-secondary h-8 w-8'
-										aria-hidden='true'
-										xmlns='http://www.w3.org/2000/svg'
-										fill='currentColor'
-										viewBox='0 0 20 20'>
-										<path d='m19.707 9.293-2-2-7-7a1 1 0 0 0-1.414 0l-7 7-2 2a1 1 0 0 0 1.414 1.414L2 10.414V18a2 2 0 0 0 2 2h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a2 2 0 0 0 2-2v-7.586l.293.293a1 1 0 0 0 1.414-1.414Z' />
-									</svg>
-								</div>
-							</label>
-						)}
-					</div>
-				)}
+					) : (
+						<div className='flex flex-row items-center justify-center mb-8'>
+							{selectedImage ? (
+								<label htmlFor='createDiscussionCoverPhotoPicker' className='w-full cursor-pointer'>
+									<div className='h-36 aspect-square bg-system-file-border rounded-lg flex flex-col items-center justify-center cursor-pointer overflow-hidden'>
+										<img src={selectedImage} className='object-cover h-full w-full' />
+									</div>
+								</label>
+							) : (
+								<label htmlFor='createDiscussionCoverPhotoPicker' className='w-full cursor-pointer'>
+									<div className='h-36 aspect-square bg-system-file-border rounded-lg flex flex-col items-center justify-center cursor-pointer overflow-hidden'>
+										<svg
+											className='text-brand-secondary h-8 w-8'
+											aria-hidden='true'
+											xmlns='http://www.w3.org/2000/svg'
+											fill='currentColor'
+											viewBox='0 0 20 20'>
+											<path d='m19.707 9.293-2-2-7-7a1 1 0 0 0-1.414 0l-7 7-2 2a1 1 0 0 0 1.414 1.414L2 10.414V18a2 2 0 0 0 2 2h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a2 2 0 0 0 2-2v-7.586l.293.293a1 1 0 0 0 1.414-1.414Z' />
+										</svg>
+									</div>
+								</label>
+							)}
+						</div>
+					)}
 				</div>
 
 				<h1 className='text-system-primary-text font-medium text-lg'>Upload Cover Photo</h1>
@@ -129,11 +144,24 @@ const CreatePodcastStep2 = ({ selectedImage, onImageSelect, fileFieldName }) => 
 					The cover photo will be used to communicate the header of your podcast.
 				</p>
 				{/* <p className='text-brand-gray mt-2 mb-2 text-base'>
-					For best result, upload an image that is 1950px by 450px or larger.
-				</p> */}
+						For best result, upload an image that is 1950px by 450px or larger.
+					</p> */}
 			</div>
+
+			{imageSrc && (
+				<div className='flex gap-2'>
+					<Button
+						onClick={handleClick}
+						size='md'
+						variant='outline'
+						className='text-sm outline-0 border-0 ring-0 shadow-none hover:bg-transparent p-0'>
+						<img src={edit} alt='' className='h-5 ' />
+						<span className='inline'>Change Image</span>
+					</Button>
+				</div>
+			)}
 		</div>
 	)
-}
+})
 
 export default CreatePodcastStep2
