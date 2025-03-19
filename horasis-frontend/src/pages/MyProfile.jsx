@@ -153,8 +153,24 @@ const MyProfile = () => {
 		)
 	}
 
-	const onProfileImageUpload = () => {
-		if (profileImageToUpload) {
+	const onProfileImageUpload = (imageToUpload) => {
+		if (imageToUpload) {
+			setIsImageUploading(true)
+			postItem(
+				'files/users',
+				imageToUpload,
+				(result) => {
+					onProfileImageSet(result.FileUrl)
+				},
+				(err) => {
+					setIsImageUploading(false)
+					console.error(err)
+				},
+				updateCurrentUser,
+				currentUserData,
+				toast
+			)
+		} else if (profileImageToUpload) {
 			setIsImageUploading(true)
 			postItem(
 				'files/users',
@@ -212,8 +228,25 @@ const MyProfile = () => {
 			toast
 		)
 	}
-	const onCoverImageUpload = () => {
-		if (coverImageToUpload) {
+	const onCoverImageUpload = (imageToUpload) => {
+		if (imageToUpload) {
+			setIsImageUploading(true)
+
+			postItem(
+				'files/users',
+				imageToUpload,
+				(result) => {
+					onCoverImageSet(result.FileUrl)
+				},
+				(err) => {
+					// console.log(err)
+					setIsImageUploading(false)
+				},
+				updateCurrentUser,
+				currentUserData,
+				toast
+			)
+		} else if (coverImageToUpload) {
 			setIsImageUploading(true)
 
 			postItem(

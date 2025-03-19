@@ -191,8 +191,13 @@ const SingleDiscussion = () => {
 			payload: { CoverPicture: url },
 		})
 	}
-	const onCoverImageUpload = () => {
-		if (coverImageToUpload) {
+	const onCoverImageUpload = (imageToUpload) => {
+		if (imageToUpload) {
+			postCoverUpload({
+				endpoint: 'files/users',
+				payload: imageToUpload,
+			})
+		} else if (coverImageToUpload) {
 			postCoverUpload({
 				endpoint: 'files/users',
 				payload: coverImageToUpload,
