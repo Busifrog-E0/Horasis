@@ -4,7 +4,7 @@ import { useToast } from '../../../Toast/ToastService'
 import { getCroppedImg } from '../../../../utils/cropUtils'
 import { blobToUint8Array } from '../../../../utils/utils'
 import Button from '../../../ui/Button'
-import change from '../../../../assets/icons/edit.svg'
+import edit from '../../../../assets/icons/edit.svg'
 
 const CreateArticleStep2 = forwardRef(({ selectedImage, onImageSelect, fileFieldName }, ref) => {
 	const toast = useToast()
@@ -154,7 +154,7 @@ const CreateArticleStep2 = forwardRef(({ selectedImage, onImageSelect, fileField
 						size='md'
 						variant='outline'
 						className='text-sm outline-0 border-0 ring-0 shadow-none hover:bg-transparent p-0'>
-						<img src={change} alt='' className='h-5 ' />
+						<img src={edit} alt='' className='h-5 ' />
 						<span className='inline'>Change Image</span>
 					</Button>
 				</div>

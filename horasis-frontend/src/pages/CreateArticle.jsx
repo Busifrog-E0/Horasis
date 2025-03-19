@@ -19,7 +19,7 @@ import Spinner from '../components/ui/Spinner'
 const CreateArticle = () => {
 	const [activeStep, setActiveStep] = useState(1)
 	const [isModalOpen, setIsModalOpen] = useState(false)
-	const createArticleStep2Ref = useRef(null)
+	const cropRef = useRef(null)
 
 	const navigate = useNavigate()
 
@@ -53,8 +53,8 @@ const CreateArticle = () => {
 	})
 
 	const handleParentCropSave = async () => {
-		if (createArticleStep2Ref.current && createArticleStep2Ref.current.handleCropSave) {
-			const imageToUpload = await createArticleStep2Ref.current.handleCropSave()
+		if (cropRef.current && cropRef.current.handleCropSave) {
+			const imageToUpload = await cropRef.current.handleCropSave()
 			return imageToUpload
 		}
 	}
@@ -221,7 +221,7 @@ const CreateArticle = () => {
 					)}
 					{activeStep === 2 && (
 						<CreateArticleStep2
-							ref={createArticleStep2Ref}
+							ref={cropRef}
 							selectedImage={selectedCoverImage}
 							onImageSelect={onCoverImageSelect}
 							fileFieldName='CoverPicture'
