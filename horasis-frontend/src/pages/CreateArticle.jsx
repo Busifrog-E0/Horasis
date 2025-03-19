@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import TodaysEventTab from '../components/Events/TodaysEventTab'
 import RecentlyActiveMemebrsTab from '../components/Members/RecentlyActiveMemebrsTab'
 import CurrentProfileTab from '../components/Profile/CurrentProfileTab'
@@ -19,6 +19,7 @@ import Spinner from '../components/ui/Spinner'
 const CreateArticle = () => {
 	const [activeStep, setActiveStep] = useState(1)
 	const [isModalOpen, setIsModalOpen] = useState(false)
+	const createArticleStep2Ref = useRef(null)
 
 	const navigate = useNavigate()
 
@@ -51,9 +52,17 @@ const CreateArticle = () => {
 		Tags: [],
 	})
 
-	const postArticle = () => {
+	const handleParentCropSave = async () => {
+		if (createArticleStep2Ref.current && createArticleStep2Ref.current.handleCropSave) {
+			const imageToUpload = await createArticleStep2Ref.current.handleCropSave()
+			return imageToUpload
+		}
+	}
+
+	const postArticle = async () => {
 		setIsModalOpen(false)
-		onCoverImageUpload()
+		const imageToUpload = await handleParentCropSave()
+		onCoverImageUpload(imageToUpload)
 	}
 
 	const [isImageUploading, setIsImageUploading] = useState(false)
@@ -88,8 +97,24 @@ const CreateArticle = () => {
 			toast
 		)
 	}
-	const onCoverImageUpload = () => {
-		if (coverImageToUpload) {
+	const onCoverImageUpload = (imageToUpload) => {
+		if (imageToUpload) {
+			setIsImageUploading(true)
+			postItem(
+				'files/users',
+				imageToUpload,
+				(result) => {
+					onCoverImageSet(result.FileUrl)
+				},
+				(err) => {
+					// console.log(err)
+					setIsImageUploading(false)
+				},
+				updateCurrentUser,
+				currentUserData,
+				toast
+			)
+		} else if (coverImageToUpload) {
 			setIsImageUploading(true)
 			postItem(
 				'files/users',
@@ -181,7 +206,7 @@ const CreateArticle = () => {
 				<Steps changeStep={changeStep} activeStep={activeStep} steps={steps} />
 				<h4 className='font-medium text-2xl text-system-primary-accent mt-5 mb-4'>Create an Article</h4>
 				<div className='p-6 bg-system-secondary-bg rounded-lg'>
-				{isImageUploading && (
+					{isImageUploading && (
 						<div className='absolute top-0 left-0 bg-system-secondary-bg-transparent w-full h-full flex items-center justify-center'>
 							<Spinner />
 						</div>
@@ -196,6 +221,7 @@ const CreateArticle = () => {
 					)}
 					{activeStep === 2 && (
 						<CreateArticleStep2
+							ref={createArticleStep2Ref}
 							selectedImage={selectedCoverImage}
 							onImageSelect={onCoverImageSelect}
 							fileFieldName='CoverPicture'
