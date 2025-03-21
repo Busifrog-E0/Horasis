@@ -24,6 +24,10 @@ import useTranslation from '../hooks/useTranslation'
 import { useAuth } from '../utils/AuthProvider'
 import { getDateInWordsFormat, gettimenow } from '../utils/date'
 import TagsList from '../components/Tags/TagsList'
+import Modal from '../components/ui/Modal'
+import PictureUpload from '../components/Profile/EditProfile/PictureUpload'
+import usePostData from '../hooks/usePostData'
+import useUpdateData from '../hooks/useUpdateData'
 
 const SingleEvent = () => {
 	const { eventid } = useParams()
@@ -262,9 +266,91 @@ const SingleEvent = () => {
 		homeLanguage,
 	} = useTranslation({ data: event, setData: setEvent, Type: 'Event' })
 
+	// cover photo upload logic
+	const [selectedCoverImage, setSelectedCoverImage] = useState(null)
+	const [coverImageToUpload, setCoverImageToUpload] = useState(null)
+	const [isCoverPictureOpen, setIsCoverPictureOpen] = useState(false)
+
+	const { isLoading: isCoverUploading, postData: postCoverUpload } = usePostData({
+		onSuccess: (result) => {
+			onCoverImageSet(result.FileUrl)
+		},
+	})
+	const { isLoading: isCoverPatching, updateData: updateCoverUpload } = useUpdateData({
+		onSuccess: (result) => {
+			if (result === true) {
+				setIsCoverPictureOpen(false)
+				getEvent()
+			}
+		},
+	})
+
+	const onCoverImageSelect = (imageData) => {
+		setCoverImageToUpload({ ...imageData, Type: 'Events' })
+		const tempUrl = URL.createObjectURL(new Blob([new Uint8Array(imageData.FileData)]))
+		setSelectedCoverImage(tempUrl)
+	}
+	const onCoverImageDelete = () => {
+		setCoverImageToUpload(null)
+		setSelectedCoverImage(null)
+	}
+
+	const onCoverImageSet = (url) => {
+		return updateCoverUpload({
+			endpoint: `events/${eventid}/coverPicture`,
+			payload: { CoverPicture: url },
+		})
+	}
+	const onCoverImageUpload = (imageToUpload) => {
+		if (imageToUpload) {
+			postCoverUpload({
+				endpoint: 'files/users',
+				payload: imageToUpload,
+			})
+		} else if (coverImageToUpload) {
+			postCoverUpload({
+				endpoint: 'files/users',
+				payload: coverImageToUpload,
+			})
+		} else {
+			onCoverImageSet('')
+		}
+	}
+
 	if (isLoadingEvent || isLoading) return <Spinner />
 	return (
 		<>
+			<Modal isOpen={isCoverPictureOpen} maxWidth='max-w-4xl'>
+				<Modal.Header>
+					<div className='p-2 flex items-center justify-between w-full'>
+						<p className='text-lg font-medium'>Cover Photo</p>
+						<button
+							onClick={() => {
+								setIsCoverPictureOpen(false)
+							}}
+							disabled={isCoverPatching || isCoverUploading}>
+							<img src={close} className='h-6  cursor-pointer' alt='' />
+						</button>
+					</div>
+				</Modal.Header>
+				<Modal.Body>
+					<p className='text-lg font-medium text-center'>
+						Your cover photo will be used to customize the header of your profile.
+					</p>
+					<div className=' flex flex-col items-center justify-center pt-10'>
+						<PictureUpload
+							altTitle='Cover Picture'
+							selectedImage={selectedCoverImage}
+							setSelectedImage={setSelectedCoverImage}
+							onImageSelect={onCoverImageSelect}
+							onImageDelete={onCoverImageDelete}
+							onUploadImage={onCoverImageUpload}
+							fileFieldName={'CoverPicture'}
+							isUploading={isCoverPatching || isCoverUploading}
+						/>
+					</div>
+				</Modal.Body>
+			</Modal>
 			<div className='overflow-hidden bg-system-primary-bg h-80 lg:h-96 relative'>
 				{event?.CoverPicture ? (
 					<img src={event?.CoverPicture} className='object-cover h-full w-full' />
@@ -278,12 +364,21 @@ const SingleEvent = () => {
 							onClick={handleGoBack}>
 							<img src={arrowback} alt='' className='h-6 cursor-pointer' />
 						</div>
-						{event?.Permissions?.IsAdmin && (
+						{/* NEED UPADTE FROM BACKEND API */}
+						{/* {event?.Permissions?.IsAdmin && (
 							<div
+								onClick={() => {
+									setIsCoverPictureOpen(true)
+									if (event?.CoverPicture) {
+										setSelectedCoverImage(event?.CoverPicture)
+									} else {
+										setSelectedCoverImage(null)
+									}
+								}}
 								className={`inline-flex items-center justify-center w-12 h-12 p-3 overflow-hidden rounded-full border border-white bg-white cursor-pointer`}>
 								<img src={camera} alt='' className='h-6 cursor-pointer' />
 							</div>
-						)}
+						)} */}
 					</div>
 					<div>
 						<h4 className='font-bold text-4xl text-white mb-2'>{event?.EventName}</h4>
