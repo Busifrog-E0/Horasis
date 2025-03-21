@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, forwardRef, useImperativeHandle } from 'react'
 import Cropper from 'react-easy-crop'
 
 import { useToast } from '../../../Toast/ToastService'
@@ -6,8 +6,9 @@ import { getCroppedImg } from '../../../../utils/cropUtils'
 import { blobToUint8Array } from '../../../../utils/utils'
 import Button from '../../../ui/Button'
 import imageIcon from '../../../../assets/icons/image.svg'
+import edit from '../../../../assets/icons/edit.svg'
 
-const CreateEventStep4 = ({ selectedImage, onImageSelect, fileFieldName }) => {
+const CreateEventStep4 = forwardRef(({ selectedImage, onImageSelect, fileFieldName }, ref) => {
 	const toast = useToast()
 	const fileInputRef = useRef(null)
 
@@ -54,6 +55,12 @@ const CreateEventStep4 = ({ selectedImage, onImageSelect, fileFieldName }) => {
 			})
 			setImageSrc(null)
 			setCropping(false) // Exit cropping mode
+			return {
+				FileType: 'image/jpeg',
+				FileData: fileDataByteArray,
+				FileName: 'cropped-cover-image.jpg',
+				FileFieldName: fileFieldName,
+			}
 		} catch (e) {
 			console.error(e)
 			toast.open('error', 'Crop Error', 'An error occurred while cropping the image')
@@ -63,6 +70,15 @@ const CreateEventStep4 = ({ selectedImage, onImageSelect, fileFieldName }) => {
 	const handleClick = () => {
 		fileInputRef.current.click()
 	}
+
+	// Expose handleCropSave imperatively to parent components
+	useImperativeHandle(
+		ref,
+		() => ({
+			handleCropSave,
+		}),
+		[handleCropSave]
+	)
 
 	return (
 		<div className='flex flex-col gap-4'>
@@ -89,9 +105,9 @@ const CreateEventStep4 = ({ selectedImage, onImageSelect, fileFieldName }) => {
 								onCropComplete={onCropComplete}
 							/>
 						</div>
-						<Button onClick={handleCropSave} variant='black' width='full' className=' text-white py-2 px-4 rounded-md'>
+						{/* <Button onClick={handleCropSave} variant='black' width='full' className=' text-white py-2 px-4 rounded-md'>
 							Save Crop
-						</Button>
+						</Button> */}
 					</div>
 				) : (
 					<div className='flex flex-row items-center justify-center mb-8'>
@@ -104,8 +120,7 @@ const CreateEventStep4 = ({ selectedImage, onImageSelect, fileFieldName }) => {
 						) : (
 							<label htmlFor='createEventCoverPhotoPicker' className='w-full cursor-pointer'>
 								<div className='h-36 w-full bg-system-file-border rounded-lg flex flex-col items-center justify-center cursor-pointer overflow-hidden'>
-									<img src={imageIcon} alt="" />
-							
+									<img src={imageIcon} alt='' />
 								</div>
 							</label>
 						)}
@@ -120,8 +135,20 @@ const CreateEventStep4 = ({ selectedImage, onImageSelect, fileFieldName }) => {
 					For best result, upload an image that is 1950px by 450px or larger.
 				</p>
 			</div>
+			{imageSrc && (
+				<div className='flex gap-2'>
+					<Button
+						onClick={handleClick}
+						size='md'
+						variant='outline'
+						className='text-sm outline-0 border-0 ring-0 shadow-none hover:bg-transparent p-0'>
+						<img src={edit} alt='' className='h-5 ' />
+						<span className='inline'>Change Image</span>
+					</Button>
+				</div>
+			)}
 		</div>
 	)
-}
+})
 
 export default CreateEventStep4

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Button from '../components/ui/Button'
 import Steps from '../components/ui/Steps'
 import { agendaSchema, eventSchema } from '../utils/schema/events/eventSchema'
@@ -208,11 +208,26 @@ const CreateEvent = () => {
 			}
 		}
 	}
+	const step3Ref = useRef(null)
+	const handleStepThreeCrop = async () => {
+		if (step3Ref.current && step3Ref.current.handleCropSave) {
+			const imageToUpload = await step3Ref.current.handleCropSave()
+			return imageToUpload
+		}
+	}
+	const step4Ref = useRef(null)
+	const handleStepFourCrop = async () => {
+		if (step4Ref.current && step4Ref.current.handleCropSave) {
+			const imageToUpload = await step4Ref.current.handleCropSave()
+			return imageToUpload
+		}
+	}
 
 	const [isModalOpen, setIsModalOpen] = useState(false)
-	const postEvent = () => {
+	const postEvent = async () => {
 		setIsModalOpen(false)
-		onCoverImagesUpload()
+		const imageToUpload = await handleStepFourCrop()
+		onCoverImagesUpload(imageToUpload)
 	}
 
 	const onImageSet = (coverImageUrl, displayImageUrl) => {
@@ -256,8 +271,23 @@ const CreateEvent = () => {
 		}
 	}
 
-	const onCoverImagesUpload = () => {
-		if (coverImageToUpload) {
+	const onCoverImagesUpload = (imageToUpload) => {
+		if (imageToUpload) {
+			setIsImageUploading(true)
+			postItem(
+				'files/users',
+				imageToUpload,
+				(result) => {
+					onDisplayImageUpload(result.FileUrl)
+				},
+				(err) => {
+					setIsImageUploading(false)
+				},
+				updateCurrentUser,
+				currentUserData,
+				toast
+			)
+		} else if (coverImageToUpload) {
 			setIsImageUploading(true)
 			postItem(
 				'files/users',
@@ -334,6 +364,7 @@ const CreateEvent = () => {
 					)}
 					{activeStep === 3 && (
 						<CreateEventStep3
+							ref={step3Ref}
 							selectedImage={selectedDisplayImage}
 							onImageSelect={onDisplayImageSelect}
 							fileFieldName='DisplayPicture'
@@ -341,6 +372,7 @@ const CreateEvent = () => {
 					)}
 					{activeStep === 4 && (
 						<CreateEventStep4
+							ref={step4Ref}
 							selectedImage={selectedCoverImage}
 							onImageSelect={onCoverImageSelect}
 							fileFieldName='CoverPicture'
@@ -386,7 +418,8 @@ const CreateEvent = () => {
 									onClick={() => setIsModalOpen(true)}
 									width='full'
 									variant='black'
-									disabled={!selectedCoverImage || !selectedDisplayImage}>
+									// disabled={!selectedCoverImage || !selectedDisplayImage}
+								>
 									Create Event
 								</Button>
 							)}
@@ -397,10 +430,16 @@ const CreateEvent = () => {
 							)}
 							{isThirdStep && (
 								<Button
-									onClick={() => validate(() => changeStep(activeStep + 1))}
+									onClick={() =>
+										validate(() => {
+											handleStepThreeCrop()
+											changeStep(activeStep + 1)
+										})
+									}
 									width='full'
 									variant='black'
-									disabled={!selectedDisplayImage}>
+									// disabled={!selectedDisplayImage}
+								>
 									Next
 								</Button>
 							)}
