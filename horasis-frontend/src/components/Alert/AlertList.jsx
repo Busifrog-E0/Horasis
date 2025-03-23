@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useContext } from 'react'
+import React, { useState, useRef, useEffect, useContext, forwardRef, useImperativeHandle } from 'react'
 import { relativeTime } from '../../utils/date'
 import DropdownMenu from '../ui/DropdownMenu'
 import AlertDetailsItem from './AlertDetailsItem'
@@ -12,7 +12,7 @@ import EmptyMembers from '../Common/EmptyMembers'
 import notification from '../../assets/icons/notification.svg'
 import { runOnce } from '../../utils/runOnce'
 
-const AlertList = () => {
+const AlertList = forwardRef(({}, ref) => {
 	const [isOpen, setIsOpen] = useState(false)
 	const dropdownRef = useRef(null)
 
@@ -157,10 +157,12 @@ const AlertList = () => {
 		}
 	}, [filters, isOpen])
 
+	const openNotifications = () => setIsOpen(!isOpen)
+	useImperativeHandle(ref, () => ({ openNotifications }), [openNotifications])
 	return (
 		<>
 			<div className='relative inline-block text-left' ref={dropdownRef}>
-				<div className='relative flex'>
+				<div className='relative hidden lg:flex'>
 					<button
 						type='button'
 						className='inline-flex justify-center rounded-md border-none bg-system-secondary-bg text-md px-0 font-medium text-brand-gray-dim'
@@ -225,6 +227,6 @@ const AlertList = () => {
 			</div>
 		</>
 	)
-}
+})
 
 export default AlertList

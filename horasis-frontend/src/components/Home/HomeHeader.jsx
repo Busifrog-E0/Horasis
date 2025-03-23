@@ -36,7 +36,7 @@ const HomeHeader = ({ moveToDiscussions, moveToEvents, moveToContacts }) => {
 								<button
 									className='text-system-secondary-bg py-1 px-4 border-2 rounded-full font-medium'
 									onClick={handleNavigate}>
-									View Activities
+									View Events
 								</button>
 							</div>
 						</>
@@ -60,7 +60,7 @@ const HomeHeader = ({ moveToDiscussions, moveToEvents, moveToContacts }) => {
 								<button
 									className='text-system-secondary-bg py-1 px-4 border-2 font-medium rounded-full'
 									onClick={handleNavigate}>
-									View Activities
+									View Events
 								</button>
 							</div>
 						</>

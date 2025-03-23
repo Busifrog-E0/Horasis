@@ -30,6 +30,20 @@ const DashboardHeader = () => {
 	const closeLogoutModal = () => setIsModalOpen(false)
 	const navigateToProfile = () => onClickItem('/MyProfile')
 
+	const messageRef = useRef(null)
+	const messagesClick = async () => {
+		if (messageRef.current && messageRef.current.openMessages) {
+			messageRef.current.openMessages()
+		}
+	}
+
+	const notificationsRef = useRef(null)
+	const notificationsClick = async () => {
+		if (notificationsRef.current && notificationsRef.current.openNotifications) {
+			notificationsRef.current.openNotifications()
+		}
+	}
+
 	return (
 		<>
 			<Modal isOpen={isModalOpen}>
@@ -181,8 +195,8 @@ const DashboardHeader = () => {
 								</button>
 							</div>
 						</div>
-						<ChatList />
-						<AlertList />
+						<ChatList ref={messageRef} />
+						<AlertList ref={notificationsRef} />
 
 						<div className='hidden lg:block'>
 							{user && (
@@ -209,6 +223,8 @@ const DashboardHeader = () => {
 								isPermitted={isPermitted}
 								navigateToProfile={navigateToProfile}
 								openLogoutModal={openLogoutModal}
+								messagesClick={messagesClick}
+								notificationsClick={notificationsClick}
 							/>
 						</div>
 
@@ -228,7 +244,15 @@ const DashboardHeader = () => {
 	)
 }
 
-const UserProfile = ({ user, avatar, isPermitted, navigateToProfile, openLogoutModal }) => {
+const UserProfile = ({
+	user,
+	avatar,
+	isPermitted,
+	navigateToProfile,
+	openLogoutModal,
+	messagesClick,
+	notificationsClick,
+}) => {
 	const navigate = useNavigate()
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false)
 	const dropdownRef = useRef(null)
@@ -277,6 +301,22 @@ const UserProfile = ({ user, avatar, isPermitted, navigateToProfile, openLogoutM
 										}}
 										className='block px-4 py-2 text-system-primary-text hover:bg-gray-100 border-b cursor-pointer'>
 										View Profile
+									</p>
+									<p
+										onClick={() => {
+											messagesClick()
+											handleDropdownToggle()
+										}}
+										className='block px-4 py-2 text-system-primary-text hover:bg-gray-100 border-b cursor-pointer'>
+										Messages
+									</p>
+									<p
+										onClick={() => {
+											notificationsClick()
+											handleDropdownToggle()
+										}}
+										className='block px-4 py-2 text-system-primary-text hover:bg-gray-100 border-b cursor-pointer'>
+										Notifications
 									</p>
 									{isPermitted && (
 										<>
