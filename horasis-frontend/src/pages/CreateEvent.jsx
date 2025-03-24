@@ -119,22 +119,31 @@ const CreateEvent = () => {
 	}
 
 	const validate = (callback) => {
-		const { error, warning } = eventSchema.validate(postEventData, {
+		const { error } = eventSchema.validate(postEventData, {
 			abortEarly: false,
 			stripUnknown: true,
 		})
+
+		let errors = {}
+
 		if (error && error.details) {
-			let obj = {}
-			error.details.forEach((val) => (obj[val.context.key] = val.message))
-			setErrorObj(obj)
+			error.details.forEach((detail) => {
+				// Using full error path ensures agenda errors are distinguished from event errors.
+				const key = detail.path.join('.')
+				errors[key] = detail.message
+			})
+		}
+
+		if (Object.keys(errors).length > 0) {
+			setErrorObj(errors)
 		} else {
 			setErrorObj({})
 			if (callback) {
 				callback()
 			}
 		}
-		// callback()
 	}
+
 	// const validateSingle = (value, key, callback) => {
 	// 	setPostEventData({ ...postEventData, ...value })
 	// 	const { error, warning } = eventSchema.extract(key).validate(value[key], {
