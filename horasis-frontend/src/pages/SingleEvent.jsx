@@ -28,6 +28,7 @@ import Modal from '../components/ui/Modal'
 import PictureUpload from '../components/Profile/EditProfile/PictureUpload'
 import usePostData from '../hooks/usePostData'
 import useUpdateData from '../hooks/useUpdateData'
+import EventsAgendaBig from '../components/Events/EventAgendaBig'
 
 const SingleEvent = () => {
 	const { eventid } = useParams()
@@ -66,6 +67,18 @@ const SingleEvent = () => {
 		tenDaysAfter.setDate(eventDate.getDate() + 10)
 
 		const isWithinTenDays = currentDate >= tenDaysBefore && currentDate <= tenDaysAfter
+
+		const getEventAgendaTab = (key) => ({
+			key: key,
+			title: 'Event Agenda',
+			render: () => {
+				return (
+					<div className='bg-system-secondary-bg p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
+						<EventsAgendaBig event={event} />
+					</div>
+				)
+			},
+		})
 
 		const getParticipantsTab = (key) => ({
 			key: key,
@@ -177,15 +190,19 @@ const SingleEvent = () => {
 		// Start with key 0
 		let tabsArray = []
 
+		tabsArray.push(getEventAgendaTab(0))
 		// Add activity tab if within the specified date range and has discussion
-		if (isWithinTenDays && HasDiscussion) {
-			tabsArray.push(getActivityTab(0)) // Key for Activity tab is 0
-		} else if (!isWithinTenDays && HasDiscussion) {
-			tabsArray.push(getDicussionNotStarted(0))
+		if (isWithinTenDays && HasDiscussion && IsMember) {
+			tabsArray.push(getActivityTab(tabsArray.length)) // Key for Activity tab is 0
+		} else if (!isWithinTenDays && HasDiscussion && IsMember) {
+			tabsArray.push(getDicussionNotStarted(tabsArray.length))
 		}
 
 		// Add other tabs, incrementing keys accordingly
-		tabsArray.push(getParticipantsTab(tabsArray.length)) // Participants tab key will be 1
+		if(IsMember){
+
+			tabsArray.push(getParticipantsTab(tabsArray.length)) // Participants tab key will be 1
+		}
 
 		if (isAdmin && isPrivate) {
 			tabsArray.push(getRegistrationTab(tabsArray.length)) // Registration Requests key will be 2
@@ -230,14 +247,14 @@ const SingleEvent = () => {
 				</div>
 			),
 		},
-		{
-			title: 'Event Agenda',
-			render: () => (
-				<div className='py-3 pt-6'>
-					<EventsAgenda event={event} />
-				</div>
-			),
-		},
+		// {
+		// 	title: 'Event Agenda',
+		// 	render: () => (
+		// 		<div className='py-3 pt-6'>
+		// 			<EventsAgenda event={event} />
+		// 		</div>
+		// 	),
+		// },
 	]
 
 	const successCallback = () => {
@@ -494,37 +511,37 @@ const SingleEvent = () => {
 						</div>
 					</div>
 					<div className='lg:col-span-2'>
-						{event && event?.IsMember && (
+						{event &&  (
 							<Tab
 								onTabChange={onTabChange}
 								activeTab={activeTab}
 								name='SingleEvent'
 								tabs={tabs(event)}
 								alignment='justify-start'
-							/>
-						)}
-						{event && !event?.IsMember && (
-							<div className={`rounded-lg ${!event?.IsMember && 'max-h-96 overflow-hidden relative h-full'}`}>
-								{!event?.IsMember && (
-									<div className='absolute top-0 right-0 left-0 bottom-0 p-4 lg:px-10 lg:py-6 bg-system-primary-accent-light h-100 overflow-hidden overflow-y-auto z-10'>
-										<div className='flex flex-col justify-center items-center mt-6'>
-											<h4 className='font-bold text-center text-3xl text-system-primary-accent mb-3'>Join the Event</h4>
-											<h4 className='text-md text-center text-system-primary-accent'>
-												Get ready for insightful conversations! Our discussions platform will be active 10 days
-												before,during and 10 days after the event?. Check in closer to the date to connect with peers,
-												share perspectives and share most of your event experience.
-											</h4>
-											<h4 className='text-md text-center text-system-primary-accent mt-4 mb-6'>
-												Let the anticipation build - meaningful discussions await!
-											</h4>
-											{event?.MembershipStatus === 'Requested' && (
-												<p className='text-system-secondary-text'>Registration request has been sent</p>
-											)}
+								/>
+							)}
+							{event && !event?.IsMember && (
+								<div className={`rounded-lg ${!event?.IsMember && 'max-h-96 overflow-hidden relative h-full  my-8 border border-system-primary-accent'}`}>
+									{!event?.IsMember && (
+										<div className='absolute top-0 right-0 left-0 bottom-0 p-4 lg:px-10 lg:py-6 bg-system-primary-accent-light h-100 overflow-hidden overflow-y-auto z-10'>
+											<div className='flex flex-col justify-center items-center mt-6'>
+												<h4 className='font-bold text-center text-3xl text-system-primary-accent mb-3'>Join the Event</h4>
+												<h4 className='text-md text-center text-system-primary-accent'>
+													Get ready for insightful conversations! Our discussions platform will be active 10 days
+													before,during and 10 days after the event?. Check in closer to the date to connect with peers,
+													share perspectives and share most of your event experience.
+												</h4>
+												<h4 className='text-md text-center text-system-primary-accent mt-4 mb-6'>
+													Let the anticipation build - meaningful discussions await!
+												</h4>
+												{event?.MembershipStatus === 'Requested' && (
+													<p className='text-system-secondary-text'>Registration request has been sent</p>
+												)}
+											</div>
 										</div>
-									</div>
-								)}
-							</div>
-						)}
+									)}
+								</div>
+							)}
 					</div>
 					<div className='flex flex-col gap-2'>
 						<ShowJoinButton event={event} />
