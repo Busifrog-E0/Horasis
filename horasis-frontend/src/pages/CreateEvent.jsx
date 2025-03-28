@@ -127,7 +127,9 @@ const CreateEvent = () => {
 		let errors = {}
 
 		if (error && error.details) {
+
 			error.details.forEach((detail) => {
+				console.log(detail)
 				// Using full error path ensures agenda errors are distinguished from event errors.
 				const key = detail.path.join('.')
 				errors[key] = detail.message
@@ -135,6 +137,7 @@ const CreateEvent = () => {
 		}
 
 		if (Object.keys(errors).length > 0) {
+			console.log(errors)
 			setErrorObj(errors)
 		} else {
 			setErrorObj({})

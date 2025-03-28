@@ -388,6 +388,14 @@ const SingleEvent = () => {
 							<h4 className='text-xl text-white'>{event?.NoOfMembers} Participants</h4>
 							<h4 className='text-xl text-white'>•</h4>
 							<h4 className='text-xl text-white'>{event?.Privacy}</h4>
+							<h4 className='text-xl text-white'>•</h4>
+							{event?.Location && (
+								<>
+									<h4 className='text-xl text-white'>{event?.Location},</h4>
+								</>
+							)}
+
+							<h4 className='text-xl text-white'>{event?.Country}</h4>
 						</div>
 					</div>
 				</div>

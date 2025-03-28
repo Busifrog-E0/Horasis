@@ -1,5 +1,5 @@
 import Joi from 'joi'
-
+import moment from 'moment'
 
 export const agendaSchema = Joi.object({
 	Name: Joi.string().required().messages({
@@ -17,6 +17,10 @@ export const agendaSchema = Joi.object({
 	EndTime: Joi.number().integer().required().messages({
 		'number.base': 'Please provide a valid timestamp for the agenda item end time.',
 		'any.required': 'The agenda item end time is required.',
+	}),
+	Location: Joi.string().required().messages({
+		'string.empty': 'Please provide the location where the agenda is held.',
+		'any.required': 'The location is required.',
 	}),
 })
 
@@ -69,6 +73,11 @@ export const eventSchema = Joi.object({
 		'any.required': 'The country is required.',
 	}),
 
+	Location: Joi.string().required().messages({
+		'string.empty': 'Please provide the location where the event is held.',
+		'any.required': 'The location is required.',
+	}),
+
 	// DisplayPicture: Joi.string().uri().required().messages({
 	// 	'string.uri': 'Please provide a valid URL for the display picture.',
 	// 	'any.required': 'The display picture URL is required.',
@@ -84,4 +93,34 @@ export const eventSchema = Joi.object({
 		'any.required': 'The discussion field is required.',
 	}),
 })
+	.custom((value, helpers) => {
+		const currentTime = moment().valueOf()
 
+		// Check that StartTime is less than EndTime.
+		if (value.StartTime >= value.EndTime) {
+			const error = helpers.error('startTime.lessThanEndTime')
+			error.path = ['StartTime']
+			return error
+		}
+
+		// Check that Date is in the future.
+		if (value.Date <= currentTime) {
+			const error = helpers.error('date.future')
+			error.path = ['Date']
+			return error
+		}
+
+		// Check that StartTime is in the future.
+		if (value.StartTime <= currentTime) {
+			const error = helpers.error('startTime.future')
+			error.path = ['StartTime']
+			return error
+		}
+
+		return value
+	})
+	.messages({
+		'startTime.lessThanEndTime': 'Start Time must be less than End Time',
+		'date.future': 'Date must be a future date',
+		'startTime.future': 'Start Time must be in the future',
+	})
