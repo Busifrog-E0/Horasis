@@ -60,6 +60,20 @@ const ValidatePostEvents = async (req, res, next) => {
     }
 };
 
+const ValidatePatchEventCoverPhoto = async (req, res, next) => {
+    const Result = Joi.object({
+        CoverPicture: Joi.string().required()
+    }).validate(req.body, { stripUnknown: true });
+    if (Result.error) {
+        const message = Result.error.details.map((detail) => detail.message).join(', ');
+        return res.status(400).json(message);
+    }
+    else {
+        req.body = Result.value;
+        return next();
+    }
+}
+
 const ValidateGetEvents = async (req, res, next) => {
     const Result = QueryParametersSchema.keys({
         StartTime: Joi.object({
@@ -128,5 +142,6 @@ export {
     ValidateGetEvents,
     ValidatePostSpeakers,
     AgendaDataSchema,
-    ValidatePostSpeakerMailInvite
+    ValidatePostSpeakerMailInvite,
+    ValidatePatchEventCoverPhoto
 }
