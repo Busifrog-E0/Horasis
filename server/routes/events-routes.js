@@ -12,7 +12,7 @@ import {
 import SwaggerDocs from '../swaggerDocs/events-swaggerDocs.js'
 import e from 'express';
 import { decodeIDToken, ensureAuthorized } from '../middleware/auth-middleware.js';
-import { ValidateGetEvents, ValidatePostEvents, ValidatePostSpeakerMailInvite, ValidatePostSpeakers } from '../validations/events-validations.js';
+import { ValidateGetEvents, ValidatePatchEventCoverPhoto, ValidatePostEvents, ValidatePostSpeakerMailInvite, ValidatePostSpeakers } from '../validations/events-validations.js';
 import { QueryParameterFormatting, ValidateGetEntity } from '../middleware/common.js';
 import { GetEventsActivitiesMiddleware, InsertEventTypeMiddleware, PostEventActivitiesMiddleware } from '../middleware/events-middleware.js';
 import { ValidatePostActivities } from '../validations/activities-validations.js';
@@ -39,6 +39,10 @@ router.post('/events', decodeIDToken, ensureAuthorized("User"), ValidatePostEven
     asyncHandler(PostEvents));
 
 router.patch('/events/:EventId',
+    // @ts-ignore
+    asyncHandler(PatchEvents));
+
+router.patch('/events/:EventId/coverPicture', decodeIDToken, ensureAuthorized("User"), ValidatePatchEventCoverPhoto,
     // @ts-ignore
     asyncHandler(PatchEvents));
 

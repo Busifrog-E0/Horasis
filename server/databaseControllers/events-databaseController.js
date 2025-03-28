@@ -9,14 +9,17 @@ import dataHandling from './functions.js'
  */
 /**
  * @typedef {object} AgendaData
+ * @property {string} AgendaId
  * @property {string} Name
  * @property {string} Description
  * @property {number} StartTime
  * @property {number} EndTime
+ * @property {string} Location
  */
 
 /**
  * @typedef {object} SpeakerData
+ * @property {AgendaData} Agenda
  * @property {string} SpeakerId
  * @property {UserData} UserDetails
  */
@@ -33,6 +36,7 @@ import dataHandling from './functions.js'
  * @property {"Public"|"Private"} Privacy
  * @property {"Virtual"|"Physical"} Type
  * @property {string} Country
+ * @property {string} Location
  * @property {number} NoOfMembers
  * @property {string} DisplayPicture
  * @property {string} CoverPicture
