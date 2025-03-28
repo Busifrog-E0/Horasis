@@ -7,7 +7,8 @@ const AgendaDataSchema = Joi.object({
     Name: Joi.string().required(),
     Description: Joi.string(),
     StartTime: Joi.number().required(),
-    EndTime: Joi.number().required()
+    EndTime: Joi.number().required(),
+    Location: Joi.string().required()
 });
 
 const EventDataSchema = Joi.object({
@@ -18,6 +19,7 @@ const EventDataSchema = Joi.object({
     StartTime: Joi.number().required(),  // Timestamp in milliseconds
     EndTime: Joi.number().required(),  // Timestamp in milliseconds
     Agenda: Joi.array().items(AgendaDataSchema).required(),
+    Location: Joi.string().required(),
     Privacy: Joi.string().valid('Public', 'Private').required(),
     Type: Joi.string().valid('Virtual', 'Offline').required(),
     Country: Joi.string().required(),
@@ -26,7 +28,7 @@ const EventDataSchema = Joi.object({
     HasDiscussion: Joi.boolean().required(),
     Tags: Joi.array().items(TagsSchema).default([]),
 }).custom((value, helpers) => {
-    const currentTime = moment().valueOf();  
+    const currentTime = moment().valueOf();
 
     if (value.StartTime >= value.EndTime) {
         //@ts-ignore
@@ -43,7 +45,7 @@ const EventDataSchema = Joi.object({
         return helpers.message('"StartTime" must be in the future');
     }
 
-    return value;  
+    return value;
 });
 
 const ValidatePostEvents = async (req, res, next) => {
@@ -86,7 +88,9 @@ const ValidateGetEvents = async (req, res, next) => {
 
 const ValidatePostSpeakers = async (req, res, next) => {
     const Result = Joi.object({
-        Agenda: AgendaDataSchema.required()
+        Agenda: AgendaDataSchema.keys({
+            AgendaId: Joi.string().required()
+        }).required()
     }).validate(req.body, { stripUnknown: true });
     if (Result.error) {
         const message = Result.error.details.map((detail) => detail.message).join(', ');
