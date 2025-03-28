@@ -57,6 +57,9 @@ const GetUsers = async (req, res) => {
         Filter['$or'] = [
             { 'FullName': { $regex: Keyword, $options: 'i' } },
             { 'Username': { $regex: Keyword, $options: 'i' } },
+            { 'IsPrivate': false, 'City': { $regex: Keyword, $options: 'i' } },
+            { 'IsPrivate': false, 'Country': { $regex: Keyword, $options: 'i' } },
+            { 'IsPrivate': false, 'Email': { $regex: Keyword, $options: 'i' } },
         ]
     }
     // @ts-ignore
@@ -375,6 +378,7 @@ const GetUsersByRole = async (req, res) => {
     }
     // @ts-ignore
     Filter.Roles = Filter.Role === "User" ? ["User"] : { $all: ["User", "Admin"] };
+    // @ts-ignore
     delete Filter.Role;
     // @ts-ignore
     const Users = await ReadUsers(Filter, NextId, Limit, OrderBy);

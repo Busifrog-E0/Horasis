@@ -55,6 +55,16 @@ const UpdateNotifications = async (data, DocId) => {
     return dataHandling.Update('Notifications', data, DocId);
 }
 
+/**
+ * 
+ * @param {NotificationData|object} data 
+ * @param {object} where 
+ * @returns 
+ */
+const UpdateManyNotifications = async (data, where = {}) => {
+    return dataHandling.UpdateMany("Notifications", data, where);
+}
+
 
 /**
  * 
@@ -76,10 +86,16 @@ const RemoveNotifications = async (DocId) => {
 }
 
 
+const CountNotifications = async (where) => {
+    return dataHandling.ReadCount("Notifications", where);
+}
+
 export {
     ReadNotifications,
     ReadOneFromNotifications,
     UpdateNotifications,
     CreateNotifications,
-    RemoveNotifications
+    RemoveNotifications,
+    UpdateManyNotifications,
+    CountNotifications,
 }
