@@ -16,7 +16,7 @@ import { CheckSameUser, QueryParameterFormatting, ValidateGetEntity } from '../m
 import { ValidateCheckUsername, ValidatePatchUsers, ValidateUserLogin, ValidatePatchUserPictures, ValidateUserRegister, ValidateVerifyOTP, ValidateGetUserMedia, ValidatePostForgotPassword, ValidatePasswordReset, ValidatePostUsersInvite, ValidateMailCheck, ValidateGetUsers } from '../validations/users-validations.js';
 import { GetMedias } from '../controllers/medias-controller.js';
 import { CheckOTP } from '../controllers/auth-controller.js';
-import { GetNotifications, GetOneFromNotifications } from '../controllers/notifications-controller.js';
+import { GetNotifications, GetOneFromNotifications, GetUnreadNotification } from '../controllers/notifications-controller.js';
 import {  InviteUserToCreateAccount } from '../controllers/invitations-controller.js';
 const router = e.Router();
 router.route
@@ -67,7 +67,7 @@ router.patch('/users/:UserId/picture', decodeIDToken, ensureAuthorized("User"), 
     //@ts-ignore
     asyncHandler(PatchUsers))
 
-router.get('/users/:UserId/media', decodeIDToken, ensureAuthorized("User"), CheckSameUser, ValidateGetUserMedia, QueryParameterFormatting,
+router.get('/users/:UserId/media', decodeIDToken, ensureAuthorized("User"), ValidateGetUserMedia, QueryParameterFormatting,
     SwaggerDocs.get_Users_UserId_Media,
     //@ts-ignore
     asyncHandler(GetMedias))
@@ -83,6 +83,10 @@ router.post('/users/forgotPassword/verify', ValidateVerifyOTP, SwaggerDocs.post_
 router.post('/users/forgotPassword/reset', ValidatePasswordReset, SwaggerDocs.post_Users_ForgotPassword_Reset,
     //@ts-ignore
     asyncHandler(PatchPassword));
+
+router.get('/users/:RecipientId/unreadNotification', decodeIDToken, ensureAuthorized("User"),
+    //@ts-ignore
+    asyncHandler(GetUnreadNotification));
 
 router.get('/users/:RecipientId/notifications', decodeIDToken, ensureAuthorized("User"), ValidateGetEntity, QueryParameterFormatting,
     SwaggerDocs.get_Users_UserId_Notifications,

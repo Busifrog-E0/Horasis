@@ -12,12 +12,12 @@ const fileFormats = {
     image: {
         extensions: [
             'jpeg', 'jpg', 'png'],
-        size: 2097152 //2mb
+        size: 3397152 //2mb
     },
     video: {
         extensions: [
             'mp4'],
-        size: 20971520 //20mb
+        size: 52428800 //20mb
     }
 }
 /**
@@ -33,6 +33,7 @@ const byteArrayToFile = (byteArray, filePath) => {
 
 import { S3 } from "@aws-sdk/client-s3";
 import e from 'express';
+import moment from 'moment';
 //const fs = readFileSync('./signature.jpg')
 const s3 = new S3({
     forcePathStyle: true, // Configures to use subdomain/virtual calling format.
@@ -120,7 +121,7 @@ const PostFilesUsers = async (req, res) => {
     if (req.body.Type) {
         FilePath = FilePath + `/${req.body.Type}/${Math.floor(Math.random() * 1000000000000) + 1}`
     }
-    SaveFileToSpaces("Users", FilePath + `/${req.body.FileFieldName}`, req.body.FileData, FileType, res)
+    SaveFileToSpaces("Users", FilePath + `/${req.body.FileFieldName}${moment().valueOf()}`, req.body.FileData, FileType, res)
 }
 
 

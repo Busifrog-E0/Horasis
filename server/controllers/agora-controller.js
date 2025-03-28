@@ -50,17 +50,16 @@ const generateAgoraToken = async (EventId, UserId) => {
         ReadMembers({ MemberId: UserId, EntityId: EventId, MembershipStatus: "Accepted" }, undefined, 1, undefined),
         ReadOneFromEvents(EventId)
     ]);
-    let Role = Speaker ? RtcRole.PUBLISHER : (Member ? RtcRole.SUBSCRIBER : undefined);
+    let Role = Speaker ? "Speaker" : (Member ? "Member" : undefined);
     if (Event.OrganiserId === UserId) {
-        Role = RtcRole.PUBLISHER
+        Role = "Speaker"
     }
     if (!Role) {
         throw new Error("No Access");
     }
-    const RtcToken = RtcTokenBuilder.buildTokenWithUid(Env.AGORA_APP_ID, Env.AGORA_APP_CERTIFICATE, EventId, UserId, Role, 6000, 6000);
+    const RtcToken = RtcTokenBuilder.buildTokenWithUid(Env.AGORA_APP_ID, Env.AGORA_APP_CERTIFICATE, EventId, UserId, RtcRole.PUBLISHER, 6000, 6000);
     const RtmToken = RtmTokenBuilder.buildToken(Env.AGORA_APP_ID, Env.AGORA_APP_CERTIFICATE, UserId, 6000);
-    const UserRole = Role === RtcRole.PUBLISHER ? "Speaker" : "Member";
-    return { RtcToken, RtmToken, Role: UserRole };
+    return { RtcToken, RtmToken, Role };
 }
 
 /**

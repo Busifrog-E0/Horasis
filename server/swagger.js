@@ -9,6 +9,7 @@ import membersDefinitions from './swaggerDocs/membersDefinitions.js';
 import eventsDefinitions from './swaggerDocs/eventsDefinitions.js';
 import articlesDefinitions from './swaggerDocs/articlesDefinitions.js';
 import analyticsDefinitions from './swaggerDocs/analyticsDefinitions.js';
+import reportsDefinitions from './swaggerDocs/reportsDefinitions.js';
 
 const doc = {
     info: {
@@ -95,6 +96,10 @@ const doc = {
         {
             "name": "Podcasts",
             "description": "",
+        },
+        {
+            "name": "Reports",
+            "description": "",
         }
     ],
     securityDefinitions: {
@@ -121,7 +126,8 @@ const doc = {
         ...membersDefinitions,
         ...eventsDefinitions,
         ...articlesDefinitions,
-        ...analyticsDefinitions
+        ...analyticsDefinitions,
+        ...reportsDefinitions,
     }
 }
 

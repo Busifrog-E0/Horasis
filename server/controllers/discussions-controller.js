@@ -43,7 +43,10 @@ const GetDiscussions = async (req, res) => {
     const { Filter, NextId, Keyword, Limit, OrderBy } = req.query;
     if (Keyword) {
         // @ts-ignore
-        Filter["DiscussionName"] = { $regex: Keyword, $options: 'i' };
+        Filter["$or"] = [
+            { "DiscussionName": { $regex: Keyword, $options: 'i' } },
+            { "Tags.TagName": { $regex: Keyword, $options: 'i' } }
+        ]
     }
     // @ts-ignore
     const Discussions = await ReadDiscussions(Filter, NextId, Limit, OrderBy);

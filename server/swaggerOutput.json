@@ -80,6 +80,10 @@
     {
       "name": "Podcasts",
       "description": ""
+    },
+    {
+      "name": "Reports",
+      "description": ""
     }
   ],
   "schemes": [
@@ -1247,36 +1251,6 @@
           }
         }
       },
-      "post": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "EntityId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "400": {
-            "description": "Bad Request"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "402": {
-            "description": "Payment Required"
-          },
-          "403": {
-            "description": "Forbidden"
-          }
-        }
-      },
       "delete": {
         "description": "",
         "parameters": [
@@ -1349,6 +1323,32 @@
           }
         ],
         "responses": {
+          "401": {
+            "description": "Unauthorized"
+          },
+          "402": {
+            "description": "Payment Required"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      }
+    },
+    "/api/likes": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
           "401": {
             "description": "Unauthorized"
           },
@@ -2739,369 +2739,6 @@
         ]
       }
     },
-    "/api/users/{UserId}/activities/{EntityId}/like": {
-      "post": {
-        "tags": [
-          "Activities"
-        ],
-        "description": "",
-        "parameters": [
-          {
-            "name": "UserId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "EntityId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "Type": {
-                  "example": "any"
-                },
-                "EntityId": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "402": {
-            "description": "Payment Required"
-          },
-          "403": {
-            "description": "Forbidden"
-          },
-          "444": {
-            "description": "Connection Closed Without Response"
-          }
-        },
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ]
-      }
-    },
-    "/api/users/{UserId}/activities/{EntityId}/dislike": {
-      "delete": {
-        "tags": [
-          "Activities"
-        ],
-        "description": "",
-        "parameters": [
-          {
-            "name": "UserId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "EntityId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "402": {
-            "description": "Payment Required"
-          },
-          "403": {
-            "description": "Forbidden"
-          },
-          "444": {
-            "description": "Connection Closed Without Response"
-          }
-        },
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ]
-      }
-    },
-    "/api/users/{UserId}/activities/{EntityId}/save": {
-      "post": {
-        "tags": [
-          "Activities"
-        ],
-        "description": "",
-        "parameters": [
-          {
-            "name": "UserId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "EntityId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "EntityId": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "402": {
-            "description": "Payment Required"
-          },
-          "403": {
-            "description": "Forbidden"
-          },
-          "444": {
-            "description": "Connection Closed Without Response"
-          }
-        },
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ]
-      },
-      "delete": {
-        "tags": [
-          "Activities"
-        ],
-        "description": "",
-        "parameters": [
-          {
-            "name": "UserId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "EntityId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "402": {
-            "description": "Payment Required"
-          },
-          "403": {
-            "description": "Forbidden"
-          },
-          "444": {
-            "description": "Connection Closed Without Response"
-          }
-        },
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ]
-      }
-    },
-    "/api/activities/{EntityId}/likedUsers": {
-      "get": {
-        "tags": [
-          "Activities"
-        ],
-        "description": "",
-        "parameters": [
-          {
-            "name": "EntityId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "NextId",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "Limit",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "Keyword",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "OrderBy",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "Filter",
-            "in": "query",
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Activity Data",
-            "schema": {
-              "$ref": "#/definitions/LikedUsersData"
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "402": {
-            "description": "Payment Required"
-          },
-          "403": {
-            "description": "Forbidden"
-          }
-        },
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ]
-      }
-    },
-    "/api/user/{UserId}/activities/save": {
-      "get": {
-        "tags": [
-          "Activities"
-        ],
-        "description": "",
-        "parameters": [
-          {
-            "name": "UserId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "NextId",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "Limit",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "Keyword",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "OrderBy",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "Filter",
-            "in": "query",
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "$ref": "#/definitions/ActivityGetDataArray"
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "402": {
-            "description": "Payment Required"
-          },
-          "403": {
-            "description": "Forbidden"
-          }
-        },
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ]
-      }
-    },
     "/api/activities/{ParentId}/comments/": {
       "get": {
         "tags": [
@@ -4077,824 +3714,6 @@
         ]
       }
     },
-    "/api/discussions/{EntityId}/join": {
-      "post": {
-        "tags": [
-          "Discussions"
-        ],
-        "description": "",
-        "parameters": [
-          {
-            "name": "EntityId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "Type": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "244": {
-            "description": ""
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "402": {
-            "description": "Payment Required"
-          },
-          "403": {
-            "description": "Forbidden"
-          },
-          "444": {
-            "description": "Connection Closed Without Response"
-          }
-        },
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ]
-      }
-    },
-    "/api/discussions/{EntityId}/join/{UserId}/reject": {
-      "delete": {
-        "tags": [
-          "Discussions"
-        ],
-        "description": "",
-        "parameters": [
-          {
-            "name": "EntityId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "UserId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "402": {
-            "description": "Payment Required"
-          },
-          "403": {
-            "description": "Forbidden"
-          }
-        },
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ]
-      }
-    },
-    "/api/discussions/{EntityId}/join/{UserId}/accept": {
-      "patch": {
-        "tags": [
-          "Discussions"
-        ],
-        "description": "",
-        "parameters": [
-          {
-            "name": "EntityId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "UserId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "Type": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "402": {
-            "description": "Payment Required"
-          },
-          "403": {
-            "description": "Forbidden"
-          },
-          "444": {
-            "description": "Connection Closed Without Response"
-          }
-        },
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ]
-      }
-    },
-    "/api/discussions/{EntityId}/members/requested": {
-      "get": {
-        "tags": [
-          "Discussions"
-        ],
-        "description": "",
-        "parameters": [
-          {
-            "name": "EntityId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "NextId",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "Limit",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "Keyword",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "OrderBy",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "Filter",
-            "in": "query",
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Discussion Data",
-            "schema": {
-              "$ref": "#/definitions/MemberData"
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "402": {
-            "description": "Payment Required"
-          },
-          "403": {
-            "description": "Forbidden"
-          }
-        },
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ]
-      }
-    },
-    "/api/discussions/{EntityId}/join/{UserId}/cancel": {
-      "delete": {
-        "tags": [
-          "Discussions"
-        ],
-        "description": "",
-        "parameters": [
-          {
-            "name": "EntityId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "UserId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "Type": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "402": {
-            "description": "Payment Required"
-          },
-          "403": {
-            "description": "Forbidden"
-          }
-        },
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ]
-      }
-    },
-    "/api/discussions/{EntityId}/members/invite": {
-      "get": {
-        "tags": [
-          "Discussions"
-        ],
-        "description": "",
-        "parameters": [
-          {
-            "name": "EntityId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "NextId",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "Limit",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "Keyword",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "OrderBy",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "Filter",
-            "in": "query",
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "402": {
-            "description": "Payment Required"
-          },
-          "403": {
-            "description": "Forbidden"
-          }
-        },
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ]
-      }
-    },
-    "/api/discussions/{EntityId}/invite/{InviteeId}": {
-      "post": {
-        "tags": [
-          "Discussions"
-        ],
-        "description": "",
-        "parameters": [
-          {
-            "name": "EntityId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "InviteeId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "IsSpeaker": {
-                  "type": "boolean",
-                  "example": false
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "402": {
-            "description": "Payment Required"
-          },
-          "403": {
-            "description": "Forbidden"
-          },
-          "444": {
-            "description": "Connection Closed Without Response"
-          }
-        },
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ]
-      }
-    },
-    "/api/discussions/{EntityId}/invite/accept": {
-      "patch": {
-        "tags": [
-          "Discussions"
-        ],
-        "description": "",
-        "parameters": [
-          {
-            "name": "EntityId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "Type": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "402": {
-            "description": "Payment Required"
-          },
-          "403": {
-            "description": "Forbidden"
-          },
-          "444": {
-            "description": "Connection Closed Without Response"
-          }
-        },
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ]
-      }
-    },
-    "/api/discussions/{EntityId}/invite/{UserId}/reject": {
-      "delete": {
-        "tags": [
-          "Discussions"
-        ],
-        "description": "",
-        "parameters": [
-          {
-            "name": "EntityId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "UserId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "402": {
-            "description": "Payment Required"
-          },
-          "403": {
-            "description": "Forbidden"
-          }
-        },
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ]
-      }
-    },
-    "/api/discussions/{EntityId}/invite/{UserId}/cancel": {
-      "delete": {
-        "tags": [
-          "Discussions"
-        ],
-        "description": "",
-        "parameters": [
-          {
-            "name": "EntityId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "UserId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "402": {
-            "description": "Payment Required"
-          },
-          "403": {
-            "description": "Forbidden"
-          }
-        },
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ]
-      }
-    },
-    "/api/discussions/{EntityId}/leave": {
-      "delete": {
-        "tags": [
-          "Discussions"
-        ],
-        "description": "",
-        "parameters": [
-          {
-            "name": "EntityId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "Type": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "402": {
-            "description": "Payment Required"
-          },
-          "403": {
-            "description": "Forbidden"
-          },
-          "444": {
-            "description": "Connection Closed Without Response"
-          }
-        },
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ]
-      }
-    },
-    "/api/discussions/{EntityId}/members": {
-      "get": {
-        "tags": [
-          "Discussions"
-        ],
-        "description": "",
-        "parameters": [
-          {
-            "name": "EntityId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "NextId",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "Limit",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "Keyword",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "OrderBy",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "Filter",
-            "in": "query",
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Discussion Data",
-            "schema": {
-              "$ref": "#/definitions/MemberData"
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "402": {
-            "description": "Payment Required"
-          },
-          "403": {
-            "description": "Forbidden"
-          }
-        },
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ]
-      }
-    },
-    "/api/discussions/{EntityId}/member/permissions": {
-      "patch": {
-        "tags": [
-          "Discussions"
-        ],
-        "description": "",
-        "parameters": [
-          {
-            "name": "EntityId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "$ref": "#/definitions/UpdatePermissionData"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "402": {
-            "description": "Payment Required"
-          },
-          "403": {
-            "description": "Forbidden"
-          },
-          "444": {
-            "description": "Connection Closed Without Response"
-          }
-        },
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ]
-      }
-    },
-    "/api/discussions/{EntityId}/member/{MemberId}/permissions/remove": {
-      "patch": {
-        "tags": [
-          "Discussions"
-        ],
-        "description": "",
-        "parameters": [
-          {
-            "name": "EntityId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "MemberId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "PermissionField": {
-                  "type": "string",
-                  "example": "CanPostActivity"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "402": {
-            "description": "Payment Required"
-          },
-          "403": {
-            "description": "Forbidden"
-          },
-          "444": {
-            "description": "Connection Closed Without Response"
-          }
-        },
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ]
-      }
-    },
     "/api/discussions/{DiscussionId}/member/permissions/everyone": {
       "patch": {
         "tags": [
@@ -5062,168 +3881,6 @@
           },
           "400": {
             "description": "Bad Request"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "402": {
-            "description": "Payment Required"
-          },
-          "403": {
-            "description": "Forbidden"
-          }
-        },
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ]
-      }
-    },
-    "/api/discussions/{EntityId}/save": {
-      "post": {
-        "tags": [
-          "Discussions"
-        ],
-        "description": "",
-        "parameters": [
-          {
-            "name": "EntityId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "Type": {
-                  "example": "any"
-                },
-                "EntityId": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "402": {
-            "description": "Payment Required"
-          },
-          "403": {
-            "description": "Forbidden"
-          },
-          "444": {
-            "description": "Connection Closed Without Response"
-          }
-        },
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ]
-      },
-      "delete": {
-        "tags": [
-          "Discussions"
-        ],
-        "description": "",
-        "parameters": [
-          {
-            "name": "EntityId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "402": {
-            "description": "Payment Required"
-          },
-          "403": {
-            "description": "Forbidden"
-          },
-          "444": {
-            "description": "Connection Closed Without Response"
-          }
-        },
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ]
-      }
-    },
-    "/api/users/{UserId}/discussions/save": {
-      "get": {
-        "tags": [
-          "Discussions"
-        ],
-        "description": "",
-        "parameters": [
-          {
-            "name": "UserId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "Filter",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "NextId",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "Limit",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "OrderBy",
-            "in": "query",
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Discussion Data",
-            "schema": {
-              "$ref": "#/definitions/DiscussionDataArray"
-            }
           },
           "401": {
             "description": "Unauthorized"
@@ -5581,824 +4238,6 @@
           },
           "400": {
             "description": "Bad Request"
-          }
-        },
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ]
-      }
-    },
-    "/api/events/{EntityId}/join": {
-      "post": {
-        "tags": [
-          "Events"
-        ],
-        "description": "",
-        "parameters": [
-          {
-            "name": "EntityId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "Type": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "244": {
-            "description": ""
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "402": {
-            "description": "Payment Required"
-          },
-          "403": {
-            "description": "Forbidden"
-          },
-          "444": {
-            "description": "Connection Closed Without Response"
-          }
-        },
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ]
-      }
-    },
-    "/api/events/{EntityId}/join/{UserId}/reject": {
-      "delete": {
-        "tags": [
-          "Events"
-        ],
-        "description": "",
-        "parameters": [
-          {
-            "name": "EntityId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "UserId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "402": {
-            "description": "Payment Required"
-          },
-          "403": {
-            "description": "Forbidden"
-          }
-        },
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ]
-      }
-    },
-    "/api/events/{EntityId}/join/{UserId}/accept": {
-      "patch": {
-        "tags": [
-          "Events"
-        ],
-        "description": "",
-        "parameters": [
-          {
-            "name": "EntityId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "UserId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "Type": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "402": {
-            "description": "Payment Required"
-          },
-          "403": {
-            "description": "Forbidden"
-          },
-          "444": {
-            "description": "Connection Closed Without Response"
-          }
-        },
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ]
-      }
-    },
-    "/api/events/{EntityId}/members/requested": {
-      "get": {
-        "tags": [
-          "Events"
-        ],
-        "description": "",
-        "parameters": [
-          {
-            "name": "EntityId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "NextId",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "Limit",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "Keyword",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "OrderBy",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "Filter",
-            "in": "query",
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Event Data",
-            "schema": {
-              "$ref": "#/definitions/MemberData"
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "402": {
-            "description": "Payment Required"
-          },
-          "403": {
-            "description": "Forbidden"
-          }
-        },
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ]
-      }
-    },
-    "/api/events/{EntityId}/join/{UserId}/cancel": {
-      "delete": {
-        "tags": [
-          "Events"
-        ],
-        "description": "",
-        "parameters": [
-          {
-            "name": "EntityId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "UserId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "Type": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "402": {
-            "description": "Payment Required"
-          },
-          "403": {
-            "description": "Forbidden"
-          }
-        },
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ]
-      }
-    },
-    "/api/events/{EntityId}/members/invite": {
-      "get": {
-        "tags": [
-          "Events"
-        ],
-        "description": "",
-        "parameters": [
-          {
-            "name": "EntityId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "NextId",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "Limit",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "Keyword",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "OrderBy",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "Filter",
-            "in": "query",
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "402": {
-            "description": "Payment Required"
-          },
-          "403": {
-            "description": "Forbidden"
-          }
-        },
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ]
-      }
-    },
-    "/api/events/{EntityId}/invite/{InviteeId}": {
-      "post": {
-        "tags": [
-          "Events"
-        ],
-        "description": "",
-        "parameters": [
-          {
-            "name": "EntityId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "InviteeId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "IsSpeaker": {
-                  "type": "boolean",
-                  "example": false
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "402": {
-            "description": "Payment Required"
-          },
-          "403": {
-            "description": "Forbidden"
-          },
-          "444": {
-            "description": "Connection Closed Without Response"
-          }
-        },
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ]
-      }
-    },
-    "/api/events/{EntityId}/invite/accept": {
-      "patch": {
-        "tags": [
-          "Events"
-        ],
-        "description": "",
-        "parameters": [
-          {
-            "name": "EntityId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "Type": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "402": {
-            "description": "Payment Required"
-          },
-          "403": {
-            "description": "Forbidden"
-          },
-          "444": {
-            "description": "Connection Closed Without Response"
-          }
-        },
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ]
-      }
-    },
-    "/api/events/{EntityId}/invite/{UserId}/reject": {
-      "delete": {
-        "tags": [
-          "Events"
-        ],
-        "description": "",
-        "parameters": [
-          {
-            "name": "EntityId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "UserId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "402": {
-            "description": "Payment Required"
-          },
-          "403": {
-            "description": "Forbidden"
-          }
-        },
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ]
-      }
-    },
-    "/api/events/{EntityId}/invite/{UserId}/cancel": {
-      "delete": {
-        "tags": [
-          "Events"
-        ],
-        "description": "",
-        "parameters": [
-          {
-            "name": "EntityId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "UserId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "402": {
-            "description": "Payment Required"
-          },
-          "403": {
-            "description": "Forbidden"
-          }
-        },
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ]
-      }
-    },
-    "/api/events/{EntityId}/leave": {
-      "delete": {
-        "tags": [
-          "Events"
-        ],
-        "description": "",
-        "parameters": [
-          {
-            "name": "EntityId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "Type": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "402": {
-            "description": "Payment Required"
-          },
-          "403": {
-            "description": "Forbidden"
-          },
-          "444": {
-            "description": "Connection Closed Without Response"
-          }
-        },
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ]
-      }
-    },
-    "/api/events/{EntityId}/members": {
-      "get": {
-        "tags": [
-          "Events"
-        ],
-        "description": "",
-        "parameters": [
-          {
-            "name": "EntityId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "NextId",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "Limit",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "Keyword",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "OrderBy",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "Filter",
-            "in": "query",
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Event Data",
-            "schema": {
-              "$ref": "#/definitions/MemberData"
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "402": {
-            "description": "Payment Required"
-          },
-          "403": {
-            "description": "Forbidden"
-          }
-        },
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ]
-      }
-    },
-    "/api/events/{EntityId}/member/permissions": {
-      "patch": {
-        "tags": [
-          "Events"
-        ],
-        "description": "",
-        "parameters": [
-          {
-            "name": "EntityId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "$ref": "#/definitions/UpdatePermissionData"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "402": {
-            "description": "Payment Required"
-          },
-          "403": {
-            "description": "Forbidden"
-          },
-          "444": {
-            "description": "Connection Closed Without Response"
-          }
-        },
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ]
-      }
-    },
-    "/api/events/{EntityId}/member/{MemberId}/permissions/remove": {
-      "patch": {
-        "tags": [
-          "Events"
-        ],
-        "description": "",
-        "parameters": [
-          {
-            "name": "EntityId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "MemberId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "PermissionField": {
-                  "type": "string",
-                  "example": "CanPostActivity"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "402": {
-            "description": "Payment Required"
-          },
-          "403": {
-            "description": "Forbidden"
-          },
-          "444": {
-            "description": "Connection Closed Without Response"
           }
         },
         "security": [
@@ -7244,165 +5083,6 @@
             "description": "Forbidden"
           }
         }
-      }
-    },
-    "/api/articles/{EntityId}/save": {
-      "post": {
-        "tags": [
-          "Articles"
-        ],
-        "description": "",
-        "parameters": [
-          {
-            "name": "EntityId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "EntityId": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "402": {
-            "description": "Payment Required"
-          },
-          "403": {
-            "description": "Forbidden"
-          },
-          "444": {
-            "description": "Connection Closed Without Response"
-          }
-        },
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ]
-      },
-      "delete": {
-        "tags": [
-          "Articles"
-        ],
-        "description": "",
-        "parameters": [
-          {
-            "name": "EntityId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "402": {
-            "description": "Payment Required"
-          },
-          "403": {
-            "description": "Forbidden"
-          },
-          "444": {
-            "description": "Connection Closed Without Response"
-          }
-        },
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ]
-      }
-    },
-    "/api/users/{UserId}/articles/save": {
-      "get": {
-        "tags": [
-          "Articles"
-        ],
-        "description": "",
-        "parameters": [
-          {
-            "name": "UserId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "Filter",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "NextId",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "Limit",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "OrderBy",
-            "in": "query",
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Article Data",
-            "schema": {
-              "$ref": "#/definitions/ArticleDataArray"
-            }
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "402": {
-            "description": "Payment Required"
-          },
-          "403": {
-            "description": "Forbidden"
-          }
-        },
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ]
       }
     },
     "/api/articles/{ArticleId}/coverPicture": {
@@ -8418,7 +6098,7 @@
         ]
       }
     },
-    "/api/members/{EntityId}/permissions/{EntityId}/remove": {
+    "/api/members/{EntityId}/permissions/{MemberId}/remove": {
       "patch": {
         "tags": [
           "Members"
@@ -8427,6 +6107,12 @@
         "parameters": [
           {
             "name": "EntityId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "MemberId",
             "in": "path",
             "required": true,
             "type": "string"
@@ -9588,6 +7274,207 @@
           "400": {
             "description": "Bad Request"
           },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "402": {
+            "description": "Payment Required"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/reports": {
+      "get": {
+        "tags": [
+          "Reports"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Report Data",
+            "schema": {
+              "$ref": "#/definitions/ReportDataArray"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "402": {
+            "description": "Payment Required"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Reports"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/ReportData"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "402": {
+            "description": "Payment Required"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/reports/{ReportId}": {
+      "get": {
+        "tags": [
+          "Reports"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "ReportId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Report Data",
+            "schema": {
+              "$ref": "#/definitions/ReportData"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "402": {
+            "description": "Payment Required"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "patch": {
+        "tags": [
+          "Reports"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "ReportId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Report Data",
+            "schema": {
+              "$ref": "#/definitions/ReportData"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "402": {
+            "description": "Payment Required"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Reports"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "ReportId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
           "401": {
             "description": "Unauthorized"
           },
@@ -12412,6 +10299,59 @@
         "ActiveUsersPercentage": {
           "type": "number",
           "example": 0
+        }
+      }
+    },
+    "ReportData": {
+      "type": "object",
+      "properties": {
+        "Content": {
+          "type": "string",
+          "example": "This is a sample report"
+        },
+        "ReportType": {
+          "type": "string",
+          "example": "Scam"
+        },
+        "Type": {
+          "type": "string",
+          "example": "Event"
+        },
+        "UserId": {
+          "type": "string",
+          "example": "abc123"
+        },
+        "EntityId": {
+          "type": "string",
+          "example": "789012"
+        }
+      }
+    },
+    "ReportDataArray": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "Content": {
+            "type": "string",
+            "example": "This is a sample report"
+          },
+          "ReportType": {
+            "type": "string",
+            "example": "Scam"
+          },
+          "Type": {
+            "type": "string",
+            "example": "Event"
+          },
+          "UserId": {
+            "type": "string",
+            "example": "abc123"
+          },
+          "EntityId": {
+            "type": "string",
+            "example": "789012"
+          }
         }
       }
     }

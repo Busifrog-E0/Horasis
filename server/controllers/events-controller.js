@@ -39,7 +39,10 @@ const GetEvents = async (req, res) => {
     const { Filter, NextId, Limit, OrderBy, Keyword } = req.query;
     if (Keyword) {
         //@ts-ignore
-        Filter["EventName"] = { $regex: Keyword, $options: 'i' };
+        Filter["$or"] = [
+            { "EventName": { $regex: Keyword, $options: 'i' } },
+            { "Tags.TagName": { $regex: Keyword, $options: 'i' } }
+        ]
     }
     // @ts-ignore
     const Events = await ReadEvents(Filter, NextId, Limit, OrderBy);
