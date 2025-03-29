@@ -102,6 +102,18 @@ async function Delete(collectionName, docName) {
     });
 }
 
+async function DeleteMany(collectionName, filter) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            await db.collection(collectionName).deleteMany(filter);
+            resolve(true);
+        } catch (error) {
+            logger.log(error);
+            throw new Error(error);
+        }
+    });
+}
+
 /**
  * @param {string} collectionName
  * @param {string | number | ObjectId | import("bson").ObjectIdLike | Uint8Array | undefined} docName
@@ -345,4 +357,5 @@ export default {
     db,
     DistinctValues,
     substract,
+    DeleteMany
 };

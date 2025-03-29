@@ -108,6 +108,7 @@ const GetPercentageOfData = (Count, TotalCount) => {
     return Percentage;
 }
 
+
 const GetParentTypeFromEntity = async (EntityId, EntityType) => {
     let ParentId, ParentType;
     switch (EntityType) {

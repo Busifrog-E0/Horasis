@@ -155,7 +155,7 @@ const DeleteActivities = async (req, res) => {
     //@ts-ignore
     const { UserId } = req.user;
     const Activity = await ReadOneFromActivities(ActivityId);
-    if (Activity.UserId !== UserId) {
+    if (Activity.UserId !== UserId && req.user.Role === "User") {
         return res.status(444).json(AlertBoxObject("Cannot Delete", "Cannot delete other User's Activity"))
     }
     await RemoveActivities(ActivityId);
