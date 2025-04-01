@@ -1,30 +1,120 @@
-import Button from '../ui/Button'
+import { useState, useRef, useEffect } from 'react'
 import avatar from '../../assets/icons/avatar.svg'
 
 const SpeakerProfileTab = ({ profile, agenda }) => {
+	const [isExpanded, setIsExpanded] = useState(false)
+	const aboutText = profile.About || 'Speaker about is not available'
+	const isLongText = aboutText.split(/\s+/).length > 50
+	const nameRef = useRef(null)
+	const jobTitleRef = useRef(null)
+	const companyRef = useRef(null)
+	const aboutRef = useRef(null)
+	const [showNameTooltip, setShowNameTooltip] = useState(false)
+	const [showJobTitleTooltip, setShowJobTitleTooltip] = useState(false)
+	const [showCompanyTooltip, setShowCompanyTooltip] = useState(false)
+	const [showAboutTooltip, setShowAboutTooltip] = useState(false)
+
+	const toggleExpanded = () => {
+		setIsExpanded(!isExpanded)
+	}
+
+	useEffect(() => {
+		if (nameRef.current) {
+			setShowNameTooltip(nameRef.current.scrollWidth > nameRef.current.clientWidth)
+		}
+		if (jobTitleRef.current) {
+			setShowJobTitleTooltip(jobTitleRef.current.scrollWidth > jobTitleRef.current.clientWidth)
+		}
+		if (companyRef.current) {
+			setShowCompanyTooltip(companyRef.current.scrollWidth > companyRef.current.clientWidth)
+		}
+		if (aboutRef.current) {
+			setShowAboutTooltip(aboutRef.current.scrollHeight > aboutRef.current.clientHeight)
+		}
+	}, [profile])
+
 	return (
-		<div className=' border rounded-md border-system-primary-accent overflow-hidden'>
-			<p className='text-sm mb-2 bg-system-primary-accent font-medium text-system-secondary-bg px-2 py-1'>
-				{agenda?.Name}
-			</p>
-			<div className='p-2'>
-				<div className='flex items-center gap-3'>
-					{profile.ProfilePicture ? (
-						<img className='w-12 h-12 rounded-full object-cover' src={profile.ProfilePicture} alt='Rounded avatar' />
-					) : (
-						<img className='w-12 h-12 rounded-full object-cover' src={avatar} alt='Rounded avatar' />
-					)}
-					<div className='flex-1'>
-						<h4 className='font-semibold text-base text-system-primary-accent'>{profile.FullName}</h4>
+		<div className='bg-system-secondary-bg border rounded-xl  overflow-hidden flex flex-col hover:shadow-sm transition-shadow'>
+				{agenda?.Name && (
+					<div className='border-b text-system-primary-accent px-4 py-2 text-md font-medium rounded-t-xl'>
+						{agenda.Name}
+					</div>
+				)}
+			<div className='p-4 flex flex-col h-full'>
+				<div className='flex items-center gap-4'>
+					<div className='w-12 h-12 rounded-full overflow-hidden flex-shrink-0'>
+						{profile.ProfilePicture ? (
+							<img className='w-full h-full object-cover' src={profile.ProfilePicture} alt='Speaker Avatar' />
+						) : (
+							<img className='w-full h-full object-cover' src={avatar} alt='Default Avatar' />
+						)}
+					</div>
+					<div className='flex flex-col flex-grow relative'>
+						<div className='relative'>
+							<h4
+								ref={nameRef}
+								className='font-semibold text-lg text-system-primary-text truncate max-w-[200px] cursor-pointer'
+								title={showNameTooltip ? profile.FullName : ''}>
+								{profile.FullName}
+							</h4>
+							{showNameTooltip && (
+								<div className='absolute top-full left-0 z-10 bg-gray-800 text-white text-sm p-2 rounded-md hidden group-hover:block'>
+									{profile.FullName}
+								</div>
+							)}
+						</div>
+						{profile.JobTitle && (
+							<div className='relative'>
+								<p
+									ref={jobTitleRef}
+									className='text-sm text-system-secondary-text truncate max-w-[200px] cursor-pointer'
+									title={showJobTitleTooltip ? profile.JobTitle : ''}>
+									{profile.JobTitle}
+								</p>
+								{showJobTitleTooltip && (
+									<div className='absolute top-full left-0 z-10 bg-gray-800 text-white text-sm p-2 rounded-md hidden group-hover:block'>
+										{profile.JobTitle}
+									</div>
+								)}
+							</div>
+						)}
+						{profile.Company && (
+							<div className='relative'>
+								<p
+									ref={companyRef}
+									className='text-sm text-system-secondary-text truncate max-w-[200px] cursor-pointer'
+									title={showCompanyTooltip ? profile.Company : ''}>
+									{profile.Company}
+								</p>
+								{showCompanyTooltip && (
+									<div className='absolute top-full left-0 z-10 bg-gray-800 text-white text-sm p-2 rounded-md hidden group-hover:block'>
+										{profile.Company}
+									</div>
+								)}
+							</div>
+						)}
 					</div>
 				</div>
-				<h4 className='text-base text-system-primary-text mt-2.5 lg:mt-3 leading-6 whitespace-pre-line'>
-					{profile.About ? (
-						profile.About
-					) : (
-						<span className='text-system-secondary-text text-sm'>Speaker about is not available</span>
+				<div className='flex-grow relative group'>
+					<p
+						ref={aboutRef}
+						className={`text-sm text-system-primary-text mt-2 leading-relaxed whitespace-pre-line overflow-hidden transition-all duration-300 cursor-pointer  ${
+							!isExpanded && isLongText ? 'line-clamp-3' : ''
+						}`}
+						title={showAboutTooltip ? aboutText : ''}>
+						{aboutText}
+					</p>
+					{showAboutTooltip && (
+						<div className='absolute top-full left-0 z-10 bg-gray-800 text-white text-sm p-2 rounded-md hidden group-hover:block'>
+							{aboutText}
+						</div>
 					)}
-				</h4>
+					{isLongText && (
+						<button onClick={toggleExpanded} className='text-sm text-system-primary-accent mt-2 hover:underline'>
+							{isExpanded ? 'Read Less' : 'Read More'}
+						</button>
+					)}
+				</div>
 			</div>
 		</div>
 	)

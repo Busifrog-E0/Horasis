@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import arrowback from '../assets/icons/arrowback.svg'
 import calendar from '../assets/icons/calendar.svg'
 import camera from '../assets/icons/camera.svg'
+import closeIcon from '../assets/icons/close.svg'
 import clock from '../assets/icons/clock.svg'
 import cover from '../assets/icons/cover.svg'
 import TimeLineTab from '../components/Activities/TimeLineTab'
@@ -29,6 +30,7 @@ import PictureUpload from '../components/Profile/EditProfile/PictureUpload'
 import usePostData from '../hooks/usePostData'
 import useUpdateData from '../hooks/useUpdateData'
 import EventsAgendaBig from '../components/Events/EventAgendaBig'
+import ShowMoreText from '../components/Common/ShowMoreText'
 
 const SingleEvent = () => {
 	const { eventid } = useParams()
@@ -187,6 +189,32 @@ const SingleEvent = () => {
 			),
 		})
 
+		const getSpeakersTab = (key) => ({
+			key: key,
+			title: 'Speakers',
+			render: () => (
+				<>
+					<div className='bg-system-secondary-bg p-4 lg:py-8 lg:px-12 rounded-b-lg'>
+						<div className=''>
+							{event?.Speakers?.length > 0 ? (
+								<div className='grid grid-cols-1  gap-6'>
+									{event?.Speakers.map((speaker) => (
+										<SpeakerProfileTab
+											key={speaker.UserDetails.id}
+											profile={speaker.UserDetails}
+											agenda={speaker.Agenda}
+										/>
+									))}
+								</div>
+							) : (
+								<EmptyMembers emptyText='No speakers registered yet.' />
+							)}
+						</div>
+					</div>
+				</>
+			),
+		})
+
 		// Start with key 0
 		let tabsArray = []
 
@@ -199,8 +227,8 @@ const SingleEvent = () => {
 		}
 
 		// Add other tabs, incrementing keys accordingly
-		if(IsMember){
-
+		tabsArray.push(getSpeakersTab(tabsArray.length))
+		if (IsMember) {
 			tabsArray.push(getParticipantsTab(tabsArray.length)) // Participants tab key will be 1
 		}
 
@@ -220,15 +248,16 @@ const SingleEvent = () => {
 			return tabsArray
 		} else {
 			// If user is not a member and the event is private
-			return [
-				{
-					key: 0,
-					title: 'Join the event',
-					render: () => (
-						<div className='bg-system-secondary-bg p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'></div>
-					),
-				},
-			]
+			return []
+			// return [
+			// 	{
+			// 		key: 0,
+			// 		title: 'Join the event',
+			// 		render: () => (
+			// 			<div className='bg-system-secondary-bg p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'></div>
+			// 		),
+			// 	},
+			// ]
 		}
 	}
 
@@ -346,7 +375,7 @@ const SingleEvent = () => {
 								setIsCoverPictureOpen(false)
 							}}
 							disabled={isCoverPatching || isCoverUploading}>
-							<img src={close} className='h-6  cursor-pointer' alt='' />
+							<img src={closeIcon} className='h-6  cursor-pointer' alt='' />
 						</button>
 					</div>
 				</Modal.Header>
@@ -368,21 +397,22 @@ const SingleEvent = () => {
 					</div>
 				</Modal.Body>
 			</Modal>
-			<div className='overflow-hidden bg-system-primary-bg h-80 lg:h-96 relative'>
-				{event?.CoverPicture ? (
-					<img src={event?.CoverPicture} className='object-cover h-full w-full' />
-				) : (
-					<img src={cover} className='object-cover h-full w-full' />
-				)}
-				<div className='absolute top-0 right-0 left-0 bottom-0 flex flex-col justify-between items-start p-4 lg:px-10 lg:py-6 bg-black/30 h-100 overflow-hidden overflow-y-auto'>
-					<div className='flex w-full items-start justify-between'>
-						<div
-							className={`inline-flex items-center justify-center w-12 h-12 p-3 overflow-hidden rounded-full border border-white bg-white cursor-pointer`}
-							onClick={handleGoBack}>
-							<img src={arrowback} alt='' className='h-6 cursor-pointer' />
-						</div>
-						{/* NEED UPADTE FROM BACKEND API */}
-						{/* {event?.Permissions?.IsAdmin && (
+			<div className='p-2 lg:px-20 '>
+				<div className='overflow-hidden bg-system-primary-bg h-48 rounded-t-lg relative'>
+					{event?.CoverPicture ? (
+						<img src={event?.CoverPicture} className='object-cover h-full w-full' />
+					) : (
+						<img src={cover} className='object-cover h-full w-full' />
+					)}
+					<div className='absolute top-0 right-0 left-0 bottom-0 flex flex-col justify-between items-start p-4 lg:px-10 lg:py-6 bg-black/30 h-100 overflow-hidden overflow-y-auto'>
+						<div className='flex w-full items-start justify-between'>
+							<div
+								className={`inline-flex items-center justify-center w-6 h-6 md:w-12 md:h-12 md:p-3 overflow-hidden rounded-full border border-white bg-white cursor-pointer`}
+								onClick={handleGoBack}>
+								<img src={arrowback} alt='' className='h-3 md:h-6 cursor-pointer' />
+							</div>
+							{/* NEED UPADTE FROM BACKEND API */}
+							{/* {event?.Permissions?.IsAdmin && (
 							<div
 								onClick={() => {
 									setIsCoverPictureOpen(true)
@@ -396,154 +426,193 @@ const SingleEvent = () => {
 								<img src={camera} alt='' className='h-6 cursor-pointer' />
 							</div>
 						)} */}
-					</div>
-					<div>
-						<h4 className='font-bold text-4xl text-white mb-2'>{event?.EventName}</h4>
-						<div className='flex flex-row flex-wrap gap-3'>
-							<h4 className='text-xl text-white'>{event?.Type} Event</h4>
-							<h4 className='text-xl text-white'>•</h4>
-							<h4 className='text-xl text-white'>{event?.NoOfMembers} Participants</h4>
-							<h4 className='text-xl text-white'>•</h4>
-							<h4 className='text-xl text-white'>{event?.Privacy}</h4>
-							<h4 className='text-xl text-white'>•</h4>
-							{event?.Location && (
-								<>
-									<h4 className='text-xl text-white'>{event?.Location},</h4>
-								</>
-							)}
-
-							<h4 className='text-xl text-white'>{event?.Country}</h4>
 						</div>
 					</div>
 				</div>
-			</div>
-			<div className='p-2 lg:px-10 lg:py-6'>
-				<div className='grid grid-cols-1 lg:grid-cols-4 gap-3 lg:gap-12 '>
-					<div className=''>
-						<div className='p-5 bg-system-secondary-bg rounded-lg mb-3 lg:mb-8'>
-							<h4 className='font-semibold text-xl text-system-primary-text mt-1 lg:mt-3'>About</h4>
-							<h4 className='font-medium text-md  text-system-secondary-text my-2 lg:my-2 leading-relaxed'>
-								{event?.Description}
-							</h4>
+				<div className='bg-system-secondary-bg rounded-b-2xl p-6 '>
+					<div className='pb-4'>
+						<h4 className='font-bold text-system-primary-accent mb-2 text-3xl '>{event?.EventName}</h4>
+
+						<div className='flex flex-row flex-wrap gap-3'>
+							<h4 className='text-md text-system-primary-accent'>{event?.Type} Event</h4>
+							<h4 className='text-md text-system-primary-accent'>•</h4>
+							<h4 className='text-md text-system-primary-accent'>{event?.NoOfMembers} Participants</h4>
+							<h4 className='text-md text-system-primary-accent'>•</h4>
+							<h4 className='text-md text-system-primary-accent'>{event?.Privacy}</h4>
+							<h4 className='text-md text-system-primary-accent'>•</h4>
+							{event?.Location && (
+								<>
+									<h4 className='text-md text-system-primary-accent'>{event?.Location},</h4>
+								</>
+							)}
+
+							<h4 className='text-md text-system-primary-accent'>{event?.Country}</h4>
+						</div>
+					</div>
+					<div className='flex flex-col md:flex-row md:gap-10'>
+						<div className='flex-1'>
+							<h4 className='font-semibold text-xl text-system-primary-text'>About</h4>
+							<ShowMoreText text={event?.Description} />
 							{event.Tags && event.Tags.length > 0 && (
 								<div className='flex my-4 gap-2 flex-wrap'>
 									<TagsList tags={event?.Tags} />
 								</div>
 							)}
 							{event?.OriginalLanguage !== homeLanguage && (
-								<>
+								<div className='mt-4'>
 									{translated ? (
-										<p className='text-sm mt-4 text-system-secondary-text cursor-pointer' onClick={showOriginal}>
+										<p className='text-sm text-system-secondary-text cursor-pointer' onClick={showOriginal}>
 											Show Original
 										</p>
 									) : (
-										<p className='text-sm mt-4 text-system-secondary-text cursor-pointer' onClick={translateEvent}>
+										<p className='text-sm text-system-secondary-text cursor-pointer' onClick={translateEvent}>
 											Translate Event Details
 										</p>
 									)}
-								</>
+								</div>
 							)}
-							<div className='flex items-start gap-4 mt-3'>
+						</div>
+						<div className='grid grid-cols-1 md:grid-cols-2'>
+							<div className='flex items-center gap-4 mt-6 md:col-span-2'>
 								<img
 									className='w-14 h-14 rounded-full object-cover'
 									src={event?.UserDetails?.ProfilePicture}
 									alt='Rounded avatar'
 								/>
 								<div className='flex-1'>
-									<h4 className='text-xs text-brand-gray-dim mt-1'>Organizer</h4>
-									<h4 className='font-semibold text-lg text-system-primary-accent mt-1'>
-										{event?.UserDetails?.FullName}
-									</h4>
+									<p className='text-xs text-brand-gray-dim'>Organizer</p>
+									<h4 className='font-semibold text-lg text-system-primary-accent'>{event?.UserDetails?.FullName}</h4>
 								</div>
 							</div>
 
-							<div className='flex items-start gap-4 mt-4 lg:mb-6'>
-								<div className='flex items-center flex-1 gap-3'>
+							<div className='grid grid-cols-2  gap-4 mt-6'>
+								<div className='flex items-center gap-3'>
 									<img src={calendar} alt='' className='h-7' />
 									<div>
-										<h4 className='text-xs text-brand-gray-dim mb-1'>When</h4>
-										<h4 className='text-sm text-system-primary-text leading-6'>
+										<p className='text-xs text-brand-gray-dim mb-1'>When</p>
+										<p className='text-sm text-system-primary-text leading-6'>
 											{getDateInWordsFormat(new Date(event?.Date))}
-										</h4>
+										</p>
 									</div>
 								</div>
-								<div className='flex items-center flex-1 gap-3'>
+								<div className='flex items-center gap-3'>
 									<img src={clock} alt='' className='h-7' />
 									<div>
-										<h4 className='text-xs text-brand-gray-dim mb-1'>Time</h4>
-										<h4 className='text-sm text-system-primary-text leading-6'>
+										<p className='text-xs text-brand-gray-dim mb-1'>Time</p>
+										<p className='text-sm text-system-primary-text leading-6'>
 											{gettimenow(new Date(event?.StartTime))}
-										</h4>
+										</p>
 									</div>
 								</div>
 							</div>
 						</div>
-						<div className='flex gap-2'>
-							{event?.IsMember ? (
-								<>
-									{currentUserData.CurrentUser.UserId !== event?.OrganiserId && (
-										<Button width='full' variant='outline' onClick={() => unRegisterEvent()}>
-											Leave Event
-										</Button>
-									)}
-								</>
-							) : event?.MembershipStatus === undefined ? (
-								<Button width='full' variant='black' onClick={() => joinEvent()}>
-									Register
-								</Button>
-							) : event?.MembershipStatus === 'Requested' ? (
-								<Button width='full' variant='outline' onClick={() => cancelRegistrationRequest()}>
-									Cancel Registration
-								</Button>
-							) : event?.MembershipStatus === 'Invited' ? (
-								<div className='flex flex-col items-start gap-2'>
-									<p className='text-system-secondary-text'>You have been invited to this event</p>
-									<div className='flex gap-2'>
-										<Button width='full' variant='outline' onClick={() => rejectInvite()}>
-											Reject
-										</Button>
-										<Button width='full' variant='black' onClick={() => acceptInvite()}>
-											Accept
-										</Button>
-									</div>
-								</div>
-							) : null}
-						</div>
 					</div>
-					<div className='lg:col-span-2'>
-						{event &&  (
+					<div className='flex gap-2 mt-10  max-w-lg justify-self-end w-full justify-end'>
+						<ShowJoinButton event={event} />
+						{event?.IsMember ? (
+							<>
+								{currentUserData.CurrentUser.UserId !== event?.OrganiserId && (
+									<Button variant='outline' onClick={() => unRegisterEvent()}>
+										Leave Event
+									</Button>
+								)}
+							</>
+						) : event?.MembershipStatus === undefined ? (
+							<Button width='full' variant='black' onClick={() => joinEvent()}>
+								Register
+							</Button>
+						) : event?.MembershipStatus === 'Requested' ? (
+							<Button variant='outline' onClick={() => cancelRegistrationRequest()}>
+								Cancel Registration
+							</Button>
+						) : event?.MembershipStatus === 'Invited' ? (
+							<div className='flex flex-col items-start gap-2'>
+								<p className='text-system-secondary-text'>You have been invited to this event</p>
+								<div className='flex gap-2'>
+									<Button width='full' variant='outline' onClick={() => rejectInvite()}>
+										Reject
+									</Button>
+									<Button width='full' variant='black' onClick={() => acceptInvite()}>
+										Accept
+									</Button>
+								</div>
+							</div>
+						) : null}
+					</div>
+				</div>
+			</div>
+			<div className='p-2 lg:px-20 '>
+				<div className='grid grid-cols-1 lg:grid-cols-4 gap-3 lg:gap-12 '>
+					<div className='lg:col-span-4'>
+						{event && (
 							<Tab
 								onTabChange={onTabChange}
 								activeTab={activeTab}
 								name='SingleEvent'
 								tabs={tabs(event)}
 								alignment='justify-start'
-								/>
-							)}
-							{event && !event?.IsMember && (
-								<div className={`rounded-lg ${!event?.IsMember && 'max-h-96 overflow-hidden relative h-full  my-8 border border-system-primary-accent'}`}>
-									{!event?.IsMember && (
-										<div className='absolute top-0 right-0 left-0 bottom-0 p-4 lg:px-10 lg:py-6 bg-system-primary-accent-light h-100 overflow-hidden overflow-y-auto z-10'>
-											<div className='flex flex-col justify-center items-center mt-6'>
-												<h4 className='font-bold text-center text-3xl text-system-primary-accent mb-3'>Join the Event</h4>
-												<h4 className='text-md text-center text-system-primary-accent'>
-													Get ready for insightful conversations! Our discussions platform will be active 10 days
-													before,during and 10 days after the event?. Check in closer to the date to connect with peers,
-													share perspectives and share most of your event experience.
-												</h4>
-												<h4 className='text-md text-center text-system-primary-accent mt-4 mb-6'>
-													Let the anticipation build - meaningful discussions await!
-												</h4>
-												{event?.MembershipStatus === 'Requested' && (
-													<p className='text-system-secondary-text'>Registration request has been sent</p>
-												)}
+							/>
+						)}
+						{event && !event?.IsMember && (
+							<div
+								className={`rounded-lg ${
+									!event?.IsMember &&
+									'max-h-96 overflow-hidden relative h-max  my-8 border border-system-primary-accent'
+								}`}>
+								{!event?.IsMember && (
+									<div className=' top-0 right-0 left-0 bottom-0 p-4 lg:px-10 lg:py-6 bg-system-primary-accent-light h-100 overflow-hidden overflow-y-auto z-10'>
+										<div className='flex flex-col justify-center items-center mt-6'>
+											<h4 className='font-bold text-center text-3xl text-system-primary-accent mb-3'>Join the Event</h4>
+											<h4 className='text-md text-center text-system-primary-accent'>
+												Get ready for insightful conversations! Our discussions platform will be active 10 days
+												before,during and 10 days after the event?. Check in closer to the date to connect with peers,
+												share perspectives and share most of your event experience.
+											</h4>
+											<h4 className='text-md text-center text-system-primary-accent mt-4 mb-6'>
+												Let the anticipation build - meaningful discussions await!
+											</h4>
+											{event?.MembershipStatus === 'Requested' && (
+												<p className='text-system-secondary-text'>Registration request has been sent</p>
+											)}
+											<div>
+												{event?.IsMember ? (
+													<>
+														{currentUserData.CurrentUser.UserId !== event?.OrganiserId && (
+															<Button variant='outline' onClick={() => unRegisterEvent()}>
+																Leave Event
+															</Button>
+														)}
+													</>
+												) : event?.MembershipStatus === undefined ? (
+													<Button width='full' variant='black' onClick={() => joinEvent()}>
+														Register
+													</Button>
+												) : event?.MembershipStatus === 'Requested' ? (
+													<Button variant='outline' onClick={() => cancelRegistrationRequest()}>
+														Cancel Registration
+													</Button>
+												) : event?.MembershipStatus === 'Invited' ? (
+													<div className='flex flex-col items-center gap-2'>
+														<p className='text-system-secondary-text'>You have been invited to this event</p>
+														<div className='flex gap-2'>
+															<Button width='full' variant='outline' onClick={() => rejectInvite()}>
+																Reject
+															</Button>
+															<Button width='full' variant='black' onClick={() => acceptInvite()}>
+																Accept
+															</Button>
+														</div>
+													</div>
+												) : null}
 											</div>
 										</div>
-									)}
-								</div>
-							)}
+									</div>
+								)}
+							</div>
+						)}
 					</div>
-					<div className='flex flex-col gap-2'>
+					{/* <ShowJoinButton event={event} /> */}
+					{/* <div className='flex flex-col gap-2'>
 						<ShowJoinButton event={event} />
 						<div className='p-5 bg-system-secondary-bg rounded-lg'>
 							<div className='lg:mt-1'>
@@ -555,7 +624,7 @@ const SingleEvent = () => {
 								/>
 							</div>
 						</div>
-					</div>
+					</div> */}
 				</div>
 			</div>
 		</>
@@ -581,10 +650,10 @@ const ShowJoinButton = ({ event }) => {
 	const shouldShowJoinButton = event?.IsMember && currentDateTime >= thirtyMinutesBefore
 
 	return (
-		<div>
+		<div className='flex-1'>
 			{/* Other components */}
 			{shouldShowJoinButton && (
-				<Button width='full' variant='black' onClick={() => navigate('join')}>
+				<Button width='full' variant='danger' onClick={() => navigate('join')}>
 					Join
 				</Button>
 			)}
