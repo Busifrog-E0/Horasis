@@ -135,7 +135,7 @@ const SingleEvent = () => {
 
 		const getActivityTab = (key) => ({
 			key: key,
-			title: 'Activities',
+			title: 'Updates & Discussions',
 			render: () => (
 				<div className='bg-system-secondary-bg p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
 					<TimeLineTab
@@ -163,7 +163,7 @@ const SingleEvent = () => {
 
 		const getDicussionNotStarted = (key) => ({
 			key: key,
-			title: 'Activities',
+			title: 'Updates & Discussions',
 			render: () => (
 				<>
 					<div className='bg-system-secondary-bg p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden h-96'>

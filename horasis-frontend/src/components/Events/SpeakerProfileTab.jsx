@@ -4,15 +4,14 @@ import avatar from '../../assets/icons/avatar.svg'
 const SpeakerProfileTab = ({ profile, agenda }) => {
 	const [isExpanded, setIsExpanded] = useState(false)
 	const aboutText = profile.About || 'Speaker about is not available'
-	const isLongText = aboutText.split(/\s+/).length > 50
+
 	const nameRef = useRef(null)
 	const jobTitleRef = useRef(null)
 	const companyRef = useRef(null)
-	const aboutRef = useRef(null)
+
 	const [showNameTooltip, setShowNameTooltip] = useState(false)
 	const [showJobTitleTooltip, setShowJobTitleTooltip] = useState(false)
 	const [showCompanyTooltip, setShowCompanyTooltip] = useState(false)
-	const [showAboutTooltip, setShowAboutTooltip] = useState(false)
 
 	const toggleExpanded = () => {
 		setIsExpanded(!isExpanded)
@@ -28,18 +27,15 @@ const SpeakerProfileTab = ({ profile, agenda }) => {
 		if (companyRef.current) {
 			setShowCompanyTooltip(companyRef.current.scrollWidth > companyRef.current.clientWidth)
 		}
-		if (aboutRef.current) {
-			setShowAboutTooltip(aboutRef.current.scrollHeight > aboutRef.current.clientHeight)
-		}
 	}, [profile])
 
 	return (
 		<div className='bg-system-secondary-bg border rounded-xl  overflow-hidden flex flex-col hover:shadow-sm transition-shadow'>
-				{agenda?.Name && (
-					<div className='border-b text-system-primary-accent px-4 py-2 text-md font-medium rounded-t-xl'>
-						{agenda.Name}
-					</div>
-				)}
+			{agenda?.Name && (
+				<div className='border-b text-system-primary-accent px-4 py-2 text-md font-medium rounded-t-xl'>
+					{agenda.Name}
+				</div>
+			)}
 			<div className='p-4 flex flex-col h-full'>
 				<div className='flex items-center gap-4'>
 					<div className='w-12 h-12 rounded-full overflow-hidden flex-shrink-0'>
@@ -97,23 +93,9 @@ const SpeakerProfileTab = ({ profile, agenda }) => {
 				</div>
 				<div className='flex-grow relative group'>
 					<p
-						ref={aboutRef}
-						className={`text-sm text-system-primary-text mt-2 leading-relaxed whitespace-pre-line overflow-hidden transition-all duration-300 cursor-pointer  ${
-							!isExpanded && isLongText ? 'line-clamp-3' : ''
-						}`}
-						title={showAboutTooltip ? aboutText : ''}>
+						className={`text-sm text-system-primary-text mt-2 leading-relaxed whitespace-pre-line overflow-hidden transition-all duration-300 cursor-pointer `}>
 						{aboutText}
 					</p>
-					{showAboutTooltip && (
-						<div className='absolute top-full left-0 z-10 bg-gray-800 text-white text-sm p-2 rounded-md hidden group-hover:block'>
-							{aboutText}
-						</div>
-					)}
-					{isLongText && (
-						<button onClick={toggleExpanded} className='text-sm text-system-primary-accent mt-2 hover:underline'>
-							{isExpanded ? 'Read Less' : 'Read More'}
-						</button>
-					)}
 				</div>
 			</div>
 		</div>
