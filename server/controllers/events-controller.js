@@ -9,6 +9,7 @@ import { AlertBoxObject } from './common.js';
 import { DetectLanguage } from './translations-controller.js';
 import { ReadInvitations } from '../databaseControllers/invitations-databaseController.js';
 import { ReadSpeakers } from '../databaseControllers/speakers-databaseController.js';
+import { ObjectId } from 'mongodb';
 
 /**
  * @typedef {import('./../databaseControllers/events-databaseController.js').EventData} EventData 
@@ -160,6 +161,11 @@ const PostEvents = async (req, res) => {
     // @ts-ignore
     const { UserId: OrganiserId } = req.user;
     const UserDetails = await ReadOneFromUsers(OrganiserId);
+    const { Agenda } = req.body;
+    req.body.Agenda = Agenda.map(Agenda => {
+        const AgendaId = (new ObjectId()).toString();
+        return { ...Agenda, AgendaId };
+    })
     req.body = EventInit(req.body);
     const EventId = await CreateEvents({ ...req.body, OrganiserId });
     const Member = MemberInit({ MemberId: OrganiserId, EntityId: EventId, UserDetails }, "Accepted", true);
@@ -240,18 +246,20 @@ const SetEventDataForGet = async (Event, UserId) => {
  */
 const CheckIfMailAvailableToInviteInEvent = async (Email, Type) => {
     switch (Type) {
-        case "Speaker":{
+        case "Speaker": {
             const [SpeakerInvitation] = await ReadInvitations({ Email }, undefined, 1, undefined);
             if (SpeakerInvitation && SpeakerInvitation.OnCreate.some(object => object.ActionType === "Event-Invite-Speaker")) {
                 return AlertBoxObject("Already Invited", "User with this email has already been invited")
             }
-            break;}
-        case "Member":{
+            break;
+        }
+        case "Member": {
             const [MemberInvitation] = await ReadInvitations({ Email }, undefined, 1, undefined);
             if (MemberInvitation && MemberInvitation.OnCreate.some(object => object.ActionType === "Event-Invite-Member")) {
                 return AlertBoxObject("Already Invited", "User with this email has already been invited")
             }
-            break;}
+            break;
+        }
         default:
             break;
     }

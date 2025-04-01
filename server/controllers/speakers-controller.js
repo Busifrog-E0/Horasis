@@ -5,7 +5,7 @@ import { AlertBoxObject } from './common.js';
 import { AggregateUsers, ReadOneFromUsers, ReadUsers } from '../databaseControllers/users-databaseController.js';
 import { MemberInit } from './members-controller.js';
 import { CreateMembers, ReadMembers } from '../databaseControllers/members-databaseController.js';
-import { IncrementEvents, PullArrayEvents, PushArrayEvents, ReadOneFromEvents } from '../databaseControllers/events-databaseController.js';
+import { IncrementEvents, PullArrayEvents, PushArrayEvents, ReadOneFromEvents, UpdateEvents } from '../databaseControllers/events-databaseController.js';
 import { RemoveNotificationForSpeaker, SendNotificationForSpeaker } from './notifications-controller.js';
 import { ObjectId } from 'mongodb';
 import { SendSpeakerInviteEmail } from './emails-controller.js';
@@ -83,11 +83,22 @@ const PostSpeakers = async (req, res) => {
     if (Speaker) {
         return res.status(444).json(AlertBoxObject("Already Invited", "You have already invited this user."));
     }
-    const MembershipStatus = "Invited";
+    const Event = await ReadOneFromEvents(EventId);
     const UserDetails = await ReadOneFromUsers(SpeakerId);
+    const { Agenda: AgendaData } = Event;
+    const updatedAgenda = AgendaData.map(item => {
+        if (item.AgendaId === Agenda.AgendaId) {
+            return { ...item, SpeakerData: { SpeakerId, UserDetails } }
+        }
+        return item;
+    })
+    const MembershipStatus = "Invited";
+
     await Promise.all([
         CreateSpeakers({ EventId, SpeakerId, MembershipStatus, UserDetails, Agenda }),
-        SendNotificationForSpeaker(EventId, SpeakerId, UserId)
+        SendNotificationForSpeaker(EventId, SpeakerId, UserId),
+        PushArrayEvents({ Speakers: { SpeakerId, UserDetails: UserDetails, Agenda: Agenda } }, EventId),
+        UpdateEvents({ Agenda: updatedAgenda }, EventId)
     ])
 
     return res.json(true);
@@ -113,7 +124,7 @@ const PatchSpeakers = async (req, res) => {
         UpdateSpeakers({ MembershipStatus: "Accepted" }, Speaker.DocId),
         Member ? Promise.resolve() : CreateMembers(MemberData),
         IncrementEvents({ NoOfMembers: 1 }, EventId),
-        PushArrayEvents({ Speakers: { SpeakerId, UserDetails: Speaker.UserDetails, Agenda: Speaker.Agenda } }, EventId),
+
     ])
     return res.json(true);
 }
