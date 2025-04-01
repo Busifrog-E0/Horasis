@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import { _storeData, _retrieveData, _clearData, CURRENTUSERDATA } from './LocalStorage'
+import { _storeData, _retrieveData, _clearData, CURRENTUSERDATA, _clear } from './LocalStorage'
 import { useRef } from 'react'
 
 export const AuthContext = React.createContext()
@@ -139,6 +139,7 @@ export const AuthProvider = ({ children }) => {
 
 	const logout = () => {
 		_clearData(CURRENTUSERDATA)
+		_clear()
 		setCurrentUserData(null)
 		setCurrentUserProfile(defaultProfile)
 	}
