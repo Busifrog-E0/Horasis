@@ -81,6 +81,10 @@ const PostMembers = async (req, res) => {
     const Entity = Type === "Discussion" ? await ReadOneFromDiscussions(EntityId) :
         (Type === "Event" ? await ReadOneFromEvents(EntityId) : await ReadOneFromPodcasts(EntityId));
 
+    if (Type === "Event" && Entity.Capacity >= Entity.NoOfMembers) {
+        return res.status(444).json(AlertBoxObject("Cannot Join", "This event is full"));
+    }
+    
     if (Entity.Privacy === "Private") {
         req.body = MemberInit({ MemberId: UserId, EntityId, UserDetails }, "Requested")
         await Promise.all([
@@ -144,12 +148,19 @@ const InviteMembers = async (req, res) => {
     //@ts-ignore
     const { UserId } = req.user;
     const { EntityId, InviteeId } = req.params;
+    const { Type } = req.body;
     const [Member] = await ReadMembers({ MemberId: UserId, EntityId }, undefined, 1, undefined);
 
     if (!Member.Permissions.CanInviteOthers) {
         return res.status(444).json(AlertBoxObject("Cannot Invite", "You cannot invite others to this discussion"));
     }
-
+    const Entity = Type === "Discussion" ? await ReadOneFromDiscussions(EntityId) :
+        (Type === "Event" ? await ReadOneFromEvents(EntityId) : await ReadOneFromPodcasts(EntityId));
+    
+    if (Type === "Event" && Entity.Capacity >= Entity.NoOfMembers) { 
+        return res.status(444).json(AlertBoxObject("Cannot Invite", "This event is full"));
+    }
+    
     const [Invitee] = await ReadMembers({ MemberId: InviteeId, EntityId }, undefined, 1, undefined);
 
     if (Invitee) {
@@ -170,7 +181,7 @@ const InviteMembers = async (req, res) => {
 
         }
     }
-    const { Type } = req.body;
+
     const UserDetails = await ReadOneFromUsers(InviteeId);
     req.body = MemberInit({ MemberId: InviteeId, EntityId, UserDetails }, "Invited");
     await Promise.all([

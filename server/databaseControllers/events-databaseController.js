@@ -37,6 +37,7 @@ import dataHandling from './functions.js'
  * @property {"Virtual"|"Physical"} Type
  * @property {string} Country
  * @property {string} Location
+ * @property {number} Capacity
  * @property {number} NoOfMembers
  * @property {string} DisplayPicture
  * @property {string} CoverPicture
