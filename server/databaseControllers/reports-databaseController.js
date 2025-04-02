@@ -8,6 +8,8 @@ import dataHandling from './functions.js'
  * @property {string} Type
  * @property {string} UserId
  * @property {string} EntityId
+ * @property {boolean} IsDeleted
+ * @property {boolean} IsViewed
  * @property {number} CreatedIndex
  */
 
@@ -64,11 +66,15 @@ const RemoveReports = async (DocId) => {
     return dataHandling.Delete('Reports', DocId);
 }
 
+const UpdateManyReports = async (data, where) => { 
+    return dataHandling.UpdateMany('Reports', data, where);
+}
 
 export {
     ReadReports,
     ReadOneFromReports,
     UpdateReports,
     CreateReports,
-    RemoveReports
+    RemoveReports,
+    UpdateManyReports
 }

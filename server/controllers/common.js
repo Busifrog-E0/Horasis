@@ -1,7 +1,11 @@
 import axios from "axios";
 import bcrpyt from 'bcrypt';
-import { ReadOneFromActivities } from "../databaseControllers/activities-databaseController.js";
-import { ReadOneFromComments } from "../databaseControllers/comments-databaseController.js";
+import { ReadOneFromActivities, RemoveActivities } from "../databaseControllers/activities-databaseController.js";
+import { ReadOneFromComments, RemoveComments } from "../databaseControllers/comments-databaseController.js";
+import { RemoveArticles } from "../databaseControllers/articles-databaseController.js";
+import { RemovePodcasts } from "../databaseControllers/podcasts-databaseController.js";
+import { RemoveDiscussions } from "../databaseControllers/discussions-databaseController.js";
+import { RemoveEvents } from "../databaseControllers/events-databaseController.js";
 const UserFields = [
     "FullName",
     "Username",
@@ -157,6 +161,15 @@ const SocketError = (Message, StatusCode) => {
     return err;
 }
 
+const DeleteFnBasedOnType = {
+    "Article": RemoveArticles,
+    "Comment": RemoveComments,
+    "Activity": RemoveActivities,
+    "Podcast": RemovePodcasts,
+    "Discussion": RemoveDiscussions,
+    "Event": RemoveEvents,
+}
+
 export {
     AlertBoxObject,
     getOTP,
@@ -166,5 +179,6 @@ export {
     GetPercentageOfData,
     hashPassword,
     ComparePassword,
-    GetParentTypeFromEntity
+    GetParentTypeFromEntity,
+    DeleteFnBasedOnType
 }
