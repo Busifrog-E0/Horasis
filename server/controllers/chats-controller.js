@@ -45,13 +45,14 @@ const GetConversations = async (req, res) => {
     // @ts-ignore
     // Filter.OneMessageSent = true;
     //@ts-ignore
-    let data = await ReadConversations(Filter, NextId, Limit, OrderBy);
+    let data = await ReadConversations({ ...Filter }, NextId, Limit, OrderBy);
 
     // later fix coversation 
-    // if (data.length !== Number(Limit || 10) && Number(Limit) !== -1) {
-
-    // }
-    // return res.json(data)
+    if (data.length !== Number(Limit || 10) && Number(Limit) !== -1) {
+        //@ts-ignore
+        let data2 = await ReadConversations({ ...Filter }, NextId, Limit - data.length);
+        data = [...data, ...data2];
+    }
 
     await Promise.all(data.map(async ConversationData => {
         // @ts-ignore
