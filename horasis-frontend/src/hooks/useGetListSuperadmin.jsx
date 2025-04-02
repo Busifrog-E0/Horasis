@@ -4,8 +4,16 @@ import { jsonToQuery } from '../utils/searchParams/extractSearchParams'
 import { getNextId } from '../utils/URLParams'
 import { getItem } from '../constants/operations'
 import { useToast } from '../components/Toast/ToastService'
+import { runOnce } from '../utils/runOnce'
 
-export default function useGetListSuperadmin(endpoint, extraParams = {}, checkLeft = true, loadInitial = true) {
+export default function useGetListSuperadmin(
+	endpoint,
+	extraParams = {},
+	checkLeft = true,
+	loadInitial = true,
+	changeOnFilter = false,
+	extraDependencies = []
+) {
 	const { updateCurrentUser, currentUserData } = useSuperAuth()
 	const toast = useToast()
 	const [data, setData] = useState([])
@@ -19,15 +27,23 @@ export default function useGetListSuperadmin(endpoint, extraParams = {}, checkLe
 		Limit: 10,
 		StartDate: null,
 		EndDate: null,
+		...extraParams
 	})
 
 	function updateFilter(oby, kw, lt, sd, ed) {
 		setFilters({
-			OrderBy: oby,
-			Keyword: kw,
-			Limit: lt,
-			StartDate: sd,
-			EndDate: ed,
+			OrderBy: oby || filters.OrderBy,
+			Keyword: kw || filters.Keyword,
+			Limit: lt || filters.Limit,
+			StartDate: sd || filters.StartDate,
+			EndDate: ed || filters.EndDate,
+		})
+	}
+
+	function changeSingleFilter(key, value) {
+		setFilters({
+			...filters,
+			[key]: value,
 		})
 	}
 
@@ -38,9 +54,10 @@ export default function useGetListSuperadmin(endpoint, extraParams = {}, checkLe
 			setIsLoading(value)
 		}
 	}
+	const dependencies = changeOnFilter ? [filters, ...extraDependencies] : [...extraDependencies]
 
-	const getList = (temp, fromUpdate = true) => {
-		const query = `${endpoint}?${jsonToQuery({ ...filters, ...extraParams })}&NextId=${getNextId(temp)}`
+	const getList = runOnce((temp, fromUpdate = true) => {
+		const query = `${endpoint}?${jsonToQuery({ ...filters })}&NextId=${getNextId(temp)}`
 		setLoadingState(temp, true)
 		getItem(
 			query,
@@ -59,12 +76,12 @@ export default function useGetListSuperadmin(endpoint, extraParams = {}, checkLe
 			updateCurrentUser,
 			currentUserData,
 			toast,
-      'admin'
+			'admin'
 		)
-	}
+	})
 
-	const checkMoreLeft = (temp) => {
-		const query = `${endpoint}?${jsonToQuery({ ...filters, ...extraParams })}&NextId=${getNextId(temp)}`
+	const checkMoreLeft = runOnce((temp) => {
+		const query = `${endpoint}?${jsonToQuery({ ...filters, Limit: 1 })}&NextId=${getNextId(temp)}`
 		getItem(
 			query,
 			(result) => {
@@ -80,15 +97,16 @@ export default function useGetListSuperadmin(endpoint, extraParams = {}, checkLe
 			},
 			updateCurrentUser,
 			currentUserData,
-			toast,'admin'
+			toast,
+			'admin'
 		)
-	}
+	})
 
 	useEffect(() => {
 		if (loadInitial) {
 			getList([])
 		}
-	}, [])
+	}, dependencies)
 
 	useEffect(() => {
 		if (checkLeft) {
@@ -103,7 +121,9 @@ export default function useGetListSuperadmin(endpoint, extraParams = {}, checkLe
 		isLoadingMore,
 		isPageDisabled,
 		filters,
+		setFilters,
 		updateFilter,
 		getList,
+		changeSingleFilter,
 	}
 }

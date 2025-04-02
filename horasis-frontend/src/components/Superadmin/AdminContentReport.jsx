@@ -1,17 +1,17 @@
 import React, { useState } from 'react'
-import empty from '../assets/icons/empty.svg'
-import Button from '../components/ui/Button'
-import Select from '../components/ui/Select'
-import Spinner from '../components/ui/Spinner'
-import useDeleteData from '../hooks/useDeleteData'
-import useGetList from '../hooks/useGetList'
-import useUpdateData from '../hooks/useUpdateData'
-import { useAuth } from '../utils/AuthProvider'
+import empty from '../../assets/icons/empty.svg'
+import Button from '../ui/Button'
+import Select from '../ui/Select'
+import Spinner from '../ui/Spinner'
+import useDeleteDataSuperadmin from '../../hooks/useDeleteDataSuperadmin'
+import useGetListSuperadmin from '../../hooks/useGetListSuperadmin'
+import useUpdateDataSuperadmin from '../../hooks/useUpdateDataSuperadmin'
+import { useSuperAuth } from '../../context/SuperAdmin/SuperAuthService'
 
 const isViewOptions = { All: '', Viewed: true, Unviewed: false }
 
-const ReportsPage = () => {
-	const { currentUserData } = useAuth()
+const AdminContentReport = () => {
+	const { currentUserData } = useSuperAuth()
 	const [reportType, setReportType] = useState('Activity')
 	const [isViewed, setIsViewed] = useState('All')
 
@@ -22,16 +22,16 @@ const ReportsPage = () => {
 		isPageDisabled,
 		getList,
 		changeSingleFilter,
-	} = useGetList('reports', { Type: reportType, IsViewed: isViewOptions[isViewed] }, true, true, true)
+	} = useGetListSuperadmin('reports', { Type: reportType, IsViewed: isViewOptions[isViewed] }, true, true, true)
 
-	const { deleteData, isLoading: isDeleting } = useDeleteData('', {
+	const { deleteData, isLoading: isDeleting } = useDeleteDataSuperadmin('', {
 		onSuccess: () => {
 			getList([])
 		},
 		onError: () => {},
 	})
 
-	const { updateData, isLoading: isUpdating } = useUpdateData({
+	const { updateData, isLoading: isUpdating } = useUpdateDataSuperadmin({
 		onSuccess: () => {
 			getList([])
 		},
@@ -52,16 +52,16 @@ const ReportsPage = () => {
 		deleteData({ endPoint: `reports/${reportId}/entity` })
 	}
 
-	const handleMarkAsRead = (reportId, isViewed) => {
+	const handleMarkAsRead = (reportId) => {
 		updateData({ endpoint: `reports/${reportId}/markAsRead`, payload: {} })
 	}
 
 	return (
-		<div className='p-4 lg:px-4 lg:py-6 bg-system-secondary-bg mt-4 mx-2 rounded-lg'>
-			<div className='flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4 md:gap-0'>
+		<div className='p-4 lg:px-4 lg:py-6 bg-system-secondary-bg mt-4 mx-2 rounded-lg flex flex-col h-full'>
+			<div className='flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4 md:gap-0 w-full '>
 				<h1 className='text-2xl font-medium text-system-primary-text'>Reported Contents</h1>
-				<div className='flex gap-4 w-full md:w-max'>
-					<div className='w-full md:w-64 flex-1'>
+				<div className='flex flex-col md:flex-row gap-4 w-full md:w-max'>
+					<div className='w-full md:w-64'>
 						<h1 className='text-system-primary-text text-sm'>Report Type</h1>
 						<Select
 							name='reportType'
@@ -73,7 +73,7 @@ const ReportsPage = () => {
 							width='full'
 						/>
 					</div>
-					<div className='w-full md:w-64 flex-1'>
+					<div className='w-full md:w-64'>
 						<h1 className='text-system-primary-text text-sm'>Viewed Status</h1>
 						<Select
 							name='isViewed'
@@ -98,8 +98,8 @@ const ReportsPage = () => {
 					<p className='text-system-primary-text text-center'>No reports found.</p>
 				</div>
 			) : (
-				<>
-					<div className='overflow-x-auto rounded-lg'>
+				<div className='flex flex-col flex-1'>
+					<div className='overflow-x-auto rounded-lg flex-1'>
 						<table className='min-w-full divide-y divide-gray-200 bg-system-secondary-bg'>
 							<thead className='bg-gray-100'>
 								<tr>
@@ -108,11 +108,13 @@ const ReportsPage = () => {
 										className='px-6 py-4 text-left text-base font-medium text-gray-500 uppercase tracking-wider'>
 										Content Type
 									</th>
-									<th
-										scope='col'
-										className='px-6 py-4 text-left text-base font-medium text-gray-500 uppercase tracking-wider'>
-										Content
-									</th>
+									{currentUserData && (
+										<th
+											scope='col'
+											className='px-6 py-4 text-left text-base font-medium text-gray-500 uppercase tracking-wider'>
+											Content
+										</th>
+									)}
 									<th
 										scope='col'
 										className='px-6 py-4 text-left text-base font-medium text-gray-500 uppercase tracking-wider'>
@@ -154,25 +156,27 @@ const ReportsPage = () => {
 												} px-6 py-5 whitespace-nowrap text-base text-gray-700`}>
 												{report.Type}
 											</td>
+											{currentUserData && (
+												<td className='px-6 py-5 whitespace-nowrap text-base text-gray-700'>
+													{!report.IsDeleted && (
+														<button
+															className='text-system-primary-accent cursor-pointer hover:text-system-primary-accent transition-colors'
+															onClick={() => {
+																const link = {
+																	Activity: 'Activities',
+																	Podcast: 'Podcasts',
+																	Article: 'Articles',
+																	Discussion: 'Discussions',
+																	Event: 'Events',
+																}
+																window.open(`/${link[report.Type]}/${report.EntityId}`, '_blank')
+															}}>
+															View Content
+														</button>
+													)}
+												</td>
+											)}
 
-											<td className='px-6 py-5 whitespace-nowrap text-base text-gray-700'>
-												{!report.IsDeleted && (
-													<button
-														className='text-system-primary-accent cursor-pointer hover:text-system-primary-accent transition-colors'
-														onClick={() => {
-															const link = {
-																Activity: 'Activities',
-																Podcast: 'Podcasts',
-																Article: 'Articles',
-																Discussion: 'Discussions',
-																Event: 'Events',
-															}
-															window.open(`/${link[report.Type]}/${report.EntityId}`, '_blank')
-														}}>
-														View Content
-													</button>
-												)}
-											</td>
 											<td className='px-6 py-5 whitespace-nowrap text-base text-gray-700'>{report.ReportType}</td>
 											<td className='px-6 py-5 whitespace-normal text-base text-gray-700 max-w-[200px]'>
 												<div className='line-clamp-3'>{report.Content}</div>
@@ -182,7 +186,7 @@ const ReportsPage = () => {
 												<button
 													className='text-system-primary-accent cursor-pointer hover:text-system-primary-accent transition-colors'
 													onClick={() => {
-														if (report?.UserDetails?.DocId) {
+														if (report?.UserDetails?.DocId && currentUserData) {
 															const link =
 																currentUserData.CurrentUser.UserId === report?.UserDetails?.DocId
 																	? 'MyProfile'
@@ -205,7 +209,7 @@ const ReportsPage = () => {
 																<Button
 																	size='xs'
 																	variant='outline'
-																	onClick={() => handleMarkAsRead(report.DocId, report.IsViewed)}
+																	onClick={() => handleMarkAsRead(report.DocId)}
 																	className='flex items-center gap-2 hover:text-system-primary-accent transition-colors'>
 																	<span className='text-sm'>Mark as Read</span>
 																</Button>
@@ -238,10 +242,10 @@ const ReportsPage = () => {
 							</Button>
 						) : null}
 					</div>
-				</>
+				</div>
 			)}
 		</div>
 	)
 }
 
-export default ReportsPage
+export default AdminContentReport
