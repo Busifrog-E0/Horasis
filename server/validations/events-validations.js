@@ -27,7 +27,7 @@ const EventDataSchema = Joi.object({
     CoverPicture: Joi.string().required(),
     HasDiscussion: Joi.boolean().required(),
     Tags: Joi.array().items(TagsSchema).default([]),
-    Capacity : Joi.number().required()
+    Capacity : Joi.number()
 }).custom((value, helpers) => {
     const currentTime = moment().valueOf();
 
