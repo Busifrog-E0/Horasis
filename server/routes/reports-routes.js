@@ -9,10 +9,11 @@ import SwaggerDocs from '../swaggerDocs/reports-swaggerDocs.js'
 
 import e from 'express';
 import { ReportMarkAsReadMiddleware } from '../middleware/reports-middleware.js';
+import { QueryParameterFormatting } from '../middleware/common.js';
 const router = e.Router();
 router.route
 
-router.get('/reports', decodeIDToken, ensureAuthorized("Admin","SuperAdmin"), ValidateGetReports, SwaggerDocs.get_Reports,
+router.get('/reports', decodeIDToken, ensureAuthorized("Admin","SuperAdmin"), ValidateGetReports,QueryParameterFormatting, SwaggerDocs.get_Reports,
     // @ts-ignore
     asyncHandler(GetReports));
 
