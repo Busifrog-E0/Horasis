@@ -8,6 +8,7 @@ import { ReadOneFromComments } from '../databaseControllers/comments-databaseCon
 import { ReadOneFromArticles } from '../databaseControllers/articles-databaseController.js';
 import { ReadOneFromPodcasts } from '../databaseControllers/podcasts-databaseController.js';
 import { AlertBoxObject, DeleteFnBasedOnType } from './common.js';
+import { ReadOneFromUsers } from '../databaseControllers/users-databaseController.js';
 /**
  * @typedef {import('./../databaseControllers/reports-databaseController.js').ReportData} ReportData 
  */
@@ -44,6 +45,8 @@ const GetReports = async (req, res) => {
  * @returns {Promise<e.Response<true>>}
  */
 const PostReports = async (req, res) => {
+    const { UserId } = req.body;
+    req.body.UserDetails = await ReadOneFromUsers(UserId);
     req.body = ReportInit(req.body);
     await CreateReports(req.body);
     return res.json(true);
