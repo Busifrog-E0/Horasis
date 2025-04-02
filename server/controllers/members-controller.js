@@ -477,9 +477,7 @@ const GetPermissionOfMember = (Member, Entity) => {
  */
 const MemberInit = (Data, MembershipStatus = "Accepted", IsAdmin = false) => {
     return {
-        EntityId: Data.EntityId,
-        MemberId: Data.MemberId,
-        UserDetails: Data.UserDetails,
+        ...Data,
         MembershipStatus,
         IsSpeaker: false,
         Permissions: PermissionObjectInit(IsAdmin)
