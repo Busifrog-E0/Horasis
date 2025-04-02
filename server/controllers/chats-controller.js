@@ -43,9 +43,15 @@ const GetConversations = async (req, res) => {
     // @ts-ignore
     Filter.ParticipantIds = { '$in': [UserId] };
     // @ts-ignore
-    Filter.OneMessageSent = true;
+    // Filter.OneMessageSent = true;
     //@ts-ignore
-    const data = await ReadConversations(Filter, NextId, Limit, OrderBy);
+    let data = await ReadConversations(Filter, NextId, Limit, OrderBy);
+
+    // later fix coversation 
+    // if (data.length !== Number(Limit || 10) && Number(Limit) !== -1) {
+
+    // }
+    return res.json(data)
 
     await Promise.all(data.map(async ConversationData => {
         // @ts-ignore
@@ -110,13 +116,7 @@ const ReterieveConversationId = async (req, res) => {
     if (!SenderData || !ReceiverId) {
         return res.status(444).json(AlertBoxObject("Invalid User", "User doesn't exists."));
     }
-
-    let ConversationData = {
-        UserDetails: [SenderData, ReceiverData],
-        ParticipantIds: [SenderId, ReceiverId]
-    };
-    ConversationData = ConversationInit(ConversationData);
-    const ConversationId = await CreateConversations(ConversationData);
+    const ConversationId = await StartConversation(SenderData, ReceiverData);
     return res.json(ConversationId);
 }
 
@@ -133,6 +133,28 @@ const PatchSeeAllMessages = async (req, res) => {
 
     await UpdateAllNotSeenMessages(ConversationId, UserId);
     return res.json(true);
+}
+
+/**
+ * 
+ * @param {import("../databaseControllers/users-databaseController.js").UserData|{DocId:string}} SenderData 
+ * @param {import("../databaseControllers/users-databaseController.js").UserData|{DocId:string}} ReceiverData 
+ * @param {boolean} RetrieveFromDatabase 
+ * @returns {Promise<string>}
+ */
+const StartConversation = async (SenderData, ReceiverData, RetrieveFromDatabase = false) => {
+    if (RetrieveFromDatabase) {
+        [SenderData, ReceiverData] = await Promise.all([
+            ReadOneFromUsers(SenderData.DocId),
+            ReadOneFromUsers(ReceiverData.DocId)
+        ]);
+    }
+    let ConversationData = {
+        UserDetails: [SenderData, ReceiverData],
+        ParticipantIds: [SenderData.DocId, ReceiverData.DocId]
+    };
+    ConversationData = ConversationInit(ConversationData);
+    return CreateConversations(ConversationData);
 }
 
 /**
@@ -203,4 +225,5 @@ export {
     PatchSeeAllMessages,
     CheckUserInConversation,
     UpdateAllNotSeenMessages,
+    StartConversation
 }
