@@ -51,7 +51,7 @@ const GetConversations = async (req, res) => {
     // if (data.length !== Number(Limit || 10) && Number(Limit) !== -1) {
 
     // }
-    return res.json(data)
+    // return res.json(data)
 
     await Promise.all(data.map(async ConversationData => {
         // @ts-ignore
