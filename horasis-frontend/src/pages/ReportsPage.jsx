@@ -1,20 +1,20 @@
 import React, { useState } from 'react'
 import empty from '../assets/icons/empty.svg'
-import { useToast } from '../components/Toast/ToastService'
 import Button from '../components/ui/Button'
 import Select from '../components/ui/Select'
 import Spinner from '../components/ui/Spinner'
-import { deleteItem, patchItem } from '../constants/operations'
+import useDeleteData from '../hooks/useDeleteData'
 import useGetList from '../hooks/useGetList'
+import useUpdateData from '../hooks/useUpdateData'
 import { useAuth } from '../utils/AuthProvider'
 
+const isViewOptions = { All: '', Viewed: true, Unviewed: false }
 
 const ReportsPage = () => {
-	const { currentUserData, updateCurrentUser } = useAuth()
-	const toast = useToast()
+	const { currentUserData } = useAuth()
 	const [reportType, setReportType] = useState('Activity')
-	const [isViewed, setIsViewed] = useState(null)
-	const [isView, setIsView] = useState('')
+	const [isViewed, setIsViewed] = useState('All')
+
 	const {
 		data: reports,
 		isLoading,
@@ -22,7 +22,21 @@ const ReportsPage = () => {
 		isPageDisabled,
 		getList,
 		changeSingleFilter,
-	} = useGetList('reports', { Type: reportType, IsViewed: isView }, true, true, true)
+	} = useGetList('reports', { Type: reportType, IsViewed: isViewOptions[isViewed] }, true, true, true)
+
+	const { deleteData, isLoading: isDeleting } = useDeleteData({
+		onSuccess: () => {
+			getList([])
+		},
+		onError: () => {},
+	})
+
+	const { updateData, isLoading: isUpdating } = useUpdateData({
+		onSuccess: () => {
+			getList([])
+		},
+		onError: () => {},
+	})
 
 	const handleReportTypeChange = (type) => {
 		setReportType(type)
@@ -30,45 +44,24 @@ const ReportsPage = () => {
 	}
 
 	const handleIsViewedChange = (viewed) => {
-		const options = { All: '', Viewed: true, Unviewed: false }
-		setIsView(options[viewed])
 		setIsViewed(viewed)
-		changeSingleFilter('IsViewed', options[viewed])
+		changeSingleFilter('IsViewed', isViewOptions[viewed])
 	}
 
 	const handleDeleteReport = (reportId) => {
-		deleteItem(
-			`reports/${reportId}/entity`,
-			() => {
-				getList([])
-			},
-			(err) => {},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
+		deleteData({ endPoint: `reports/${reportId}/entity` })
 	}
 
-	const handleMarkAsRead = (reportId) => {
-		patchItem(
-			`reports/${reportId}/markAsRead`,
-			{},
-			() => {
-				getList([])
-			},
-			(err) => {},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
+	const handleMarkAsRead = (reportId, isViewed) => {
+		updateData({ endpoint: `reports/${reportId}/markAsRead`, payload: {} })
 	}
 
 	return (
-		<div className='p-4 lg:px-4 lg:py-6 bg-system-secondary-bg mt-10 rounded-lg'>
-			<div className='flex justify-between items-center mb-6'>
+		<div className='p-4 lg:px-4 lg:py-6 bg-system-secondary-bg mt-4 mx-2 rounded-lg'>
+			<div className='flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4 md:gap-0'>
 				<h1 className='text-2xl font-medium text-system-primary-text'>Reported Contents</h1>
-				<div className='flex gap-4'>
-					<div className='w-64'>
+				<div className='flex gap-4 w-full md:w-max'>
+					<div className='w-full md:w-64 flex-1'>
 						<h1 className='text-system-primary-text text-sm'>Report Type</h1>
 						<Select
 							name='reportType'
@@ -80,7 +73,7 @@ const ReportsPage = () => {
 							width='full'
 						/>
 					</div>
-					<div className='w-64'>
+					<div className='w-full md:w-64 flex-1'>
 						<h1 className='text-system-primary-text text-sm'>Viewed Status</h1>
 						<Select
 							name='isViewed'
@@ -118,6 +111,11 @@ const ReportsPage = () => {
 									<th
 										scope='col'
 										className='px-6 py-4 text-left text-base font-medium text-gray-500 uppercase tracking-wider'>
+										Content
+									</th>
+									<th
+										scope='col'
+										className='px-6 py-4 text-left text-base font-medium text-gray-500 uppercase tracking-wider'>
 										Report Type
 									</th>
 									<th
@@ -129,11 +127,6 @@ const ReportsPage = () => {
 										scope='col'
 										className='px-6 py-4 text-left text-base font-medium text-gray-500 uppercase tracking-wider'>
 										User
-									</th>
-									<th
-										scope='col'
-										className='px-6 py-4 text-left text-base font-medium text-gray-500 uppercase tracking-wider'>
-										Content
 									</th>
 									<th
 										scope='col'
@@ -161,11 +154,7 @@ const ReportsPage = () => {
 												} px-6 py-5 whitespace-nowrap text-base text-gray-700`}>
 												{report.Type}
 											</td>
-											<td className='px-6 py-5 whitespace-nowrap text-base text-gray-700'>{report.ReportType}</td>
-											<td className='px-6 py-5 whitespace-normal text-base text-gray-700'>{report.Content}</td>
-											<td className='px-6 py-5 whitespace-nowrap text-base text-gray-700'>
-												{report?.UserDetails?.Username}
-											</td>
+
 											<td className='px-6 py-5 whitespace-nowrap text-base text-gray-700'>
 												{!report.IsDeleted && (
 													<button
@@ -184,6 +173,27 @@ const ReportsPage = () => {
 													</button>
 												)}
 											</td>
+											<td className='px-6 py-5 whitespace-nowrap text-base text-gray-700'>{report.ReportType}</td>
+											<td className='px-6 py-5 whitespace-normal text-base text-gray-700 max-w-[200px]'>
+												<div className='line-clamp-3'>{report.Content}</div>
+											</td>
+
+											<td className='px-6 py-5 whitespace-nowrap text-base text-gray-700'>
+												<button
+													className='text-system-primary-accent cursor-pointer hover:text-system-primary-accent transition-colors'
+													onClick={() => {
+														if (report?.UserDetails?.DocId) {
+															const link =
+																currentUserData.CurrentUser.UserId === report?.UserDetails?.DocId
+																	? 'MyProfile'
+																	: `ViewProfile/${report?.UserDetails?.DocId}`
+															window.open(`/${link}`, '_blank')
+														}
+													}}>
+													{report?.UserDetails?.Username}
+												</button>
+											</td>
+
 											<td className='px-6 py-5 whitespace-nowrap text-base text-gray-700'>
 												{new Date(report.CreatedIndex).toLocaleString()}
 											</td>
@@ -195,7 +205,7 @@ const ReportsPage = () => {
 																<Button
 																	size='xs'
 																	variant='outline'
-																	onClick={() => handleMarkAsRead(report.DocId)}
+																	onClick={() => handleMarkAsRead(report.DocId, report.IsViewed)}
 																	className='flex items-center gap-2 hover:text-system-primary-accent transition-colors'>
 																	<span className='text-sm'>Mark as Read</span>
 																</Button>
@@ -220,7 +230,7 @@ const ReportsPage = () => {
 						</table>
 					</div>
 					<div className='flex justify-start  mt-4'>
-						{isLoadingMore ? (
+						{isLoadingMore || isDeleting || isUpdating ? (
 							<Spinner />
 						) : !isPageDisabled ? (
 							<Button size='md' variant='black' onClick={() => getList(reports, false)}>

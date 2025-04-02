@@ -36,6 +36,7 @@ import NewStreaming from '../pages/NewStreaming'
 import NotFoundPage from '../pages/NotFoundPage'
 import Podcasts from '../pages/Podcasts'
 import Register from '../pages/Register'
+import ReportsPage from '../pages/ReportsPage'
 import Saved from '../pages/Saved'
 import SavedArticlesPage from '../pages/SavedArticlesPage'
 import ShowUserProfile from '../pages/ShowUserProfile'
@@ -50,8 +51,7 @@ import AdminUsers from '../pages/superadmin/AdminUsers'
 import SuperAdminLogin from '../pages/SuperAdminLogin'
 import Tags from '../pages/Tags'
 import UniversalSearchDetails from '../pages/UniversalSearchDetails'
-import ReportsPage from '../pages/ReportsPage'
-import AdminContentReports from '../pages/superadmin/AdminContentReports'
+
 
 export const router = createBrowserRouter(
 	createRoutesFromElements(
