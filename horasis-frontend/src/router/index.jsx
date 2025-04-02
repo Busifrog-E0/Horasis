@@ -10,6 +10,7 @@ import SuperAdminLayout from '../layouts/superadmin/SuperAdminLayout'
 import SuperAdminUnauthLayout from '../layouts/superadmin/SuperAdminUnauthLayout'
 import UnAuthLayout from '../layouts/UnAuthLayout'
 //pages
+import RouterErrorBoundary from '../components/Common/ErrorBoundaries/RouterErrorBoundary'
 import WelcomePage from '../components/Login/WelcomePage'
 import AdminProtected from '../layouts/AdminProtected'
 import ProfileTabLayout from '../layouts/ProfileTabLayout'
@@ -22,6 +23,7 @@ import Connections from '../pages/Connections'
 import CreateArticle from '../pages/CreateArticle'
 import CreateDiscussion from '../pages/CreateDiscussion'
 import CreateEvent from '../pages/CreateEvent'
+import CreatePodcast from '../pages/CreatePodcast'
 import Discussions from '../pages/Discussions'
 import EnterEvent from '../pages/EnterEvent'
 import Events from '../pages/Events'
@@ -32,6 +34,7 @@ import Mentions from '../pages/Mentions'
 import MyProfile from '../pages/MyProfile'
 import NewStreaming from '../pages/NewStreaming'
 import NotFoundPage from '../pages/NotFoundPage'
+import Podcasts from '../pages/Podcasts'
 import Register from '../pages/Register'
 import Saved from '../pages/Saved'
 import SavedArticlesPage from '../pages/SavedArticlesPage'
@@ -40,19 +43,17 @@ import SingleActivity from '../pages/SingleActivity'
 import SingleArticles from '../pages/SingleArticles'
 import SingleDiscussion from '../pages/SingleDiscussion'
 import SingleEvent from '../pages/SingleEvent'
+import SinglePodcast from '../pages/SinglePodcast'
 import SuggestionsPage from '../pages/SuggestionsPage'
+import AdminTags from '../pages/superadmin/AdminTags'
 import AdminUsers from '../pages/superadmin/AdminUsers'
 import SuperAdminLogin from '../pages/SuperAdminLogin'
-import UniversalSearchDetails from '../pages/UniversalSearchDetails'
-import AdminTags from '../pages/superadmin/AdminTags'
-import Podcasts from '../pages/Podcasts'
-import SinglePodcast from '../pages/SinglePodcast'
-import CreatePodcast from '../pages/CreatePodcast'
 import Tags from '../pages/Tags'
+import UniversalSearchDetails from '../pages/UniversalSearchDetails'
 
 export const router = createBrowserRouter(
 	createRoutesFromElements(
-		<Route path='/' element={<RootLayout />}>
+		<Route path='/' element={<RootLayout />} errorElement={<RouterErrorBoundary />}>
 			<Route path='/SuperAdmin' element={<SuperAdminLayout />}>
 				<Route path='' element={<SuperAdminAuthLayout />}>
 					<Route path='' element={<SuperAdminDashboardLayout />}>
