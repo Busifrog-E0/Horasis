@@ -1,6 +1,12 @@
 import e from 'express';
 
 import { ReadOneFromReports, ReadReports, UpdateReports, CreateReports, RemoveReports, } from './../databaseControllers/reports-databaseController.js';
+import { ReadOneFromEvents } from '../databaseControllers/events-databaseController.js';
+import { ReadOneFromDiscussions } from '../databaseControllers/discussions-databaseController.js';
+import { ReadOneFromActivities } from '../databaseControllers/activities-databaseController.js';
+import { ReadOneFromComments } from '../databaseControllers/comments-databaseController.js';
+import { ReadOneFromArticles } from '../databaseControllers/articles-databaseController.js';
+import { ReadOneFromPodcasts } from '../databaseControllers/podcasts-databaseController.js';
 /**
  * @typedef {import('./../databaseControllers/reports-databaseController.js').ReportData} ReportData 
  */
@@ -26,7 +32,15 @@ const GetOneFromReports = async (req, res) => {
 const GetReports = async (req, res) => {
     const { Filter, NextId, Limit, OrderBy } = req.query;
     // @ts-ignore
-    const data = await ReadReports(Filter, NextId, Limit, OrderBy);
+    const { Type } = Filter;
+    const ReadFnObj = {
+        "Event": ReadOneFromEvents, "Discussions": ReadOneFromDiscussions, "Activity": ReadOneFromActivities,
+        "Comment": ReadOneFromComments, "Article": ReadOneFromArticles, "Podcast": ReadOneFromPodcasts
+    };
+    const ReadFn = ReadFnObj[Type];
+    // @ts-ignore
+    const Reports = await ReadReports(Filter, NextId, Limit, OrderBy);
+    const data = await Promise.all(Reports.map(async Report => await ReadFn(Report.EntityId)));
     return res.json(data);
 }
 

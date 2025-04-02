@@ -76,6 +76,9 @@ const RemoveActivityExtendedProperties = async (DocId) => {
     return dataHandling.Delete('ActivityExtendedProperties', DocId);
 }
 
+const RemoveManyActivityExtendedProperties = async (where) => {
+    return dataHandling.DeleteMany('ActivityExtendedProperties', where);
+}
 
 /**
  * 
@@ -121,5 +124,5 @@ export {
     RemoveActivityExtendedProperties,
     PushOnceInManyActivityExtendedProperties,
     PullManyActivityExtendedProperties,
-    ActivityExtendedPropertiesInit
+    ActivityExtendedPropertiesInit, RemoveManyActivityExtendedProperties
 }
