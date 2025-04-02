@@ -152,11 +152,20 @@ const InviteSpeakersThroughEmail = async (req, res) => {
         }
 
         const SpeakerId = new ObjectId().toString();
-        const SpeakerData = SpeakerInit({ SpeakerId, EventId, MembershipStatus: "Accepted", Agenda, UserDetails: { FullName, About, Email, ProfilePicture: '' } });
-
+        const UserDetails = { FullName, About, Email, ProfilePicture: '' }
+        const SpeakerData = SpeakerInit({ SpeakerId, EventId, MembershipStatus: "Accepted", Agenda, UserDetails  });
+        const { Agenda: AgendaData } = Event;
+        const updatedAgenda = AgendaData.map(item => {
+            if (item.AgendaId === Agenda.AgendaId) {
+                return { ...item, SpeakerData: { SpeakerId, UserDetails } }
+            }
+            return item;
+        })
         await Promise.all([
             PushArrayEvents({ Speakers: { SpeakerId, UserDetails: SpeakerData.UserDetails, Agenda, } }, EventId),
             CreateSpeakers(SpeakerData),
+            PushArrayEvents({ Speakers: { SpeakerId, UserDetails: UserDetails, Agenda: Data.Agenda } }, EventId),
+            UpdateEvents({ Agenda: updatedAgenda }, EventId),
             //SendSpeakerInviteEmail(Email, SpeakerId, Event, Agenda, FullName)
         ])
     }))

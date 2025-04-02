@@ -144,20 +144,10 @@ const CreateEntitiesBasedOnActionType = async (ActionType, EntityId, UserData, U
             if (Speaker) {
                 break;
             }
-            const Event = await ReadOneFromEvents(EntityId);
-            const UserDetails = await ReadOneFromUsers(UserId);
-            const { Agenda: AgendaData } = Event;
-            const updatedAgenda = AgendaData.map(item => {
-                if (item.AgendaId === Data.Agenda.AgendaId) {
-                    return { ...item, SpeakerData: { SpeakerId: UserId, UserDetails } }
-                }
-                return item;
-            })
             await Promise.all([
                 CreateSpeakers(SpeakerInit({ EventId: EntityId, SpeakerId: UserId, MembershipStatus, UserDetails: UserData, Agenda: Data.Agenda })),
                 SendNotificationForSpeaker(EntityId, UserId, SendUserId),
-                PushArrayEvents({ Speakers: { SpeakerId: UserId, UserDetails: UserDetails, Agenda: Data.Agenda } }, EntityId),
-                UpdateEvents({ Agenda: updatedAgenda }, EntityId)
+
             ])
             break;
         }
