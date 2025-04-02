@@ -29,7 +29,7 @@ router.patch('/reports/:ReportId/markAsRead', decodeIDToken, ensureAuthorized("A
     // @ts-ignore
     asyncHandler(PatchReports));
 
-router.delete('/reports/:ReportId', decodeIDToken, ensureAuthorized("Admin", "SuperAdmin"), SwaggerDocs.delete_Reports_ReportId,
+router.delete('/reports/:ReportId/entity', decodeIDToken, ensureAuthorized("Admin", "SuperAdmin"), SwaggerDocs.delete_Reports_ReportId,
     // @ts-ignore
     asyncHandler(DeleteReports));
 
