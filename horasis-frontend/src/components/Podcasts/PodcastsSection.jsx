@@ -8,6 +8,7 @@ import EmptyMembers from '../Common/EmptyMembers'
 import SearchComponent from '../Search/SearchBox/SearchComponent'
 import Button from '../ui/Button'
 import Spinner from '../ui/Spinner'
+import TooltipText from '../Common/ToolTipText'
 
 const PodcastsSection = () => {
 	const {
@@ -103,7 +104,11 @@ const PodcastItem = ({ podcast }) => {
 				</div>
 
 				<div className='p-4 flex-grow'>
-					<h2 className='text-2xl font-semibold text-system-primary-text'>{singlePodcast?.PodcastName}</h2>
+					<TooltipText toolTipText={singlePodcast?.PodcastName}>
+						<h2 className='text-2xl font-semibold text-system-primary-text line-clamp-1'>
+							{singlePodcast?.PodcastName}
+						</h2>
+					</TooltipText>
 					<p className='text-system-secondary-text my-2 line-clamp-2'>{singlePodcast?.Description}</p>
 					<div className='flex items-center justify-start my-2 gap-2'>
 						{isLoading || isLoadingPodcast ? (
