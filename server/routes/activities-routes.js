@@ -34,7 +34,7 @@ router.get('/activities/search', decodeIDToken, ensureAuthorized("User"), GetFee
     //@ts-ignore
     asyncHandler(GetFilteredActivities))
 
-router.get('/activities/:ActivityId', decodeIDToken, ensureAuthorized("User"), SwaggerDocs.get_Activities_ActivityId,
+router.get('/activities/:ActivityId', decodeIDToken, ensureAuthorized("User","Admin","SuperAdmin"), SwaggerDocs.get_Activities_ActivityId,
     // @ts-ignore
     asyncHandler(GetOneFromActivities));
 

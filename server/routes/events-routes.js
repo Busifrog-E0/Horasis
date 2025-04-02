@@ -28,7 +28,7 @@ router.get('/events', decodeIDToken, ensureAuthorized("User"), ValidateGetEvents
     // @ts-ignore
     asyncHandler(GetEvents));
 
-router.get('/events/:EventId', decodeIDToken, ensureAuthorized("User"),
+router.get('/events/:EventId', decodeIDToken, ensureAuthorized("User","Admin", "SuperAdmin"),
     SwaggerDocs.get_Events_EventsId,
     // @ts-ignore
     asyncHandler(GetOneFromEvents));
