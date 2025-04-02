@@ -242,7 +242,7 @@ const SetEventDataForGet = async (Event, UserId) => {
             return null;
         }
     }).filter(agenda=> agenda !== null);
-     Event.Speakers = Speakers;
+         Event.Speakers = Speakers;
     return { ...Event, UserDetails };
 }
 
