@@ -168,7 +168,7 @@ const PostEvents = async (req, res) => {
     })
     req.body = EventInit(req.body);
     const EventId = await CreateEvents({ ...req.body, OrganiserId });
-    const Member = MemberInit({ MemberId: OrganiserId, EntityId: EventId, UserDetails }, "Accepted", true);
+    const Member = MemberInit({ MemberId: OrganiserId, EntityId: EventId, UserDetails,Type : "Event" }, "Accepted", true);
     await CreateMembers(Member);
     return res.json(EventId);
 }
@@ -235,13 +235,13 @@ const SetEventDataForGet = async (Event, UserId) => {
     //@ts-ignore
     Event = GetPermissionOfMember(Member[0], Event);
     const Speakers = Event.Agenda.map((agenda, index) => {
-        const speaker = Event.Speakers.find(speaker => speaker.Agenda.AgendaId === agenda.AgendaId);
+        const speaker = Event.Speakers?.find(speaker => speaker.Agenda.AgendaId === agenda.AgendaId);
         if (speaker) {
             return speaker
         } else {
             return null;
         }
-    }).filter(agenda => agenda !== null);
+    }).filter(agenda=> agenda !== null);
     Event.Speakers = Speakers;
     return { ...Event, UserDetails };
 }
