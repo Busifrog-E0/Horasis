@@ -50,6 +50,8 @@ import AdminUsers from '../pages/superadmin/AdminUsers'
 import SuperAdminLogin from '../pages/SuperAdminLogin'
 import Tags from '../pages/Tags'
 import UniversalSearchDetails from '../pages/UniversalSearchDetails'
+import ReportsPage from '../pages/ReportsPage'
+import AdminContentReports from '../pages/superadmin/AdminContentReports'
 
 export const router = createBrowserRouter(
 	createRoutesFromElements(
@@ -60,6 +62,7 @@ export const router = createBrowserRouter(
 						<Route index element={<Navigate to='admin-users' />} />
 						<Route path='admin-users' element={<AdminUsers />} />
 						<Route path='tags' element={<AdminTags />} />
+						
 					</Route>
 				</Route>
 				<Route path='Login' element={<SuperAdminUnauthLayout />}>
@@ -115,6 +118,15 @@ export const router = createBrowserRouter(
 						element={
 							<AdminProtected>
 								<Analytics />
+							</AdminProtected>
+						}
+					/>
+
+					<Route
+						path='/Reports'
+						element={
+							<AdminProtected>
+								<ReportsPage />
 							</AdminProtected>
 						}
 					/>

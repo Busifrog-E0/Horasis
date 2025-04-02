@@ -183,6 +183,22 @@ const DashboardHeader = () => {
 									}`}></div>
 							</div>
 						)}
+
+						{isPermitted && (
+							<div className='w-max flex flex-col items-center'>
+								<a
+									className={`cursor-pointer  font-medium text-md  ${
+										location.pathname === '/Reports' ? 'text-system-primary-accent' : 'text-system-primary-text'
+									}`}
+									onClick={() => onClickItem('/Reports')}>
+									Reports
+								</a>
+								<div
+									className={`h-1 w-10 rounded-full ${
+										location.pathname === '/Reports' ? 'bg-system-primary-accent' : 'bg-transparent'
+									}`}></div>
+							</div>
+						)}
 					</div>
 					<div className='flex flex-row flex-wrap items-center gap-2 md:gap-4'>
 						<div className='relative inline-block text-left'>

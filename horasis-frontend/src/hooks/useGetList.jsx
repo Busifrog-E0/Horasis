@@ -39,6 +39,13 @@ export default function useGetList(
 		})
 	}
 
+	function changeSingleFilter(key, value) {
+		setFilters({
+			...filters,
+			[key]: value,
+		})
+	}
+
 	const setLoadingState = (temp, value) => {
 		if (temp.length > 0) {
 			setIsLoadingMore(value)
@@ -114,5 +121,6 @@ export default function useGetList(
 		setFilters,
 		updateFilter,
 		getList,
+		changeSingleFilter,
 	}
 }
