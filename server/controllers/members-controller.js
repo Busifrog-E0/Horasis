@@ -86,7 +86,7 @@ const PostMembers = async (req, res) => {
     }
     
     if (Entity.Privacy === "Private") {
-        req.body = MemberInit({ MemberId: UserId, EntityId, UserDetails }, "Requested")
+        req.body = MemberInit({ MemberId: UserId, EntityId, UserDetails,Type }, "Requested")
         await Promise.all([
             SendNotificationForMemberRequest(Type, EntityId, UserId),
             CreateMembers(req.body)
@@ -94,7 +94,7 @@ const PostMembers = async (req, res) => {
         return res.status(244).json(AlertBoxObject("Request Sent", "Request has been sent"));
     }
     else {
-        req.body = MemberInit({ MemberId: UserId, EntityId, UserDetails }, "Accepted");
+        req.body = MemberInit({ MemberId: UserId, EntityId, UserDetails,Type }, "Accepted");
         await Promise.all([
             SendNotificationForMemberJoin(Type, EntityId, UserId),
             CreateMembers({ ...req.body, MemberId: UserId, EntityId, UserDetails }),
@@ -183,7 +183,7 @@ const InviteMembers = async (req, res) => {
     }
 
     const UserDetails = await ReadOneFromUsers(InviteeId);
-    req.body = MemberInit({ MemberId: InviteeId, EntityId, UserDetails }, "Invited");
+    req.body = MemberInit({ MemberId: InviteeId, EntityId, UserDetails ,Type }, "Invited");
     await Promise.all([
         await CreateMembers(req.body),
         await SendNotificationForMemberInvitation(Type, EntityId, InviteeId, UserId)
@@ -400,11 +400,11 @@ const DeleteMembers = async (req, res) => {
     const { EntityId } = req.params;
     //@ts-ignore
     const { UserId } = req.user;
-    const Member = await ReadMembers({ MemberId: UserId, EntityId }, undefined, 1, undefined);
-    if (Member.length === 0) {
+    const [Member] = await ReadMembers({ MemberId: UserId, EntityId }, undefined, 1, undefined);
+    if (!Member) {
         return res.status(444).json(AlertBoxObject("Cannot leave", "You are not an member of this discussion"));
     }
-    switch(req.body.Type) {
+    switch(Member.Type) {
         case "Discussion": {
             const Discussion = await ReadOneFromDiscussions(EntityId);
             if (Discussion.OrganiserId === UserId) {
@@ -430,7 +430,7 @@ const DeleteMembers = async (req, res) => {
             break;
         }  
     }
-    await RemoveMembers(Member[0].DocId);
+    await RemoveMembers(Member.DocId);
     return res.json(true);
 }
 
@@ -470,6 +470,7 @@ const GetPermissionOfMember = (Member, Entity) => {
  * @param {string} Data.EntityId 
  * @param {string} Data.MemberId 
  * @param {UserData} Data.UserDetails
+ * @param {"Discussion"|"Event"|"Podcast"} Data.Type
  * @param {"Accepted"|"Invited"|"Requested"} MembershipStatus 
  * @param {boolean} IsAdmin 
  * @returns 
