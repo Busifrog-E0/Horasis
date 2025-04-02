@@ -24,6 +24,7 @@ const CreateEvent = () => {
 	const navigate = useNavigate()
 
 	const changeStep = (step) => {
+		console.log(postEventData)
 		if (step >= 1 && step <= 6) {
 			setActiveStep(step)
 		}
@@ -70,6 +71,7 @@ const CreateEvent = () => {
 		Country: 'United States',
 		HasDiscussion: true,
 		Tags: [],
+		EnableSeatLimit:false
 	})
 
 	// useEffect(() => {
@@ -127,7 +129,6 @@ const CreateEvent = () => {
 		let errors = {}
 
 		if (error && error.details) {
-
 			error.details.forEach((detail) => {
 				console.log(detail)
 				// Using full error path ensures agenda errors are distinguished from event errors.
@@ -364,6 +365,7 @@ const CreateEvent = () => {
 							setPostEventData={setPostEventData}
 							validateSingle={newValidateSingle}
 							errorObj={errorObj}
+							setErrorObj={setErrorObj}
 						/>
 					)}
 					{activeStep === 2 && (

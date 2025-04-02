@@ -13,8 +13,9 @@ import Select from '../../../ui/Select'
 import SelectDiscussionPrivacy from '../../../Discussions/CreateDiscussion/SelectDiscussionPrivacy'
 import { SearchTags, SelectedTag } from '../../../Profile/AboutProfile'
 import useGetList from '../../../../hooks/useGetList'
+import Checkbox from '../../../ui/Checkbox'
 
-const CreateEventStep1 = ({ postEventData, setPostEventData, validateSingle, errorObj }) => {
+const CreateEventStep1 = ({ postEventData, setPostEventData, validateSingle, errorObj, setErrorObj }) => {
 	const [eventAgendas, setEventAgendas] = useState([1])
 	const [date, setDate] = useState(new Date())
 	const onSelectType = (value) => {
@@ -439,6 +440,49 @@ const CreateEventStep1 = ({ postEventData, setPostEventData, validateSingle, err
 					}}
 				/>
 				{errorObj['Location'] != undefined && <p className='text-brand-red m-0'>{errorObj['Location']}</p>}
+				{/* <SelectEventCountry /> */}
+			</div>
+
+			<div>
+				<div>
+					<Checkbox
+						onChange={(e) => {
+							const enabled = e.target.checked
+							validateSingle({ ['EnableSeatLimit']: enabled }, 'EnableSeatLimit')
+							if (!enabled) {
+								// Remove Capacity from postEventData when disabling seat limit
+								setPostEventData((prevData) => {
+									const newData = { ...prevData }
+									delete newData.Capacity
+									return newData
+								})
+								// Optionally clear Capacity errors
+								setErrorObj((prevErrors) => {
+									const newErrors = { ...prevErrors }
+									delete newErrors['Capacity']
+									return newErrors
+								})
+							}
+						}}
+						checked={postEventData.EnableSeatLimit}
+						label={<span>Limit Seating Capacity</span>}
+					/>
+				</div>
+				<h1 className='text-system-primary-text font-medium text-lg'>
+					Seat Limit<span className='text-brand-red'></span>
+				</h1>
+				<Input
+					placeholder='Seat Limit (Optional)'
+					width='full'
+					variant='primary_outlined'
+					disabled={!postEventData.EnableSeatLimit}
+					value={postEventData.Capacity}
+					type='number'
+					onChange={(e) => {
+						validateSingle({ ['Capacity']: Number(e.target.value) }, 'Capacity')
+					}}
+				/>
+				{errorObj['Capacity'] != undefined && <p className='text-brand-red m-0'>{errorObj['Capacity']}</p>}
 				{/* <SelectEventCountry /> */}
 			</div>
 		</div>

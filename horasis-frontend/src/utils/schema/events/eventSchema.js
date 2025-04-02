@@ -92,6 +92,13 @@ export const eventSchema = Joi.object({
 		'boolean.base': 'Please indicate whether the event includes a discussion.',
 		'any.required': 'The discussion field is required.',
 	}),
+
+	Capacity: Joi.number().min(1).messages({
+		'number.base': 'Please enter a valid number for the seat limit.',
+		'any.required': 'The seat limit is required.',
+		'number.min': 'The seat limit must be at least 1.',
+	}),
+	EnableSeatLimit: Joi.boolean().optional(),
 })
 	.custom((value, helpers) => {
 		const currentTime = moment().valueOf()
