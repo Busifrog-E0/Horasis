@@ -81,7 +81,7 @@ const PostMembers = async (req, res) => {
     const Entity = Type === "Discussion" ? await ReadOneFromDiscussions(EntityId) :
         (Type === "Event" ? await ReadOneFromEvents(EntityId) : await ReadOneFromPodcasts(EntityId));
 
-    if (Type === "Event" && Entity.Capacity >= Entity.NoOfMembers) {
+    if (Type === "Event" && Entity.Capacity && Entity.Capacity >= Entity.NoOfMembers) {
         return res.status(444).json(AlertBoxObject("Cannot Join", "This event is full"));
     }
     
@@ -157,7 +157,7 @@ const InviteMembers = async (req, res) => {
     const Entity = Type === "Discussion" ? await ReadOneFromDiscussions(EntityId) :
         (Type === "Event" ? await ReadOneFromEvents(EntityId) : await ReadOneFromPodcasts(EntityId));
     
-    if (Type === "Event" && Entity.Capacity >= Entity.NoOfMembers) { 
+    if (Type === "Event" && Entity.Capacity && Entity.Capacity >= Entity.NoOfMembers) { 
         return res.status(444).json(AlertBoxObject("Cannot Invite", "This event is full"));
     }
     
