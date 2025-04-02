@@ -472,7 +472,7 @@ const SingleEvent = () => {
 								</div>
 							)}
 						</div>
-						<div className='grid grid-cols-1 md:grid-cols-2'>
+						<div className='grid grid-cols-1 md:grid-cols-1 '>
 							<div className='flex items-center gap-4 mt-6 md:col-span-2'>
 								<img
 									className='w-14 h-14 rounded-full object-cover'
@@ -485,7 +485,7 @@ const SingleEvent = () => {
 								</div>
 							</div>
 
-							<div className='grid grid-cols-2  gap-4 mt-6'>
+							<div className='grid grid-cols-2 sm:grid-cols-3  gap-4 mt-6'>
 								<div className='flex items-center gap-3'>
 									<img src={calendar} alt='' className='h-7' />
 									<div>
@@ -504,40 +504,65 @@ const SingleEvent = () => {
 										</p>
 									</div>
 								</div>
+								{event?.Capacity && !event.IsMember && (
+									<div className='flex items-center space-x-3 bg-gray-100 p-3 rounded-lg shadow-sm'>
+										<div className='flex flex-col'>
+											{event.Capacity - event.NoOfMembers > 0 ? (
+												<>
+													<span className='font-medium text-gray-700'>
+														{event.Capacity - event.NoOfMembers}
+														{/* <span className='text-gray-500 ml-1 text-sm'>/ {event.Capacity}</span> */}
+													</span>
+													<span className='text-xs text-gray-500'>Seats Available</span>
+												</>
+											) : (
+												<span className='text-sm text-gray-700'>No Seats Available</span>
+											)}
+										</div>
+									</div>
+								)}
+								
 							</div>
 						</div>
 					</div>
-					<div className='flex gap-2 mt-10  max-w-lg justify-self-end w-full justify-end'>
+					<div className='flex gap-2 mt-10  max-w-sm justify-self-end w-full justify-end items-center'>
 						<ShowJoinButton event={event} />
-						{event?.IsMember ? (
-							<>
-								{currentUserData.CurrentUser.UserId !== event?.OrganiserId && (
-									<Button variant='outline' onClick={() => unRegisterEvent()}>
-										Leave Event
-									</Button>
-								)}
-							</>
-						) : event?.MembershipStatus === undefined ? (
-							<Button width='full' variant='black' onClick={() => joinEvent()}>
-								Register
-							</Button>
-						) : event?.MembershipStatus === 'Requested' ? (
-							<Button variant='outline' onClick={() => cancelRegistrationRequest()}>
-								Cancel Registration
-							</Button>
-						) : event?.MembershipStatus === 'Invited' ? (
-							<div className='flex flex-col items-start gap-2'>
-								<p className='text-system-secondary-text'>You have been invited to this event</p>
-								<div className='flex gap-2'>
-									<Button width='full' variant='outline' onClick={() => rejectInvite()}>
-										Reject
-									</Button>
-									<Button width='full' variant='black' onClick={() => acceptInvite()}>
-										Accept
-									</Button>
+
+						<>
+							{event?.IsMember ? (
+								<>
+									{currentUserData.CurrentUser.UserId !== event?.OrganiserId && (
+										<Button variant='outline' onClick={() => unRegisterEvent()}>
+											Leave Event
+										</Button>
+									)}
+								</>
+							) : event?.MembershipStatus === undefined ? (
+								<>
+									{event.Capacity && event.Capacity - event.NoOfMembers <= 0 ? null : (
+										<Button width='full' variant='black' onClick={() => joinEvent()}>
+											Register
+										</Button>
+									)}
+								</>
+							) : event?.MembershipStatus === 'Requested' ? (
+								<Button variant='outline' onClick={() => cancelRegistrationRequest()}>
+									Cancel Registration
+								</Button>
+							) : event?.MembershipStatus === 'Invited' ? (
+								<div className='flex flex-col items-start gap-2'>
+									<p className='text-system-secondary-text'>You have been invited to this event</p>
+									<div className='flex gap-2'>
+										<Button width='full' variant='outline' onClick={() => rejectInvite()}>
+											Reject
+										</Button>
+										<Button width='full' variant='black' onClick={() => acceptInvite()}>
+											Accept
+										</Button>
+									</div>
 								</div>
-							</div>
-						) : null}
+							) : null}
+						</>
 					</div>
 				</div>
 			</div>
