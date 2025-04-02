@@ -21,7 +21,7 @@ import {  InviteUserToCreateAccount } from '../controllers/invitations-controlle
 const router = e.Router();
 router.route
 
-router.get('/users/:UserId', decodeIDToken, ensureAuthorized("User"), SwaggerDocs.get_Users_UserId,
+router.get('/users/:UserId', decodeIDToken, ensureAuthorized("User","Admin","SuperAdmin"), SwaggerDocs.get_Users_UserId,
     // @ts-ignore
     asyncHandler(GetOneFromUsers));
 
