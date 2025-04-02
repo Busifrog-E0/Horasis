@@ -42,15 +42,13 @@ const GetConversations = async (req, res) => {
     }
     // @ts-ignore
     Filter.ParticipantIds = { '$in': [UserId] };
-    // @ts-ignore
-    // Filter.OneMessageSent = true;
     //@ts-ignore
-    let data = await ReadConversations({ ...Filter }, NextId, Limit, OrderBy);
+    let data = await ReadConversations({ ...Filter, OneMessageSent: true }, NextId, Limit, OrderBy);
 
     // later fix coversation 
     if (data.length !== Number(Limit || 10) && Number(Limit) !== -1) {
         //@ts-ignore
-        let data2 = await ReadConversations({ ...Filter }, NextId, Limit - data.length);
+        let data2 = await ReadConversations({ ...Filter, OneMessageSent: false }, NextId, Limit - data.length);
         data = [...data, ...data2];
     }
 
