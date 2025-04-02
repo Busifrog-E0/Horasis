@@ -46,9 +46,9 @@ const ValidatePatchReports = async (req, res, next) => {
  */
 const ValidateGetReports = async (req, res, next) => {
     const Result = QueryParametersSchema.keys({
-        Type: ReportsSchema.extract('Type'),
-        ReportType: ReportsSchema.extract('ReportType'),
-        EntityId: ReportsSchema.extract('EntityId')
+        Type: ReportsSchema.extract('Type').required(),
+        ReportType: ReportsSchema.extract('ReportType').optional(),
+        EntityId: ReportsSchema.extract('EntityId').optional(),
     }).validate(req.query, { stripUnknown: true });
     if (Result.error) {
         const message = Result.error.details.map((detail) => detail.message).join(', ');
