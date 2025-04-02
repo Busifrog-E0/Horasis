@@ -78,7 +78,7 @@ const DeleteReports = async (req, res) => {
     }
     const { EntityId, Type } = Report;
     await Promise.all([
-        UpdateManyReports({ IsDeleted: true }, { EntityId }),
+        UpdateManyReports({ IsDeleted: true, IsViewed: true }, { EntityId }),
         DeleteFnBasedOnType[Type](EntityId)
     ])
     return res.json(true);

@@ -49,6 +49,7 @@ const ValidateGetReports = async (req, res, next) => {
         Type: ReportsSchema.extract('Type').required(),
         ReportType: ReportsSchema.extract('ReportType').optional(),
         EntityId: ReportsSchema.extract('EntityId').optional(),
+        IsViewed : Joi.boolean().optional(),
     }).validate(req.query, { stripUnknown: true });
     if (Result.error) {
         const message = Result.error.details.map((detail) => detail.message).join(', ');
