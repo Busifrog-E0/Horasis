@@ -7,7 +7,7 @@ import Button from '../../../ui/Button'
 import { useToast } from '../../../Toast/ToastService'
 import edit from '../../../../assets/icons/edit.svg'
 
-const CreatePodcastStep2 = forwardRef(({ selectedImage, onImageSelect, fileFieldName }, ref) => {
+const CreatePodcastStep2 = forwardRef(({ selectedImage, onImageSelect, fileFieldName, cropping, setCropping }, ref) => {
 	const toast = useToast()
 	const fileInputRef = useRef(null)
 
@@ -15,7 +15,6 @@ const CreatePodcastStep2 = forwardRef(({ selectedImage, onImageSelect, fileField
 	const [crop, setCrop] = useState({ x: 0, y: 0 })
 	const [zoom, setZoom] = useState(1)
 	const [croppedAreaPixels, setCroppedAreaPixels] = useState(null)
-	const [cropping, setCropping] = useState(false)
 
 	// Handle image change (selecting a new image)
 	const handleImageChange = (e) => {

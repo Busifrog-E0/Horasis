@@ -51,6 +51,8 @@ const CreateArticle = () => {
 		CoverPicture: '',
 		Tags: [],
 	})
+	const [cropping, setCropping] = useState(false)
+
 
 	const handleParentCropSave = async () => {
 		if (cropRef.current && cropRef.current.handleCropSave) {
@@ -225,6 +227,8 @@ const CreateArticle = () => {
 							selectedImage={selectedCoverImage}
 							onImageSelect={onCoverImageSelect}
 							fileFieldName='CoverPicture'
+							cropping={cropping}
+							setCropping={setCropping}
 						/>
 					)}
 
@@ -245,7 +249,7 @@ const CreateArticle = () => {
 								</Button>
 							)}
 							{isSecondStep && (
-								<Button onClick={() => setIsModalOpen(true)} width='full' variant='black'>
+								<Button onClick={() => setIsModalOpen(true)} width='full' variant='black' disabled={!cropping}>
 									Publish
 								</Button>
 							)}

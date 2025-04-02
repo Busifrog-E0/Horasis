@@ -7,7 +7,7 @@ import Button from '../../../ui/Button'
 import imageIcon from '../../../../assets/icons/image.svg'
 import edit from '../../../../assets/icons/edit.svg'
 
-const CreateEventStep3 = forwardRef(({ selectedImage, onImageSelect, fileFieldName }, ref) => {
+const CreateEventStep3 = forwardRef(({ selectedImage, onImageSelect, fileFieldName,cropping,setCropping }, ref) => {
 	const toast = useToast()
 	const fileInputRef = useRef(null)
 
@@ -15,7 +15,6 @@ const CreateEventStep3 = forwardRef(({ selectedImage, onImageSelect, fileFieldNa
 	const [crop, setCrop] = useState({ x: 0, y: 0 })
 	const [zoom, setZoom] = useState(1)
 	const [croppedAreaPixels, setCroppedAreaPixels] = useState(null)
-	const [cropping, setCropping] = useState(false)
 
 	const handleImageChange = (e) => {
 		const files = Array.from(e.target.files)

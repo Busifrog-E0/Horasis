@@ -55,6 +55,8 @@ const CreateDiscussion = () => {
 	const isThirdStep = activeStep === 3
 	const isFourthStep = activeStep === 4
 
+	const [cropping, setCropping] = useState(false)
+
 	const handleParentCropSave = async () => {
 		if (cropRef.current && cropRef.current.handleCropSave) {
 			const imageToUpload = await cropRef.current.handleCropSave()
@@ -241,6 +243,8 @@ const CreateDiscussion = () => {
 							selectedImage={selectedCoverImage}
 							onImageSelect={onCoverImageSelect}
 							fileFieldName='CoverPicture'
+							cropping={cropping}
+							setCropping={setCropping}
 						/>
 					)}
 					{activeStep === 3 && <CreateDiscussionStep3 discussionId={discussionId} />}
@@ -267,7 +271,12 @@ const CreateDiscussion = () => {
 								</Button>
 							)}
 							{isSecondStep && (
-								<Button onClick={() => setIsModalOpen(true)} width='full' className='px-10' variant='black'>
+								<Button
+									onClick={() => setIsModalOpen(true)}
+									width='full'
+									className='px-10'
+									variant='black'
+									disabled={!cropping}>
 									Create Discussion
 								</Button>
 							)}

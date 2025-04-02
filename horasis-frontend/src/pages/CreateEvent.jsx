@@ -71,7 +71,7 @@ const CreateEvent = () => {
 		Country: 'United States',
 		HasDiscussion: true,
 		Tags: [],
-		EnableSeatLimit:false
+		EnableSeatLimit: false,
 	})
 
 	// useEffect(() => {
@@ -221,6 +221,8 @@ const CreateEvent = () => {
 			}
 		}
 	}
+	const [displayCropping, setDisplayCropping] = useState(false)
+
 	const step3Ref = useRef(null)
 	const handleStepThreeCrop = async () => {
 		if (step3Ref.current && step3Ref.current.handleCropSave) {
@@ -228,6 +230,8 @@ const CreateEvent = () => {
 			return imageToUpload
 		}
 	}
+	const [cropping, setCropping] = useState(false)
+
 	const step4Ref = useRef(null)
 	const handleStepFourCrop = async () => {
 		if (step4Ref.current && step4Ref.current.handleCropSave) {
@@ -382,6 +386,8 @@ const CreateEvent = () => {
 							selectedImage={selectedDisplayImage}
 							onImageSelect={onDisplayImageSelect}
 							fileFieldName='DisplayPicture'
+							cropping={displayCropping}
+							setCropping={setDisplayCropping}
 						/>
 					)}
 					{activeStep === 4 && (
@@ -390,6 +396,8 @@ const CreateEvent = () => {
 							selectedImage={selectedCoverImage}
 							onImageSelect={onCoverImageSelect}
 							fileFieldName='CoverPicture'
+							cropping={cropping}
+							setCropping={setCropping}
 						/>
 					)}
 					{activeStep === 5 && (
@@ -428,12 +436,7 @@ const CreateEvent = () => {
 								</Button>
 							)}
 							{isFourthStep && (
-								<Button
-									onClick={() => setIsModalOpen(true)}
-									width='full'
-									variant='black'
-									// disabled={!selectedCoverImage || !selectedDisplayImage}
-								>
+								<Button onClick={() => setIsModalOpen(true)} width='full' variant='black' disabled={!cropping}>
 									Create Event
 								</Button>
 							)}
@@ -452,8 +455,7 @@ const CreateEvent = () => {
 									}
 									width='full'
 									variant='black'
-									// disabled={!selectedDisplayImage}
-								>
+									disabled={selectedDisplayImage ? false : !displayCropping}>
 									Next
 								</Button>
 							)}

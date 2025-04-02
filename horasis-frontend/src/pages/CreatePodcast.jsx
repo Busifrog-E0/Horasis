@@ -53,6 +53,7 @@ const CreatePodcast = () => {
 	const isSecondStep = activeStep === 2
 	const isThirdStep = activeStep === 3
 	// const isFourthStep = activeStep === 4
+	const [cropping, setCropping] = useState(false)
 
 	const handleParentCropSave = async () => {
 		if (cropRef.current && cropRef.current.handleCropSave) {
@@ -239,6 +240,8 @@ const CreatePodcast = () => {
 							selectedImage={selectedCoverImage}
 							onImageSelect={onCoverImageSelect}
 							fileFieldName='CoverPicture'
+							cropping={cropping}
+							setCropping={setCropping}
 						/>
 					)}
 					{/* {activeStep === 3 && <CreatePodcastStep3 podcastId={podcastId} />} */}
@@ -280,7 +283,7 @@ const CreatePodcast = () => {
 								</Button>
 							)}
 							{isSecondStep && (
-								<Button onClick={() => setIsModalOpen(true)} width='full' className='px-10' variant='black'>
+								<Button onClick={() => setIsModalOpen(true)} width='full' className='px-10' variant='black' disabled={!cropping}>
 									Create Podcast
 								</Button>
 							)}

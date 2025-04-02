@@ -6,7 +6,7 @@ import { blobToUint8Array } from '../../../../utils/utils'
 import Button from '../../../ui/Button'
 import edit from '../../../../assets/icons/edit.svg'
 
-const CreateArticleStep2 = forwardRef(({ selectedImage, onImageSelect, fileFieldName }, ref) => {
+const CreateArticleStep2 = forwardRef(({ selectedImage, onImageSelect, fileFieldName, cropping, setCropping }, ref) => {
 	const toast = useToast()
 	const fileInputRef = useRef(null)
 
@@ -14,7 +14,6 @@ const CreateArticleStep2 = forwardRef(({ selectedImage, onImageSelect, fileField
 	const [crop, setCrop] = useState({ x: 0, y: 0 })
 	const [zoom, setZoom] = useState(1)
 	const [croppedAreaPixels, setCroppedAreaPixels] = useState(null)
-	const [cropping, setCropping] = useState(false)
 
 	// Handle image change (selecting a new image)
 	const handleImageChange = (e) => {
