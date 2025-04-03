@@ -39,7 +39,7 @@ const ChatList = forwardRef(({}, ref) => {
 	const [pageDisabled, setPageDisabled] = useState(true)
 	const [filters, setFilters] = useState({
 		OrderBy: 'LatestMessage.CreatedIndex',
-		Limit: 3,
+		Limit: 15,
 		Keyword: '',
 	})
 	const api = `chats`

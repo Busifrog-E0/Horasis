@@ -191,7 +191,7 @@ const DashboardHeader = () => {
 										location.pathname === '/Reports' ? 'text-system-primary-accent' : 'text-system-primary-text'
 									}`}
 									onClick={() => onClickItem('/Reports')}>
-									Reports
+									Moderator
 								</a>
 								<div
 									className={`h-1 w-10 rounded-full ${
@@ -381,6 +381,22 @@ const UserProfile = ({
 										onClick={navigateToProfile}
 										className='block px-4 py-2 text-system-primary-text hover:bg-system-primary-bg border-b cursor-pointer'>
 										View Profile
+									</p>
+									<p
+										onClick={() => {
+											messagesClick()
+											handleDropdownToggle()
+										}}
+										className='block px-4 py-2 text-system-primary-text hover:bg-gray-100 border-b cursor-pointer'>
+										Messages
+									</p>
+									<p
+										onClick={() => {
+											notificationsClick()
+											handleDropdownToggle()
+										}}
+										className='block px-4 py-2 text-system-primary-text hover:bg-gray-100 border-b cursor-pointer'>
+										Notifications
 									</p>
 									<p
 										onClick={openLogoutModal}

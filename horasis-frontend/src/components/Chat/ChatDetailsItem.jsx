@@ -19,7 +19,8 @@ const ChatDetailsItem = ({ user, conversation, onChatClick }) => {
 				</div>
 				<div className='flex flex-col items-end gap-2'>
 					<h4 className='font-medium text-xs text-brand-gray-dim'>
-						{relativeTime(conversation?.LatestMessage?.CreatedIndex)}
+						
+						{conversation?.LatestMessage?.CreatedIndex && relativeTime(conversation?.LatestMessage?.CreatedIndex)}
 					</h4>
 				
 					{conversation.NumberOfUnseenMessages !== undefined && (

@@ -148,7 +148,7 @@ const AdminContentReport = () => {
 										<tr
 											key={report.DocId}
 											className={`transition duration-150 ease-in-out ${
-												report.IsViewed ? 'bg-system-secondary-bg' : 'font-medium bg-system-primary-bg '
+												report.IsViewed ? 'bg-system-primary-bg' : 'font-medium bg-system-secondary-bg '
 											}`}>
 											<td
 												className={` ${

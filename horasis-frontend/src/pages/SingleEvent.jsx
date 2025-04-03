@@ -191,7 +191,7 @@ const SingleEvent = () => {
 
 		const getSpeakersTab = (key) => ({
 			key: key,
-			title: 'Speakers',
+			title: 'Speaker Details',
 			render: () => (
 				<>
 					<div className='bg-system-secondary-bg p-4 lg:py-8 lg:px-12 rounded-b-lg'>
@@ -521,7 +521,6 @@ const SingleEvent = () => {
 										</div>
 									</div>
 								)}
-								
 							</div>
 						</div>
 					</div>

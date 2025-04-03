@@ -55,13 +55,13 @@ const NewStreamUsersList = ({
 				</div>
 				<div className='hidden md:flex flex-row gap-2 p-1 px-3 rounded-md ml-6 items-center bg-[#354657]'>
 					<img src={people} alt='' className='h-4 ' />
-					<p className='text-white'>{participants.length + speakers.length} + </p>
+					<p className='text-white'>{participants.length + speakers.length}  </p>
 				</div>
 				<div
 					className='flex md:hidden flex-row gap-2 p-1 px-3 rounded-md ml-6 items-center bg-[#354657]'
 					onClick={() => setModalOpen(true)}>
 					<img src={people} alt='' className='h-4 ' />
-					<p className='text-white'>{participants.length + speakers.length} + </p>
+					<p className='text-white'>{participants.length + speakers.length}  </p>
 				</div>
 			</div>
 			<div className='flex-grow-1 flex-1  overflow-hidden '>
