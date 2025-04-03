@@ -7,7 +7,7 @@ import { AddConnectionstoUser, RemoveConnectionsToUser, ViewOtherUserData } from
 import { ReadOneFromUsers,  } from '../databaseControllers/users-databaseController.js';
 import {  RemoveNotificationsForConnectionRequest, SendNotificationsForConnectionAccept, SendNotificationsForConnectionRequest } from './notifications-controller.js';
 import { StartConversation } from './chats-controller.js';
-import { ReadConversations } from '../databaseControllers/conversations-databaseController.js';
+import { ReadConversations, RemoveConversations } from '../databaseControllers/conversations-databaseController.js';
 /**
  * @typedef {import('./../databaseControllers/connections-databaseController.js').ConnectionData} ConnectionData 
  */
@@ -197,8 +197,8 @@ const DeleteConnection = async (req, res) => {
     res.json(true);
 
     const CheckConversation = await ReadConversations({ ParticipantIds: { $all: [MyId, UserId] }, OneMessageSent: false }, undefined, 1, undefined);
-    if (CheckConversation.length === 0) {
-        await StartConversation({ "DocId": MyId }, { "DocId": UserId }, true);
+    if (CheckConversation.length === 1) {
+        await RemoveConversations(CheckConversation[0].DocId);
     }
     return true;
 
