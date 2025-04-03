@@ -175,7 +175,7 @@ const AddContentAndStatusToNotification = async (Notification) => {
  * @param {string} UserId 
  */
 const SendNotificationToUser = async (NotificationObject, UserId) => {
-    await CreateNotifications({ ...NotificationObject, RecipientId: UserId, HasSeen: false });
+        await CreateNotifications({ ...NotificationObject, RecipientId: UserId, HasSeen: false });
 }
 
 /**
