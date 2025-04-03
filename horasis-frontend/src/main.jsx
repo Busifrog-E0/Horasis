@@ -19,10 +19,10 @@ const Auth = () => (
 
 ReactDOM.createRoot(document.getElementById('root')).render(
 	<React.StrictMode>
-		<ErrorBoundary FallbackComponent={MyFallback}>
+	
 			<AgoraRTCProvider client={client}>
 				<Auth />
 			</AgoraRTCProvider>
-		</ErrorBoundary>
+
 	</React.StrictMode>
 )
