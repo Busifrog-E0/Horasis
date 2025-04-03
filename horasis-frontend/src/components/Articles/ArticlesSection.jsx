@@ -8,7 +8,7 @@ import { getNextId } from '../../utils/URLParams'
 import { deleteItem, getItem, postItem } from '../../constants/operations'
 import Spinner from '../ui/Spinner'
 
-const ArticlesSection = () => {
+const ArticlesSection = ({ handleRefresh }) => {
 	const { currentUserData, updateCurrentUser } = useAuth()
 	const toast = useToast()
 
@@ -87,7 +87,7 @@ const ArticlesSection = () => {
 		fetch()
 	}, [filters])
 
-	const getSingleArticle = (id,setLoader) => {
+	const getSingleArticle = (id, setLoader) => {
 		setLoader(id)
 		getItem(
 			`articles/${id}`,
@@ -113,6 +113,7 @@ const ArticlesSection = () => {
 			(result) => {
 				if (result === true) {
 					getSingleArticle(id, setSaving)
+					handleRefresh()
 				}
 			},
 			(err) => {
@@ -131,6 +132,7 @@ const ArticlesSection = () => {
 			(result) => {
 				if (result === true) {
 					getSingleArticle(id, setSaving)
+					handleRefresh()
 				}
 			},
 			(err) => {
@@ -145,7 +147,7 @@ const ArticlesSection = () => {
 	const likeArticle = (EntId, callback) => {
 		postItem(
 			`likes/${EntId}`,
-			{Type:'Article'},
+			{ Type: 'Article' },
 			(result) => {
 				if (result === true) {
 					getSingleArticle(EntId, setLiking)
@@ -195,6 +197,7 @@ const ArticlesSection = () => {
 				<>
 					<div className='rounded-lg'>
 						<ArticlesList
+						handleRefresh={handleRefresh}
 							data={articles}
 							emptyText={'No articles'}
 							saveArticle={saveArticle}

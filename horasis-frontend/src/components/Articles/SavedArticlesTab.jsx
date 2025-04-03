@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { forwardRef, useImperativeHandle, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import arrowfor from '../../assets/icons/arrowfor.svg'
 import saveOutline from '../../assets/icons/graysave.svg'
@@ -9,7 +9,7 @@ import useGetList from '../../hooks/useGetList'
 import EmptyMembers from '../Common/EmptyMembers'
 import Spinner from '../ui/Spinner'
 
-const SavedArticlesTab = ({ bordered = false, loadMoreEnabled = false, iconPresent = true }) => {
+const SavedArticlesTab = forwardRef(({ bordered = false, loadMoreEnabled = false, iconPresent = true }, ref) => {
 	const {
 		data: articles,
 		isLoading,
@@ -29,6 +29,17 @@ const SavedArticlesTab = ({ bordered = false, loadMoreEnabled = false, iconPrese
 	const navigateToArticle = (id) => {
 		navigate(`/Articles/${id}`)
 	}
+
+	const handleRefresh = () => {
+		getArticles([])
+	}
+	useImperativeHandle(
+		ref,
+		() => ({
+			handleRefresh,
+		}),
+		[handleRefresh]
+	)
 
 	return (
 		<div className='p-5 bg-system-secondary-bg rounded-lg'>
@@ -78,7 +89,7 @@ const SavedArticlesTab = ({ bordered = false, loadMoreEnabled = false, iconPrese
 			</div>
 		</div>
 	)
-}
+})
 
 const SavedArticleItem = ({ article, lastItem, navigateToArticle }) => {
 	const [singleArticle, setSingleArticle] = useState(article)

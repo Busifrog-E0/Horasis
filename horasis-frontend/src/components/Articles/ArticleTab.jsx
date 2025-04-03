@@ -21,6 +21,7 @@ const ArticleTab = ({
 	iconSize = '6',
 	likeArticle,
 	unLikeArticle,
+	handleRefresh,
 }) => {
 	const [singleArticle, setSingleArticle] = useState(article)
 
@@ -35,13 +36,19 @@ const ArticleTab = ({
 	const { isLiking, isUnliking, likeEntity, unlikeEntity } = useEntityLikeManager({
 		EntityId: singleArticle ? singleArticle?.DocId : article.DocId,
 		Type: 'Article',
-		successCallback: getSingleArticle,
+		successCallback: () => {
+			getSingleArticle()
+			handleRefresh()
+		},
 		errorCallback: () => {},
 	})
 	const { isSaving, isUnsaving, saveEntity, unsaveEntity } = useEntitySaveManager({
 		EntityId: singleArticle ? singleArticle?.DocId : article.DocId,
 		Type: 'Article',
-		successCallback: getSingleArticle,
+		successCallback: () => {
+			getSingleArticle()
+			handleRefresh()
+		},
 		errorCallback: () => {},
 	})
 
