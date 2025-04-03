@@ -349,10 +349,10 @@ const ShowUserProfile = () => {
 								</h4>
 								<h4 className='font-medium text-xl text-brand-gray-dim lg:text-center'>@{user && user.Username}</h4>
 								<div className='flex justify-center items-center mt-2 lg:mt-6 flex-wrap sm:flex-nowrap  lg:flex-wrap gap-2'>
-									{user && user.ConnectionStatus && (
+									{user && user.ConnectionStatus && userid !== currentUserData.CurrentUser.UserId && (
 										<UserProfileConnectComponent profile={user} connectCallback={getUser} setIsLoading={setIsLoading} />
 									)}
-									{user && (
+									{user && userid !== currentUserData.CurrentUser.UserId && (
 										<UserProfileFollowComponent profile={user} followCallback={getUser} setIsLoading={setIsLoading} />
 									)}
 								</div>
