@@ -8,7 +8,7 @@ import Button from '../../../ui/Button'
 import imageIcon from '../../../../assets/icons/image.svg'
 import edit from '../../../../assets/icons/edit.svg'
 
-const CreateEventStep4 = forwardRef(({ selectedImage, onImageSelect, fileFieldName,cropping,setCropping }, ref) => {
+const CreateEventStep4 = forwardRef(({ selectedImage, onImageSelect, fileFieldName, cropping, setCropping }, ref) => {
 	const toast = useToast()
 	const fileInputRef = useRef(null)
 
@@ -119,7 +119,15 @@ const CreateEventStep4 = forwardRef(({ selectedImage, onImageSelect, fileFieldNa
 						) : (
 							<label htmlFor='createEventCoverPhotoPicker' className='w-full cursor-pointer'>
 								<div className='h-36 w-full bg-system-file-border rounded-lg flex flex-col items-center justify-center cursor-pointer overflow-hidden'>
-									<img src={imageIcon} alt='' />
+									<svg
+										className='text-brand-secondary h-8 w-8'
+										aria-hidden='true'
+										xmlns='http://www.w3.org/2000/svg'
+										fill='currentColor'
+										viewBox='0 0 24 24'>
+										<path d='M0 0h24v24H0z' fill='none' />
+										<path d='M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z' />
+									</svg>
 								</div>
 							</label>
 						)}
