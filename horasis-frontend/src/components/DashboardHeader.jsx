@@ -71,9 +71,12 @@ const DashboardHeader = () => {
 					</div>
 					<div className='px-10 hidden lg:flex flex-row flex-wrap gap-8 flex-1'>
 						<div className='w-max flex flex-col items-center'>
+							{console.log(location.pathname)}
 							<a
 								className={`cursor-pointer  font-medium text-md  ${
-									location.pathname === '/Events' || location.pathname === '/events' || location.pathname === '/'
+									location.pathname.includes('/Events') ||
+									location.pathname.includes('/events') ||
+									location.pathname === '/'
 										? 'text-system-primary-accent'
 										: 'text-system-primary-text'
 								}`}
@@ -82,7 +85,9 @@ const DashboardHeader = () => {
 							</a>
 							<div
 								className={`h-1 w-10 rounded-full ${
-									location.pathname === '/Events' || location.pathname === '/events' || location.pathname === '/'
+									location.pathname.includes('/Events') ||
+									location.pathname.includes('/events') ||
+									location.pathname === '/'
 										? 'bg-system-primary-accent'
 										: 'bg-transparent'
 								}`}></div>
@@ -90,81 +95,105 @@ const DashboardHeader = () => {
 						<div className='w-max flex flex-col items-center'>
 							<a
 								className={`cursor-pointer  font-medium text-md  ${
-									location.pathname === '/Activities' ? 'text-system-primary-accent' : 'text-system-primary-text'
+									location.pathname.includes('/Activities') || location.pathname.includes('/activities')
+										? 'text-system-primary-accent'
+										: 'text-system-primary-text'
 								}`}
 								onClick={() => onClickItem('/Activities')}>
 								Activities
 							</a>
 							<div
 								className={`h-1 w-10 rounded-full ${
-									location.pathname === '/Activities' ? 'bg-system-primary-accent' : 'bg-transparent'
+									location.pathname.includes('/Activities') || location.pathname.includes('/activities')
+										? 'bg-system-primary-accent'
+										: 'bg-transparent'
 								}`}></div>
 						</div>
 
 						<div className='w-max flex flex-col items-center'>
 							<a
 								className={`cursor-pointer  font-medium text-md  ${
-									location.pathname === '/Discussions' ? 'text-system-primary-accent' : 'text-system-primary-text'
+									location.pathname.includes('/Discussions') || location.pathname.includes('/discussions')
+										? 'text-system-primary-accent'
+										: 'text-system-primary-text'
 								}`}
 								onClick={() => onClickItem('/Discussions')}>
 								Discussions
 							</a>
 							<div
 								className={`h-1 w-10 rounded-full ${
-									location.pathname === '/Discussions' ? 'bg-system-primary-accent' : 'bg-transparent'
+									location.pathname.includes('/Discussions') || location.pathname.includes('/discussions')
+										? 'bg-system-primary-accent'
+										: 'bg-transparent'
 								}`}></div>
 						</div>
 						<div className='w-max flex flex-col items-center'>
 							<a
 								className={`cursor-pointer  font-medium text-md  ${
-									location.pathname === '/Connections' ? 'text-system-primary-accent' : 'text-system-primary-text'
+									location.pathname.includes('/Connections') || location.pathname.includes('/connections')
+										? 'text-system-primary-accent'
+										: 'text-system-primary-text'
 								}`}
 								onClick={() => onClickItem('/Connections')}>
 								Connections
 							</a>
 							<div
 								className={`h-1 w-10 rounded-full ${
-									location.pathname === '/Connections' ? 'bg-system-primary-accent' : 'bg-transparent'
+									location.pathname.includes('/Connections') || location.pathname.includes('/connections')
+										? 'bg-system-primary-accent'
+										: 'bg-transparent'
 								}`}></div>
 						</div>
 						<div className='w-max flex flex-col items-center'>
 							<a
 								className={`cursor-pointer  font-medium text-md  ${
-									location.pathname === '/Articles' ? 'text-system-primary-accent' : 'text-system-primary-text'
+									location.pathname.includes('/Articles') || location.pathname.includes('/articles')
+										? 'text-system-primary-accent'
+										: 'text-system-primary-text'
 								}`}
 								onClick={() => onClickItem('/Articles')}>
 								Articles
 							</a>
 							<div
 								className={`h-1 w-10 rounded-full ${
-									location.pathname === '/Articles' ? 'bg-system-primary-accent' : 'bg-transparent'
+									location.pathname.includes('/Articles') || location.pathname.includes('/articles')
+										? 'bg-system-primary-accent'
+										: 'bg-transparent'
 								}`}></div>
 						</div>
 						<div className='w-max flex flex-col items-center'>
 							<a
 								className={`cursor-pointer  font-medium text-md  ${
-									location.pathname === '/Podcasts' ? 'text-system-primary-accent' : 'text-system-primary-text'
+									location.pathname.includes('/Podcasts') || location.pathname.includes('/podcasts')
+										? 'text-system-primary-accent'
+										: 'text-system-primary-text'
 								}`}
 								onClick={() => onClickItem('/Podcasts')}>
 								Podcasts
 							</a>
 							<div
 								className={`h-1 w-10 rounded-full ${
-									location.pathname === '/Podcasts' ? 'bg-system-primary-accent' : 'bg-transparent'
+									location.pathname.includes('/Podcasts') || location.pathname.includes('/podcasts')
+										? 'bg-system-primary-accent'
+										: 'bg-transparent'
 								}`}></div>
 						</div>
 						{isPermitted && (
 							<div className='w-max flex flex-col items-center'>
 								<a
 									className={`cursor-pointer  font-medium text-md  ${
-										location.pathname === '/TagsManager' ? 'text-system-primary-accent' : 'text-system-primary-text'
+										location.pathname.includes('/TagsManager') || location.pathname.includes('/tagsmanager')
+											? 'text-system-primary-accent'
+											: 'text-system-primary-text'
 									}`}
 									onClick={() => onClickItem('/TagsManager')}>
 									Tags
 								</a>
 								<div
 									className={`h-1 w-10 rounded-full ${
-										location.pathname === '/TagsManager' ? 'bg-system-primary-accent' : 'bg-transparent'
+										location.pathname.includes('/TagsManager') || location.pathname.includes('/tagsmanager')
+											? 'bg-system-primary-accent'
+											: 'bg-transparent'
 									}`}></div>
 							</div>
 						)}
@@ -172,14 +201,18 @@ const DashboardHeader = () => {
 							<div className='w-max flex flex-col items-center'>
 								<a
 									className={`cursor-pointer  font-medium text-md  ${
-										location.pathname === '/Analytics' ? 'text-system-primary-accent' : 'text-system-primary-text'
+										location.pathname.includes('/Analytics') || location.pathname.includes('/analytics')
+											? 'text-system-primary-accent'
+											: 'text-system-primary-text'
 									}`}
 									onClick={() => onClickItem('/Analytics')}>
 									Analytics
 								</a>
 								<div
 									className={`h-1 w-10 rounded-full ${
-										location.pathname === '/Analytics' ? 'bg-system-primary-accent' : 'bg-transparent'
+										location.pathname.includes('/Analytics') || location.pathname.includes('/analytics')
+											? 'bg-system-primary-accent'
+											: 'bg-transparent'
 									}`}></div>
 							</div>
 						)}
@@ -188,14 +221,18 @@ const DashboardHeader = () => {
 							<div className='w-max flex flex-col items-center'>
 								<a
 									className={`cursor-pointer  font-medium text-md  ${
-										location.pathname === '/Reports' ? 'text-system-primary-accent' : 'text-system-primary-text'
+										location.pathname.includes('/Moderation') || location.pathname.includes('/moderation')
+											? 'text-system-primary-accent'
+											: 'text-system-primary-text'
 									}`}
-									onClick={() => onClickItem('/Reports')}>
-									Moderator
+									onClick={() => onClickItem('/Moderation')}>
+									Moderation
 								</a>
 								<div
 									className={`h-1 w-10 rounded-full ${
-										location.pathname === '/Reports' ? 'bg-system-primary-accent' : 'bg-transparent'
+										location.pathname.includes('/Moderation') || location.pathname.includes('/moderation')
+											? 'bg-system-primary-accent'
+											: 'bg-transparent'
 									}`}></div>
 							</div>
 						)}

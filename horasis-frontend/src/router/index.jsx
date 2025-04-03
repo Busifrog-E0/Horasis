@@ -62,7 +62,7 @@ export const router = createBrowserRouter(
 						<Route index element={<Navigate to='admin-users' />} />
 						<Route path='admin-users' element={<AdminUsers />} />
 						<Route path='tags' element={<AdminTags />} />
-						<Route path='content-reports' element={<AdminContentReports />} />
+						<Route path='content-moderation' element={<AdminContentReports />} />
 					</Route>
 				</Route>
 				<Route path='Login' element={<SuperAdminUnauthLayout />}>
@@ -123,7 +123,7 @@ export const router = createBrowserRouter(
 					/>
 
 					<Route
-						path='/Reports'
+						path='/Moderation'
 						element={
 							<AdminProtected>
 								<ReportsPage />

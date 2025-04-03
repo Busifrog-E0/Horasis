@@ -31,7 +31,7 @@ const SuperadminSidebar = ({ toggleSidebar = () => {} }) => {
 
 					<NavLink
 						onClick={() => toggleSidebar()}
-						to='content-reports'
+						to='content-moderation'
 						className={({ isActive }) =>
 							isActive
 								? 'block p-3 rounded-lg bg-system-primary-accent text-system-secondary-bg'
