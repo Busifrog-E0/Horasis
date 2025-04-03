@@ -26,6 +26,7 @@ const CreateDiscussionStep1 = ({ postDiscussionData, setPostDiscussionData, vali
 	}
 
 	const { data: tagsList } = useGetList('tags', { Limit: -1 })
+	const MAX_CHAR_LIMIT = 500
 	return (
 		<div className='flex flex-col gap-4'>
 			<div>
@@ -63,16 +64,25 @@ const CreateDiscussionStep1 = ({ postDiscussionData, setPostDiscussionData, vali
 				<h1 className='text-system-primary-text font-medium text-lg'>
 					Discussion Description<span className='text-brand-red'>*</span>
 				</h1>
-				<TextArea
-					rows={6}
-					placeholder='Discussion description'
-					width='full'
-					variant='primary_outlined'
-					value={postDiscussionData.Description}
-					onChange={(e) => {
-						validateSingle({ ['Description']: e.target.value }, 'Description')
-					}}
-				/>
+				<div className='relative'>
+					<TextArea
+						rows={6}
+						placeholder='Discussion description'
+						width='full'
+						variant='primary_outlined'
+						value={postDiscussionData.Description}
+						maxLength={MAX_CHAR_LIMIT}
+						onChange={(e) => {
+							if (e.target.value.length <= MAX_CHAR_LIMIT) {
+								validateSingle({ ['Description']: e.target.value }, 'Description')
+							}
+						}}
+					/>
+					<p className='text-system-secondary-text absolute bottom-2 right-2'>
+						{postDiscussionData.Description ? MAX_CHAR_LIMIT - postDiscussionData.Description.length : MAX_CHAR_LIMIT} /{' '}
+						{MAX_CHAR_LIMIT}
+					</p>
+				</div>
 				{errorObj['Description'] != undefined && <p className='text-brand-red m-0'>{errorObj['Description']}</p>}
 			</div>
 
