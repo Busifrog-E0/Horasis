@@ -35,11 +35,7 @@ const EventsAgendaBig = ({ event }) => {
 								</div>
 								{agenda?.Description && (
 									<div className='mb-4'>
-										<ShowMoreText
-											text={
-												'				Lorem ipsum dolor sit amet consectetur adipisicing elit. Ad nihil saepe laborum nisi sunt autem corrupti vero ipsam, aperiam cupiditate possimus quae assumenda unde placeat molestias labore expedita similique rem blanditiis eaque repudiandae maiores sint. Mollitia esse a alias minima provident iste vel tenetur voluptatibus!'
-											}
-										/>
+										<ShowMoreText text={agenda?.Description} />
 									</div>
 								)}
 
