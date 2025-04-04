@@ -69,9 +69,8 @@ const DashboardHeader = () => {
 						onClick={() => onClickItem('/home')}>
 						<Logo />
 					</div>
-					<div className='px-10 hidden lg:flex flex-row flex-wrap gap-8 flex-1'>
-						<div className='w-max flex flex-col items-center'>
-							{console.log(location.pathname)}
+					<div className='hidden lg:flex flex-row flex-nowrap gap-4 md:gap-8 flex-1 overflow-x-auto px-2 md:px-10 scroll-smooth'>
+						<div className='w-max flex flex-col items-center flex-shrink-0'>
 							<a
 								className={`cursor-pointer  font-medium text-md  ${
 									location.pathname.includes('/Events') ||

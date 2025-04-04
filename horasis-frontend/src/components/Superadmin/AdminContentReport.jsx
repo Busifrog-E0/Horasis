@@ -201,7 +201,10 @@ const AdminContentReport = () => {
 											<td className='px-6 py-5 whitespace-nowrap text-base text-gray-700'>
 												{new Date(report.CreatedIndex).toLocaleString()}
 											</td>
-											<td className='px-6 py-5 whitespace-nowrap text-right text-base font-medium'>
+											<td
+												className={` ${
+													report.IsViewed ? '' : 'border-r-2 border-system-primary-accent'
+												} px-6 py-5 whitespace-nowrap text-base text-gray-700`}>
 												<div className='flex items-center justify-end space-x-4'>
 													{!report.IsDeleted ? (
 														<>
