@@ -1,9 +1,9 @@
-import heroImage from '../../assets/images/hero-right-image.png'
+import heroImage from '../../assets/images/home/hero-right-image.png'
 const HeroSection = () => {
 	return (
 		<>
-			<div className='bg-system-primary-accent-transparent px-4 sm:px-8 md:px-16 lg:px-20 h-[calc(100vh-5rem)] flex items-center justify-center overflow-hidden'>
-				<div className='grid lg:grid-cols-2 max-w-screen-2xl gap-10'>
+			<div className='bg-system-primary-accent-transparent px-4 sm:px-8 md:px-16 lg:px-20 h-[calc(100vh-5rem)] flex items-center justify-center overflow-hidden relative'>
+				<div className='grid lg:grid-cols-2 max-w-screen-2xl gap-10 '>
 					<div className='flex flex-col gap-10 justify-center order-last md:order-first'>
 						<div>
 							<div className='flex flex-col gap-4'>
@@ -29,8 +29,12 @@ const HeroSection = () => {
 							</div> */}
 						</div>
 					</div>
-					<div className=' w-full h-full border md:border-none border-system-primary-bg rounded-xl'>
-						<img src={heroImage} alt='' className='lg:scale-[1.8]' />
+					<div className=' w-full h-full border md:border-none border-system-primary-bg rounded-xl '>
+						<img
+							src={heroImage}
+							alt=''
+							className='md:scale-150 lg:scale-[1.2] lg:absolute lg:-right-1/4 lg:bottom-0 xl:-right-1/4 2xl:-right-1'
+						/>
 					</div>
 				</div>
 			</div>

@@ -219,6 +219,8 @@ const SingleEvent = () => {
 		let tabsArray = []
 
 		tabsArray.push(getEventAgendaTab(0))
+		tabsArray.push(getSpeakersTab(tabsArray.length))
+
 		// Add activity tab if within the specified date range and has discussion
 		if (isWithinTenDays && HasDiscussion && IsMember) {
 			tabsArray.push(getActivityTab(tabsArray.length)) // Key for Activity tab is 0
@@ -227,7 +229,6 @@ const SingleEvent = () => {
 		}
 
 		// Add other tabs, incrementing keys accordingly
-		tabsArray.push(getSpeakersTab(tabsArray.length))
 		if (IsMember) {
 			tabsArray.push(getParticipantsTab(tabsArray.length)) // Participants tab key will be 1
 		}
