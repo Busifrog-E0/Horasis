@@ -137,9 +137,9 @@ const PatchSpeakers = async (req, res) => {
 const InviteSpeakersThroughEmail = async (req, res) => {
     const { EventId } = req.params;
     const { InvitationData } = req.body;
-    const Event = await ReadOneFromEvents(EventId);
     for (const Data of InvitationData) {
         const { Email, Agenda, FullName, About } = Data;
+        const Event = await ReadOneFromEvents(EventId);
         const [[Speaker], [User]] = await Promise.all([
             ReadSpeakers({ "UserDetails.Email": Email, EventId }, undefined, 1, undefined),
             ReadUsers({ Email }, undefined, 1, undefined)
