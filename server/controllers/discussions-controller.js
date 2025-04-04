@@ -169,7 +169,7 @@ const PostDiscussions = async (req, res) => {
     req.body = DiscussionInit(req.body);
     req.body.OriginalLanguage = OriginalLanguage;
     const DiscussionId = await CreateDiscussions({ ...req.body });
-    const Member = MemberInit({ MemberId: OrganiserId, EntityId: DiscussionId, UserDetails }, "Accepted", true);
+    const Member = MemberInit({ MemberId: OrganiserId, EntityId: DiscussionId, UserDetails, Type: "Discussion" }, "Accepted", true);
     await CreateMembers(Member);
     return res.json(DiscussionId);
 }
@@ -210,7 +210,7 @@ const DeleteDiscussions = async (req, res) => {
     if (Discussion.OrganiserId !== UserId) {
         return res.status(444).json(AlertBoxObject("Cannot Delete", "You are not the organiser of this discussion"))
     }
-        await Promise.all([
+    await Promise.all([
         RemoveDiscussions(DiscussionId),
         DeleteMembersOfEntity(DiscussionId),
         RemoveNotificationForEntity(DiscussionId)

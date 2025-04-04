@@ -138,36 +138,34 @@ const InviteSpeakersThroughEmail = async (req, res) => {
     const { EventId } = req.params;
     const { InvitationData } = req.body;
     const Event = await ReadOneFromEvents(EventId);
-    await Promise.all(InvitationData.map(async Data => {
+    for (const Data of InvitationData) {
         const { Email, Agenda, FullName, About } = Data;
         const [[Speaker], [User]] = await Promise.all([
             ReadSpeakers({ "UserDetails.Email": Email, EventId }, undefined, 1, undefined),
             ReadUsers({ Email }, undefined, 1, undefined)
         ]);
         if (User) {
-            return res.status(444).json(AlertBoxObject("User Already Exists", "User aLready Exists"))
+            return res.status(444).json(AlertBoxObject("User Already Exists", "User aLready Exists"));
         }
         if (Speaker) {
             return res.status(444).json(AlertBoxObject("Already Invited", "You have already invited this Email"));
         }
 
         const SpeakerId = new ObjectId().toString();
-        const UserDetails = { FullName, About, Email, ProfilePicture: '' }
-        const SpeakerData = SpeakerInit({ SpeakerId, EventId, MembershipStatus: "Accepted", Agenda, UserDetails  });
+        const UserDetails = { FullName, About, Email, ProfilePicture: '' };
+        const SpeakerData = SpeakerInit({ SpeakerId, EventId, MembershipStatus: "Accepted", Agenda, UserDetails });
         const { Agenda: AgendaData } = Event;
         const updatedAgenda = AgendaData.map(item => {
             if (item.AgendaId === Agenda.AgendaId) {
-                return { ...item, SpeakerData: { SpeakerId, UserDetails } }
+                return { ...item, SpeakerData: { SpeakerId, UserDetails } };
             }
             return item;
-        })
-        await Promise.all([
-            PushArrayEvents({ Speakers: { SpeakerId, UserDetails: SpeakerData.UserDetails, Agenda, } }, EventId),
-            CreateSpeakers(SpeakerData),
-            UpdateEvents({ Agenda: updatedAgenda }, EventId),
-            //SendSpeakerInviteEmail(Email, SpeakerId, Event, Agenda, FullName)
-        ])
-    }))
+        });
+        await PushArrayEvents({ Speakers: { SpeakerId, UserDetails: SpeakerData.UserDetails, Agenda } }, EventId);
+        await CreateSpeakers(SpeakerData);
+        await UpdateEvents({ Agenda: updatedAgenda }, EventId);
+        // await SendSpeakerInviteEmail(Email, SpeakerId, Event, Agenda, FullName);
+    }
     return res.json(true);
 }
 
