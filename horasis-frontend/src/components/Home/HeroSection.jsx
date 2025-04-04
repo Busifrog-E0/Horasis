@@ -33,7 +33,7 @@ const HeroSection = () => {
 						<img
 							src={heroImage}
 							alt=''
-							className='md:scale-150 lg:scale-[1.2] lg:absolute lg:-right-1/4 lg:bottom-0 xl:-right-1/4 2xl:-right-1'
+							className='md:scale-150 lg:scale-[1.1] lg:absolute lg:-right-1/3 lg:bottom-0 xl:-right-[30%] 2xl:right-[-10rem]'
 						/>
 					</div>
 				</div>
