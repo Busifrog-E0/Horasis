@@ -8,7 +8,7 @@ import Spinner from '../../ui/Spinner'
 
 const ViewLikedMembers = ({ entity, timeSize = 'text-md' }) => {
 	const [isModalOpen, setIsModalOpen] = useState(false)
-	
+
 	const {
 		data: likedUsers,
 		isLoading,
@@ -56,7 +56,7 @@ const ViewLikedMembers = ({ entity, timeSize = 'text-md' }) => {
 				</Modal.Body>
 			</Modal>
 			<p className={`${timeSize} text-brand-gray-dim mt-1 cursor-pointer hover:underline `} onClick={openModal}>
-				{entity.NoOfLikes} likes
+				{entity.NoOfLikes} {entity.NoOfLikes === 1 ? 'like' : 'likes'}
 			</p>
 		</>
 	)

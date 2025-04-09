@@ -37,7 +37,7 @@ const Tab = ({ tabs, gap = 'lg:gap-4', activeTab, onTabChange = () => {}, name, 
 				<TabList activeTab={activeTab} tablist={tabs} />
 			</div>
 
-			<TabContent>{tabs[activeTab].render()}</TabContent>
+			<TabContent>{tabs[activeTab]?.render()}</TabContent>
 		</div>
 	)
 }

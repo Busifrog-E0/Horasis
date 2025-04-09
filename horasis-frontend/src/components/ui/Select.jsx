@@ -1,6 +1,6 @@
 import { twMerge } from 'tailwind-merge'
 import { inputVariants } from '../../utils/app/FormElements'
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 const Select = ({
 	variant,
@@ -21,12 +21,13 @@ const Select = ({
 	required,
 	iconClick,
 	options,
-	isSearchable=false,
+	isSearchable = false,
 	...props
 }) => {
 	const [selected, setSelected] = useState(value)
 	const [showOptions, setShowOptions] = useState(false)
 	const [searchTerm, setSearchTerm] = useState('')
+	const dropdownRef = useRef(null)
 
 	// Filter options based on search term
 	const filteredOptions = options.filter((option) => option.toLowerCase().includes(searchTerm.toLowerCase()))
@@ -44,6 +45,20 @@ const Select = ({
 		}
 	}
 
+	useEffect(() => {
+		const handleClickOutside = (event) => {
+			if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+				setShowOptions(false)
+				setSearchTerm('')
+			}
+		}
+
+		document.addEventListener('mousedown', handleClickOutside)
+		return () => {
+			document.removeEventListener('mousedown', handleClickOutside)
+		}
+	}, [])
+
 	return (
 		<div
 			className={`flex flex-col my-1 ${
@@ -58,7 +73,7 @@ const Select = ({
 				{extra && <div className='hidden lg:block lg:m-0 text-sm'>{extra}</div>}
 			</div>
 
-			<div className='relative' onKeyDown={handleKeyDown} tabIndex={0}>
+			<div className='relative' onKeyDown={handleKeyDown} tabIndex={0} ref={dropdownRef}>
 				<div
 					onClick={() => setShowOptions((prev) => !prev)}
 					className={
@@ -71,7 +86,7 @@ const Select = ({
 						</>
 					) : (
 						<>
-							<p className='w-full text-base'>{searchTerm?searchTerm:value}</p>
+							<p className='w-full text-base'>{searchTerm ? searchTerm : value}</p>
 						</>
 					)}
 					{showOptions ? (

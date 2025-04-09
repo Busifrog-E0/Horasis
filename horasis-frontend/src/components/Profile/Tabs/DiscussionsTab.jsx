@@ -10,7 +10,7 @@ import Spinner from '../../ui/Spinner'
 import EmptyMembers from '../../Common/EmptyMembers'
 import { useNavigate } from 'react-router-dom'
 
-const DiscussionsTab = () => {
+const DiscussionsTab = ({ showOther = false, userId = '' }) => {
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
 	const toast = useToast()
 	const [isLoading, setIsLoading] = useState(true)
@@ -22,7 +22,8 @@ const DiscussionsTab = () => {
 		Limit: 10,
 		Keyword: '',
 	})
-	const api = `user/${currentUserData.CurrentUser.UserId}/discussions`
+	const api =
+		showOther === true ? `user/${userId}/discussions` : `user/${currentUserData.CurrentUser.UserId}/discussions`
 	const setLoadingCom = (tempArr, value) => {
 		if (tempArr.length > 0) {
 			setIsLoadingMore(value)

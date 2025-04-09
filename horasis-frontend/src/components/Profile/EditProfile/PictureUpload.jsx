@@ -56,10 +56,10 @@ const PictureUpload = ({
 	const handleCropSave = async () => {
 		try {
 			const croppedImage = await getCroppedImg(imageSrc, croppedAreaPixels)
-		
+
 			const fileDataUint8Array = await blobToUint8Array(croppedImage)
 			const fileDataByteArray = Array.from(fileDataUint8Array)
-			
+
 			// setSelectedImage(croppedImage)
 			setCropping(false) // Exit cropping mode
 			onImageSelect({
@@ -68,6 +68,13 @@ const PictureUpload = ({
 				FileName: 'cropped-image.jpg',
 				FileFieldName: fileFieldName,
 			})
+
+			return {
+				FileType: 'image/jpeg',
+				FileData: fileDataByteArray,
+				FileName: 'cropped-image.jpg',
+				FileFieldName: fileFieldName,
+			}
 		} catch (e) {
 			console.error(e)
 			toast.open('error', 'Crop Error', 'An error occurred while cropping')
@@ -102,9 +109,9 @@ const PictureUpload = ({
 								onCropComplete={onCropComplete}
 							/>
 						</div>
-						<Button onClick={handleCropSave} size='md' variant='black' className='text-md z-50'>
+						{/* <Button onClick={handleCropSave} size='md' variant='black' className='text-md z-50'>
 							Save Crop
-						</Button>
+						</Button> */}
 					</div>
 				) : selectedImage ? (
 					<div className='w-full flex items-center justify-center'>
@@ -222,7 +229,15 @@ const PictureUpload = ({
 						<img src={change} alt='' className='h-6 sm:hidden' />
 						<span className='hidden sm:inline'>Change Image</span>
 					</Button>
-					<Button onClick={onUploadImage} size='md' variant='black' className='text-md' disabled={isUploading}>
+					<Button
+						onClick={async () => {
+							const imageToUpload = await handleCropSave()
+							onUploadImage(imageToUpload)
+						}}
+						size='md'
+						variant='black'
+						className='text-md'
+						disabled={isUploading}>
 						<img src={confirm} alt='' className='h-6 sm:hidden' />
 						<span className='hidden sm:inline'>Apply</span>
 					</Button>

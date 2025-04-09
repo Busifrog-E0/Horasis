@@ -1,11 +1,12 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect, forwardRef, useImperativeHandle } from 'react'
 import Cropper from 'react-easy-crop'
 import { useToast } from '../../../Toast/ToastService'
 import { getCroppedImg } from '../../../../utils/cropUtils'
 import { blobToUint8Array } from '../../../../utils/utils'
 import Button from '../../../ui/Button'
+import edit from '../../../../assets/icons/edit.svg'
 
-const CreateArticleStep2 = ({ selectedImage, onImageSelect, fileFieldName }) => {
+const CreateArticleStep2 = forwardRef(({ selectedImage, onImageSelect, fileFieldName, cropping, setCropping }, ref) => {
 	const toast = useToast()
 	const fileInputRef = useRef(null)
 
@@ -13,7 +14,6 @@ const CreateArticleStep2 = ({ selectedImage, onImageSelect, fileFieldName }) => 
 	const [crop, setCrop] = useState({ x: 0, y: 0 })
 	const [zoom, setZoom] = useState(1)
 	const [croppedAreaPixels, setCroppedAreaPixels] = useState(null)
-	const [cropping, setCropping] = useState(false)
 
 	// Handle image change (selecting a new image)
 	const handleImageChange = (e) => {
@@ -41,7 +41,7 @@ const CreateArticleStep2 = ({ selectedImage, onImageSelect, fileFieldName }) => 
 		setCroppedAreaPixels(croppedPixels)
 	}
 
-	// Save the cropped image
+	// Save the cropped image – this function is both used internally and exposed imperatively.
 	const handleCropSave = async () => {
 		try {
 			const croppedImage = await getCroppedImg(imageSrc, croppedAreaPixels)
@@ -54,8 +54,16 @@ const CreateArticleStep2 = ({ selectedImage, onImageSelect, fileFieldName }) => 
 				FileName: 'cropped-article-image.jpg',
 				FileFieldName: fileFieldName,
 			})
+
 			setImageSrc(null)
 			setCropping(false) // Exit cropping mode
+
+			return {
+				FileType: 'image/jpeg',
+				FileData: fileDataByteArray,
+				FileName: 'cropped-article-image.jpg',
+				FileFieldName: fileFieldName,
+			}
 		} catch (e) {
 			console.error(e)
 			toast.open('error', 'Crop Error', 'An error occurred while cropping the image')
@@ -66,6 +74,15 @@ const CreateArticleStep2 = ({ selectedImage, onImageSelect, fileFieldName }) => 
 	const handleClick = () => {
 		fileInputRef.current.click()
 	}
+
+	// Expose handleCropSave imperatively to parent components
+	useImperativeHandle(
+		ref,
+		() => ({
+			handleCropSave,
+		}),
+		[handleCropSave]
+	)
 
 	return (
 		<div className='flex flex-col gap-4'>
@@ -92,13 +109,9 @@ const CreateArticleStep2 = ({ selectedImage, onImageSelect, fileFieldName }) => 
 								onCropComplete={onCropComplete}
 							/>
 						</div>
-						<Button
-							onClick={handleCropSave}
-							variant='black'
-							width='full'
-							className=' text-white py-2 px-4 rounded-md'>
+						{/* <Button onClick={handleCropSave} variant='black' width='full' className='text-white py-2 px-4 rounded-md'>
 							Save Crop
-						</Button>
+						</Button> */}
 					</div>
 				) : (
 					<div className='flex flex-row items-center justify-center mb-8'>
@@ -111,14 +124,15 @@ const CreateArticleStep2 = ({ selectedImage, onImageSelect, fileFieldName }) => 
 						) : (
 							<label htmlFor='createArticleCoverPhotoPicker' className='w-full cursor-pointer'>
 								<div className='h-36 w-full bg-system-file-border rounded-lg flex flex-col items-center justify-center cursor-pointer overflow-hidden'>
-									<svg
-										className='text-brand-secondary h-8 w-8'
-										aria-hidden='true'
-										xmlns='http://www.w3.org/2000/svg'
-										fill='currentColor'
-										viewBox='0 0 20 20'>
-										<path d='m19.707 9.293-2-2-7-7a1 1 0 0 0-1.414 0l-7 7-2 2a1 1 0 0 0 1.414 1.414L2 10.414V18a2 2 0 0 0 2 2h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a2 2 0 0 0 2-2v-7.586l.293.293a1 1 0 0 0 1.414-1.414Z' />
-									</svg>
+								<svg
+											className='text-brand-secondary h-8 w-8'
+											aria-hidden='true'
+											xmlns='http://www.w3.org/2000/svg'
+											fill='currentColor'
+											viewBox='0 0 24 24'>
+											<path d='M0 0h24v24H0z' fill='none' />
+											<path d='M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z' />
+										</svg>
 								</div>
 							</label>
 						)}
@@ -133,8 +147,20 @@ const CreateArticleStep2 = ({ selectedImage, onImageSelect, fileFieldName }) => 
 					For best result, upload an image that is 1950px by 450px or larger.
 				</p>
 			</div>
+			{imageSrc && (
+				<div className='flex gap-2'>
+					<Button
+						onClick={handleClick}
+						size='md'
+						variant='outline'
+						className='text-sm outline-0 border-0 ring-0 shadow-none hover:bg-transparent p-0'>
+						<img src={edit} alt='' className='h-5 ' />
+						<span className='inline'>Change Image</span>
+					</Button>
+				</div>
+			)}
 		</div>
 	)
-}
+})
 
 export default CreateArticleStep2

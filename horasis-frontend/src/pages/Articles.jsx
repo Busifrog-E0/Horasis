@@ -11,11 +11,18 @@ import addIcon from '../assets/icons/add-icon.svg'
 import ArticlesSection from '../components/Articles/ArticlesSection'
 import SavedDiscussionTab from '../components/Discussions/Saved/SavedDiscussionTab'
 import SavedArticlesTab from '../components/Articles/SavedArticlesTab'
+import { useRef } from 'react'
 
 const Articles = () => {
 	const navigate = useNavigate()
 	const OnClickCreateNew = (path) => {
 		navigate(path)
+	}
+	const refreshRef = useRef(null)
+	const handleRefresh = () => {
+		if (refreshRef.current && refreshRef.current.handleRefresh) {
+			refreshRef.current.handleRefresh()
+		}
 	}
 	return (
 		<>
@@ -41,10 +48,10 @@ const Articles = () => {
 				</div>
 			</div> */}
 			<div className='lg:col-span-2'>
-				<ArticlesSection />
+				<ArticlesSection handleRefresh={handleRefresh} />
 			</div>
 			<div>
-				<SavedArticlesTab />
+				<SavedArticlesTab ref={refreshRef} />
 			</div>
 		</>
 	)

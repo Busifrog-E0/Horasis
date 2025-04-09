@@ -19,6 +19,14 @@ import usePostData from '../hooks/usePostData'
 import useUpdateData from '../hooks/useUpdateData'
 import useWindowSize from '../hooks/useWindowSize'
 import { useAuth } from '../utils/AuthProvider'
+import TimeLineTab from '../components/Activities/TimeLineTab'
+import AboutTab from '../components/Profile/Tabs/AboutTab'
+import MyConnectionsTab from '../components/Connections/MyConnectionsTab'
+import VideosTab from '../components/Profile/Tabs/VideosTab'
+import ImagesTab from '../components/Profile/Tabs/ImagesTab'
+import DiscussionsTab from '../components/Profile/Tabs/DiscussionsTab'
+import DocumentTab from '../components/Profile/Tabs/DocumentTab'
+import MyArticlesTab from '../components/Profile/Tabs/MyArticlesTab'
 
 const UserProfileConnectComponent = ({ profile, connectCallback = () => { } }) => {
 	const navigate = useNavigate()
@@ -31,21 +39,27 @@ const UserProfileConnectComponent = ({ profile, connectCallback = () => { } }) =
 			navigate(`/Chat/${profile.DocId}`)
 		}
 	}
-	const { isLoading: isPostLoading, postData } = usePostData({ onSuccess:  (result) => {
+	const { isLoading: isPostLoading, postData } = usePostData({
+		onSuccess: (result) => {
 			if (result === true) {
 				connectCallback()
 			}
-		}, })
-	const { isLoading: isUpdateLoading, updateData } = useUpdateData({ onSuccess:  (result) => {
+		},
+	})
+	const { isLoading: isUpdateLoading, updateData } = useUpdateData({
+		onSuccess: (result) => {
 			if (result === true) {
 				connectCallback()
 			}
-		}, })
-	const { isLoading: isDeleteLoading, deleteData } = useDeleteData('', { onSuccess:  (result) => {
+		},
+	})
+	const { isLoading: isDeleteLoading, deleteData } = useDeleteData('', {
+		onSuccess: (result) => {
 			if (result === true) {
 				connectCallback()
 			}
-		}, })
+		},
+	})
 
 	const sendConnectionRequest = () => {
 		return postData({
@@ -186,13 +200,74 @@ const ShowUserProfile = () => {
 
 	const { scrollToTop } = useAuth()
 
-	const tabs = () => [
-		{
-			key: 0,
-			title: 'About',
-			render: () => <AboutProfile user={user} getUserDetails={getUser} isCurrentUser={false} />,
-		},
-	]
+	const tabs = () => {
+		if (user?.ConnectionStatus === 'Connected' || user?.IsFollowing === true) {
+			return [
+				{
+					key: 0,
+					title: 'Timeline',
+					render: () => (
+						<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
+							<TimeLineTab
+								api={`user/${user?.DocId}/activities`}
+								gapBnTabs='gap-7'
+								classNameForPost='py-5'
+								bordered={true}
+								showPostComponent={false}
+							/>
+						</div>
+					),
+				},
+				{
+					key: 1,
+					title: 'About',
+					render: () => <AboutProfile user={user} getUserDetails={getUser} isCurrentUser={false} />,
+				},
+				{
+					key: 2,
+					title: 'Connections',
+					render: () => <MyConnectionsTab showOther={true} userId={user.DocId} />,
+				},
+				{
+					key: 3,
+					title: 'Videos',
+					render: () => <VideosTab showOther={true} userId={user.DocId} />,
+				},
+				{
+					key: 4,
+					title: 'Photos',
+					render: () => <ImagesTab showOther={true} userId={user.DocId} />,
+				},
+				{
+					key: 5,
+					title: 'Discussions',
+					render: () => <DiscussionsTab showOther={true} userId={user.DocId} />,
+				},
+				{
+					key: 6,
+					title: 'Documents',
+					render: () => <DocumentTab showOther={true} userId={user.DocId} />,
+				},
+				{
+					key: 7,
+					title: 'Articles',
+					render: () => <MyArticlesTab showOther={true} userId={user.DocId} />,
+				},
+			]
+		} else {
+			return [
+				{
+					key: 0,
+					title: 'About',
+					render: () => <AboutProfile user={user} getUserDetails={getUser} isCurrentUser={false} />,
+				},
+			]
+		}
+	}
+
+	useEffect(() => {
+		setActiveTab(0)
+	}, [user])
 
 	const onTabChange = (item) => {
 		setActiveTab(item.key)
@@ -263,7 +338,7 @@ const ShowUserProfile = () => {
 			</div>
 			<div className='p-2 lg:px-10 lg:py-6 pt-6'>
 				<div className='grid lg:grid-cols-4 gap-3 lg:gap-12 '>
-					<div className='py-5 lg:py-8 px-8 lg:px-12 bg-system-secondary-bg rounded-lg mb-3 lg:mb-8 h-max'>
+					<div className='py-5 lg:py-8 px-8 lg:px-12 bg-system-secondary-bg rounded-lg mb-3 lg:mb-8 h-max max-w-screen overflow-auto'>
 						{isLoading ? (
 							<Spinner />
 						) : (
@@ -273,10 +348,10 @@ const ShowUserProfile = () => {
 								</h4>
 								<h4 className='font-medium text-xl text-brand-gray-dim lg:text-center'>@{user && user.Username}</h4>
 								<div className='flex justify-center items-center mt-2 lg:mt-6 flex-wrap sm:flex-nowrap  lg:flex-wrap gap-2'>
-									{user && user.ConnectionStatus && (
+									{user && user.ConnectionStatus && userid !== currentUserData.CurrentUser.UserId && (
 										<UserProfileConnectComponent profile={user} connectCallback={getUser} setIsLoading={setIsLoading} />
 									)}
-									{user && (
+									{user && userid !== currentUserData.CurrentUser.UserId && (
 										<UserProfileFollowComponent profile={user} followCallback={getUser} setIsLoading={setIsLoading} />
 									)}
 								</div>
@@ -373,7 +448,7 @@ const ShowUserProfile = () => {
 											</div>
 											<h4
 												className='font-semibold text-xl text-brand-gray-dim truncate cursor-pointer hover:text-sky-600'
-												onClick={() => window.open("https://" + user.LinkedIn, '_blank')}>
+												onClick={() => window.open('https://' + user.LinkedIn, '_blank')}>
 												{user && extractLinkedInUsername(user.LinkedIn)}
 											</h4>
 										</div>

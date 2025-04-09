@@ -26,6 +26,7 @@ const CreatePodcastStep1 = ({ postPodcastData, setPostPodcastData, validateSingl
 	}
 
 	const { data: tagsList } = useGetList('tags', { Limit: -1 })
+	const MAX_CHAR_LIMIT = 500
 	return (
 		<div className='flex flex-col gap-4'>
 			<div>
@@ -63,16 +64,25 @@ const CreatePodcastStep1 = ({ postPodcastData, setPostPodcastData, validateSingl
 				<h1 className='text-system-primary-text font-medium text-lg'>
 					Podcast Description<span className='text-brand-red'>*</span>
 				</h1>
-				<TextArea
-					rows={6}
-					placeholder='Podcast description'
-					width='full'
-					variant='primary_outlined'
-					value={postPodcastData.Description}
-					onChange={(e) => {
-						validateSingle({ ['Description']: e.target.value }, 'Description')
-					}}
-				/>
+				<div className='relative'>
+					<TextArea
+						rows={6}
+						placeholder='Podcast description'
+						width='full'
+						variant='primary_outlined'
+						value={postPodcastData.Description}
+						maxLength={MAX_CHAR_LIMIT}
+						onChange={(e) => {
+							if (e.target.value.length <= MAX_CHAR_LIMIT) {
+								validateSingle({ ['Description']: e.target.value }, 'Description')
+							}
+						}}
+					/>
+					<p className='text-system-secondary-text absolute bottom-2 right-2'>
+						{postPodcastData.Description ? MAX_CHAR_LIMIT - postPodcastData.Description.length : MAX_CHAR_LIMIT} /{' '}
+						{MAX_CHAR_LIMIT}
+					</p>
+				</div>
 				{errorObj['Description'] != undefined && <p className='text-brand-red m-0'>{errorObj['Description']}</p>}
 			</div>
 

@@ -21,11 +21,12 @@ const ArticleTab = ({
 	iconSize = '6',
 	likeArticle,
 	unLikeArticle,
+	handleRefresh,
 }) => {
 	const [singleArticle, setSingleArticle] = useState(article)
 
 	const { isLoading: isLoadingArticle, getData: getSingleArticle } = useGetData(
-		`articles/${singleArticle ? singleArticle.DocId : article.DocId}`,
+		`articles/${singleArticle ? singleArticle?.DocId : article.DocId}`,
 		{
 			onSuccess: (result) => setSingleArticle(result),
 		},
@@ -33,15 +34,21 @@ const ArticleTab = ({
 	)
 
 	const { isLiking, isUnliking, likeEntity, unlikeEntity } = useEntityLikeManager({
-		EntityId: singleArticle ? singleArticle.DocId : article.DocId,
+		EntityId: singleArticle ? singleArticle?.DocId : article.DocId,
 		Type: 'Article',
-		successCallback: getSingleArticle,
+		successCallback: () => {
+			getSingleArticle()
+			handleRefresh()
+		},
 		errorCallback: () => {},
 	})
 	const { isSaving, isUnsaving, saveEntity, unsaveEntity } = useEntitySaveManager({
-		EntityId: singleArticle ? singleArticle.DocId : article.DocId,
+		EntityId: singleArticle ? singleArticle?.DocId : article.DocId,
 		Type: 'Article',
-		successCallback: getSingleArticle,
+		successCallback: () => {
+			getSingleArticle()
+			handleRefresh()
+		},
 		errorCallback: () => {},
 	})
 
@@ -49,7 +56,7 @@ const ArticleTab = ({
 		return (
 			<div
 				className='p-0 bg-system-secondary-bg rounded-lg cursor-pointer shadow-lg'
-				onClick={() => navigateToArticle(singleArticle.DocId)}>
+				onClick={() => navigateToArticle(singleArticle?.DocId)}>
 				{isLoadingArticle && (
 					<div
 						style={{ zIndex: 1000 }}
@@ -58,13 +65,13 @@ const ArticleTab = ({
 					</div>
 				)}
 				<div className='h-52 overflow-hidden rounded-t-lg'>
-					<img src={singleArticle.CoverPicture} className='object-cover h-full w-full' />
+					<img src={singleArticle?.CoverPicture} className='object-cover h-full w-full' />
 				</div>
 				<div className='px-5 pb-5 flex justify-between mt-2'>
 					<div>
-						<h4 className='font-semibold text-lg text-system-primary-accent'>{singleArticle.ArticleName}</h4>
-						<h4 className='text-xs text-system-primary-accent'>by {singleArticle.UserDetails.FullName}</h4>
-						<h4 className='text-sm text-brand-gray-dim mt-2'>{relativeTime(singleArticle.CreatedIndex)}</h4>
+						<h4 className='font-semibold text-lg text-system-primary-accent'>{singleArticle?.ArticleName}</h4>
+						<h4 className='text-xs text-system-primary-accent'>by {singleArticle?.UserDetails?.FullName}</h4>
+						<h4 className='text-sm text-brand-gray-dim mt-2'>{relativeTime(singleArticle?.CreatedIndex)}</h4>
 						<div className='mt-1'>
 							<div className='flex items-center justify-between gap-10'>
 								<div className='flex flex-wrap items-start justify-between gap-10'>
@@ -73,7 +80,7 @@ const ArticleTab = ({
 											<Spinner />
 										) : (
 											<div className='flex items-center gap-2'>
-												{singleArticle.HasLiked ? (
+												{singleArticle?.HasLiked ? (
 													<img
 														src={liked}
 														className={`h-${iconSize} w-${iconSize} cursor-pointer text-system-error`}
@@ -101,10 +108,10 @@ const ArticleTab = ({
 											className='flex items-center gap-2'
 											onClick={(e) => {
 												e.stopPropagation()
-												navigate(`/Articles/${singleArticle.DocId}`, { state: { scrollToComments: true } })
+												navigate(`/Articles/${singleArticle?.DocId}`, { state: { scrollToComments: true } })
 											}}>
 											<img src={reply} className={`h-${iconSize} w-${iconSize} `} />
-											<p className={`text-brand-gray-dim mt-1`}>{singleArticle.NoOfComments} replies</p>
+											<p className={`text-brand-gray-dim mt-1`}>{singleArticle?.NoOfComments} replies</p>
 										</div>
 									</div> */}
 								</div>
@@ -118,7 +125,7 @@ const ArticleTab = ({
 							</>
 						) : (
 							<>
-								{singleArticle.HasSaved ? (
+								{singleArticle?.HasSaved ? (
 									<>
 										<img
 											src={saved}

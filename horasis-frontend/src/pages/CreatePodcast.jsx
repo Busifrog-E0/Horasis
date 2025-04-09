@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import CreatePodcastStep1 from '../components/Podcasts/CreatePodcast/CreatePodcastSteps/CreatePodcastStep1'
 import CreatePodcastStep2 from '../components/Podcasts/CreatePodcast/CreatePodcastSteps/CreatePodcastStep2'
@@ -32,6 +32,7 @@ const CreatePodcast = () => {
 		Tags: [],
 	})
 	const [podcastId, setPodcastId] = useState('')
+	const cropRef = useRef(null)
 
 	const changeStep = (step) => {
 		if (step >= 1 && step <= 3) {
@@ -52,10 +53,18 @@ const CreatePodcast = () => {
 	const isSecondStep = activeStep === 2
 	const isThirdStep = activeStep === 3
 	// const isFourthStep = activeStep === 4
+	const [cropping, setCropping] = useState(false)
 
-	const postPodcast = () => {
+	const handleParentCropSave = async () => {
+		if (cropRef.current && cropRef.current.handleCropSave) {
+			const imageToUpload = await cropRef.current.handleCropSave()
+			return imageToUpload
+		}
+	}
+	const postPodcast = async () => {
 		setIsModalOpen(false)
-		onCoverImageUpload()
+		const imageToUpload = await handleParentCropSave()
+		onCoverImageUpload(imageToUpload)
 	}
 
 	const [isImageUploading, setIsImageUploading] = useState(false)
@@ -91,8 +100,24 @@ const CreatePodcast = () => {
 			toast
 		)
 	}
-	const onCoverImageUpload = () => {
-		if (coverImageToUpload) {
+	const onCoverImageUpload = (imageToUpload) => {
+		if (imageToUpload) {
+			setIsImageUploading(true)
+			postItem(
+				'files/users',
+				imageToUpload,
+				(result) => {
+					onCoverImageSet(result.FileUrl)
+				},
+				(err) => {
+					// console.log(err)
+					setIsImageUploading(false)
+				},
+				updateCurrentUser,
+				currentUserData,
+				toast
+			)
+		} else if (coverImageToUpload) {
 			setIsImageUploading(true)
 			postItem(
 				'files/users',
@@ -150,7 +175,7 @@ const CreatePodcast = () => {
 
 	const [podcast, setpodcast] = useState('')
 	const getpodcast = () => {
-		getItem	(
+		getItem(
 			`podcasts/${podcastId}`,
 			(result) => {
 				setpodcast(result)
@@ -211,9 +236,12 @@ const CreatePodcast = () => {
 					)}
 					{activeStep === 2 && (
 						<CreatePodcastStep2
+						ref={cropRef}
 							selectedImage={selectedCoverImage}
 							onImageSelect={onCoverImageSelect}
 							fileFieldName='CoverPicture'
+							cropping={cropping}
+							setCropping={setCropping}
 						/>
 					)}
 					{/* {activeStep === 3 && <CreatePodcastStep3 podcastId={podcastId} />} */}
@@ -255,7 +283,7 @@ const CreatePodcast = () => {
 								</Button>
 							)}
 							{isSecondStep && (
-								<Button onClick={() => setIsModalOpen(true)} width='full' className='px-10' variant='black'>
+								<Button onClick={() => setIsModalOpen(true)} width='full' className='px-10' variant='black' disabled={!cropping}>
 									Create Podcast
 								</Button>
 							)}

@@ -187,7 +187,7 @@ const NewStreamParticipantList = ({
 										AuthorName,
 										action: 'CONVERSATION_MESSAGE',
 									}
-									setMessages((prev) => [...prev, MessageContent])
+									// setMessages((prev) => [...prev, MessageContent])
 
 									sendMessage(JSON.stringify(MessageContent))
 									setMessageToSend('')

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Button from '../components/ui/Button'
 import Steps from '../components/ui/Steps'
 import { agendaSchema, eventSchema } from '../utils/schema/events/eventSchema'
@@ -24,6 +24,7 @@ const CreateEvent = () => {
 	const navigate = useNavigate()
 
 	const changeStep = (step) => {
+		console.log(postEventData)
 		if (step >= 1 && step <= 6) {
 			setActiveStep(step)
 		}
@@ -70,6 +71,7 @@ const CreateEvent = () => {
 		Country: 'United States',
 		HasDiscussion: true,
 		Tags: [],
+		EnableSeatLimit: false,
 	})
 
 	// useEffect(() => {
@@ -119,22 +121,33 @@ const CreateEvent = () => {
 	}
 
 	const validate = (callback) => {
-		const { error, warning } = eventSchema.validate(postEventData, {
+		const { error } = eventSchema.validate(postEventData, {
 			abortEarly: false,
 			stripUnknown: true,
 		})
+
+		let errors = {}
+
 		if (error && error.details) {
-			let obj = {}
-			error.details.forEach((val) => (obj[val.context.key] = val.message))
-			setErrorObj(obj)
+			error.details.forEach((detail) => {
+				console.log(detail)
+				// Using full error path ensures agenda errors are distinguished from event errors.
+				const key = detail.path.join('.')
+				errors[key] = detail.message
+			})
+		}
+
+		if (Object.keys(errors).length > 0) {
+			console.log(errors)
+			setErrorObj(errors)
 		} else {
 			setErrorObj({})
 			if (callback) {
 				callback()
 			}
 		}
-		// callback()
 	}
+
 	// const validateSingle = (value, key, callback) => {
 	// 	setPostEventData({ ...postEventData, ...value })
 	// 	const { error, warning } = eventSchema.extract(key).validate(value[key], {
@@ -208,11 +221,30 @@ const CreateEvent = () => {
 			}
 		}
 	}
+	const [displayCropping, setDisplayCropping] = useState(false)
+
+	const step3Ref = useRef(null)
+	const handleStepThreeCrop = async () => {
+		if (step3Ref.current && step3Ref.current.handleCropSave) {
+			const imageToUpload = await step3Ref.current.handleCropSave()
+			return imageToUpload
+		}
+	}
+	const [cropping, setCropping] = useState(false)
+
+	const step4Ref = useRef(null)
+	const handleStepFourCrop = async () => {
+		if (step4Ref.current && step4Ref.current.handleCropSave) {
+			const imageToUpload = await step4Ref.current.handleCropSave()
+			return imageToUpload
+		}
+	}
 
 	const [isModalOpen, setIsModalOpen] = useState(false)
-	const postEvent = () => {
+	const postEvent = async () => {
 		setIsModalOpen(false)
-		onCoverImagesUpload()
+		const imageToUpload = await handleStepFourCrop()
+		onCoverImagesUpload(imageToUpload)
 	}
 
 	const onImageSet = (coverImageUrl, displayImageUrl) => {
@@ -256,8 +288,23 @@ const CreateEvent = () => {
 		}
 	}
 
-	const onCoverImagesUpload = () => {
-		if (coverImageToUpload) {
+	const onCoverImagesUpload = (imageToUpload) => {
+		if (imageToUpload) {
+			setIsImageUploading(true)
+			postItem(
+				'files/users',
+				imageToUpload,
+				(result) => {
+					onDisplayImageUpload(result.FileUrl)
+				},
+				(err) => {
+					setIsImageUploading(false)
+				},
+				updateCurrentUser,
+				currentUserData,
+				toast
+			)
+		} else if (coverImageToUpload) {
 			setIsImageUploading(true)
 			postItem(
 				'files/users',
@@ -322,6 +369,7 @@ const CreateEvent = () => {
 							setPostEventData={setPostEventData}
 							validateSingle={newValidateSingle}
 							errorObj={errorObj}
+							setErrorObj={setErrorObj}
 						/>
 					)}
 					{activeStep === 2 && (
@@ -334,16 +382,22 @@ const CreateEvent = () => {
 					)}
 					{activeStep === 3 && (
 						<CreateEventStep3
+							ref={step3Ref}
 							selectedImage={selectedDisplayImage}
 							onImageSelect={onDisplayImageSelect}
 							fileFieldName='DisplayPicture'
+							cropping={displayCropping}
+							setCropping={setDisplayCropping}
 						/>
 					)}
 					{activeStep === 4 && (
 						<CreateEventStep4
+							ref={step4Ref}
 							selectedImage={selectedCoverImage}
 							onImageSelect={onCoverImageSelect}
 							fileFieldName='CoverPicture'
+							cropping={cropping}
+							setCropping={setCropping}
 						/>
 					)}
 					{activeStep === 5 && (
@@ -382,11 +436,7 @@ const CreateEvent = () => {
 								</Button>
 							)}
 							{isFourthStep && (
-								<Button
-									onClick={() => setIsModalOpen(true)}
-									width='full'
-									variant='black'
-									disabled={!selectedCoverImage || !selectedDisplayImage}>
+								<Button onClick={() => setIsModalOpen(true)} width='full' variant='black' disabled={!cropping}>
 									Create Event
 								</Button>
 							)}
@@ -397,10 +447,15 @@ const CreateEvent = () => {
 							)}
 							{isThirdStep && (
 								<Button
-									onClick={() => validate(() => changeStep(activeStep + 1))}
+									onClick={() =>
+										validate(() => {
+											handleStepThreeCrop()
+											changeStep(activeStep + 1)
+										})
+									}
 									width='full'
 									variant='black'
-									disabled={!selectedDisplayImage}>
+									disabled={selectedDisplayImage ? false : !displayCropping}>
 									Next
 								</Button>
 							)}

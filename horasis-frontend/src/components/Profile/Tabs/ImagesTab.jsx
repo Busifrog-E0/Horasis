@@ -8,7 +8,7 @@ import { jsonToQuery } from '../../../utils/searchParams/extractSearchParams'
 import Spinner from '../../ui/Spinner'
 import EmptyMembers from '../../Common/EmptyMembers'
 
-const ImagesTab = () => {
+const ImagesTab = ({ showOther = false, userId = '' }) => {
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
 	const toast = useToast()
 	const [isLoading, setIsLoading] = useState(true)
@@ -21,7 +21,7 @@ const ImagesTab = () => {
 		Keyword: '',
 		Type: 'image',
 	})
-	const api = `users/${currentUserData.CurrentUser.UserId}/media`
+	const api = showOther === true ? `users/${userId}/media` : `users/${currentUserData.CurrentUser.UserId}/media`
 	const setLoadingCom = (tempArr, value) => {
 		if (tempArr.length > 0) {
 			setIsLoadingMore(value)

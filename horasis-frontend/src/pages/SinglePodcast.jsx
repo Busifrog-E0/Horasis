@@ -21,6 +21,7 @@ import { defaultPostData, useAuth } from '../utils/AuthProvider'
 import { activityValidation } from '../utils/schema/users/activityValidation'
 import TagsList from '../components/Tags/TagsList'
 import ReportEntity from '../components/Report/ReportEntity'
+import TooltipText from '../components/Common/ToolTipText'
 
 const tabs = (podcast) => {
 	const { Privacy, IsMember, MembershipStatus, Permissions, DocId } = podcast
@@ -171,8 +172,10 @@ const SinglePodcast = () => {
 						<div className='flex flex-col justify-between gap-6 h-full'>
 							<div>
 								{/* Podcast Title */}
-								<h1 className='text-4xl font-bold text-system-primary-text'>{podcast?.PodcastName}</h1>
-
+								{/* <h1 className='text-4xl font-bold text-system-primary-text line-clamp-2'>{podcast?.PodcastName}</h1> */}
+								<TooltipText toolTipText={podcast?.PodcastName}>
+									<h1 className='text-4xl font-bold text-system-primary-text line-clamp-2'>{podcast?.PodcastName}</h1>
+								</TooltipText>
 								{/* Podcast Description */}
 								<p className='text-lg text-system-secondary-text leading-relaxed'>{podcast?.Description}</p>
 								{/* <p className='text-md text-system-primary-text italic'>{podcast?.Brief}</p> */}

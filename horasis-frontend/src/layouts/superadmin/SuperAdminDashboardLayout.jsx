@@ -12,7 +12,7 @@ const SuperAdminDashboardLayout = () => {
 	}
 	return (
 		<div className='h-screen w-full flex items-center justify-center bg-system-primary-bg p-2'>
-			<div className='max-w-[1400px] w-full h-full bg-system-secondary-bg flex flex-col rounded-md overflow-hidden'>
+			<div className='max-w-[1600px] w-full h-full bg-system-secondary-bg flex flex-col rounded-md lg:overflow-hidden'>
 				{/* Header */}
 				<SuperAdminHeader />
 
@@ -27,7 +27,7 @@ const SuperAdminDashboardLayout = () => {
 					</div>
 
 					{/* Main Content */}
-					<div className='flex-1 flex flex-col '>
+					<div className='flex-1 flex flex-col overflow-x-hidden lg:overflow-auto'>
 						{/* Mobile Menu Button */}
 						<div className='lg:hidden p-4 bg-system-secondary-bg text-system-primary-text flex justify-end items-center'>
 							<button onClick={toggleSidebar} className='text-lg font-semibold'>
@@ -36,13 +36,6 @@ const SuperAdminDashboardLayout = () => {
 						</div>
 
 						{/* Main Content Area */}
-						{/* <div className='flex-1 p-4 lg:px-6 lg:py-6 overflow-y-auto bg-system-secondary-bg'>
-							<div className='grid lg:grid-cols-4 gap-3 lg:gap-12'>
-								<div className='lg:col-span-4'>
-									<AdminUser />
-								</div>
-							</div>
-						</div> */}
 						<Outlet />
 					</div>
 				</div>

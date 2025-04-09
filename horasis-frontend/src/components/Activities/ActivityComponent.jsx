@@ -313,7 +313,9 @@ const ActivityComponent = ({
 							className={`${from === 'podcast' ? 'hidden' : 'flex'} items-center gap-2 cursor-pointer`}
 							onClick={() => setShowComment((prev) => !prev)}>
 							<img src={reply} className={`h-${iconSize} w-${iconSize} `} />
-							<p className={`text-brand-gray-dim mt-1 ${timeSize}`}>{singleActivity.NoOfComments} replies</p>
+							<p className={`text-brand-gray-dim mt-1 ${timeSize}`}>
+								{singleActivity.NoOfComments} {singleActivity.NoOfComments === 1 ? 'reply' : 'replies'}
+							</p>
 						</div>
 						{/* {isDeleting ? (
 							<Spinner />

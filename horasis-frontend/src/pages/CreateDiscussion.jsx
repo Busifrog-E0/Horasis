@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Settings from '../components/Common/PermissionsManagement/Settings'
 import CreateDiscussionStep1 from '../components/Discussions/CreateDiscussion/CreateDiscussionSteps/CreateDiscussionStep1'
@@ -19,6 +19,8 @@ const CreateDiscussion = () => {
 	const toast = useToast()
 	const [activeStep, setActiveStep] = useState(1)
 	const [isModalOpen, setIsModalOpen] = useState(false)
+	const cropRef = useRef(null)
+
 	const navigate = useNavigate()
 	const [errorObj, setErrorObj] = useState({})
 	const [postDiscussionData, setPostDiscussionData] = useState({
@@ -53,9 +55,19 @@ const CreateDiscussion = () => {
 	const isThirdStep = activeStep === 3
 	const isFourthStep = activeStep === 4
 
-	const postDiscussion = () => {
+	const [cropping, setCropping] = useState(false)
+
+	const handleParentCropSave = async () => {
+		if (cropRef.current && cropRef.current.handleCropSave) {
+			const imageToUpload = await cropRef.current.handleCropSave()
+			return imageToUpload
+		}
+	}
+
+	const postDiscussion = async () => {
 		setIsModalOpen(false)
-		onCoverImageUpload()
+		const imageToUpload = await handleParentCropSave()
+		onCoverImageUpload(imageToUpload)
 	}
 
 	const [isImageUploading, setIsImageUploading] = useState(false)
@@ -91,8 +103,24 @@ const CreateDiscussion = () => {
 			toast
 		)
 	}
-	const onCoverImageUpload = () => {
-		if (coverImageToUpload) {
+	const onCoverImageUpload = (imageToUpload) => {
+		if (imageToUpload) {
+			setIsImageUploading(true)
+			postItem(
+				'files/users',
+				imageToUpload,
+				(result) => {
+					onCoverImageSet(result.FileUrl)
+				},
+				(err) => {
+					// console.log(err)
+					setIsImageUploading(false)
+				},
+				updateCurrentUser,
+				currentUserData,
+				toast
+			)
+		} else if (coverImageToUpload) {
 			setIsImageUploading(true)
 			postItem(
 				'files/users',
@@ -211,9 +239,12 @@ const CreateDiscussion = () => {
 					)}
 					{activeStep === 2 && (
 						<CreateDiscussionStep2
+							ref={cropRef}
 							selectedImage={selectedCoverImage}
 							onImageSelect={onCoverImageSelect}
 							fileFieldName='CoverPicture'
+							cropping={cropping}
+							setCropping={setCropping}
 						/>
 					)}
 					{activeStep === 3 && <CreateDiscussionStep3 discussionId={discussionId} />}
@@ -240,7 +271,12 @@ const CreateDiscussion = () => {
 								</Button>
 							)}
 							{isSecondStep && (
-								<Button onClick={() => setIsModalOpen(true)} width='full' className='px-10' variant='black'>
+								<Button
+									onClick={() => setIsModalOpen(true)}
+									width='full'
+									className='px-10'
+									variant='black'
+									disabled={!cropping}>
 									Create Discussion
 								</Button>
 							)}

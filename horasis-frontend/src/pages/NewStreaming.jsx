@@ -19,6 +19,7 @@ import Spinner from '../components/ui/Spinner'
 import { getItem } from '../constants/operations'
 import { useAuth } from '../utils/AuthProvider'
 import { AGORA_APP_ID } from '../utils/enums'
+import { runOnce } from '../utils/runOnce'
 
 const NewStreaming = () => {
 	const location = useLocation()
@@ -79,7 +80,7 @@ const NewStreaming = () => {
 		)
 	}
 
-	const getRoleAndTokens = async () => {
+	const getRoleAndTokens = runOnce(async () => {
 		setIsLoadingToken(true)
 		getItem(
 			`event/${eventid}/videoCall/join`,
@@ -98,7 +99,7 @@ const NewStreaming = () => {
 			currentUserData,
 			toast
 		)
-	}
+	})
 
 	const getEvent = () => {
 		setIsLoadingEvent(true)
@@ -168,7 +169,7 @@ const NewStreaming = () => {
 			return
 		}
 
-		const newRtmClient = new AgoraRTM.RTM(appId, currentUserData.CurrentUser.UserId, { token: rtmToken })
+		const newRtmClient = new AgoraRTM.RTM(appId, currentUserData.CurrentUser.UserId)
 		setRtmClient(newRtmClient) // Set the client here to prevent multiple logins
 
 		newRtmClient.addEventListener('presence', async (event) => {
@@ -284,7 +285,7 @@ const NewStreaming = () => {
 
 	const handleRtmLogin = async (rtmClient) => {
 		try {
-			const result = await rtmClient.login()
+			const result = await rtmClient.login({ token: rtmToken })
 			// console.log(result)
 		} catch (status) {
 			console.log(status)

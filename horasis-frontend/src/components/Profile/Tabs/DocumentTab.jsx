@@ -10,7 +10,7 @@ import Spinner from '../../ui/Spinner'
 import EmptyMembers from '../../Common/EmptyMembers'
 import { useToast } from '../../Toast/ToastService'
 
-const DocumentTab = () => {
+const DocumentTab = ({ showOther = false, userId = '' }) => {
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
 	const toast = useToast()
 	const [isLoading, setIsLoading] = useState(true)
@@ -23,7 +23,7 @@ const DocumentTab = () => {
 		Keyword: '',
 		Type: 'document',
 	})
-	const api = `users/${currentUserData.CurrentUser.UserId}/media`
+	const api = showOther === true ? `users/${userId}/media` : `users/${currentUserData.CurrentUser.UserId}/media`
 	const setLoadingCom = (tempArr, value) => {
 		if (tempArr.length > 0) {
 			setIsLoadingMore(value)

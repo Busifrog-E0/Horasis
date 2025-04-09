@@ -10,7 +10,7 @@ import Spinner from '../../ui/Spinner'
 import EmptyMembers from '../../Common/EmptyMembers'
 import { useNavigate } from 'react-router-dom'
 
-const MyArticlesTab = () => {
+const MyArticlesTab = ({ showOther = false, userId = '' }) => {
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
 	const toast = useToast()
 	const [isLoading, setIsLoading] = useState(true)
@@ -21,7 +21,7 @@ const MyArticlesTab = () => {
 		OrderBy: 'Index',
 		Limit: 10,
 		Keyword: '',
-    AuthorId:currentUserData.CurrentUser.UserId
+    AuthorId:showOther === true ? userId : currentUserData.CurrentUser.UserId
 	})
 	const api = `articles`
 	const setLoadingCom = (tempArr, value) => {

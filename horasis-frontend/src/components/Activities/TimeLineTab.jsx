@@ -26,7 +26,8 @@ const TimeLineTab = ({
 	},
 	type = '',
 	entId = '',
-	from=""
+	from = '',
+	showPostComponent = true,
 }) => {
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
 	const toast = useToast()
@@ -109,15 +110,17 @@ const TimeLineTab = ({
 
 	return (
 		<div>
-			<PostComponent
-				className={classNameForPost}
-				onSuccess={fetch}
-				permissions={permissions}
-				api={'activities'}
-				type={type}
-				entId={entId}
-				from={from}
-			/>
+			{showPostComponent && (
+				<PostComponent
+					className={classNameForPost}
+					onSuccess={fetch}
+					permissions={permissions}
+					api={'activities'}
+					type={type}
+					entId={entId}
+					from={from}
+				/>
+			)}
 
 			{header && <h4 className='font-medium text-2xl text-system-primary-text mt-3 lg:mt-9 mb-4'>All Updates</h4>}
 
