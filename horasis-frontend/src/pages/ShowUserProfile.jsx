@@ -93,14 +93,24 @@ const UserProfileConnectComponent = ({ profile, connectCallback = () => {} }) =>
 		switch (profile.ConnectionStatus) {
 			case 'No Connection':
 				return (
-					<Button
-						variant='outline'
-						width='full'
-						className='rounded-full font-semibold'
-						size='md'
-						onClick={sendConnectionRequest}>
-						Connect
-					</Button>
+					<>
+						<Button
+							variant='outline'
+							width='full'
+							className='rounded-full font-semibold'
+							size='md'
+							onClick={sendConnectionRequest}>
+							Connect
+						</Button>
+						<Button
+							variant='white'
+							width='full'
+							className='rounded-full font-semibold shadow-sm text-system-primary-accent bg-system-secondary-accent'
+							size='md'
+							onClick={goToChat}>
+							Chat
+						</Button>
+					</>
 				)
 
 			case 'Connected':
@@ -144,19 +154,38 @@ const UserProfileConnectComponent = ({ profile, connectCallback = () => {} }) =>
 							onClick={rejectConnectionRequest}>
 							Reject
 						</Button>
+
+						<Button
+							variant='white'
+							width='full'
+							className='rounded-full font-semibold shadow-sm text-system-primary-accent bg-system-secondary-accent'
+							size='md'
+							onClick={goToChat}>
+							Chat
+						</Button>
 					</>
 				)
 
 			case 'Connection Requested':
 				return (
-					<Button
-						variant='white'
-						width='full'
-						className='rounded-full font-semibold shadow-sm text-system-primary-accent border-none hover:bg-system-secondary-accent'
-						size='md'
-						onClick={cancelConnectionRequest}>
-						Cancel Request
-					</Button>
+					<>
+						<Button
+							variant='white'
+							width='full'
+							className='rounded-full font-semibold shadow-sm text-system-primary-accent border-none hover:bg-system-secondary-accent'
+							size='md'
+							onClick={cancelConnectionRequest}>
+							Cancel Request
+						</Button>
+						<Button
+							variant='white'
+							width='full'
+							className='rounded-full font-semibold shadow-sm text-system-primary-accent bg-system-secondary-accent'
+							size='md'
+							onClick={goToChat}>
+							Chat
+						</Button>
+					</>
 				)
 
 			default:
