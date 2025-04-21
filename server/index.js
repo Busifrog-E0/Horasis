@@ -3,8 +3,8 @@ import ENV from "./Env.js";
 import cors from "cors";
 import express, { json, urlencoded } from 'express';
 import { Socket, Server } from "socket.io";
-
-
+import helmet from "helmet";
+import { rateLimit } from 'express-rate-limit'
 import db from './databaseControllers/db.config.js';
 const PORT = ENV.PORT;
 // const PORT = 443;
@@ -21,6 +21,20 @@ app.use(json());
 app.use(urlencoded({
     extended: true
 }));
+
+app.use(helmet({ contentSecurityPolicy: false }));
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 mins
+    max: 100,
+    message: {
+        status: 429,
+        error: 'Too many requests. Please try again later.'
+    },
+    standardHeaders: true,
+    legacyHeaders: false,
+})
+
+app.use(limiter);
 import errorHandler from './middleware/errorHandling-middleware.js';
 
 
