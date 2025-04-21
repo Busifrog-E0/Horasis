@@ -60,6 +60,8 @@ const GetUsers = async (req, res) => {
             { 'IsPrivate': false, 'City': { $regex: Keyword, $options: 'i' } },
             { 'IsPrivate': false, 'Country': { $regex: Keyword, $options: 'i' } },
             { 'IsPrivate': false, 'Email': { $regex: Keyword, $options: 'i' } },
+            { 'IsPrivate': false, 'Interests': { $regex: Keyword, $options: 'i' } },
+            { 'IsPrivate' : false , 'Industry': { $regex: Keyword, $options: 'i' } }
         ]
     }
     // @ts-ignore

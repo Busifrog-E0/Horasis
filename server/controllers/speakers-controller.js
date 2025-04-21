@@ -119,7 +119,7 @@ const PatchSpeakers = async (req, res) => {
         return res.status(444).json(AlertBoxObject("Already Accepted", "You have already accepted the invitaion."));
     }
     const [Member] = await ReadMembers({ MemberId: SpeakerId, EntityId: EventId }, undefined, 1, undefined);
-    const MemberData = MemberInit({ EntityId: EventId, MemberId: SpeakerId, UserDetails: Speaker.UserDetails });
+    const MemberData = MemberInit({ EntityId: EventId, MemberId: SpeakerId, UserDetails: Speaker.UserDetails ,Type : "Event" });
     await Promise.all([
         UpdateSpeakers({ MembershipStatus: "Accepted" }, Speaker.DocId),
         Member ? Promise.resolve() : CreateMembers(MemberData),
@@ -137,29 +137,35 @@ const PatchSpeakers = async (req, res) => {
 const InviteSpeakersThroughEmail = async (req, res) => {
     const { EventId } = req.params;
     const { InvitationData } = req.body;
-    const Event = await ReadOneFromEvents(EventId);
-    await Promise.all(InvitationData.map(async Data => {
+    for (const Data of InvitationData) {
         const { Email, Agenda, FullName, About } = Data;
+        const Event = await ReadOneFromEvents(EventId);
         const [[Speaker], [User]] = await Promise.all([
             ReadSpeakers({ "UserDetails.Email": Email, EventId }, undefined, 1, undefined),
             ReadUsers({ Email }, undefined, 1, undefined)
         ]);
         if (User) {
-            return res.status(444).json(AlertBoxObject("User Already Exists", "User aLready Exists"))
+            return res.status(444).json(AlertBoxObject("User Already Exists", "User aLready Exists"));
         }
         if (Speaker) {
             return res.status(444).json(AlertBoxObject("Already Invited", "You have already invited this Email"));
         }
 
         const SpeakerId = new ObjectId().toString();
-        const SpeakerData = SpeakerInit({ SpeakerId, EventId, MembershipStatus: "Accepted", Agenda, UserDetails: { FullName, About, Email, ProfilePicture: '' } });
-
-        await Promise.all([
-            PushArrayEvents({ Speakers: { SpeakerId, UserDetails: SpeakerData.UserDetails, Agenda, } }, EventId),
-            CreateSpeakers(SpeakerData),
-            //SendSpeakerInviteEmail(Email, SpeakerId, Event, Agenda, FullName)
-        ])
-    }))
+        const UserDetails = { FullName, About, Email, ProfilePicture: '' };
+        const SpeakerData = SpeakerInit({ SpeakerId, EventId, MembershipStatus: "Accepted", Agenda, UserDetails });
+        const { Agenda: AgendaData } = Event;
+        const updatedAgenda = AgendaData.map(item => {
+            if (item.AgendaId === Agenda.AgendaId) {
+                return { ...item, SpeakerData: { SpeakerId, UserDetails } };
+            }
+            return item;
+        });
+        await PushArrayEvents({ Speakers: { SpeakerId, UserDetails: SpeakerData.UserDetails, Agenda } }, EventId);
+        await CreateSpeakers(SpeakerData);
+        await UpdateEvents({ Agenda: updatedAgenda }, EventId);
+        // await SendSpeakerInviteEmail(Email, SpeakerId, Event, Agenda, FullName);
+    }
     return res.json(true);
 }
 

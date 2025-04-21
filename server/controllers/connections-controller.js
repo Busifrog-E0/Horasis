@@ -6,6 +6,8 @@ import { AlertBoxObject } from './common.js';
 import { AddConnectionstoUser, RemoveConnectionsToUser, ViewOtherUserData } from './users-controller.js';
 import { ReadOneFromUsers,  } from '../databaseControllers/users-databaseController.js';
 import {  RemoveNotificationsForConnectionRequest, SendNotificationsForConnectionAccept, SendNotificationsForConnectionRequest } from './notifications-controller.js';
+import { StartConversation } from './chats-controller.js';
+import { ReadConversations, RemoveConversations } from '../databaseControllers/conversations-databaseController.js';
 /**
  * @typedef {import('./../databaseControllers/connections-databaseController.js').ConnectionData} ConnectionData 
  */
@@ -90,7 +92,7 @@ const PostConnectionSend = async (req, res) => {
  * 
  * @param {e.Request} req 
  * @param {e.Response} res 
- * @returns {Promise<e.Response<true>>}
+ * @returns {Promise<e.Response<true>|true>}
  */
 const PostConnectionAccept = async (req, res) => {
     // @ts-ignore
@@ -113,7 +115,14 @@ const PostConnectionAccept = async (req, res) => {
     await SendNotificationsForConnectionAccept(ConnectionData.DocId, SenderId, ReceiverId);
     AddConnectionstoUser(ReceiverId, SenderId);
     AddConnectionstoUser(SenderId, ReceiverId);
-    return res.json(true);
+    res.json(true);
+
+    // create conversation Id when created
+    const CheckConversation = await ReadConversations({ ParticipantIds: { $all: [SenderId, ReceiverId] } }, undefined, 1, undefined);
+    if (CheckConversation.length === 0) {
+        await StartConversation({ "DocId": SenderId }, { "DocId": ReceiverId }, true);
+    }
+    return true
 }
 
 
@@ -169,7 +178,7 @@ const DeleteConnectionCancel = async (req, res) => {
  * 
  * @param {e.Request} req 
  * @param {e.Response} res 
- * @returns {Promise<e.Response<true>>}
+ * @returns {Promise<e.Response<true>|true>}
  */
 const DeleteConnection = async (req, res) => {
 
@@ -185,7 +194,14 @@ const DeleteConnection = async (req, res) => {
     await RemoveNotificationsForConnectionRequest(ConnectionData.DocId);
     RemoveConnectionsToUser(ConnectionData.ReceiverId, ConnectionData.SenderId);
     RemoveConnectionsToUser(ConnectionData.SenderId, ConnectionData.ReceiverId);
-    return res.json(true)
+    res.json(true);
+
+    const CheckConversation = await ReadConversations({ ParticipantIds: { $all: [MyId, UserId] }, OneMessageSent: false }, undefined, 1, undefined);
+    if (CheckConversation.length === 1) {
+        await RemoveConversations(CheckConversation[0].DocId);
+    }
+    return true;
+
 }
 
 

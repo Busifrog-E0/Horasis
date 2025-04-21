@@ -19,7 +19,7 @@ router.get('/podcasts', decodeIDToken, ensureAuthorized("User"), ValidateGetEnti
     //@ts-ignore
     asyncHandler(GetPodcasts));
 
-router.get('/podcasts/:PodcastId', decodeIDToken, ensureAuthorized("User"),
+router.get('/podcasts/:PodcastId', decodeIDToken, ensureAuthorized("User","Admin","SuperAdmin"),
     // @ts-ignore
     asyncHandler(GetOneFromPodcasts));
 

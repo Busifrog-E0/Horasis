@@ -165,20 +165,6 @@ const AddContentAndStatusToNotification = async (Notification) => {
         }
         Notification.Status = Member[0].MembershipStatus;
     }
-    if (Notification.Type === "Invitation-Speaker") {
-        const Speaker = await ReadSpeakers({ SpeakerId: Notification.RecipientId, EventId: Notification.EntityId }, undefined, 1, undefined);
-        switch (Speaker[0].MembershipStatus) {
-            case "Invited":
-                Notification.Content = `@${Notification.UserDetails.FullName}@ has send you an invitation to ${Notification.EntityType} : @${Notification.EntityName}@ as an Speaker`;
-                break;
-            case "Accepted":
-                Notification.Content = `You have accepted the invitation to ${Notification.EntityType} : @${Notification.EntityName}@`;
-                break;
-            default:
-                break;
-        }
-        Notification.Status = Speaker[0].MembershipStatus
-    }
     return Notification;
 }
 
@@ -189,7 +175,7 @@ const AddContentAndStatusToNotification = async (Notification) => {
  * @param {string} UserId 
  */
 const SendNotificationToUser = async (NotificationObject, UserId) => {
-    await CreateNotifications({ ...NotificationObject, RecipientId: UserId, HasSeen: false });
+        await CreateNotifications({ ...NotificationObject, RecipientId: UserId, HasSeen: false });
 }
 
 /**
@@ -601,7 +587,7 @@ const SendNotificationForSpeaker = async (EntityId, UserId, SendUserId) => {
         NotifierId: SendUserId,
         EntityId: EntityId,
         EntityType: "Event",
-        Content: ``,
+        Content: `You have been invited as a speaker for Event @${EntityName}@ by @${UserDetails.FullName}@ !`,
         Link: Link,
         Type: "Invitation-Speaker",
         ContentLinks: [

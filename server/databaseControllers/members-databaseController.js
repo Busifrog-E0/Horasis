@@ -24,7 +24,7 @@ import dataHandling from './functions.js'
  * @property {UserData} UserDetails
  * @property {"Invited"|"Accepted"|"Requested"} MembershipStatus
  * @property {string} DocId
- * @property {"Discussion"|"Event"} Type
+ * @property {"Discussion"|"Event"|"Podcast"} Type
  * @property {number} CreatedIndex
  * @property {PermissionData} Permissions
  */

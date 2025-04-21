@@ -64,7 +64,7 @@ const ReadUsers = async (Where, NextIndex, Limit, orderBy, RemovePassword = true
 const ReadOneFromUsers = async (DocId, RemovePassword = true) => {
     /**@type {UserData} */
     const UserData = await dataHandling.Read('Users', DocId);
-    if (RemovePassword) {
+    if (RemovePassword && UserData !== null) {
         // @ts-ignore
         delete UserData.Password;
     }

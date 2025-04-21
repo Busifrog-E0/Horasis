@@ -1,12 +1,13 @@
 import e from 'express';
 
 import { ReadOneFromInvitations, ReadInvitations, UpdateInvitations, CreateInvitations, RemoveInvitations, } from './../databaseControllers/invitations-databaseController.js';
-import { ReadUsers } from '../databaseControllers/users-databaseController.js';
+import { ReadOneFromUsers, ReadUsers } from '../databaseControllers/users-databaseController.js';
 import { CreateSpeakers, ReadSpeakers, } from '../databaseControllers/speakers-databaseController.js';
 import { SpeakerInit } from './speakers-controller.js';
 import { CreateMembers, ReadMembers } from '../databaseControllers/members-databaseController.js';
 import { MemberInit } from './members-controller.js';
 import { SendNotificationForMemberInvitation, SendNotificationForSpeaker } from './notifications-controller.js';
+import { PushArrayEvents, ReadOneFromEvents, UpdateEvents } from '../databaseControllers/events-databaseController.js';
 
 /**
  * @typedef {import('./../databaseControllers/users-databaseController.js').UserData} UserData
@@ -121,7 +122,7 @@ const AddUserDetailsAfterInvited = async (UserData, UserId) => {
     }
     const [InvitedUser] = checkInvitedUser;
     await Promise.all(InvitedUser.OnCreate.map(async OnCreateObject =>
-        await CreateEntitiesBasedOnActionType(OnCreateObject.ActionType, OnCreateObject.EntityId, UserData, UserId, OnCreateObject.SentUserId,OnCreateObject.Data)))
+        await CreateEntitiesBasedOnActionType(OnCreateObject.ActionType, OnCreateObject.EntityId, UserData, UserId, OnCreateObject.SentUserId, OnCreateObject.Data)))
     RemoveInvitations(InvitedUser.DocId);
 }
 
@@ -135,7 +136,7 @@ const AddUserDetailsAfterInvited = async (UserData, UserId) => {
  * @param {object} Data
  * @param {AgendaData} Data.Agenda
  */
-const CreateEntitiesBasedOnActionType = async (ActionType, EntityId, UserData, UserId, SendUserId,Data) => {
+const CreateEntitiesBasedOnActionType = async (ActionType, EntityId, UserData, UserId, SendUserId, Data) => {
     switch (ActionType) {
         case "Event-Invite-Speaker": {
             const MembershipStatus = "Invited";
@@ -143,8 +144,11 @@ const CreateEntitiesBasedOnActionType = async (ActionType, EntityId, UserData, U
             if (Speaker) {
                 break;
             }
-            await CreateSpeakers(SpeakerInit({ EventId: EntityId, SpeakerId: UserId, MembershipStatus, UserDetails: UserData, Agenda : Data.Agenda }));
-            await SendNotificationForSpeaker(EntityId, UserId, SendUserId)
+            await Promise.all([
+                CreateSpeakers(SpeakerInit({ EventId: EntityId, SpeakerId: UserId, MembershipStatus, UserDetails: UserData, Agenda: Data.Agenda })),
+                SendNotificationForSpeaker(EntityId, UserId, SendUserId),
+
+            ])
             break;
         }
         case "Discussion-Invite-Member":
@@ -155,7 +159,7 @@ const CreateEntitiesBasedOnActionType = async (ActionType, EntityId, UserData, U
                 if (Member) {
                     break;
                 }
-                await CreateMembers(MemberInit({ EntityId, MemberId: UserId, UserDetails: UserData }), "Invited");
+                await CreateMembers(MemberInit({ EntityId, MemberId: UserId, UserDetails: UserData, Type: ActionType.split("-")[0] }), "Invited");
                 //@ts-ignore
                 await SendNotificationForMemberInvitation(ActionType.split("-")[0], EntityId, UserId, SendUserId)
                 break;

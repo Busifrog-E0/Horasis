@@ -1,3 +1,4 @@
+import { RemoveManyActivityExtendedProperties } from "./activityExtendedProperties-databaseController.js";
 import dataHandling from "./functions.js";
 
 /**
@@ -72,6 +73,7 @@ const CreateActivities = async (data, DocId = undefined) => {
  * @returns {Promise<boolean>}
  */
 const RemoveActivities = async (DocId) => {
+  await RemoveManyActivityExtendedProperties({ ActivityId: DocId });
   return dataHandling.Delete("Activities", DocId);
 };
 

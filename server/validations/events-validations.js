@@ -27,6 +27,7 @@ const EventDataSchema = Joi.object({
     CoverPicture: Joi.string().required(),
     HasDiscussion: Joi.boolean().required(),
     Tags: Joi.array().items(TagsSchema).default([]),
+    Capacity : Joi.number()
 }).custom((value, helpers) => {
     const currentTime = moment().valueOf();
 
@@ -122,7 +123,9 @@ const ValidatePostSpeakerMailInvite = async (req, res, next) => {
             Joi.object({
                 Email: Joi.string().email().lowercase().required(),
                 FullName: Joi.string().required(),
-                Agenda: AgendaDataSchema.required(),
+                Agenda: AgendaDataSchema.keys({
+                    AgendaId: Joi.string().required()
+                }).required(),
                 About: Joi.string().max(500).allow("").required()
             })
         ).max(5).required()

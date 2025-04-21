@@ -29,7 +29,7 @@ router.get('/discussions', decodeIDToken, ensureAuthorized("User"), ValidateGetE
     //@ts-ignore
     asyncHandler(GetDiscussions));
 
-router.get('/discussions/:DiscussionId', decodeIDToken, ensureAuthorized("User"),
+router.get('/discussions/:DiscussionId', decodeIDToken, ensureAuthorized("User","Admin","SuperAdmin"),
     // @ts-ignore
     asyncHandler(GetOneFromDiscussions));
 
