@@ -6,6 +6,8 @@ import { Socket, Server } from "socket.io";
 import helmet from "helmet";
 import { rateLimit } from 'express-rate-limit'
 import db from './databaseControllers/db.config.js';
+import { readFile } from 'fs/promises';
+
 const PORT = ENV.PORT;
 // const PORT = 443;
 
@@ -39,7 +41,9 @@ import errorHandler from './middleware/errorHandling-middleware.js';
 
 
 import swaggerUi from 'swagger-ui-express';
-import swaggerFile from './swaggerOutput.json' assert { type: 'json' };
+const raw = await readFile('./swaggerOutput.json', 'utf-8');
+const swaggerFile = JSON.parse(raw);
+// import swaggerFile from './swaggerOutput.json' with { type: 'json' };
 // import { FirstSetupAdminInfo } from "./databaseControllers/admins-databaseController.js";
 import { ClearAdminRoleArray, GenerateToken } from "./controllers/auth-controller.js";
 import { decodeSocketIdToken } from "./middleware/auth-middleware.js";
