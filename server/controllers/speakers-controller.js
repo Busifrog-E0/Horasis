@@ -119,7 +119,7 @@ const PatchSpeakers = async (req, res) => {
         return res.status(444).json(AlertBoxObject("Already Accepted", "You have already accepted the invitaion."));
     }
     const [Member] = await ReadMembers({ MemberId: SpeakerId, EntityId: EventId }, undefined, 1, undefined);
-    const MemberData = MemberInit({ EntityId: EventId, MemberId: SpeakerId, UserDetails: Speaker.UserDetails ,Type : "Event" });
+    const MemberData = MemberInit({ EntityId: EventId, MemberId: SpeakerId, UserDetails: Speaker.UserDetails, Type: "Event" });
     await Promise.all([
         UpdateSpeakers({ MembershipStatus: "Accepted" }, Speaker.DocId),
         Member ? Promise.resolve() : CreateMembers(MemberData),
@@ -164,7 +164,7 @@ const InviteSpeakersThroughEmail = async (req, res) => {
         await PushArrayEvents({ Speakers: { SpeakerId, UserDetails: SpeakerData.UserDetails, Agenda } }, EventId);
         await CreateSpeakers(SpeakerData);
         await UpdateEvents({ Agenda: updatedAgenda }, EventId);
-        // await SendSpeakerInviteEmail(Email, SpeakerId, Event, Agenda, FullName);
+        await SendSpeakerInviteEmail(Email, SpeakerId, Event, Agenda, FullName);
     }
     return res.json(true);
 }
