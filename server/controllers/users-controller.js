@@ -61,7 +61,7 @@ const GetUsers = async (req, res) => {
             { 'IsPrivate': false, 'Country': { $regex: Keyword, $options: 'i' } },
             { 'IsPrivate': false, 'Email': { $regex: Keyword, $options: 'i' } },
             { 'IsPrivate': false, 'Interests': { $regex: Keyword, $options: 'i' } },
-            { 'IsPrivate' : false , 'Industry': { $regex: Keyword, $options: 'i' } }
+            { 'IsPrivate': false, 'Industry': { $regex: Keyword, $options: 'i' } }
         ]
     }
     // @ts-ignore
@@ -402,34 +402,6 @@ const UserInit = async (User) => {
         Roles: ["User"],
     };
 }
-
-
-/* const SendUserEmailVerification = async (UserData) => {
-    const EmailVerification = {
-        UserId: UserData.DocId,
-        CreatedIndex: moment().valueOf(),
-        Verified: false
-    }
-    const EmailVerificationId = await CreateEmailVerifications(EmailVerification);
-    const VerificationLink = `${ApiBaseUrl}/api/users/${EmailVerification.UserId}/verify/${EmailVerificationId}`;
-    return AccountVerificationEmail(UserData, VerificationLink);
-}
-
-const VerifyUserEmail = async (req, res) => {
-    const { EmailVerificationId } = req.params;
-    const EmailVerificationData = await ReadOneFromEmailVerifications(EmailVerificationId);
-    if (moment(EmailVerificationData.CreatedIndex).add(15, "minute").isAfter(moment())) {
-        return res.redirect(`${WebUrl}/${EmailVerificationExpiryRoute}`)
-    }
-    if (EmailVerificationData.Verified) {
-        res.redirect(WebUrl);
-    }
-    await Promise.all([
-        UpdateEmailVerifications({ "Verified": true, VerifiedIndex: moment().valueOf() }, EmailVerificationData.DocId),
-        UpdateUsers({ EmailVerification: true }, EmailVerificationData.UserId),
-    ])
-    return res.redirect(WebUrl);
-} */
 
 export {
     GetOneFromUsers, GetUsers, PostUsersRegister, PatchUsers,

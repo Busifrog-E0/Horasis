@@ -16,7 +16,18 @@ const app = express();
 
 import router from "./routes/index.js";
 
-app.use(cors({ origin: true }));
+const allowedOrigins = ['https://hsocial.web.app', 'http://localhost:5173'];
+
+app.use(cors({
+    origin: function (origin, callback) {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+}));
+
 app.use(express.json({ "limit": "60mb" }));
 
 app.use(json());
@@ -26,8 +37,8 @@ app.use(urlencoded({
 
 app.use(helmet({ contentSecurityPolicy: false }));
 const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 mins
-    max: 100,
+    windowMs: 60 * 1000, // 15 mins
+    max: 300,
     message: {
         status: 429,
         error: 'Too many requests. Please try again later.'

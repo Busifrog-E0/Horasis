@@ -75,8 +75,8 @@ const getOTP = (TestUser = false) => {
     for (let i = 0; i < 6; i++) {
         OTP += digits[Math.floor(Math.random() * 10)];
     }
-    //return OTP;
-    return "123456";
+    return OTP;
+    // return "123456";
 }
 
 /**

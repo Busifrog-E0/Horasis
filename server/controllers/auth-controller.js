@@ -123,8 +123,7 @@ const SendRegisterOTP = async (Email, Data, Description, res) => {
     }
     const OTP = getOTP(TestUser);
 
-    const ReturnMessage = true;
-    // await SendOTPEmail(Email, OTP, Data.FullName)
+    const ReturnMessage = await SendOTPEmail(Email, OTP, Data.FullName);
 
     if (ReturnMessage === true) {
         const Now = moment();
@@ -153,8 +152,7 @@ const SendPasswordOTP = async (Email, res) => {
     }
     const OTP = getOTP(TestUser);
     const [User] = (await ReadUsers({ Email }, undefined, 1, undefined));
-    const ReturnMessage = true;
-    //await ForgotPasswordOTPEmail(Email, User.FullName, OTP)
+    const ReturnMessage = await ForgotPasswordOTPEmail(Email, User.FullName, OTP);
 
     if (ReturnMessage === true) {
         const Now = moment();
