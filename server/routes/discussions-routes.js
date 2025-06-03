@@ -11,7 +11,7 @@ import SwaggerDocs from '../swaggerDocs/discussions-swaggerDocs.js'
 import e from 'express';
 import { decodeIDToken, ensureAuthorized } from '../middleware/auth-middleware.js';
 import { ValidateAddPermissionForEveryone, ValidatePatchDiscussionCoverPhoto, ValidatePatchMemberPermission, ValidatePatchRemovePermission, ValidatePostDiscussion } from '../validations/discussions-validations.js';
-import { QueryParameterFormatting, ValidateGetEntity } from '../middleware/common.js';
+import { CheckSameUserInBody, CheckSameUserInEntity, QueryParameterFormatting, ValidateGetEntity } from '../middleware/common.js';
 import {
     AcceptJoinRequest, AcceptMemberInvitation, DeleteMembers, DeleteTempMembers,
     GetJoinRequests, GetMembers, GetMembersToInvite, InviteMembers, PostMembers, RemoveMemberPermissions, UpdateMemberPermissions
@@ -29,7 +29,7 @@ router.get('/discussions', decodeIDToken, ensureAuthorized("User"), ValidateGetE
     //@ts-ignore
     asyncHandler(GetDiscussions));
 
-router.get('/discussions/:DiscussionId', decodeIDToken, ensureAuthorized("User","Admin","SuperAdmin"),
+router.get('/discussions/:DiscussionId', decodeIDToken, ensureAuthorized("User", "Admin", "SuperAdmin"),
     // @ts-ignore
     asyncHandler(GetOneFromDiscussions));
 
@@ -37,7 +37,8 @@ router.post('/discussions', decodeIDToken, ensureAuthorized("User"), ValidatePos
     // @ts-ignore
     asyncHandler(PostDiscussions));
 
-router.patch('/discussions/:DiscussionId/coverPicture', decodeIDToken, ensureAuthorized("User"), ValidatePatchDiscussionCoverPhoto,
+router.patch('/discussions/:DiscussionId/coverPicture', decodeIDToken, ensureAuthorized("User"),
+    CheckSameUserInEntity(GetOneFromDiscussions, "DiscussionId"), ValidatePatchDiscussionCoverPhoto,
     SwaggerDocs.patch_Discussion_DiscussionId_CoverPicture,
     // @ts-ignore
     asyncHandler(PatchDiscussions));
@@ -48,7 +49,7 @@ router.get('/guest/discussions/', ValidateGetEntity, QueryParameterFormatting, S
 
 
 router.patch('/discussions/:DiscussionId/member/permissions/everyone', decodeIDToken, ensureAuthorized("User"), ValidateAddPermissionForEveryone,
-    SwaggerDocs.patch_Discussions_EntityId_Member_Permissions_Everyone,
+    CheckSameUserInEntity(GetOneFromDiscussions, "DiscussionId"), SwaggerDocs.patch_Discussions_EntityId_Member_Permissions_Everyone,
     //@ts-ignore
     asyncHandler(PatchDiscussions));
 
@@ -66,7 +67,7 @@ router.get('/user/:UserId/discussions/invited', decodeIDToken, ensureAuthorized(
 
 /************************************************************************ACTIVITIES************************************************************************* */
 
-router.post('/discussions/:EntityId/activities', decodeIDToken, ensureAuthorized("User"), ValidatePostActivities, PostDiscussionActivitiesMiddleware,
+router.post('/discussions/:EntityId/activities', decodeIDToken, ensureAuthorized("User"), ValidatePostActivities, CheckSameUserInBody, PostDiscussionActivitiesMiddleware,
     MemberPostActivityMiddleware, SwaggerDocs.post_Discussions_DiscussionId_Activities,
     //@ts-ignore
     asyncHandler(PostActivities));

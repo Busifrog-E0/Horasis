@@ -7,7 +7,7 @@ import { decodeIDToken, ensureAuthorized } from '../middleware/auth-middleware.j
 import { ValidatePostActivities, ValidatePatchActivities, ValidateGetActivities } from '../validations/activities-validations.js';
 import SwaggerDocs from '../swaggerDocs/activities-swaggerDocs.js'
 import e from 'express';
-import { QueryParameterFormatting, ValidateGetEntity } from '../middleware/common.js';
+import { CheckSameUserInBody, CheckSameUserInEntity, QueryParameterFormatting, ValidateGetEntity } from '../middleware/common.js';
 import { GetFeedActivitiesMiddleware, GetMentionedActivitiesMiddleware, GetUserActivitiesMiddleware, InsertActivityTypeMiddleware, PostActivitiesLikeMiddleware, PostFeedActivitiesMiddleware } from '../middleware/activities-middleware.js';
 
 const router = e.Router();
@@ -34,20 +34,22 @@ router.get('/activities/search', decodeIDToken, ensureAuthorized("User"), GetFee
     //@ts-ignore
     asyncHandler(GetFilteredActivities))
 
-router.get('/activities/:ActivityId', decodeIDToken, ensureAuthorized("User","Admin","SuperAdmin"), SwaggerDocs.get_Activities_ActivityId,
+router.get('/activities/:ActivityId', decodeIDToken, ensureAuthorized("User", "Admin", "SuperAdmin"), SwaggerDocs.get_Activities_ActivityId,
     // @ts-ignore
     asyncHandler(GetOneFromActivities));
 
-router.post('/activities', decodeIDToken, ensureAuthorized("User"), ValidatePostActivities, PostFeedActivitiesMiddleware, SwaggerDocs.post_Activities,
+router.post('/activities', decodeIDToken, ensureAuthorized("User"), ValidatePostActivities, CheckSameUserInBody, PostFeedActivitiesMiddleware, SwaggerDocs.post_Activities,
     // @ts-ignore
     asyncHandler(PostActivities));
 
-router.patch('/activities/:ActivityId', decodeIDToken, ensureAuthorized("User"), ValidatePatchActivities, SwaggerDocs.patch_Activities,
+router.patch('/activities/:ActivityId', decodeIDToken, ensureAuthorized("User"), ValidatePatchActivities,
+    CheckSameUserInEntity(GetOneFromActivities, "ActivityId"), SwaggerDocs.patch_Activities,
     // @ts-ignore
     asyncHandler(PatchActivities));
 
 
-router.delete('/activities/:ActivityId', decodeIDToken, ensureAuthorized("User", "Admin", "SuperAdmin"), SwaggerDocs.delete_Activities_ActivityId,
+router.delete('/activities/:ActivityId', decodeIDToken, ensureAuthorized("User", "Admin", "SuperAdmin"),
+    CheckSameUserInEntity(GetOneFromActivities, "ActivityId"), SwaggerDocs.delete_Activities_ActivityId,
     // @ts-ignore
     asyncHandler(DeleteActivities));
 
