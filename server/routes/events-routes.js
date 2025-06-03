@@ -33,7 +33,7 @@ router.get('/events/:EventId', decodeIDToken, ensureAuthorized("User","Admin", "
     // @ts-ignore
     asyncHandler(GetOneFromEvents));
 
-router.post('/events', decodeIDToken, ensureAuthorized("User"), ValidatePostEvents,
+router.post('/events', decodeIDToken, ensureAuthorized("Admin"), ValidatePostEvents,
     SwaggerDocs.post_Events,
     // @ts-ignore
     asyncHandler(PostEvents));
@@ -42,7 +42,7 @@ router.patch('/events/:EventId',
     // @ts-ignore
     asyncHandler(PatchEvents));
 
-router.patch('/events/:EventId/coverPicture', decodeIDToken, ensureAuthorized("User"), ValidatePatchEventCoverPhoto,
+router.patch('/events/:EventId/coverPicture', decodeIDToken, ensureAuthorized("Admin"), ValidatePatchEventCoverPhoto,
     // @ts-ignore
     asyncHandler(PatchEvents));
 
@@ -50,7 +50,7 @@ router.get('/guest/events/', ValidateGetEvents, QueryParameterFormatting, Swagge
     //@ts-ignore
     asyncHandler(GetPublicEvents));
 
-router.patch('/events/:EventId/member/permissions/everyone', decodeIDToken, ensureAuthorized("User"), ValidateAddPermissionForEveryone,
+router.patch('/events/:EventId/member/permissions/everyone', decodeIDToken, ensureAuthorized("Admin"), ValidateAddPermissionForEveryone,
     SwaggerDocs.patch_Events_EntityId_Member_Permissions_Everyone,
     //@ts-ignore
     asyncHandler(PatchEvents));
@@ -79,27 +79,27 @@ router.get('/events/:EntityId/activities', decodeIDToken, ensureAuthorized("User
     //@ts-ignore
     asyncHandler(GetFilteredActivities));
 
-router.delete('/events/:EventId', decodeIDToken, ensureAuthorized("User"),
+router.delete('/events/:EventId', decodeIDToken, ensureAuthorized("Admin"),
     // @ts-ignore
     asyncHandler(DeleteEvents));
 
 /******************************************************************************SPEAKERS**************************************************************************************** */
 
-router.post('/events/:EventId/speakers/:SpeakerId', decodeIDToken, ensureAuthorized("User"), ValidatePostSpeakers,
+router.post('/events/:EventId/speakers/:SpeakerId', decodeIDToken, ensureAuthorized("Admin"), ValidatePostSpeakers,
     SwaggerDocs.post_Events_EventId_Speakers,
     //@ts-ignore
     asyncHandler(PostSpeakers));
 
-router.post('/events/:EventId/speakers/invite/email', decodeIDToken, ensureAuthorized("User"), ValidatePostSpeakerMailInvite,
+router.post('/events/:EventId/speakers/invite/email', decodeIDToken, ensureAuthorized("Admin"), ValidatePostSpeakerMailInvite,
     //@ts-ignore
     asyncHandler(InviteSpeakersThroughEmail))
 
-router.patch('/events/:EventId/speakers', decodeIDToken, ensureAuthorized("User"),
+router.patch('/events/:EventId/speakers', decodeIDToken, ensureAuthorized("Admin"),
     SwaggerDocs.patch_Events_EventId_Speakers,
     //@ts-ignore
     asyncHandler(PatchSpeakers));
 
-router.get('/events/:EventId/speakers/invite', decodeIDToken, ensureAuthorized("User"), ValidateGetEntity, QueryParameterFormatting,
+router.get('/events/:EventId/speakers/invite', decodeIDToken, ensureAuthorized("Admin"), ValidateGetEntity, QueryParameterFormatting,
     SwaggerDocs.get_Events_EventId_Speakers_Invited,
     //@ts-ignore
     asyncHandler(GetSpeakerstoInvite));
@@ -110,7 +110,7 @@ router.delete('/events/:EventId/speakers/:SpeakerId/reject', decodeIDToken, ensu
     asyncHandler(DeleteSpeakers));
 
 
-router.delete('/events/:EventId/speakers/:SpeakerId', decodeIDToken, ensureAuthorized("User"),
+router.delete('/events/:EventId/speakers/:SpeakerId', decodeIDToken, ensureAuthorized("Admin"),
     SwaggerDocs.delete_Events_EventId_Speakers_SpeakerId,
     //@ts-ignore
     asyncHandler(DeleteSpeakers));
