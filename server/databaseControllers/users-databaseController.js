@@ -71,6 +71,24 @@ const ReadOneFromUsers = async (DocId, RemovePassword = true) => {
     return UserData;
 }
 
+
+/**
+ * 
+ * @param {string} DocId 
+ * @param {boolean} RemovePassword
+ * @param {undefined|object} Session 
+ * @returns {Promise<UserData>}
+ */
+const TransactionalReadOneFromUsers = async (DocId, RemovePassword = true, Session) => {
+    /**@type {UserData} */
+    const UserData = await dataHandling.Read('Users', DocId);
+    if (RemovePassword && UserData !== null) {
+        // @ts-ignore
+        delete UserData.Password;
+    }
+    return UserData;
+}
+
 /**
  * 
  * @param {UserData|object} data
@@ -130,6 +148,7 @@ const PullFromManyUsers = async (data, where = {}, updateOptions = {}) => {
 export {
     ReadUsers,
     ReadOneFromUsers,
+    TransactionalReadOneFromUsers,
     UpdateUsers,
     CreateUsers,
     RemoveUsers,

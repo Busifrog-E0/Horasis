@@ -147,6 +147,39 @@ const GetParentTypeFromEntity = async (EntityId, EntityType) => {
 }
 
 
+const TransactionalGetParentTypeFromEntity = async (EntityId, EntityType) => {
+    let ParentId, ParentType;
+    switch (EntityType) {
+        case "Activity": {
+            const Activity = await ReadOneFromActivities(EntityId);
+            ParentId = Activity.EntityId;
+            ParentType = Activity.Type;
+            break;
+        }
+        case "Comment": {
+            const Comment = await ReadOneFromComments(EntityId);
+            let Activity;
+            if (Comment.Type === "Reply") {
+                const Entity = await ReadOneFromComments(Comment.ParentId);
+                Activity = await ReadOneFromActivities(Entity.ParentId);
+            }
+            else {
+                Activity = await ReadOneFromActivities(Comment.ParentId);
+            }
+            ParentId = Activity.EntityId;
+            ParentType = Activity.Type;
+            break;
+        }
+        case "Article": {
+            ParentId = EntityId;
+            ParentType = 'Article';
+            break;
+        }
+        default: break;
+    }
+    return { ParentId, ParentType }
+}
+
 
 /**
  * 
@@ -180,5 +213,6 @@ export {
     hashPassword,
     ComparePassword,
     GetParentTypeFromEntity,
+    TransactionalGetParentTypeFromEntity,
     DeleteFnBasedOnType
 }

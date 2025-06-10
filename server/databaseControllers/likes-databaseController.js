@@ -29,6 +29,20 @@ const ReadLikes = async (Where, NextIndex, Limit, orderBy) => {
     return dataHandling.Read('Likes', undefined, NextIndex, Limit, Where, orderBy);
 }
 
+
+/**
+ * 
+ * @param {undefined|object} Where 
+ * @param {undefined|string} NextIndex 
+ * @param {undefined|number} Limit 
+ * @param {undefined|object} orderBy 
+ * @param {undefined|object} Session 
+ * @returns {Promise<Array<LikeData>>} Returns LikeData
+ */
+const TransactionalReadLikes = async (Where, NextIndex, Limit, orderBy, Session) => {
+    return dataHandling.TransactionalRead('Likes', undefined, NextIndex, Limit, Where, orderBy, Session);
+}
+
 /**
  * 
  * @param {string} DocId 
@@ -75,6 +89,7 @@ const CountLikes = async (where) => {
 
 export {
     ReadLikes,
+    TransactionalReadLikes,
     ReadOneFromLikes,
     UpdateLikes,
     CreateLikes,

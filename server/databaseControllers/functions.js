@@ -1,8 +1,9 @@
 import logger from 'harislogger';
 
 import dbFile from './db.config.js';
-const db = dbFile.getClient().db("Horasis");
-import { ObjectId } from 'mongodb';
+const dbClient = dbFile.getClient();
+const db = dbClient.db("Horasis");
+import { ObjectId, ClientSession } from 'mongodb';
 import moment from "moment-timezone";
 
 
@@ -197,6 +198,171 @@ async function Read(collectionName, docName, NextIndex = "", limit = 10, where =
     }
 }
 
+
+
+/**
+ * @param {string} collectionName
+ * @param {object} data
+ * @param {string | number | ObjectId | import("bson").ObjectIdLike | Uint8Array | undefined} docName
+ * @param {ClientSession|undefined} session
+ * @returns {Promise<string>}
+ */
+async function TransactionalCreate(collectionName, data, docName = undefined, index = true, session = undefined) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!data.CreatedIndex) {
+                data.CreatedIndex = moment().valueOf();
+            }
+            if (!data.Index && index) {
+                data.Index = `${Date.now()}`;
+            }
+            if (docName !== undefined) {
+                const done = await db.collection(collectionName).insertOne({ ...data, "_id": new ObjectId(docName) }, { session });
+                resolve(done.insertedId.toString());
+            } else {
+                const done = await db.collection(collectionName).insertOne(data, { session });
+                resolve(done.insertedId.toString());
+            }
+        } catch (error) {
+            logger.log(error);
+            throw new Error(error);
+        }
+    });
+}
+
+
+/**
+ * @param {string} collectionName
+ * @param {Array<string>} operation
+ * @param {{ LastUpdated: number | undefined; }|object} data
+ * @param {object} dataSets
+ * @param {string | number | ObjectId | import("bson").ObjectIdLike | Uint8Array | undefined} docName
+ * @param {ClientSession|undefined} session
+ */
+async function TransactionalUpdate(collectionName, data, docName, operation = ["$set"], session = undefined, LastUpdated = true, ...dataSets) {
+    return new Promise(async (resolve, reject) => {
+        try {
+
+            if (data.LastUpdated === undefined && LastUpdated) {
+                data.LastUpdated = `${Date.now()}`;
+            }
+            delete data._id;
+            const OperationObject = { [operation[0]]: data }
+            for (let index = 1; index < operation.length; index++) {
+                OperationObject[operation[index]] = dataSets[index - 1];
+            }
+            await db.collection(collectionName).updateOne({ "_id": new ObjectId(docName) }, OperationObject, { session });
+            resolve(true);
+        } catch (error) {
+            logger.log(error);
+            throw new Error(error);
+        }
+    });
+}
+
+
+/**
+ * @param {string} collectionName
+ * @param {string | number | ObjectId | import("bson").ObjectIdLike | Uint8Array | undefined} docName
+ * @param {ClientSession|undefined} session
+ */
+async function TransactionalDelete(collectionName, docName, session = undefined) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            await db.collection(collectionName).deleteOne({ "_id": new ObjectId(docName) }, { session });
+            resolve(true);
+        } catch (error) {
+            logger.log(error);
+            throw new Error(error);
+        }
+    });
+}
+
+
+/**
+ * @param {string} collectionName
+ * @param {string | number | ObjectId | import("bson").ObjectIdLike | Uint8Array | undefined} docName
+ * @param {ClientSession|undefined} session
+ * @return {Promise<object|Array<object>|null>}
+ */
+async function TransactionalRead(collectionName, docName, NextIndex = "", limit = 10, where = {}, orderBy = { "Index": "desc" }, session = undefined) {
+    let query, NextField = "Index";
+    try {
+        if (docName === undefined || docName === "") {
+
+            const OrderByKeys = Object.keys(orderBy);
+            NextField = OrderByKeys[0] || "Index";
+            for (let index = 0; index < OrderByKeys.length; index++) {
+                if (!where[OrderByKeys[index]]) {
+                    where[OrderByKeys[index]] = { "$exists": true };
+                }
+            }
+            orderBy["_id"] = "desc";
+            if (NextIndex) {
+                const [Index, nextId] = NextIndex.split('--');
+                if (where["$or"]) {
+                    const FirstOr = where["$or"];
+                    if (orderBy[NextField] === "desc") {
+                        where["$and"] = [
+                            { "$or": FirstOr },
+                            { "$or": [{ [NextField]: { "$lt": Index } }, { [NextField]: Index, "_id": { "$lt": new ObjectId(nextId) } }] },
+                        ]
+                    }
+                    else {
+                        where["$and"] = [
+                            { "$or": FirstOr },
+                            { "$or": [{ [NextField]: { "$gt": Index } }, { [NextField]: Index, "_id": { "$lt": new ObjectId(nextId) } }] },
+                        ]
+                    }
+
+                    delete where["$or"];
+                }
+                else {
+                    if (orderBy[NextField] === "desc") {
+                        where["$or"] = [{ [NextField]: { "$lt": Index } }, { [NextField]: Index, "_id": { "$lt": new ObjectId(nextId) } }];
+                    }
+                    else {
+                        where["$or"] = [{ [NextField]: { "$gt": Index } }, { [NextField]: Index, "_id": { "$lt": new ObjectId(nextId) } }];
+                    }
+                }
+            }
+
+
+            if (limit === -1) {
+                // @ts-ignore
+                query = db.collection(collectionName).find(where, { session }).sort(orderBy);
+            }
+            else {
+                // @ts-ignore
+                query = db.collection(collectionName).find(where, { session }).sort(orderBy).limit(limit);
+            }
+
+            const temp = [];
+            const data = await query.toArray();
+            data.forEach((doc, index) => {
+                const NextFieldData = NextField.split(".").reduce((prev, cur) => {
+                    return prev[cur];
+                }, doc);
+                temp.push({ ...doc, "DocId": doc._id.toString(), "NextId": `${NextFieldData}--${doc._id}` });
+            });
+            return temp;
+        }
+        else {
+            const data = await db.collection(collectionName).find({ "_id": new ObjectId(docName) }, { session }).toArray();
+            if (data.length === 1) {
+                return { ...data[0], "DocId": data[0]._id.toString() };
+            }
+            else {
+                return null;
+            }
+        }
+    }
+    catch (error) {
+        logger.log(error);
+        throw new Error(error);
+    }
+}
+
 /**
  * 
  * @param {string} collectionName 
@@ -350,11 +516,16 @@ export default {
     UpdateMany,
     Delete,
     Read,
+    TransactionalCreate,
+    TransactionalUpdate,
+    TransactionalDelete,
+    TransactionalRead,
     ReadCount,
     Aggregate,
     Check,
     ObjectId,
     db,
+    dbClient,
     DistinctValues,
     substract,
     DeleteMany
