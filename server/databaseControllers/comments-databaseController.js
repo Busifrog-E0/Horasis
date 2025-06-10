@@ -87,6 +87,12 @@ const IncrementComments = async (data, DocId) => {
     return dataHandling.Update("Comments", data, DocId, ["$inc"], false);
 }
 
+
+const TransactionalIncrementComments = async (data, DocId, Session) => {
+    return dataHandling.TransactionalUpdate("Comments", data, DocId, ["$inc"], Session, false);
+}
+
+
 export {
     ReadComments,
     ReadOneFromComments,
@@ -95,5 +101,6 @@ export {
     CreateComments,
     RemoveComments,
     CommentCount,
-    IncrementComments
+    IncrementComments,
+    TransactionalIncrementComments
 }
