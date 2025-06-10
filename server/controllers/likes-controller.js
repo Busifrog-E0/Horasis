@@ -1,6 +1,6 @@
 import e from 'express';
 
-import { ReadOneFromLikes, ReadLikes, UpdateLikes, CreateLikes, RemoveLikes, TransactionalReadLikes, } from './../databaseControllers/likes-databaseController.js';
+import { ReadOneFromLikes, ReadLikes, UpdateLikes, CreateLikes, RemoveLikes, TransactionalReadLikes, TransactionalCreateLikes, } from './../databaseControllers/likes-databaseController.js';
 import { IncrementActivities, ReadOneFromActivities, TransactionalIncrementActivities } from '../databaseControllers/activities-databaseController.js';
 import { ReadOneFromUsers, TransactionalReadOneFromUsers } from '../databaseControllers/users-databaseController.js';
 import { AlertBoxObject, GetParentTypeFromEntity, TransactionalGetParentTypeFromEntity } from './common.js';
@@ -83,7 +83,8 @@ const PostLikes = async (req, res) => {
             //@ts-ignore
             ParentType
         });
-        await CreateLikes(data);
+        await TransactionalCreateLikes(data, undefined, Session);
+        await Session.commitTransaction();
         return res.json(true);
 
     } catch (error) {

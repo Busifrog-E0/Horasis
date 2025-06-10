@@ -73,6 +73,18 @@ const CreateLikes = async (data, DocId = undefined) => {
     return dataHandling.Create('Likes', data, DocId);
 }
 
+
+/**
+ * 
+ * @param {LikeData|object} data
+ * @param {string|undefined} DocId 
+ * @param {object|undefined} Session 
+ * @returns {Promise<string>}
+ */
+const TransactionalCreateLikes = async (data, DocId = undefined, Session) => {
+    return dataHandling.TransactionalCreate('Likes', data, DocId, undefined, Session);
+}
+
 /**
  * 
  * @param {string} DocId 
@@ -93,6 +105,7 @@ export {
     ReadOneFromLikes,
     UpdateLikes,
     CreateLikes,
+    TransactionalCreateLikes,
     RemoveLikes,
     CountLikes
 }
