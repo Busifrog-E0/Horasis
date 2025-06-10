@@ -76,6 +76,10 @@ const IncrementArticles = async (data, DocId) => {
     return dataHandling.Update("Articles", data, DocId, ["$inc"], false);
 }
 
+const TransactionalIncrementArticles = async (data, DocId, Session) => {
+    return dataHandling.TransactionalUpdate("Articles", data, DocId, ["$inc"], Session, false);
+}
+
 const CountArticles = async (where) => {
     return dataHandling.ReadCount('Articles', where);
 }
@@ -91,6 +95,7 @@ export {
     CreateArticles,
     RemoveArticles,
     IncrementArticles,
+    TransactionalIncrementArticles,
     AggregateArticles,
     CountArticles
 }
