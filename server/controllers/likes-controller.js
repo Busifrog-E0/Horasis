@@ -1,11 +1,11 @@
 import e from 'express';
 
 import { ReadOneFromLikes, ReadLikes, UpdateLikes, CreateLikes, RemoveLikes, TransactionalReadLikes, } from './../databaseControllers/likes-databaseController.js';
-import { IncrementActivities, ReadOneFromActivities } from '../databaseControllers/activities-databaseController.js';
+import { IncrementActivities, ReadOneFromActivities, TransactionalIncrementActivities } from '../databaseControllers/activities-databaseController.js';
 import { ReadOneFromUsers, TransactionalReadOneFromUsers } from '../databaseControllers/users-databaseController.js';
 import { AlertBoxObject, GetParentTypeFromEntity, TransactionalGetParentTypeFromEntity } from './common.js';
 import { IncrementComments, ReadOneFromComments } from '../databaseControllers/comments-databaseController.js';
-import { RemoveNotificationForActivityLikes, SendNotificationsforActivityLikes } from './notifications-controller.js';
+import { RemoveNotificationForActivityLikes, SendNotificationsforActivityLikes, TransactionalSendNotificationToUser } from './notifications-controller.js';
 import { IncrementArticles } from '../databaseControllers/articles-databaseController.js';
 import databaseHandling from '../databaseControllers/functions.js';
 
@@ -69,8 +69,8 @@ const PostLikes = async (req, res) => {
         const { Type } = req.body;
         const { ParentId, ParentType } = await TransactionalGetParentTypeFromEntity(EntityId, Type, Session);
         if (Type === 'Activity') {
-            await IncrementActivities({ NoOfLikes: 1 }, EntityId);
-            await SendNotificationsforActivityLikes(UserId, EntityId);
+            await TransactionalIncrementActivities({ NoOfLikes: 1 }, EntityId, Session);
+            await TransactionalSendNotificationToUser(UserId, EntityId, Session);
         }
         if (Type === 'Comment') {
             await IncrementComments({ NoOfLikes: 1 }, EntityId);

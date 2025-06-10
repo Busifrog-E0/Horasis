@@ -1,8 +1,8 @@
 import e from 'express';
 
-import { ReadOneFromNotifications, ReadNotifications, UpdateNotifications, CreateNotifications, RemoveNotifications, UpdateManyNotifications, CountNotifications, } from './../databaseControllers/notifications-databaseController.js';
-import { ReadOneFromUsers } from '../databaseControllers/users-databaseController.js';
-import { ReadOneFromActivities } from '../databaseControllers/activities-databaseController.js';
+import { ReadOneFromNotifications, ReadNotifications, UpdateNotifications, CreateNotifications, RemoveNotifications, UpdateManyNotifications, CountNotifications, TransactionalReadNotifications, TransactionalCreateNotifications, } from './../databaseControllers/notifications-databaseController.js';
+import { ReadOneFromUsers, TransactionalReadOneFromUsers } from '../databaseControllers/users-databaseController.js';
+import { ReadOneFromActivities, TransactionalReadOneFromActivities } from '../databaseControllers/activities-databaseController.js';
 import { ReadLikes } from '../databaseControllers/likes-databaseController.js';
 import { ReadOneFromDiscussions } from '../databaseControllers/discussions-databaseController.js';
 import { ConnectionStatus } from './connections-controller.js';
@@ -175,7 +175,18 @@ const AddContentAndStatusToNotification = async (Notification) => {
  * @param {string} UserId 
  */
 const SendNotificationToUser = async (NotificationObject, UserId) => {
-        await CreateNotifications({ ...NotificationObject, RecipientId: UserId, HasSeen: false });
+    await CreateNotifications({ ...NotificationObject, RecipientId: UserId, HasSeen: false });
+}
+
+
+/**
+ * 
+ * @param {NotificationObject} NotificationObject 
+ * @param {object|undefined} Session 
+ * @param {string} UserId 
+ */
+const TransactionalSendNotificationToUser = async (NotificationObject, UserId, Session) => {
+    await TransactionalCreateNotifications({ ...NotificationObject, RecipientId: UserId, HasSeen: false }, undefined, Session);
 }
 
 /**
@@ -286,6 +297,37 @@ const SendNotificationsforActivityLikes = async (UserId, ActivityId) => {
     }
     return SendNotificationToUser(NotificationObject, Activity.UserId);
 }
+
+/**
+ * 
+ * @param {string} UserId 
+ * @param {string} ActivityId 
+ * @param {object|undefined} Session
+ * @returns 
+ */
+const TransactionalSendNotificationsforActivityLikes = async (UserId, ActivityId, Session) => {
+    const [Notification] = await TransactionalReadNotifications({ EntityId: ActivityId, Type: "Like" }, undefined, 1, undefined, Session);
+    if (Notification) {
+        return;
+    }
+    const [UserDetails, Activity] = await Promise.all([
+        TransactionalReadOneFromUsers(UserId, true, Session),
+        TransactionalReadOneFromActivities(ActivityId, Session),
+    ]);
+    const NotificationObject = {
+        NotifierId: UserId,
+        EntityId: ActivityId,
+        EntityType: "Activity",
+        Content: "",
+        Link: `/activities/${ActivityId}`,
+        Type: "Like",
+        ContentLinks: [],
+        UserDetails
+    }
+    return SendNotificationToUser(NotificationObject, Activity.UserId);
+}
+
+
 
 /**
  * 
@@ -616,7 +658,7 @@ export {
     GetNotifications, DeleteNotifications, GetUnreadNotification,
     SendNotificationstoActivityMentions, SendNotificationstoCommentMentions, SendNotificationsforActivityLikes,
     SendNotificationsForFollow, SendNotificationForMemberRequest, SendNotificationForMemberRequestStatus, SendNotificationForMemberInvitation,
-    SendNotificationToUser, SendNotificationForMemberJoin, SendNotificationsForConnectionAccept, SendNotificationsForConnectionRequest,
+    SendNotificationToUser, TransactionalSendNotificationToUser, SendNotificationForMemberJoin, SendNotificationsForConnectionAccept, SendNotificationsForConnectionRequest,
     RemoveNotificationsAfterActivityMentionPatch, RemoveNotificationsForConnectionRequest, GetOneFromNotifications,
     RemoveNotificationsForFollow, RemoveNotificationForMember, SendNotificationToUserOnCommentPost, RemoveNotificationForEntity,
     SendNotificationForSpeaker, RemoveNotificationForSpeaker, RemoveNotificationForActivityLikes

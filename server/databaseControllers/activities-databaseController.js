@@ -93,6 +93,10 @@ const IncrementActivities = async (data, DocId) => {
   return dataHandling.Update("Activities", data, DocId, ["$inc"], false);
 }
 
+const TransactionalIncrementActivities = async (data, DocId, Session) => {
+  return dataHandling.TransactionalUpdate("Activities", data, DocId, ["$inc"], Session, false);
+}
+
 const UpdateAndIncrementActivities = async (UpdateData, IncrementData, DocId) => {
   return dataHandling.Update("Activities", UpdateData, DocId, ["$set", "$inc"], true, IncrementData);
 }
@@ -111,6 +115,6 @@ const UpdateManyActivities = async (data, where = {}) => {
 
 export {
   ReadActivities, ReadOneFromActivities, TransactionalReadOneFromActivities, UpdateActivities, CreateActivities, RemoveActivities,
-  IncrementActivities, UpdateAndIncrementActivities, AggregateActivities, CountActivities,
+  IncrementActivities, TransactionalIncrementActivities, UpdateAndIncrementActivities, AggregateActivities, CountActivities,
   UpdateManyActivities
 };
