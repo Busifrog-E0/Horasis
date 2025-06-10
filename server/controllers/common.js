@@ -1,7 +1,7 @@
 import axios from "axios";
 import bcrpyt from 'bcrypt';
-import { ReadOneFromActivities, RemoveActivities } from "../databaseControllers/activities-databaseController.js";
-import { ReadOneFromComments, RemoveComments } from "../databaseControllers/comments-databaseController.js";
+import { ReadOneFromActivities, RemoveActivities, TransactionalReadOneFromActivities } from "../databaseControllers/activities-databaseController.js";
+import { ReadOneFromComments, RemoveComments, TransactionalReadOneFromComments } from "../databaseControllers/comments-databaseController.js";
 import { RemoveArticles } from "../databaseControllers/articles-databaseController.js";
 import { RemovePodcasts } from "../databaseControllers/podcasts-databaseController.js";
 import { RemoveDiscussions } from "../databaseControllers/discussions-databaseController.js";
@@ -147,24 +147,24 @@ const GetParentTypeFromEntity = async (EntityId, EntityType) => {
 }
 
 
-const TransactionalGetParentTypeFromEntity = async (EntityId, EntityType) => {
+const TransactionalGetParentTypeFromEntity = async (EntityId, EntityType, Session) => {
     let ParentId, ParentType;
     switch (EntityType) {
         case "Activity": {
-            const Activity = await ReadOneFromActivities(EntityId);
+            const Activity = await TransactionalReadOneFromActivities(EntityId, Session);
             ParentId = Activity.EntityId;
             ParentType = Activity.Type;
             break;
         }
         case "Comment": {
-            const Comment = await ReadOneFromComments(EntityId);
+            const Comment = await TransactionalReadOneFromComments(EntityId, Session);
             let Activity;
             if (Comment.Type === "Reply") {
-                const Entity = await ReadOneFromComments(Comment.ParentId);
-                Activity = await ReadOneFromActivities(Entity.ParentId);
+                const Entity = await TransactionalReadOneFromComments(Comment.ParentId, Session);
+                Activity = await TransactionalReadOneFromActivities(Entity.ParentId, Session);
             }
             else {
-                Activity = await ReadOneFromActivities(Comment.ParentId);
+                Activity = await TransactionalReadOneFromActivities(Comment.ParentId, Session);
             }
             ParentId = Activity.EntityId;
             ParentType = Activity.Type;

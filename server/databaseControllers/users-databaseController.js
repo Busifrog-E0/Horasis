@@ -81,7 +81,7 @@ const ReadOneFromUsers = async (DocId, RemovePassword = true) => {
  */
 const TransactionalReadOneFromUsers = async (DocId, RemovePassword = true, Session) => {
     /**@type {UserData} */
-    const UserData = await dataHandling.Read('Users', DocId);
+    const UserData = await dataHandling.TransactionalRead('Users', DocId, undefined, undefined, undefined, undefined, Session);
     if (RemovePassword && UserData !== null) {
         // @ts-ignore
         delete UserData.Password;

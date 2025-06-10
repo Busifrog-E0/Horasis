@@ -47,6 +47,18 @@ const ReadOneFromActivities = async (DocId) => {
   return dataHandling.Read("Activities", DocId);
 };
 
+
+/**
+ *
+ * @param {string} DocId
+ * @param {undefined|object} Session 
+ * @returns {Promise<ActivityData>}
+ */
+const TransactionalReadOneFromActivities = async (DocId, Session) => {
+  return dataHandling.TransactionalRead("Activities", DocId, undefined, undefined, undefined, undefined, Session);
+};
+
+
 /**
  *
  * @param {ActivityData|object} data
@@ -98,7 +110,7 @@ const UpdateManyActivities = async (data, where = {}) => {
 }
 
 export {
-  ReadActivities, ReadOneFromActivities, UpdateActivities, CreateActivities, RemoveActivities,
+  ReadActivities, ReadOneFromActivities, TransactionalReadOneFromActivities, UpdateActivities, CreateActivities, RemoveActivities,
   IncrementActivities, UpdateAndIncrementActivities, AggregateActivities, CountActivities,
   UpdateManyActivities
 };

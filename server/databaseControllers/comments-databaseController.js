@@ -41,6 +41,16 @@ const ReadOneFromComments = async (DocId) => {
 
 /**
  * 
+ * @param {string} DocId 
+ * @param {undefined|object} Session 
+ * @returns {Promise<CommentData>}
+ */
+const TransactionalReadOneFromComments = async (DocId, Session) => {
+    return dataHandling.TransactionalRead('Comments', DocId, undefined, undefined, undefined, Session);
+}
+
+/**
+ * 
  * @param {CommentData|object} data
  * @param {string} DocId 
  * @returns {Promise<boolean>}
@@ -80,6 +90,7 @@ const IncrementComments = async (data, DocId) => {
 export {
     ReadComments,
     ReadOneFromComments,
+    TransactionalReadOneFromComments,
     UpdateComments,
     CreateComments,
     RemoveComments,
