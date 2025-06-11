@@ -23,11 +23,11 @@ router.get('/podcasts/:PodcastId', decodeIDToken, ensureAuthorized("User","Admin
     // @ts-ignore
     asyncHandler(GetOneFromPodcasts));
 
-router.post('/podcasts', decodeIDToken, ensureAuthorized("User"), ValidatePostPodcast, SwaggerDocs.post_Podcast,
+router.post('/podcasts', decodeIDToken, ensureAuthorized("Admin"), ValidatePostPodcast, SwaggerDocs.post_Podcast,
     // @ts-ignore
     asyncHandler(PostPodcasts));
 
-router.patch('/podcasts/:PodcastId/coverPicture', decodeIDToken, ensureAuthorized("User"), ValidatePatchPodcastCoverPhoto,
+router.patch('/podcasts/:PodcastId/coverPicture', decodeIDToken, ensureAuthorized("Admin"), ValidatePatchPodcastCoverPhoto,
     SwaggerDocs.patch_Podcast_PodcastId_CoverPicture,
     // @ts-ignore
     asyncHandler(PatchPodcasts));
