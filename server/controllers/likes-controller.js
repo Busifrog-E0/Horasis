@@ -1,6 +1,6 @@
 import e from 'express';
 
-import { ReadOneFromLikes, ReadLikes, UpdateLikes, CreateLikes, RemoveLikes, } from './../databaseControllers/likes-databaseController.js';
+import { ReadOneFromLikes, ReadLikes, UpdateLikes, CreateLikes, RemoveLikes, TransactionalReadLikes, TransactionalCreateLikes, } from './../databaseControllers/likes-databaseController.js';
 import { IncrementActivities, ReadOneFromActivities } from '../databaseControllers/activities-databaseController.js';
 import { ReadOneFromUsers } from '../databaseControllers/users-databaseController.js';
 import { AlertBoxObject, GetParentTypeFromEntity } from './common.js';
@@ -56,10 +56,7 @@ const PostLikes = async (req, res) => {
     const EntityId = entityId || req.params.EntityId;
     //@ts-ignore
     const { UserId } = req.user;
-    const CheckLike = await ReadLikes({ EntityId, UserId }, undefined, 1, undefined);
-    if (CheckLike.length > 0) {
-        return res.status(444).json(AlertBoxObject("Cannot Like", "You cannot like twice"));
-    }
+
     let transactionFinish = false;
     const Session = databaseHandling.dbClient.startSession();
 
@@ -76,11 +73,11 @@ const PostLikes = async (req, res) => {
             //@ts-ignore
             ParentType
         });
-        await CreateLikes(data);
+        await TransactionalCreateLikes(data, undefined, Session);
         transactionFinish = true;
     } catch (error) {
         await Session.abortTransaction();
-        return res.status(500).json(error.message);
+        transactionFinish = false;
     }
     finally {
         await Session.endSession();
@@ -89,10 +86,6 @@ const PostLikes = async (req, res) => {
     if (!transactionFinish) {
         return res.status(444).json(AlertBoxObject("Cannot Like", "You cannot like twice"));
     }
-
-
-
-
 
     if (Type === 'Activity') {
         await IncrementActivities({ NoOfLikes: 1 }, EntityId);
