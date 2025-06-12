@@ -2,13 +2,25 @@ import Joi from 'joi';
 import { QueryParametersSchema } from './common.js';
 import { AgendaDataSchema } from './events-validations.js';
 import { TagsSchema } from './tags-validations.js';
+import sanitizeHtml from 'sanitize-html';
 
-
-
+const sanitize = (value) => {
+    return sanitizeHtml(value, {
+        allowedTags: [],          // No HTML tags allowed
+        allowedAttributes: {},    // No attributes allowed
+        allowedIframeHostnames: [], // No iframes allowed
+        disallowedTagsMode: 'discard',  // Discard disallowed tags
+    });
+};
+const sanitizedString = Joi.string()
+    .custom((value, helpers) => {
+        const sanitized = sanitize(value);
+        return sanitized;
+    });
 const UserSchema = Joi.object({
-    FullName: Joi.string().required(),
-    Username: Joi.string().min(3).required(),
-    Email: Joi.string().email().lowercase().required(),
+    FullName: sanitizedString.required(),
+    Username: sanitizedString.min(3).required(),
+    Email: sanitizedString.email().lowercase().required(),
     Password: Joi.string().min(8).required(),
     Country: Joi.string().required(),
     City: Joi.string().required(),
@@ -17,7 +29,7 @@ const UserSchema = Joi.object({
     CompanyName: Joi.string(),
     About: Joi.string().max(500).allow(""),
     Interests: Joi.array().items(TagsSchema).default([]),
-    LinkedIn : Joi.string().allow(""),
+    LinkedIn: Joi.string().allow(""),
     IsPrivate: Joi.boolean(),
 });
 
@@ -108,7 +120,7 @@ const ValidatePatchUsers = async (req, res, next) => {
         CompanyName: UserSchema.extract("CompanyName"),
         About: UserSchema.extract("About"),
         JobTitle: UserSchema.extract("JobTitle"),
-        Interests : UserSchema.extract("Interests"),
+        Interests: UserSchema.extract("Interests"),
         City: UserSchema.extract("City"),
         Industry: UserSchema.extract("Industry"),
         LinkedIn: UserSchema.extract("LinkedIn"),
@@ -185,7 +197,7 @@ const ValidatePasswordReset = async (req, res, next) => {
 
 const ValidatePostUsersInvite = (req, res, next) => {
     const Result = Joi.object({
-        ActionType: Joi.string().valid("Discussion-Invite-Member", "Event-Invite-Member", "Event-Invite-Speaker","Podcast-Invite-Member").required(),
+        ActionType: Joi.string().valid("Discussion-Invite-Member", "Event-Invite-Member", "Event-Invite-Speaker", "Podcast-Invite-Member").required(),
         InvitationData: Joi.array().items(InvitationDataSchema).max(5).required(),
         EntityId: Joi.string().required()
     }).validate(req.body, { stripUnknown: true, convert: true });
