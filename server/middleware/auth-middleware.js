@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import ENV from "./../Env.js";
 import e from "express";
 import { SocketError } from "../controllers/common.js";
-import { AdminRoleArray } from "../controllers/auth-controller.js";
+import { AdminRoleArray, LogoutUsers } from "../controllers/auth-controller.js";
 
 
 
@@ -22,6 +22,11 @@ const decodeIDToken = async (req, res, next) => {
     if (!token) {
         return res.status(403).send("A token is required for authentication");
     }
+    const IsLogoutToken = LogoutUsers.find(a => a.token === token);
+    if (IsLogoutToken) {
+        return res.status(445).send("Invalid Token");
+    }
+
     try {
         const user = jwt.verify(token, ENV.TOKEN_KEY);
         //@ts-ignore    

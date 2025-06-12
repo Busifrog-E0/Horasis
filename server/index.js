@@ -56,7 +56,7 @@ const raw = await readFile('./swaggerOutput.json', 'utf-8');
 const swaggerFile = JSON.parse(raw);
 // import swaggerFile from './swaggerOutput.json' with { type: 'json' };
 // import { FirstSetupAdminInfo } from "./databaseControllers/admins-databaseController.js";
-import { ClearAdminRoleArray, GenerateToken } from "./controllers/auth-controller.js";
+import { ClearAdminRoleArray, ClearLogoutUsers, GenerateToken } from "./controllers/auth-controller.js";
 import { decodeSocketIdToken } from "./middleware/auth-middleware.js";
 import { ConnectSocket } from "./controllers/socket-controller.js";
 import { CreateActiveUsers } from "./databaseControllers/activeUsers-databaseController.js";
@@ -77,6 +77,7 @@ app.use(errorHandler);
 
 setInterval(() => {
     ClearAdminRoleArray();
+    ClearLogoutUsers();
 }, 1000 * 60 * 60 * 12);
 
 

@@ -13,6 +13,7 @@ const { Read, Create, Delete, Update } = dataHandling;
  * @type {Array<{UserId: string, Index: number, Type: "Add" | "Remove",Role : string[] } >}
  */
 let AdminRoleArray = [];
+let LogoutUsers = [];
 
 
 const TestUsers = [
@@ -204,6 +205,30 @@ const VerifyOTP = async (OTPId, OTP, res) => {
     }
 }
 
+
+const UserLogout = async (req, res) => {
+    const { Token, RefreshToken } = req.body;
+    /**
+     * @type {RefreshTokenData}
+     */
+    const RefreshTokenData = await Read("RefreshTokens", RefreshToken);
+    if (!RefreshTokenData || RefreshTokenData.Token !== Token || RefreshTokenData.Valid !== true) {
+        res.status(445).json("InValid");
+    }
+    else {
+        try {
+            jwt.decode(RefreshTokenData.Token, { complete: true });
+            LogoutUsers.push({ Index: moment().valueOf(), token: RefreshTokenData.Token });
+            await Delete("RefreshToken", RefreshTokenData.DocId);
+            res.json(true);
+        }
+        catch (error) {
+            res.status(445).json(error.message);
+        }
+    }
+
+}
+
 /**
  * 
  * @param {undefined|object} Where 
@@ -248,7 +273,10 @@ const MaintainAdminRoleArray = (UserId, action) => {
 
 const ClearAdminRoleArray = () => {
     AdminRoleArray = AdminRoleArray.filter(item => moment().valueOf() - item.Index > 2 * 60 * 60 * 1000);
-    console.log("run")
+}
+
+const ClearLogoutUsers = () => {
+    LogoutUsers = LogoutUsers.filter(item => moment().valueOf() - item.Index > 2 * 60 * 60 * 1000);
 }
 
 /**
@@ -275,11 +303,11 @@ const TokenData = async (CurrentUser) => {
 }
 
 export {
-    ModelLogin, RefreshToken, GenerateToken,
+    ModelLogin, RefreshToken, GenerateToken, UserLogout,
     VerifyOTP, SendRegisterOTP, TokenData,
     SendPasswordOTP, ReadOneFromOTP, CheckOTP,
     ReadRefreshTokens, UpdateRefreshToken,
-    MaintainAdminRoleArray, AdminRoleArray,
-    ClearAdminRoleArray
+    MaintainAdminRoleArray, AdminRoleArray, LogoutUsers,
+    ClearAdminRoleArray, ClearLogoutUsers
 };
 
