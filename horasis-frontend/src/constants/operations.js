@@ -3,18 +3,51 @@ import { CURRENTUSERDATA, SUPERUSERDATA, _retrieveData } from '../utils/LocalSto
 
 export const DEBUG_API = 'https://deploy.busifrog.com/'
 export const PRODUCTION_API = 'https://deploy.busifrog.com/'
-// export const PRODUCTION_API = 'https://horasis.busifrog.com/'
 
-let retryCountForPatch = 0
-let retryCountForPost = 0
-let retryCountForGet = 0
-let retryCountForDelete = 0
-const maxRetriesForRefreshToken = 3
+export const userLogout = async (Token, RefreshToken) => {
+	const API_URL = debug ? DEBUG_API : PRODUCTION_API
+
+	axios
+		.post(
+			`${API_URL}api/UserLogout`,
+			{ Token, RefreshToken },
+			{
+				headers: {
+					'Access-Control-Allow-Origin': '*',
+					'Content-Type': 'application/json',
+					Authorization: `Bearer`,
+				},
+				mode: 'no-cors',
+			}
+		)
+		.then(async (result) => {
+			localStorage.clear()
+			window.location.reload()
+		})
+		.catch(async (result) => {
+			localStorage.clear()
+			window.location.reload()
+		})
+}
 
 const refreshToken = async (updateCurrentUser, currentUserData, role, debug) => {
-	const tokenToBeRefreshed = role === 'user' ? (_retrieveData(CURRENTUSERDATA) ? JSON.parse(_retrieveData(CURRENTUSERDATA)).Token : null) : _retrieveData(SUPERUSERDATA) ? JSON.parse(_retrieveData(SUPERUSERDATA)).Token : null
+	const tokenToBeRefreshed =
+		role === 'user'
+			? _retrieveData(CURRENTUSERDATA)
+				? JSON.parse(_retrieveData(CURRENTUSERDATA)).Token
+				: null
+			: _retrieveData(SUPERUSERDATA)
+			? JSON.parse(_retrieveData(SUPERUSERDATA)).Token
+			: null
 
-	const refreshToken = role === 'user' ? (_retrieveData(CURRENTUSERDATA) ? JSON.parse(_retrieveData(CURRENTUSERDATA)).RefreshToken : null) : _retrieveData(SUPERUSERDATA) ? JSON.parse(_retrieveData(SUPERUSERDATA)).RefreshToken : null
+	const refreshToken =
+		role === 'user'
+			? _retrieveData(CURRENTUSERDATA)
+				? JSON.parse(_retrieveData(CURRENTUSERDATA)).RefreshToken
+				: null
+			: _retrieveData(SUPERUSERDATA)
+			? JSON.parse(_retrieveData(SUPERUSERDATA)).RefreshToken
+			: null
 
 	const API_URL = debug ? DEBUG_API : PRODUCTION_API
 
@@ -40,51 +73,32 @@ const refreshToken = async (updateCurrentUser, currentUserData, role, debug) => 
 		.catch(async (err) => {
 			if (err.response) {
 				if (err.response.status === 445) {
-					localStorage.clear()
-					window.location.reload()
+					userLogout(tokenToBeRefreshed, refreshToken)
 				}
 			}
 		})
 }
 
-// export const newPostItem = async (
-// 	url,
-// 	data,
-// 	successCallback,
-// 	errorCallback,
-// 	updateCurrentUser,
-// 	currentUserData,
-// 	debug = false
-// ) => {
-// 	const API_URL = debug ? DEBUG_API : PRODUCTION_API
-// 	try {
-// 		const result = await axios.post(API_URL + 'api/' + url, data, {
-// 			headers: {
-// 				'Access-Control-Allow-Origin': '*',
-// 				'Content-Type': 'application/json',
-// 				Authorization: `Bearer ${
-// 					_retrieveData(CURRENTUSERDATA) ? JSON.parse(_retrieveData(CURRENTUSERDATA)).Token : null
-// 				}`,
-// 			},
-// 			mode: 'no-cors',
-// 		})
-// 		return successCallback(result.data)
-// 	} catch (err) {
-// 		if (!err.response) {
-// 			return errorCallback('Something happened!')
-// 		}
-// 		if (err.response.status === 401) {
-// 			await refreshToken(updateCurrentUser, currentUserData)
-// 			// await apiCallback()
-// 			await postItem(url, data, successCallback, errorCallback, updateCurrentUser, currentUserData, debug)
-// 		}
-// 		return errorCallback(err.response.data)
-// 	}
-// }
-
-export const postItem = async (url, data, successCallback, errorCallback, updateCurrentUser, currentUserData, toast = { open: () => {}, close: () => {} }, role = 'user', debug = false) => {
+export const postItem = async (
+	url,
+	data,
+	successCallback,
+	errorCallback,
+	updateCurrentUser,
+	currentUserData,
+	toast = { open: () => {}, close: () => {} },
+	role = 'user',
+	debug = false
+) => {
 	const API_URL = debug ? DEBUG_API : PRODUCTION_API
-	const useToken = role === 'user' ? (_retrieveData(CURRENTUSERDATA) ? JSON.parse(_retrieveData(CURRENTUSERDATA)).Token : null) : _retrieveData(SUPERUSERDATA) ? JSON.parse(_retrieveData(SUPERUSERDATA)).Token : null
+	const useToken =
+		role === 'user'
+			? _retrieveData(CURRENTUSERDATA)
+				? JSON.parse(_retrieveData(CURRENTUSERDATA)).Token
+				: null
+			: _retrieveData(SUPERUSERDATA)
+			? JSON.parse(_retrieveData(SUPERUSERDATA)).Token
+			: null
 	axios
 		.post(API_URL + 'api/' + url, data, {
 			headers: {
@@ -110,7 +124,17 @@ export const postItem = async (url, data, successCallback, errorCallback, update
 				if (err.response.status === 401) {
 					await refreshToken(updateCurrentUser, currentUserData, role, debug)
 					// await apiCallback()
-					await postItem(url, data, successCallback, errorCallback, updateCurrentUser, currentUserData, toast, role, debug)
+					await postItem(
+						url,
+						data,
+						successCallback,
+						errorCallback,
+						updateCurrentUser,
+						currentUserData,
+						toast,
+						role,
+						debug
+					)
 				} else if (err.response.status === 444) {
 					if (typeof err.response.data === 'string') {
 						toast.open('error', 'Error', err.response.data)
@@ -118,6 +142,8 @@ export const postItem = async (url, data, successCallback, errorCallback, update
 						toast.open('error', err.response.data.Header, err.response.data.Message)
 					}
 					errorCallback(err.response.data)
+				} else if (err.response.status === 445) {
+					userLogout(currentUserData.Token, currentUserData.RefreshToken)
 				} else {
 					errorCallback(err.response.data)
 				}
@@ -127,9 +153,26 @@ export const postItem = async (url, data, successCallback, errorCallback, update
 		})
 }
 
-export const patchItem = async (url, data, successCallback, errorCallback, updateCurrentUser, currentUserData, toast = { open: () => {}, close: () => {} }, role = 'user', debug = false) => {
+export const patchItem = async (
+	url,
+	data,
+	successCallback,
+	errorCallback,
+	updateCurrentUser,
+	currentUserData,
+	toast = { open: () => {}, close: () => {} },
+	role = 'user',
+	debug = false
+) => {
 	const API_URL = debug ? DEBUG_API : PRODUCTION_API
-	const useToken = role === 'user' ? (_retrieveData(CURRENTUSERDATA) ? JSON.parse(_retrieveData(CURRENTUSERDATA)).Token : null) : _retrieveData(SUPERUSERDATA) ? JSON.parse(_retrieveData(SUPERUSERDATA)).Token : null
+	const useToken =
+		role === 'user'
+			? _retrieveData(CURRENTUSERDATA)
+				? JSON.parse(_retrieveData(CURRENTUSERDATA)).Token
+				: null
+			: _retrieveData(SUPERUSERDATA)
+			? JSON.parse(_retrieveData(SUPERUSERDATA)).Token
+			: null
 	axios
 		.patch(API_URL + 'api/' + url, data, {
 			headers: {
@@ -162,6 +205,8 @@ export const patchItem = async (url, data, successCallback, errorCallback, updat
 					} else {
 						toast.open('error', err.response.data.Header, err.response.data.Message)
 					}
+				} else if (err.response.status === 445) {
+					userLogout(currentUserData.Token, currentUserData.RefreshToken)
 				} else {
 					errorCallback(err.response.data)
 				}
@@ -171,9 +216,25 @@ export const patchItem = async (url, data, successCallback, errorCallback, updat
 		})
 }
 
-export const deleteItem = async (url, successCallback, errorCallback, updateCurrentUser, currentUserData, toast = { open: () => {}, close: () => {} }, role = 'user', debug = false) => {
+export const deleteItem = async (
+	url,
+	successCallback,
+	errorCallback,
+	updateCurrentUser,
+	currentUserData,
+	toast = { open: () => {}, close: () => {} },
+	role = 'user',
+	debug = false
+) => {
 	const API_URL = debug ? DEBUG_API : PRODUCTION_API
-	const useToken = role === 'user' ? (_retrieveData(CURRENTUSERDATA) ? JSON.parse(_retrieveData(CURRENTUSERDATA)).Token : null) : _retrieveData(SUPERUSERDATA) ? JSON.parse(_retrieveData(SUPERUSERDATA)).Token : null
+	const useToken =
+		role === 'user'
+			? _retrieveData(CURRENTUSERDATA)
+				? JSON.parse(_retrieveData(CURRENTUSERDATA)).Token
+				: null
+			: _retrieveData(SUPERUSERDATA)
+			? JSON.parse(_retrieveData(SUPERUSERDATA)).Token
+			: null
 
 	axios
 		.delete(API_URL + 'api/' + url, {
@@ -207,6 +268,8 @@ export const deleteItem = async (url, successCallback, errorCallback, updateCurr
 					} else {
 						toast.open('error', err.response.data.Header, err.response.data.Message)
 					}
+				} else if (err.response.status === 445) {
+					userLogout(currentUserData.Token, currentUserData.RefreshToken)
 				} else {
 					errorCallback(err.response.data)
 				}
@@ -216,9 +279,25 @@ export const deleteItem = async (url, successCallback, errorCallback, updateCurr
 		})
 }
 
-export const getItem = async (url, successCallback, errorCallback, updateCurrentUser, currentUserData, toast = { open: () => {}, close: () => {} }, role = 'user', debug = false) => {
+export const getItem = async (
+	url,
+	successCallback,
+	errorCallback,
+	updateCurrentUser,
+	currentUserData,
+	toast = { open: () => {}, close: () => {} },
+	role = 'user',
+	debug = false
+) => {
 	const API_URL = debug ? DEBUG_API : PRODUCTION_API
-	const useToken = role === 'user' ? (_retrieveData(CURRENTUSERDATA) ? JSON.parse(_retrieveData(CURRENTUSERDATA)).Token : null) : _retrieveData(SUPERUSERDATA) ? JSON.parse(_retrieveData(SUPERUSERDATA)).Token : null
+	const useToken =
+		role === 'user'
+			? _retrieveData(CURRENTUSERDATA)
+				? JSON.parse(_retrieveData(CURRENTUSERDATA)).Token
+				: null
+			: _retrieveData(SUPERUSERDATA)
+			? JSON.parse(_retrieveData(SUPERUSERDATA)).Token
+			: null
 	axios
 		.get(API_URL + 'api/' + url, {
 			headers: {
@@ -251,6 +330,8 @@ export const getItem = async (url, successCallback, errorCallback, updateCurrent
 					} else {
 						toast.open('error', err.response.data.Header, err.response.data.Message)
 					}
+				} else if (err.response.status === 445) {
+					userLogout(currentUserData.Token, currentUserData.RefreshToken)
 				} else {
 					errorCallback(err.response.data)
 				}

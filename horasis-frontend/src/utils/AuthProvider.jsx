@@ -1,6 +1,7 @@
 import React, { useContext } from 'react'
 import { _storeData, _retrieveData, _clearData, CURRENTUSERDATA, _clear } from './LocalStorage'
 import { useRef } from 'react'
+import { userLogout } from '../constants/operations'
 
 export const AuthContext = React.createContext()
 export const defaultProfile = {
@@ -137,7 +138,8 @@ export const AuthProvider = ({ children }) => {
 		setCurrentUserData(User)
 	}
 
-	const logout = () => {
+	const logout = async () => {
+		await userLogout(currentUserData.Token, currentUserData.RefreshToken)
 		_clearData(CURRENTUSERDATA)
 		_clear()
 		setCurrentUserData(null)
