@@ -64,7 +64,8 @@ const PostLikes = async (req, res) => {
         Session.startTransaction();
         const CheckLike = await TransactionalReadLikes({ EntityId, UserId }, undefined, 1, undefined, Session);
         if (CheckLike.length > 0) {
-            await Session.commitTransaction();
+            await Session.abortTransaction();
+            return res.status(444).json(AlertBoxObject("Cannot Like", "You cannot like twice"));
         }
         const UserDetails = await ReadOneFromUsers(UserId);
         const { ParentId, ParentType } = await GetParentTypeFromEntity(EntityId, Type);
@@ -75,6 +76,8 @@ const PostLikes = async (req, res) => {
         });
         await TransactionalCreateLikes(data, undefined, Session);
         transactionFinish = true;
+        await Session.commitTransaction();
+
     } catch (error) {
         await Session.abortTransaction();
         transactionFinish = false;
