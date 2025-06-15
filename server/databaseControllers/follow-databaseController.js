@@ -25,6 +25,21 @@ const ReadFollows = async (Where, NextIndex, Limit, orderBy) => {
     return dataHandling.Read('Follows', undefined, NextIndex, Limit, Where, orderBy);
 }
 
+
+/**
+ * 
+ * @param {undefined|object} Where 
+ * @param {undefined|string} NextIndex 
+ * @param {undefined|number} Limit 
+ * @param {undefined|object} orderBy 
+ * @param {undefined|object} Session 
+ * @returns {Promise<Array<FollowData>>} Returns FollowData
+ */
+const TransactionalReadFollows = async (Where, NextIndex, Limit, orderBy, Session) => {
+    return dataHandling.TransactionalRead('Follows', undefined, NextIndex, Limit, Where, orderBy, Session);
+}
+
+
 /**
  * 
  * @param {string} DocId 
@@ -55,6 +70,18 @@ const CreateFollows = async (data, DocId = undefined) => {
     return dataHandling.Create('Follows', data, DocId);
 }
 
+
+/**
+ * 
+ * @param {FollowData|object} data
+ * @param {string|undefined} DocId 
+ * @param {object|undefined} Session 
+ * @returns {Promise<string>}
+ */
+const TransactionalCreateFollows = async (data, DocId = undefined, Session) => {
+    return dataHandling.TransactionalCreate('Follows', data, DocId, undefined, Session);
+}
+
 /**
  * 
  * @param {string} DocId 
@@ -74,9 +101,11 @@ const UpdateManyFollows = async (data, where = {}, updateOptions = {}) => {
 
 export {
     ReadFollows,
+    TransactionalReadFollows,
     ReadOneFromFollows,
     UpdateFollows,
     CreateFollows,
+    TransactionalCreateFollows,
     RemoveFollows,
     GetFollowCount,
     UpdateManyFollows

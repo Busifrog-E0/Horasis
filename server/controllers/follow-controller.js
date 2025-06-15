@@ -1,6 +1,7 @@
 import e from 'express';
 
-import { ReadOneFromFollows, ReadFollows, UpdateFollows, CreateFollows, RemoveFollows, GetFollowCount, } from './../databaseControllers/follow-databaseController.js';
+import databaseHandling from '../databaseControllers/functions.js';
+import { ReadOneFromFollows, ReadFollows, UpdateFollows, CreateFollows, RemoveFollows, GetFollowCount, TransactionalReadFollows, TransactionalCreateFollows, } from './../databaseControllers/follow-databaseController.js';
 import { AddConnectionstoUser, RemoveConnectionsToUser, ViewOtherUserData } from './users-controller.js';
 import { AlertBoxObject } from './common.js';
 import { ReadOneFromUsers } from '../databaseControllers/users-databaseController.js';
@@ -93,13 +94,35 @@ const PostFollows = async (req, res) => {
     if (FolloweeId === FollowerId) {
         return res.status(444).json(AlertBoxObject("Cannot follow yourself", "You cannot follow yourself"));
     }
-    const Follow = await ReadFollows({ FolloweeId, FollowerId }, undefined, 1, undefined);
-    if (Follow.length > 0) {
+
+    let transactionFinish = false;
+    const Session = databaseHandling.dbClient.startSession();
+
+    try {
+        Session.startTransaction();
+        const Follow = await TransactionalReadFollows({ FolloweeId, FollowerId }, undefined, 1, undefined, Session);
+        if (Follow.length > 0) {
+            await Session.abortTransaction();
+            return res.status(444).json(AlertBoxObject("Already follows this profile", "You already follow this profile"));
+        }
+        const UserDetails = await Promise.all([ReadOneFromUsers(FolloweeId), ReadOneFromUsers(FollowerId)]);
+        req.body.UserDetails = UserDetails;
+        await TransactionalCreateFollows(req.body, undefined, Session);
+
+        transactionFinish = true;
+        await Session.commitTransaction();
+
+    } catch (error) {
+        await Session.abortTransaction();
+        transactionFinish = false;
+    }
+    finally {
+        await Session.endSession();
+    }
+    if (!transactionFinish) {
         return res.status(444).json(AlertBoxObject("Already follows this profile", "You already follow this profile"));
     }
-    const UserDetails = await Promise.all([ReadOneFromUsers(FolloweeId), ReadOneFromUsers(FollowerId)]);
-    req.body.UserDetails = UserDetails;
-    await CreateFollows(req.body);
+
     await SendNotificationsForFollow(FollowerId, FolloweeId);
     AddConnectionstoUser(FolloweeId, FollowerId);
     return res.json(true);
