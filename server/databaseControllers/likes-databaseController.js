@@ -94,6 +94,17 @@ const RemoveLikes = async (DocId) => {
 }
 
 
+/**
+ * 
+ * @param {string} DocId 
+ * @param {object|undefined} Session 
+ * @returns {Promise<boolean>}
+ */
+const TransactionalRemoveLikes = async (DocId, Session) => {
+    return dataHandling.TransactionalDelete('Likes', DocId, Session);
+}
+
+
 const CountLikes = async (where) => {
     return dataHandling.ReadCount("Likes", where)
 }
@@ -106,5 +117,6 @@ export {
     CreateLikes,
     TransactionalCreateLikes,
     RemoveLikes,
+    TransactionalRemoveLikes,
     CountLikes
 }
