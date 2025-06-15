@@ -125,8 +125,10 @@ const DeleteLikes = async (req, res) => {
     const { EntityId } = req.params;
     //@ts-ignore
     const { UserId } = req.user;
+
     /**@type {LikeData} */
-    let Like;
+    //@ts-ignore
+    let Like = {};
     let transactionFinish = false;
     const Session = databaseHandling.dbClient.startSession();
 
