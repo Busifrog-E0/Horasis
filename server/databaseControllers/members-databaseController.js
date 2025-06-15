@@ -43,6 +43,20 @@ const ReadMembers = async (Where, NextIndex, Limit, orderBy) => {
     return dataHandling.Read('Members', undefined, NextIndex, Limit, Where, orderBy);
 }
 
+
+/**
+ * 
+ * @param {undefined|object} Where 
+ * @param {undefined|string} NextIndex 
+ * @param {undefined|number} Limit 
+ * @param {undefined|object} orderBy 
+ * @param {undefined|object} Session 
+ * @returns {Promise<Array<MemberData>>} Returns MemberData
+ */
+const TransactionalReadMembers = async (Where, NextIndex, Limit, orderBy, Session) => {
+    return dataHandling.TransactionalRead('Members', undefined, NextIndex, Limit, Where, orderBy, Session);
+}
+
 /**
  * 
  * @param {string} DocId 
@@ -75,6 +89,17 @@ const CreateMembers = async (data, DocId = undefined) => {
 
 /**
  * 
+ * @param {MemberData|object} data
+ * @param {string|undefined} DocId 
+ * @param {object|undefined} Session 
+ * @returns {Promise<string>}
+ */
+const TransactionalCreateMembers = async (data, DocId = undefined, Session) => {
+    return dataHandling.TransactionalCreate('Members', data, DocId, undefined, Session);
+}
+
+/**
+ * 
  * @param {string} DocId 
  * @returns {Promise<boolean>}
  */
@@ -96,9 +121,11 @@ const UpdateManyMembers = async (data, where = {}, updateOptions = {}) => {
 
 export {
     ReadMembers,
+    TransactionalReadMembers,
     ReadOneFromMembers,
     UpdateMembers,
     CreateMembers,
+    TransactionalCreateMembers,
     RemoveMembers,
     UpdateManyMembers
 }
