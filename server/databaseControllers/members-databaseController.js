@@ -1,4 +1,4 @@
-import { RemoveNotificationForMember } from '../controllers/notifications-controller.js';
+import { RemoveNotificationForMember, TransactionalRemoveNotificationForMember } from '../controllers/notifications-controller.js';
 import dataHandling from './functions.js'
 
 /**
@@ -68,6 +68,16 @@ const ReadOneFromMembers = async (DocId) => {
 
 /**
  * 
+ * @param {string} DocId 
+ * @param {undefined|object} Session 
+ * @returns {Promise<MemberData>}
+ */
+const TransactionalReadOneFromMembers = async (DocId, Session) => {
+    return dataHandling.TransactionalRead('Members', DocId, undefined, undefined, undefined, undefined, Session);
+}
+
+/**
+ * 
  * @param {MemberData|object} data
  * @param {string} DocId 
  * @returns {Promise<boolean>}
@@ -109,6 +119,19 @@ const RemoveMembers = async (DocId) => {
     return dataHandling.Delete('Members', DocId);
 }
 
+
+/**
+ * 
+ * @param {string} DocId 
+ * @param {object|undefined} Session 
+ * @returns {Promise<boolean>}
+ */
+const TransactionalRemoveMembers = async (DocId, Session) => {
+    const Member = await TransactionalReadOneFromMembers(DocId, Session);
+    await TransactionalRemoveNotificationForMember(Member.EntityId, Member.MemberId, Session);
+    return dataHandling.TransactionalDelete('Members', DocId, Session);
+}
+
 /**
  * 
  * @param {object} data 
@@ -123,9 +146,11 @@ export {
     ReadMembers,
     TransactionalReadMembers,
     ReadOneFromMembers,
+    TransactionalReadOneFromMembers,
     UpdateMembers,
     CreateMembers,
     TransactionalCreateMembers,
     RemoveMembers,
+    TransactionalRemoveMembers,
     UpdateManyMembers
 }

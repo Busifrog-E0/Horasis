@@ -136,6 +136,7 @@ const DeleteLikes = async (req, res) => {
         Session.startTransaction();
         const CheckLike = await TransactionalReadLikes({ EntityId, UserId }, undefined, 1, undefined, Session);
         if (CheckLike.length === 0) {
+            await Session.abortTransaction();
             return res.status(444).json(AlertBoxObject("Cannot DisLike", "You have not liked this activity"));
         }
         Like = CheckLike[0];

@@ -1,6 +1,6 @@
 import e from 'express';
 
-import { ReadOneFromNotifications, ReadNotifications, UpdateNotifications, CreateNotifications, RemoveNotifications, UpdateManyNotifications, CountNotifications, } from './../databaseControllers/notifications-databaseController.js';
+import { ReadOneFromNotifications, ReadNotifications, UpdateNotifications, CreateNotifications, RemoveNotifications, UpdateManyNotifications, CountNotifications, TransactionalReadNotifications, TransactionalRemoveNotifications, } from './../databaseControllers/notifications-databaseController.js';
 import { ReadOneFromUsers } from '../databaseControllers/users-databaseController.js';
 import { ReadOneFromActivities } from '../databaseControllers/activities-databaseController.js';
 import { ReadLikes } from '../databaseControllers/likes-databaseController.js';
@@ -175,7 +175,7 @@ const AddContentAndStatusToNotification = async (Notification) => {
  * @param {string} UserId 
  */
 const SendNotificationToUser = async (NotificationObject, UserId) => {
-        await CreateNotifications({ ...NotificationObject, RecipientId: UserId, HasSeen: false });
+    await CreateNotifications({ ...NotificationObject, RecipientId: UserId, HasSeen: false });
 }
 
 /**
@@ -570,10 +570,30 @@ const SendNotificationForMemberInvitation = async (Type, EntityId, UserId, Sende
     return await SendNotificationToUser(NotificationObject, UserId);
 }
 
+/**
+ * 
+ * @param {string} EntityId 
+ * @param {string} UserId 
+ * @returns 
+ */
 const RemoveNotificationForMember = async (EntityId, UserId) => {
     const Notifications = await ReadNotifications({ EntityId, RecipientId: UserId, Type: { $in: ["Invitation", "Join-Status"] } }, undefined, -1, undefined);
     const NotificationsForAdmin = await ReadNotifications({ EntityId, NotifierId: UserId, Type: { $in: ["Join", "Join-Request"] } }, undefined, -1, undefined);
     return Promise.all([...Notifications, ...NotificationsForAdmin].map(Notification => RemoveNotifications(Notification.DocId)));
+}
+
+
+/**
+ * 
+ * @param {string} EntityId 
+ * @param {string} UserId 
+ * @param {object|undefined} Session
+ * @returns 
+ */
+const TransactionalRemoveNotificationForMember = async (EntityId, UserId, Session) => {
+    const Notifications = await TransactionalReadNotifications({ EntityId, RecipientId: UserId, Type: { $in: ["Invitation", "Join-Status"] } }, undefined, -1, undefined, Session);
+    const NotificationsForAdmin = await TransactionalReadNotifications({ EntityId, NotifierId: UserId, Type: { $in: ["Join", "Join-Request"] } }, undefined, -1, undefined, Session);
+    return Promise.all([...Notifications, ...NotificationsForAdmin].map(Notification => TransactionalRemoveNotifications(Notification.DocId, Session)));
 }
 
 /**************************************************SPEAKERS*************************************************************************************************************** */
@@ -618,7 +638,7 @@ export {
     SendNotificationsForFollow, SendNotificationForMemberRequest, SendNotificationForMemberRequestStatus, SendNotificationForMemberInvitation,
     SendNotificationToUser, SendNotificationForMemberJoin, SendNotificationsForConnectionAccept, SendNotificationsForConnectionRequest,
     RemoveNotificationsAfterActivityMentionPatch, RemoveNotificationsForConnectionRequest, GetOneFromNotifications,
-    RemoveNotificationsForFollow, RemoveNotificationForMember, SendNotificationToUserOnCommentPost, RemoveNotificationForEntity,
-    SendNotificationForSpeaker, RemoveNotificationForSpeaker, RemoveNotificationForActivityLikes
-
+    RemoveNotificationsForFollow, RemoveNotificationForMember, TransactionalRemoveNotificationForMember,
+    SendNotificationToUserOnCommentPost, RemoveNotificationForEntity,
+    SendNotificationForSpeaker, RemoveNotificationForSpeaker, RemoveNotificationForActivityLikes,
 }
