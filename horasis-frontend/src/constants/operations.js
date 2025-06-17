@@ -3,8 +3,8 @@ import { CURRENTUSERDATA, SUPERUSERDATA, _retrieveData } from '../utils/LocalSto
 
 export const DEBUG_API = 'https://deploy.busifrog.com/'
 export const PRODUCTION_API = 'https://deploy.busifrog.com/'
-
-export const userLogout = async (Token, RefreshToken) => {
+export const isDebug=false
+export const userLogout = async (Token, RefreshToken,debug=false) => {
 	const API_URL = debug ? DEBUG_API : PRODUCTION_API
 
 	axios
@@ -73,7 +73,7 @@ const refreshToken = async (updateCurrentUser, currentUserData, role, debug) => 
 		.catch(async (err) => {
 			if (err.response) {
 				if (err.response.status === 445) {
-					userLogout(tokenToBeRefreshed, refreshToken)
+					userLogout(tokenToBeRefreshed, refreshToken,debug)
 				}
 			}
 		})
@@ -143,7 +143,7 @@ export const postItem = async (
 					}
 					errorCallback(err.response.data)
 				} else if (err.response.status === 445) {
-					userLogout(currentUserData.Token, currentUserData.RefreshToken)
+					userLogout(currentUserData.Token, currentUserData.RefreshToken,debug)
 				} else {
 					errorCallback(err.response.data)
 				}
@@ -206,7 +206,7 @@ export const patchItem = async (
 						toast.open('error', err.response.data.Header, err.response.data.Message)
 					}
 				} else if (err.response.status === 445) {
-					userLogout(currentUserData.Token, currentUserData.RefreshToken)
+					userLogout(currentUserData.Token, currentUserData.RefreshToken,debug)
 				} else {
 					errorCallback(err.response.data)
 				}
@@ -269,7 +269,7 @@ export const deleteItem = async (
 						toast.open('error', err.response.data.Header, err.response.data.Message)
 					}
 				} else if (err.response.status === 445) {
-					userLogout(currentUserData.Token, currentUserData.RefreshToken)
+					userLogout(currentUserData.Token, currentUserData.RefreshToken,debug)
 				} else {
 					errorCallback(err.response.data)
 				}
@@ -331,7 +331,7 @@ export const getItem = async (
 						toast.open('error', err.response.data.Header, err.response.data.Message)
 					}
 				} else if (err.response.status === 445) {
-					userLogout(currentUserData.Token, currentUserData.RefreshToken)
+					userLogout(currentUserData.Token, currentUserData.RefreshToken,debug)
 				} else {
 					errorCallback(err.response.data)
 				}
