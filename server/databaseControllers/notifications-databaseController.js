@@ -38,6 +38,19 @@ const ReadNotifications = async (Where, NextIndex, Limit, orderBy) => {
 
 /**
  * 
+ * @param {undefined|object} Where 
+ * @param {undefined|string} NextIndex 
+ * @param {undefined|number} Limit 
+ * @param {undefined|object} orderBy 
+ * @param {undefined|object} Session 
+ * @returns {Promise<Array<NotificationData>>} Returns NotificationData
+ */
+const TransactionalReadNotifications = async (Where, NextIndex, Limit, orderBy, Session) => {
+    return dataHandling.TransactionalRead('Notifications', undefined, NextIndex, Limit, Where, orderBy, Session);
+}
+
+/**
+ * 
  * @param {string} DocId 
  * @returns {Promise<NotificationData>}
  */
@@ -85,6 +98,16 @@ const RemoveNotifications = async (DocId) => {
     return dataHandling.Delete('Notifications', DocId);
 }
 
+/**
+ * 
+ * @param {string} DocId 
+ * @param {undefined|object} Session 
+ * @returns {Promise<boolean>}
+ */
+const TransactionalRemoveNotifications = async (DocId, Session) => {
+    return dataHandling.TransactionalDelete('Notifications', DocId, Session);
+}
+
 
 const CountNotifications = async (where) => {
     return dataHandling.ReadCount("Notifications", where);
@@ -92,10 +115,12 @@ const CountNotifications = async (where) => {
 
 export {
     ReadNotifications,
+    TransactionalReadNotifications,
     ReadOneFromNotifications,
     UpdateNotifications,
     CreateNotifications,
     RemoveNotifications,
+    TransactionalRemoveNotifications,
     UpdateManyNotifications,
     CountNotifications,
 }

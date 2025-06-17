@@ -1,6 +1,6 @@
 import e from 'express';
 
-import { ReadOneFromMembers, ReadMembers, UpdateMembers, CreateMembers, RemoveMembers, UpdateManyMembers, } from './../databaseControllers/members-databaseController.js';
+import { ReadOneFromMembers, ReadMembers, UpdateMembers, CreateMembers, RemoveMembers, UpdateManyMembers, TransactionalReadMembers, TransactionalCreateMembers, TransactionalRemoveMembers, } from './../databaseControllers/members-databaseController.js';
 import { IncrementDiscussions, ReadOneFromDiscussions } from '../databaseControllers/discussions-databaseController.js';
 import { AlertBoxObject } from './common.js';
 import { ReadOneFromUsers, } from '../databaseControllers/users-databaseController.js';
@@ -8,6 +8,9 @@ import { AggregateConnections } from '../databaseControllers/connections-databas
 import { SendNotificationForMemberInvitation, SendNotificationForMemberJoin, SendNotificationForMemberRequest, SendNotificationForMemberRequestStatus } from './notifications-controller.js';
 import { IncrementEvents, ReadOneFromEvents, } from '../databaseControllers/events-databaseController.js';
 import { IncrementPodcasts, ReadOneFromPodcasts } from '../databaseControllers/podcasts-databaseController.js';
+import databaseHandling from '../databaseControllers/functions.js';
+import { IncrementAType, ReadAType } from './type-controller.js';
+
 /**
  * @typedef {import('./../databaseControllers/members-databaseController.js').MemberData} MemberData 
  */
@@ -64,7 +67,6 @@ const GetMembers = async (req, res) => {
  * 
  * @param {e.Request} req 
  * @param {e.Response} res 
- * @returns {Promise<e.Response<true>>}
  */
 const PostMembers = async (req, res) => {
     //@ts-ignore
@@ -72,36 +74,61 @@ const PostMembers = async (req, res) => {
     const { EntityId } = req.params;
     const { Type } = req.body;
 
-    const MemberCheck = await ReadMembers({ MemberId: UserId, EntityId, MembershipStatus: "Accepted" }, undefined, 1, undefined);
-    if (MemberCheck.length > 0) {
-        return res.status(444).json(AlertBoxObject("Cannot Join", "You have already joined this discussion"));
-    }
-
     const UserDetails = await ReadOneFromUsers(UserId);;
     const Entity = Type === "Discussion" ? await ReadOneFromDiscussions(EntityId) :
         (Type === "Event" ? await ReadOneFromEvents(EntityId) : await ReadOneFromPodcasts(EntityId));
-
+    //@ts-ignore
     if (Type === "Event" && Entity.Capacity && Entity.Capacity <= Entity.NoOfMembers) {
         return res.status(444).json(AlertBoxObject("Cannot Join", "This event is full"));
     }
-    
+
+
+
+    let transactionFinish = false;
+    const Session = databaseHandling.dbClient.startSession();
+    try {
+        Session.startTransaction();
+
+        const MemberCheck = await TransactionalReadMembers({ MemberId: UserId, EntityId, MembershipStatus: "Accepted" }, undefined, 1, undefined, Session);
+        if (MemberCheck.length > 0) {
+            await Session.abortTransaction();
+            return res.status(444).json(AlertBoxObject("Cannot Join", "You have already joined this discussion"));
+        }
+
+        if (Entity.Privacy === "Private") {
+            req.body = MemberInit({ MemberId: UserId, EntityId, UserDetails, Type }, "Requested")
+            await TransactionalCreateMembers(req.body, undefined, Session);
+            res.status(244).json(AlertBoxObject("Request Sent", "Request has been sent"));
+        }
+        else {
+            req.body = MemberInit({ MemberId: UserId, EntityId, UserDetails, Type }, "Accepted");
+            await TransactionalCreateMembers({ ...req.body, MemberId: UserId, EntityId, UserDetails }, undefined, Session);
+            res.json(true);
+        }
+
+        transactionFinish = true;
+        await Session.commitTransaction();
+
+    } catch (error) {
+        await Session.abortTransaction();
+        transactionFinish = false;
+    }
+    finally {
+        await Session.endSession();
+    }
+    if (!transactionFinish) {
+        return res.status(444).json(AlertBoxObject("Cannot Join", "You have already joined this discussion"));
+    }
+
     if (Entity.Privacy === "Private") {
-        req.body = MemberInit({ MemberId: UserId, EntityId, UserDetails,Type }, "Requested")
-        await Promise.all([
-            SendNotificationForMemberRequest(Type, EntityId, UserId),
-            CreateMembers(req.body)
-        ])
-        return res.status(244).json(AlertBoxObject("Request Sent", "Request has been sent"));
+        await SendNotificationForMemberRequest(Type, EntityId, UserId);
     }
     else {
-        req.body = MemberInit({ MemberId: UserId, EntityId, UserDetails,Type }, "Accepted");
         await Promise.all([
             SendNotificationForMemberJoin(Type, EntityId, UserId),
-            CreateMembers({ ...req.body, MemberId: UserId, EntityId, UserDetails }),
             Type === "Discussion" ? IncrementDiscussions({ NoOfMembers: 1 }, EntityId) : (
                 Type === "Event" ? IncrementEvents({ NoOfMembers: 1 }, EntityId) : IncrementPodcasts({ NoOfMembers: 1 }, EntityId))
         ])
-        return res.json(true);
     }
 }
 
@@ -127,7 +154,7 @@ const AcceptJoinRequest = async (req, res) => {
     if (req.body.Type === "Event") {
         await IncrementEvents({ NoOfMembers: 1 }, EntityId);
     }
-    if(req.body.Type === "Podcast"){
+    if (req.body.Type === "Podcast") {
         await IncrementPodcasts({ NoOfMembers: 1 }, EntityId);
     }
     //@ts-ignore
@@ -156,11 +183,11 @@ const InviteMembers = async (req, res) => {
     }
     const Entity = Type === "Discussion" ? await ReadOneFromDiscussions(EntityId) :
         (Type === "Event" ? await ReadOneFromEvents(EntityId) : await ReadOneFromPodcasts(EntityId));
-    
-    if (Type === "Event" && Entity.Capacity && Entity.Capacity <= Entity.NoOfMembers) { 
+    //@ts-ignore
+    if (Type === "Event" && Entity.Capacity && Entity.Capacity <= Entity.NoOfMembers) {
         return res.status(444).json(AlertBoxObject("Cannot Invite", "This event is full"));
     }
-    
+
     const [Invitee] = await ReadMembers({ MemberId: InviteeId, EntityId }, undefined, 1, undefined);
 
     if (Invitee) {
@@ -170,7 +197,7 @@ const InviteMembers = async (req, res) => {
                 req.body.Type === "Discussion" ?
                     await IncrementDiscussions({ NoOfMembers: 1 }, EntityId)
                     :
-                   ( req.body.Type === "Event" ? await IncrementEvents({ NoOfMembers: 1 }, EntityId) : await IncrementPodcasts({ NoOfMembers: 1 }, EntityId));
+                    (req.body.Type === "Event" ? await IncrementEvents({ NoOfMembers: 1 }, EntityId) : await IncrementPodcasts({ NoOfMembers: 1 }, EntityId));
                 return res.json(true);
 
             case "Invited":
@@ -183,7 +210,7 @@ const InviteMembers = async (req, res) => {
     }
 
     const UserDetails = await ReadOneFromUsers(InviteeId);
-    req.body = MemberInit({ MemberId: InviteeId, EntityId, UserDetails ,Type }, "Invited");
+    req.body = MemberInit({ MemberId: InviteeId, EntityId, UserDetails, Type }, "Invited");
     await Promise.all([
         await CreateMembers(req.body),
         await SendNotificationForMemberInvitation(Type, EntityId, InviteeId, UserId)
@@ -349,7 +376,7 @@ const RemoveMemberPermissions = async (req, res) => {
         req.body.Type === "Discussion" ?
             ReadOneFromDiscussions(EntityId)
             :
-            ( req.body.Type === "Event" ? ReadOneFromEvents(EntityId) : ReadOneFromPodcasts(EntityId)),
+            (req.body.Type === "Event" ? ReadOneFromEvents(EntityId) : ReadOneFromPodcasts(EntityId)),
         ReadMembers({ MemberId: MemberId, EntityId }, undefined, 1, undefined),
         ReadMembers({ MemberId: UserId, EntityId }, undefined, 1, undefined)
     ]);
@@ -400,37 +427,39 @@ const DeleteMembers = async (req, res) => {
     const { EntityId } = req.params;
     //@ts-ignore
     const { UserId } = req.user;
-    const [Member] = await ReadMembers({ MemberId: UserId, EntityId }, undefined, 1, undefined);
-    if (!Member) {
-        return res.status(444).json(AlertBoxObject("Cannot leave", "You are not an member of this discussion"));
-    }
-    switch(Member.Type) {
-        case "Discussion": {
-            const Discussion = await ReadOneFromDiscussions(EntityId);
-            if (Discussion.OrganiserId === UserId) {
-                return res.status(444).json(AlertBoxObject("Cannot leave", "Organiser cannot leave the discussion"));
-            }
-            await IncrementDiscussions({ NoOfMembers: -1 }, EntityId);
-            break;
+    /**@type {MemberData} */
+    //@ts-ignore
+    let Member = {};
+
+    let transactionFinish = false;
+    const Session = databaseHandling.dbClient.startSession();
+    try {
+        Session.startTransaction();
+        Member = (await TransactionalReadMembers({ MemberId: UserId, EntityId }, undefined, 1, undefined, Session))[0];
+        const EntityData = await ReadAType(EntityId, Member.Type);
+        if (EntityData.OrganiserId === UserId) {
+            await Session.abortTransaction();
+            return res.status(444).json(AlertBoxObject("Cannot leave", "Organiser cannot leave the podcast"));
         }
-        case "Event": {
-            const Event = await ReadOneFromEvents(EntityId);
-            if (Event.OrganiserId === UserId) {
-                return res.status(444).json(AlertBoxObject("Cannot leave", "Organiser cannot leave the event"));
-            }
-            await IncrementEvents({ NoOfMembers: -1 }, EntityId);
-            break;
-         }
-        case "Podcast": {
-            const Podcast = await ReadOneFromPodcasts(EntityId);
-            if (Podcast.OrganiserId === UserId) {
-                return res.status(444).json(AlertBoxObject("Cannot leave", "Organiser cannot leave the podcast"));
-            }
-            await IncrementPodcasts({ NoOfMembers: -1 }, EntityId);
-            break;
-        }  
+        if (!Member) {
+            await Session.abortTransaction();
+            return res.status(444).json(AlertBoxObject("Cannot leave", "You are not an member of this discussion"));
+        }
+        await TransactionalRemoveMembers(Member.DocId, Session);
+        transactionFinish = true;
+        await Session.commitTransaction();
+    } catch (error) {
+        await Session.abortTransaction();
+        transactionFinish = false;
     }
-    await RemoveMembers(Member.DocId);
+    finally {
+        await Session.endSession();
+    }
+    if (!transactionFinish) {
+        return res.status(444).json(AlertBoxObject("Cannot Like", "You cannot like twice"));
+    }
+
+    await IncrementAType(EntityId, Member.Type, { NoOfMembers: -1 });
     return res.json(true);
 }
 

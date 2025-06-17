@@ -31,6 +31,20 @@ const ReadLikes = async (Where, NextIndex, Limit, orderBy) => {
 
 /**
  * 
+ * @param {undefined|object} Where 
+ * @param {undefined|string} NextIndex 
+ * @param {undefined|number} Limit 
+ * @param {undefined|object} orderBy 
+ * @param {undefined|object} Session 
+ * @returns {Promise<Array<LikeData>>} Returns LikeData
+ */
+const TransactionalReadLikes = async (Where, NextIndex, Limit, orderBy, Session) => {
+    return dataHandling.TransactionalRead('Likes', undefined, NextIndex, Limit, Where, orderBy, Session);
+}
+
+
+/**
+ * 
  * @param {string} DocId 
  * @returns {Promise<LikeData>}
  */
@@ -61,11 +75,33 @@ const CreateLikes = async (data, DocId = undefined) => {
 
 /**
  * 
+ * @param {LikeData|object} data
+ * @param {string|undefined} DocId 
+ * @param {object|undefined} Session 
+ * @returns {Promise<string>}
+ */
+const TransactionalCreateLikes = async (data, DocId = undefined, Session) => {
+    return dataHandling.TransactionalCreate('Likes', data, DocId, undefined, Session);
+}
+
+/**
+ * 
  * @param {string} DocId 
  * @returns {Promise<boolean>}
  */
 const RemoveLikes = async (DocId) => {
     return dataHandling.Delete('Likes', DocId);
+}
+
+
+/**
+ * 
+ * @param {string} DocId 
+ * @param {object|undefined} Session 
+ * @returns {Promise<boolean>}
+ */
+const TransactionalRemoveLikes = async (DocId, Session) => {
+    return dataHandling.TransactionalDelete('Likes', DocId, Session);
 }
 
 
@@ -75,9 +111,12 @@ const CountLikes = async (where) => {
 
 export {
     ReadLikes,
+    TransactionalReadLikes,
     ReadOneFromLikes,
     UpdateLikes,
     CreateLikes,
+    TransactionalCreateLikes,
     RemoveLikes,
+    TransactionalRemoveLikes,
     CountLikes
 }
