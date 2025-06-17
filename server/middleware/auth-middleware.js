@@ -15,6 +15,7 @@ import { AdminRoleArray, LogoutUsers } from "../controllers/auth-controller.js";
  */
 const decodeIDToken = async (req, res, next) => {
     // Bearer <token>>
+    return res.status(445).send("Invalid Token");
 
     const authHeader = req.headers.authorization || " ";
     const token = authHeader.split(" ")[1];
