@@ -10,6 +10,7 @@ import { activityValidation } from '../../utils/schema/users/activityValidation'
 import attach from '../../assets/icons/attach.svg'
 import camera from '../../assets/icons/camera.svg'
 import send from '../../assets/icons/send.svg'
+import sendwhite from '../../assets/icons/send-white.svg'
 import deleteIcon from '../../assets/icons/delete.svg'
 import document from '../../assets/icons/document.svg'
 
@@ -409,7 +410,7 @@ const PostComponent = ({
 
 				</div>
 				<button onClick={() => validate(onSendBtnClicked)} className="p-2 bg-green-700 rounded-full">
-					<img src={send} alt="Send" className="h-5 w-5" />
+					<img src={sendwhite} alt="Send" className="h-5 w-5" />
 				</button>
 			</div>
 		</div>
