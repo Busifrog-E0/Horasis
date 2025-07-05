@@ -1,12 +1,12 @@
 import Joi from "joi"
 
 const QueryParametersSchema = Joi.object({
-    "NextId": Joi.string().allow(''),
-    "Keyword": Joi.string().allow(''),
+    "NextId": Joi.string().allow('').trim(),
+    "Keyword": Joi.string().allow('').trim(),
     "Limit": Joi.number().required(),
     "OrderBy": Joi.alternatives().try(
-        Joi.string(),
-        Joi.array().items(Joi.string().required()),
+        Joi.string().trim(),
+        Joi.array().items(Joi.string().required().trim()),
     ).required(),
 })
 
