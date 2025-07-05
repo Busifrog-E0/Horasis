@@ -73,12 +73,12 @@ const Select = ({
 				{extra && <div className='hidden lg:block lg:m-0 text-sm'>{extra}</div>}
 			</div>
 
-			<div className='relative' onKeyDown={handleKeyDown} tabIndex={0} ref={dropdownRef}>
+			<div className='relative outline-none focus:outline-none ' onKeyDown={handleKeyDown} tabIndex={0} ref={dropdownRef}>
 				<div
 					onClick={() => setShowOptions((prev) => !prev)}
 					className={
 						twMerge(inputVariants({ variant, size, width, withIcon, className })) +
-						' hover:shadow-inner focus:bg-system-secondary-bg focus:border-2 focus:border-system-primary-accent cursor-pointer'
+						' hover:shadow-inner focus:bg-system-secondary-bg outline-none focus:outline-none focus:border-2 focus:border-system-primary-accent cursor-pointer'
 					}>
 					{value === '' && placeholder ? (
 						<>
@@ -113,7 +113,7 @@ const Select = ({
 				{showOptions && (
 					<div
 						className={
-							'border-2 border-system-primary-bg rounded-lg text-base w-full z-50 bg-white flex flex-col max-h-40 overflow-auto absolute left-0 top-12 mb-10'
+							'border-2 border-system-primary-bg  outline-none focus:outline-none rounded-lg text-base w-full z-50 bg-white flex flex-col max-h-40 overflow-auto absolute left-0 top-12 mb-10'
 						}>
 						{/* Display filtered options */}
 						{filteredOptions.length > 0 ? (

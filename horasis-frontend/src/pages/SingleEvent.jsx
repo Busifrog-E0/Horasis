@@ -250,15 +250,6 @@ const SingleEvent = () => {
 		} else {
 			// If user is not a member and the event is private
 			return []
-			// return [
-			// 	{
-			// 		key: 0,
-			// 		title: 'Join the event',
-			// 		render: () => (
-			// 			<div className='bg-system-secondary-bg p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'></div>
-			// 		),
-			// 	},
-			// ]
 		}
 	}
 
@@ -277,14 +268,6 @@ const SingleEvent = () => {
 				</div>
 			),
 		},
-		// {
-		// 	title: 'Event Agenda',
-		// 	render: () => (
-		// 		<div className='py-3 pt-6'>
-		// 			<EventsAgenda event={event} />
-		// 		</div>
-		// 	),
-		// },
 	]
 
 	const successCallback = () => {
@@ -365,6 +348,13 @@ const SingleEvent = () => {
 	}
 
 	if (isLoadingEvent || isLoading) return <Spinner />
+
+	// Check if the event has ended
+	const eventEndTime = new Date(event.EndTime)
+	const currentDateTime = new Date()
+	const hasEventEnded = currentDateTime > eventEndTime
+
+
 	return (
 		<>
 			<Modal isOpen={isCoverPictureOpen} maxWidth='max-w-4xl'>
@@ -412,21 +402,6 @@ const SingleEvent = () => {
 								onClick={handleGoBack}>
 								<img src={arrowback} alt='' className='h-3 md:h-6 cursor-pointer' />
 							</div>
-							{/* NEED UPADTE FROM BACKEND API */}
-							{/* {event?.Permissions?.IsAdmin && (
-							<div
-								onClick={() => {
-									setIsCoverPictureOpen(true)
-									if (event?.CoverPicture) {
-										setSelectedCoverImage(event?.CoverPicture)
-									} else {
-										setSelectedCoverImage(null)
-									}
-								}}
-								className={`inline-flex items-center justify-center w-12 h-12 p-3 overflow-hidden rounded-full border border-white bg-white cursor-pointer`}>
-								<img src={camera} alt='' className='h-6 cursor-pointer' />
-							</div>
-						)} */}
 						</div>
 					</div>
 				</div>
@@ -505,15 +480,12 @@ const SingleEvent = () => {
 										</p>
 									</div>
 								</div>
-								{event?.Capacity && !event.IsMember && (
+								{event?.Capacity && !event.IsMember && !hasEventEnded && (
 									<div className='flex items-center space-x-3 bg-gray-100 p-3 rounded-lg shadow-sm'>
 										<div className='flex flex-col'>
 											{event.Capacity - event.NoOfMembers > 0 ? (
 												<>
-													<span className='font-medium text-gray-700'>
-														{event.Capacity - event.NoOfMembers}
-														{/* <span className='text-gray-500 ml-1 text-sm'>/ {event.Capacity}</span> */}
-													</span>
+													<span className='font-medium text-gray-700'>{event.Capacity - event.NoOfMembers}</span>
 													<span className='text-xs text-gray-500'>Seats Available</span>
 												</>
 											) : (
@@ -527,42 +499,47 @@ const SingleEvent = () => {
 					</div>
 					<div className='flex gap-2 mt-10  max-w-sm justify-self-end w-full justify-end items-center'>
 						<ShowJoinButton event={event} />
-
-						<>
-							{event?.IsMember ? (
-								<>
-									{currentUserData.CurrentUser.UserId !== event?.OrganiserId && (
-										<Button variant='outline' onClick={() => unRegisterEvent()}>
-											Leave Event
-										</Button>
-									)}
-								</>
-							) : event?.MembershipStatus === undefined ? (
-								<>
-									{event.Capacity && event.Capacity - event.NoOfMembers <= 0 ? null : (
-										<Button width='full' variant='black' onClick={() => joinEvent()}>
-											Register
-										</Button>
-									)}
-								</>
-							) : event?.MembershipStatus === 'Requested' ? (
-								<Button variant='outline' onClick={() => cancelRegistrationRequest()}>
-									Cancel Registration
-								</Button>
-							) : event?.MembershipStatus === 'Invited' ? (
-								<div className='flex flex-col items-start gap-2'>
-									<p className='text-system-secondary-text'>You have been invited to this event</p>
-									<div className='flex gap-2'>
-										<Button width='full' variant='outline' onClick={() => rejectInvite()}>
-											Reject
-										</Button>
-										<Button width='full' variant='black' onClick={() => acceptInvite()}>
-											Accept
-										</Button>
+						{hasEventEnded ? (
+							<div className='flex flex-col items-center gap-2'>
+								<p className='text-system-primary-accent border py-1 px-4 text-base rounded-md'>Event has ended</p>
+							</div>
+						) : (
+							<>
+								{event?.IsMember ? (
+									<>
+										{currentUserData.CurrentUser.UserId !== event?.OrganiserId && (
+											<Button variant='outline' onClick={() => unRegisterEvent()}>
+												Leave Event
+											</Button>
+										)}
+									</>
+								) : event?.MembershipStatus === undefined ? (
+									<>
+										{event.Capacity && event.Capacity - event.NoOfMembers <= 0 ? null : (
+											<Button width='full' variant='black' onClick={() => joinEvent()}>
+												Register
+											</Button>
+										)}
+									</>
+								) : event?.MembershipStatus === 'Requested' ? (
+									<Button variant='outline' onClick={() => cancelRegistrationRequest()}>
+										Cancel Registration
+									</Button>
+								) : event?.MembershipStatus === 'Invited' ? (
+									<div className='flex flex-col items-start gap-2'>
+										<p className='text-system-secondary-text'>You have been invited to this event</p>
+										<div className='flex gap-2'>
+											<Button width='full' variant='outline' onClick={() => rejectInvite()}>
+												Reject
+											</Button>
+											<Button width='full' variant='black' onClick={() => acceptInvite()}>
+												Accept
+											</Button>
+										</div>
 									</div>
-								</div>
-							) : null}
-						</>
+								) : null}
+							</>
+						)}
 					</div>
 				</div>
 			</div>
@@ -578,7 +555,7 @@ const SingleEvent = () => {
 								alignment='justify-start'
 							/>
 						)}
-						{event && !event?.IsMember && (
+						{event && !event?.IsMember && !hasEventEnded && (
 							<div
 								className={`rounded-lg ${
 									!event?.IsMember &&
@@ -600,35 +577,43 @@ const SingleEvent = () => {
 												<p className='text-system-secondary-text'>Registration request has been sent</p>
 											)}
 											<div>
-												{event?.IsMember ? (
-													<>
-														{currentUserData.CurrentUser.UserId !== event?.OrganiserId && (
-															<Button variant='outline' onClick={() => unRegisterEvent()}>
-																Leave Event
-															</Button>
-														)}
-													</>
-												) : event?.MembershipStatus === undefined ? (
-													<Button width='full' variant='black' onClick={() => joinEvent()}>
-														Register
-													</Button>
-												) : event?.MembershipStatus === 'Requested' ? (
-													<Button variant='outline' onClick={() => cancelRegistrationRequest()}>
-														Cancel Registration
-													</Button>
-												) : event?.MembershipStatus === 'Invited' ? (
+												{hasEventEnded ? (
 													<div className='flex flex-col items-center gap-2'>
-														<p className='text-system-secondary-text'>You have been invited to this event</p>
-														<div className='flex gap-2'>
-															<Button width='full' variant='outline' onClick={() => rejectInvite()}>
-																Reject
-															</Button>
-															<Button width='full' variant='black' onClick={() => acceptInvite()}>
-																Accept
-															</Button>
-														</div>
+														<p className='text-system-primary-accent border py-1 px-4 text-base rounded-md'>Event has ended</p>
 													</div>
-												) : null}
+												) : (
+													<>
+														{event?.IsMember ? (
+															<>
+																{currentUserData.CurrentUser.UserId !== event?.OrganiserId && (
+																	<Button variant='outline' onClick={() => unRegisterEvent()}>
+																		Leave Event
+																	</Button>
+																)}
+															</>
+														) : event?.MembershipStatus === undefined ? (
+															<Button width='full' variant='black' onClick={() => joinEvent()}>
+																Register
+															</Button>
+														) : event?.MembershipStatus === 'Requested' ? (
+															<Button variant='outline' onClick={() => cancelRegistrationRequest()}>
+																Cancel Registration
+															</Button>
+														) : event?.MembershipStatus === 'Invited' ? (
+															<div className='flex flex-col items-center gap-2'>
+																<p className='text-system-secondary-text'>You have been invited to this event</p>
+																<div className='flex gap-2'>
+																	<Button width='full' variant='outline' onClick={() => rejectInvite()}>
+																		Reject
+																	</Button>
+																	<Button width='full' variant='black' onClick={() => acceptInvite()}>
+																		Accept
+																	</Button>
+																</div>
+															</div>
+														) : null}
+													</>
+												)}
 											</div>
 										</div>
 									</div>
@@ -636,20 +621,6 @@ const SingleEvent = () => {
 							</div>
 						)}
 					</div>
-					{/* <ShowJoinButton event={event} /> */}
-					{/* <div className='flex flex-col gap-2'>
-						<ShowJoinButton event={event} />
-						<div className='p-5 bg-system-secondary-bg rounded-lg'>
-							<div className='lg:mt-1'>
-								<MiniTab
-									gap='gap-8'
-									fontSize='text-md xl:text-md'
-									alignment='justify-center'
-									tabs={miniEventTabs(event)}
-								/>
-							</div>
-						</div>
-					</div> */}
 				</div>
 			</div>
 		</>
@@ -658,11 +629,12 @@ const SingleEvent = () => {
 
 const ShowJoinButton = ({ event }) => {
 	// Assuming you have event.StartTime available and it's in a valid date format
-	const { IsMember, StartTime } = event
+	const { IsMember, StartTime, EndTime } = event
 	const navigate = useNavigate()
 
 	// Convert StartTime to a Date object
 	const eventStartTime = new Date(StartTime) // Ensure StartTime is in a valid format
+	const eventEndTime = new Date(EndTime)
 
 	// Get current date and time
 	const currentDateTime = new Date()
@@ -674,14 +646,18 @@ const ShowJoinButton = ({ event }) => {
 	// Check if the button should be shown
 	const shouldShowJoinButton = event?.IsMember && currentDateTime >= thirtyMinutesBefore
 
+	// Check if the event has ended
+	const hasEventEnded = currentDateTime > eventEndTime
+
 	return (
 		<div className='flex-1'>
-			{/* Other components */}
-			{shouldShowJoinButton && (
-				<Button width='full' variant='danger' onClick={() => navigate('join')}>
-					Join
-				</Button>
-			)}
+			{hasEventEnded
+				? null
+				: shouldShowJoinButton && (
+						<Button width='full' variant='danger' onClick={() => navigate('join')}>
+							Join
+						</Button>
+					)}
 		</div>
 	)
 }
