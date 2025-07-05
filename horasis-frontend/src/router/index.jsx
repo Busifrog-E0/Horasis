@@ -52,6 +52,8 @@ import SuperAdminLogin from '../pages/SuperAdminLogin'
 import Tags from '../pages/Tags'
 import UniversalSearchDetails from '../pages/UniversalSearchDetails'
 import AdminContentReports from '../pages/superadmin/AdminContentReports'
+import GlobalGoals from '../pages/GlobalGoals'
+import VirtualForrest from '../pages/VirtualForrest'
 
 export const router = createBrowserRouter(
 	createRoutesFromElements(
@@ -70,7 +72,10 @@ export const router = createBrowserRouter(
 				</Route>
 			</Route>
 			<Route path='/' element={<AuthLayout />}>
+
 				<Route path='/' element={<DashboardLayout />}>
+					<Route path='/GlobalGoals' element={<GlobalGoals />} />
+					<Route path='/VirtualForrest' element={<VirtualForrest />} />
 					<Route path='/' element={<ProfileTabLayout />}>
 						<Route path='/' element={<Events />} />
 						<Route path='/Activities' element={<Activities />} />

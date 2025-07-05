@@ -20,6 +20,7 @@ import whiteforum from '../assets/icons/forumwhite.svg'
 import blackforum from '../assets/icons/forumblack.svg'
 import whiteevent from '../assets/icons/eventwhite.svg'
 import blackevent from '../assets/icons/eventblack.svg'
+import ChoroplethChart from '../components/Map/ChoroplethChart'
 
 const Analytics = () => {
 	const { currentUserData, updateCurrentUser } = useAuth()
@@ -111,7 +112,6 @@ const Analytics = () => {
 						</div>
 						<div className='p-5 pb-0 bg-system-secondary-bg rounded-lg mt-3 lg:mt-5'>
 							<h4 className='font-bold text-xl text-system-primary-text '>Today's Event Location</h4>
-
 							<MapChart
 								onCitySelect={(city) => {
 									console.log(city)

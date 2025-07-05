@@ -65,7 +65,7 @@ const colors = {
 }
 
 const fontFamily = {
-	sans: ['Poppins', 'sans-serif'],
+	sans: ['Lato', 'sans-serif'],
 }
 
 const boxShadow = {
