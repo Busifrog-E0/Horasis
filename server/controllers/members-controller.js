@@ -82,49 +82,26 @@ const PostMembers = async (req, res) => {
         return res.status(444).json(AlertBoxObject("Cannot Join", "This event is full"));
     }
 
-
-
-    let transactionFinish = false;
-    const Session = databaseHandling.dbClient.startSession();
-    try {
-        Session.startTransaction();
-
-        const MemberCheck = await TransactionalReadMembers({ MemberId: UserId, EntityId, MembershipStatus: "Accepted" }, undefined, 1, undefined, Session);
-        if (MemberCheck.length > 0) {
-            await Session.abortTransaction();
-            return res.status(444).json(AlertBoxObject("Cannot Join", "You have already joined this discussion"));
-        }
-
-        if (Entity.Privacy === "Private") {
-            req.body = MemberInit({ MemberId: UserId, EntityId, UserDetails, Type }, "Requested")
-            await TransactionalCreateMembers(req.body, undefined, Session);
-            res.status(244).json(AlertBoxObject("Request Sent", "Request has been sent"));
-        }
-        else {
-            req.body = MemberInit({ MemberId: UserId, EntityId, UserDetails, Type }, "Accepted");
-            await TransactionalCreateMembers({ ...req.body, MemberId: UserId, EntityId, UserDetails }, undefined, Session);
-            res.json(true);
-        }
-
-        transactionFinish = true;
-        await Session.commitTransaction();
-
-    } catch (error) {
-        await Session.abortTransaction();
-        transactionFinish = false;
+    const MemberCheck = await TransactionalReadMembers({ MemberId: UserId, EntityId, MembershipStatus: "Accepted" }, undefined, 1, undefined, undefined);
+    if (MemberCheck.length > 0) {
+        return res.status(444).json(AlertBoxObject("Cannot Join", "You have already joined this discussion"));
     }
-    finally {
-        await Session.endSession();
-    }
-    if (!transactionFinish) {
+
+    const InitMembershipStatus = Entity.Privacy === "Private" ? "Requested" : "Accepted";
+    req.body = MemberInit({ MemberId: UserId, EntityId, UserDetails, Type }, InitMembershipStatus)
+
+    const CheckFlag = await TransactionalCreateMembers(req.body, undefined, undefined);
+    if (!CheckFlag) {
         return res.status(444).json(AlertBoxObject("Cannot Join", "You have already joined this discussion"));
     }
 
     if (Entity.Privacy === "Private") {
-        await SendNotificationForMemberRequest(Type, EntityId, UserId);
+        res.status(244).json(AlertBoxObject("Request Sent", "Request has been sent"));
+        return SendNotificationForMemberRequest(Type, EntityId, UserId);
     }
     else {
-        await Promise.all([
+        res.json(true);
+        return Promise.all([
             SendNotificationForMemberJoin(Type, EntityId, UserId),
             Type === "Discussion" ? IncrementDiscussions({ NoOfMembers: 1 }, EntityId) : (
                 Type === "Event" ? IncrementEvents({ NoOfMembers: 1 }, EntityId) : IncrementPodcasts({ NoOfMembers: 1 }, EntityId))
