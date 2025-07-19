@@ -57,38 +57,23 @@ const PostLikes = async (req, res) => {
     //@ts-ignore
     const { UserId } = req.user;
 
-    let transactionFinish = false;
-    const Session = databaseHandling.dbClient.startSession();
-
-    try {
-        Session.startTransaction();
-        const CheckLike = await TransactionalReadLikes({ EntityId, UserId }, undefined, 1, undefined, Session);
-        if (CheckLike.length > 0) {
-            await Session.abortTransaction();
-            return res.status(444).json(AlertBoxObject("Cannot Like", "You cannot like twice"));
-        }
-        const UserDetails = await ReadOneFromUsers(UserId);
-        const { ParentId, ParentType } = await GetParentTypeFromEntity(EntityId, Type);
-        const data = LikeInit({
-            EntityId, UserId, Type, UserDetails, ParentId,
-            //@ts-ignore
-            ParentType
-        });
-        await TransactionalCreateLikes(data, undefined, Session);
-        transactionFinish = true;
-        await Session.commitTransaction();
-
-    } catch (error) {
-        await Session.abortTransaction();
-        transactionFinish = false;
-    }
-    finally {
-        await Session.endSession();
-    }
-
-    if (!transactionFinish) {
+    const CheckLike = await TransactionalReadLikes({ EntityId, UserId }, undefined, 1, undefined, undefined);
+    if (CheckLike.length > 0) {
         return res.status(444).json(AlertBoxObject("Cannot Like", "You cannot like twice"));
     }
+
+    const UserDetails = await ReadOneFromUsers(UserId);
+    const { ParentId, ParentType } = await GetParentTypeFromEntity(EntityId, Type);
+    const data = LikeInit({
+        EntityId, UserId, Type, UserDetails, ParentId,
+        //@ts-ignore
+        ParentType
+    });
+    const FlagCheck = await TransactionalCreateLikes(data, undefined, undefined);
+    if (!FlagCheck) {
+        return res.status(444).json(AlertBoxObject("Cannot Like", "You cannot like twice"));
+    }
+
 
     if (Type === 'Activity') {
         await IncrementActivities({ NoOfLikes: 1 }, EntityId);
