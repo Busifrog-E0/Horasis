@@ -225,7 +225,9 @@ async function TransactionalCreate(collectionName, data, docName = undefined, in
             }
         } catch (error) {
             logger.log(error);
-            throw new Error(error);
+            // throw new Error(error);
+            //@ts-ignore
+            resolve(false);
         }
     });
 }

@@ -55,7 +55,7 @@ import swaggerUi from 'swagger-ui-express';
 const raw = await readFile('./swaggerOutput.json', 'utf-8');
 const swaggerFile = JSON.parse(raw);
 // import swaggerFile from './swaggerOutput.json' with { type: 'json' };
-// import { FirstSetupAdminInfo } from "./databaseControllers/admins-databaseController.js";
+import { FirstTimeSetup } from "./databaseControllers/common.js";
 import { ClearAdminRoleArray, ClearLogoutUsers, GenerateToken } from "./controllers/auth-controller.js";
 import { decodeSocketIdToken } from "./middleware/auth-middleware.js";
 import { ConnectSocket } from "./controllers/socket-controller.js";
@@ -85,8 +85,7 @@ setInterval(() => {
 
 const expressServer = app.listen(PORT, async (err) => {
     await db.init();
-    // await FirstSetupAdminInfo();
-
+    await FirstTimeSetup();
     console.log(`Server is up at localhost ${PORT}`);
     const CurrentUser = {
         // Role: 'Admin',

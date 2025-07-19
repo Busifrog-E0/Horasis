@@ -1,16 +1,35 @@
-import { ObjectId } from "mongodb";
+import moment from "moment";
 import { ReadFollows, ReadOneFromFollows, UpdateFollows } from "./follow-databaseController.js";
 import { ReadOneFromUsers, ReadUsers } from "./users-databaseController.js";
 import { ReadActivities, UpdateActivities, UpdateManyActivities } from "./activities-databaseController.js";
 import { ReadDiscussions, UpdateDiscussions } from "./discussions-databaseController.js";
 import { CreateActiveUsers, ReadActiveUsers } from "./activeUsers-databaseController.js";
-import moment from "moment";
 import { AddConnectionstoUser } from "../controllers/users-controller.js";
 import { AddtoUserActivities } from "../controllers/activities-controller.js";
 import { ReadLikes, UpdateLikes } from "./likes-databaseController.js";
 import { GetLikes } from "../controllers/likes-controller.js";
 import { GetParentTypeFromEntity } from "../controllers/common.js";
 import { ReadComments, UpdateComments } from "./comments-databaseController.js";
+import databaseHandling from "./functions.js";
+
+
+const FirstTimeSetup = async () => {
+    await databaseHandling.db.collection('Likes').createIndex(
+        { UserId: 1, EntityId: 1 },
+        { unique: true }
+    );
+
+    await databaseHandling.db.collection('Follows').createIndex(
+        { FolloweeId: 1, FollowerId: 1 },
+        { unique: true }
+    );
+
+    await databaseHandling.db.collection('Members').createIndex(
+        { MemberId: 1, EntityId: 1, MembershipStatus: 1 },
+        { unique: true }
+    );
+
+}
 
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
 
@@ -135,7 +154,10 @@ function Shuffle(array) {
 
     return array;
 }
+
+
 export {
+    FirstTimeSetup,
     VersionUpdate,
     Shuffle,
     CreateUserExtendedProperties,
@@ -143,5 +165,5 @@ export {
     AddUserDetailstoLikes,
     TypeFeedInProfileChangeActivities,
     ParentTypeInLikesAndComments,
-    UserInComments
+    UserInComments,
 }
