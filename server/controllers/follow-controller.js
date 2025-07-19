@@ -95,31 +95,16 @@ const PostFollows = async (req, res) => {
         return res.status(444).json(AlertBoxObject("Cannot follow yourself", "You cannot follow yourself"));
     }
 
-    let transactionFinish = false;
-    const Session = databaseHandling.dbClient.startSession();
 
-    try {
-        Session.startTransaction();
-        const Follow = await TransactionalReadFollows({ FolloweeId, FollowerId }, undefined, 1, undefined, Session);
-        if (Follow.length > 0) {
-            await Session.abortTransaction();
-            return res.status(444).json(AlertBoxObject("Already follows this profile", "You already follow this profile"));
-        }
-        const UserDetails = await Promise.all([ReadOneFromUsers(FolloweeId), ReadOneFromUsers(FollowerId)]);
-        req.body.UserDetails = UserDetails;
-        await TransactionalCreateFollows(req.body, undefined, Session);
-
-        transactionFinish = true;
-        await Session.commitTransaction();
-
-    } catch (error) {
-        await Session.abortTransaction();
-        transactionFinish = false;
+    const Follow = await TransactionalReadFollows({ FolloweeId, FollowerId }, undefined, 1, undefined, undefined);
+    if (Follow.length > 0) {
+        return res.status(444).json(AlertBoxObject("Already follows this profile", "You already follow this profile"));
     }
-    finally {
-        await Session.endSession();
-    }
-    if (!transactionFinish) {
+    const UserDetails = await Promise.all([ReadOneFromUsers(FolloweeId), ReadOneFromUsers(FollowerId)]);
+    req.body.UserDetails = UserDetails;
+    const CheckFlag = await TransactionalCreateFollows(req.body, undefined, undefined);
+
+    if (!CheckFlag) {
         return res.status(444).json(AlertBoxObject("Already follows this profile", "You already follow this profile"));
     }
 
