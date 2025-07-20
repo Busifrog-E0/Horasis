@@ -67,6 +67,18 @@ const ReadOneFromUsers = async (DocId, RemovePassword = true) => {
     if (RemovePassword && UserData !== null) {
         // @ts-ignore
         delete UserData.Password;
+        // @ts-ignore
+        delete UserData.Roles;
+        // @ts-ignore
+        delete UserData.CreatedIndex;
+        // @ts-ignore
+        delete UserData.Index;
+        // @ts-ignore
+        delete UserData.LastUpdated;
+        // @ts-ignore
+        delete UserData.Online;
+        // @ts-ignore
+        delete UserData.LastActive;
     }
     return UserData;
 }
