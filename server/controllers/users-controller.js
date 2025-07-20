@@ -149,7 +149,7 @@ const UserLogin = async (req, res) => {
     const { Email, Password } = req.body;
     const Users = await ReadUsers({ Email: Email }, undefined, 1, undefined, false);
     if (Users.length === 0) {
-        return res.json("REGISTER_REDIRECT");
+        return res.status(444).json(AlertBoxObject("Invalid Credentials", "The email or password you entered is incorrect"));
     }
     const [User] = Users
     if (await ComparePassword(Password, User.Password) === false) {
