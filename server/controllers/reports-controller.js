@@ -45,7 +45,8 @@ const GetReports = async (req, res) => {
  * @returns {Promise<e.Response<true>>}
  */
 const PostReports = async (req, res) => {
-    const { UserId } = req.body;
+    // @ts-ignore
+    const { UserId } = req.user;
     req.body.UserDetails = await ReadOneFromUsers(UserId);
     req.body = ReportInit(req.body);
     await CreateReports(req.body);
