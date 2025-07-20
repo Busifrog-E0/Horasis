@@ -124,7 +124,15 @@ const CheckSameUserInBody = (req, res, next) => {
 }
 
 
-const CheckSameUserInEntity = (ReadFn,FieldName)=> async (req, res, next) => {
+const CheckSameOrganizerInBody = (req, res, next) => {
+    if (req.user.UserId !== req.body.OrganiserId) {
+        return res.status(402).json("No Access")
+    }
+    return next();
+}
+
+
+const CheckSameUserInEntity = (ReadFn, FieldName) => async (req, res, next) => {
     const Entity = await ReadFn(req.params[FieldName]);
     if (Entity.UserId !== req.user.UserId) {
         return res.status(402).json("No Access")
@@ -141,5 +149,5 @@ const EntityTypes = {
 export {
     AddUpdatedBy, ValidateGetEntity, QueryParameterFormatting,
     SetUserIdInQuery, CheckSameUser, SetActiveInQueryIfUser, EntityTypes,
-    CheckSameUserInBody, CheckSameUserInEntity  
+    CheckSameUserInBody, CheckSameUserInEntity, CheckSameOrganizerInBody
 }
