@@ -7,6 +7,7 @@ import {
     PatchPassword,
 } from '../controllers/users-controller.js';
 import asyncHandler from 'express-async-handler';
+import { rateLimit } from 'express-rate-limit'
 
 import { decodeIDToken, ensureAuthorized } from '../middleware/auth-middleware.js';
 // import { ValidatePostUsers, ValidateGetUsers, ValidatePatchUsers } from '../validations/users-validations.js';
@@ -17,11 +18,22 @@ import { ValidateCheckUsername, ValidatePatchUsers, ValidateUserLogin, ValidateP
 import { GetMedias } from '../controllers/medias-controller.js';
 import { CheckOTP } from '../controllers/auth-controller.js';
 import { GetNotifications, GetOneFromNotifications, GetUnreadNotification } from '../controllers/notifications-controller.js';
-import {  InviteUserToCreateAccount } from '../controllers/invitations-controller.js';
-const router = e.Router();
-router.route
+import { InviteUserToCreateAccount } from '../controllers/invitations-controller.js';
 
-router.get('/users/:UserId', decodeIDToken, ensureAuthorized("User","Admin","SuperAdmin"), SwaggerDocs.get_Users_UserId,
+const singleApiLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 5, // Limit each IP to 5 requests
+    message: {
+        status: 429,
+        error: 'Too many requests. Please try again later.'
+    },
+    standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+    legacyHeaders: false,  // Disable the `X-RateLimit-*` headers
+});
+
+const router = e.Router();
+
+router.get('/users/:UserId', decodeIDToken, ensureAuthorized("User", "Admin", "SuperAdmin"), SwaggerDocs.get_Users_UserId,
     // @ts-ignore
     asyncHandler(GetOneFromUsers));
 
@@ -43,7 +55,7 @@ router.post('/users/verify', ValidateVerifyOTP, SwaggerDocs.post_Users_Verify,
     //@ts-ignore
     asyncHandler(VerifyRegistrationOTP))
 
-router.post('/users/login', ValidateUserLogin, SwaggerDocs.post_Users_Login,
+router.post('/users/login', singleApiLimiter, ValidateUserLogin, SwaggerDocs.post_Users_Login,
     // @ts-ignore
     asyncHandler(UserLogin));
 
@@ -72,15 +84,15 @@ router.get('/users/:UserId/media', decodeIDToken, ensureAuthorized("User"), Vali
     //@ts-ignore
     asyncHandler(GetMedias))
 
-router.post('/users/forgotPassword', ValidatePostForgotPassword, SwaggerDocs.post_Users_ForgotPassword,
+router.post('/users/forgotPassword', singleApiLimiter, ValidatePostForgotPassword, SwaggerDocs.post_Users_ForgotPassword,
     //@ts-ignore
     asyncHandler(SendForgotPasswordOTP));
 
-router.post('/users/forgotPassword/verify', ValidateVerifyOTP, SwaggerDocs.post_Users_ForgotPassword_Verify,
+router.post('/users/forgotPassword/verify', singleApiLimiter, ValidateVerifyOTP, SwaggerDocs.post_Users_ForgotPassword_Verify,
     //@ts-ignore
     asyncHandler(CheckOTP));
 
-router.post('/users/forgotPassword/reset', ValidatePasswordReset, SwaggerDocs.post_Users_ForgotPassword_Reset,
+router.post('/users/forgotPassword/reset', singleApiLimiter, ValidatePasswordReset, SwaggerDocs.post_Users_ForgotPassword_Reset,
     //@ts-ignore
     asyncHandler(PatchPassword));
 
