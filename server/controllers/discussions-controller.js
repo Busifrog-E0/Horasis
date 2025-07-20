@@ -161,7 +161,8 @@ const GetPublicDiscussions = async (req, res) => {
  * @returns {Promise<e.Response<true>>}
  */
 const PostDiscussions = async (req, res) => {
-    const { OrganiserId } = req.body;
+    // @ts-ignore
+    const { UserId: OrganiserId } = req.user;
     const [UserDetails, OriginalLanguage] = await Promise.all([
         ReadOneFromUsers(OrganiserId),
         DetectLanguage(req.body.Description)

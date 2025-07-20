@@ -25,7 +25,7 @@ import { ValidateGetMembers, ValidateInviteMembers } from '../validations/member
 const router = e.Router();
 
 
-router.get('/discussions', decodeIDToken, ensureAuthorized("User"), ValidateGetEntity, QueryParameterFormatting, SwaggerDocs.get_Discussions,
+router.get('/discussions', decodeIDToken, ensureAuthorized("User", "Admin"), ValidateGetEntity, QueryParameterFormatting, SwaggerDocs.get_Discussions,
     //@ts-ignore
     asyncHandler(GetDiscussions));
 
@@ -33,11 +33,11 @@ router.get('/discussions/:DiscussionId', decodeIDToken, ensureAuthorized("User",
     // @ts-ignore
     asyncHandler(GetOneFromDiscussions));
 
-router.post('/discussions', decodeIDToken, ensureAuthorized("User"), ValidatePostDiscussion, SwaggerDocs.post_Discussion,
+router.post('/discussions', decodeIDToken, ensureAuthorized("User", "Admin"), ValidatePostDiscussion, SwaggerDocs.post_Discussion,
     // @ts-ignore
     asyncHandler(PostDiscussions));
 
-router.patch('/discussions/:DiscussionId/coverPicture', decodeIDToken, ensureAuthorized("User"),
+router.patch('/discussions/:DiscussionId/coverPicture', decodeIDToken, ensureAuthorized("User", "Admin"),
     CheckSameUserInEntity(GetOneFromDiscussions, "DiscussionId"), ValidatePatchDiscussionCoverPhoto,
     SwaggerDocs.patch_Discussion_DiscussionId_CoverPicture,
     // @ts-ignore
@@ -48,19 +48,19 @@ router.get('/guest/discussions/', ValidateGetEntity, QueryParameterFormatting, S
     asyncHandler(GetPublicDiscussions));
 
 
-router.patch('/discussions/:DiscussionId/member/permissions/everyone', decodeIDToken, ensureAuthorized("User"), ValidateAddPermissionForEveryone,
+router.patch('/discussions/:DiscussionId/member/permissions/everyone', decodeIDToken, ensureAuthorized("User", "Admin"), ValidateAddPermissionForEveryone,
     CheckSameUserInEntity(GetOneFromDiscussions, "DiscussionId"), SwaggerDocs.patch_Discussions_EntityId_Member_Permissions_Everyone,
     //@ts-ignore
     asyncHandler(PatchDiscussions));
 
 /*********************************************************************FILTERED DISCUSSIONS********************************************************************* */
 
-router.get('/user/:UserId/discussions', decodeIDToken, ensureAuthorized("User"), ValidateGetEntity, QueryParameterFormatting,
+router.get('/user/:UserId/discussions', decodeIDToken, ensureAuthorized("User", "Admin"), ValidateGetEntity, QueryParameterFormatting,
     SwaggerDocs.get_User_UserId_Discussions,
     //@ts-ignore
     asyncHandler(GetUserDiscussions))
 
-router.get('/user/:UserId/discussions/invited', decodeIDToken, ensureAuthorized("User"), ValidateGetEntity, QueryParameterFormatting,
+router.get('/user/:UserId/discussions/invited', decodeIDToken, ensureAuthorized("User", "Admin"), ValidateGetEntity, QueryParameterFormatting,
     SwaggerDocs.get_Discussions_Invited,
     //@ts-ignore
     asyncHandler(GetInvitedDiscussions));
