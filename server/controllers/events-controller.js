@@ -160,6 +160,7 @@ const GetPublicEvents = async (req, res) => {
 const PostEvents = async (req, res) => {
     // @ts-ignore
     const { UserId: OrganiserId } = req.user;
+    req.body.OrganiserId = OrganiserId;
     const UserDetails = await ReadOneFromUsers(OrganiserId);
     const { Agenda } = req.body;
     req.body.Agenda = Agenda.map(Agenda => {
@@ -168,7 +169,7 @@ const PostEvents = async (req, res) => {
     })
     req.body = EventInit(req.body);
     const EventId = await CreateEvents({ ...req.body, OrganiserId });
-    const Member = MemberInit({ MemberId: OrganiserId, EntityId: EventId, UserDetails,Type : "Event" }, "Accepted", true);
+    const Member = MemberInit({ MemberId: OrganiserId, EntityId: EventId, UserDetails, Type: "Event" }, "Accepted", true);
     await CreateMembers(Member);
     return res.json(EventId);
 }
@@ -241,8 +242,8 @@ const SetEventDataForGet = async (Event, UserId) => {
         } else {
             return null;
         }
-    }).filter(agenda=> agenda !== null);
-         Event.Speakers = Speakers;
+    }).filter(agenda => agenda !== null);
+    Event.Speakers = Speakers;
     return { ...Event, UserDetails };
 }
 
