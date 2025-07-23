@@ -191,7 +191,11 @@ const ForgotPassword = () => {
 					</button>
 				</Modal.Header>
 				<Modal.Body>
-					<p className='text-system-secondary-text mb-2'>
+					<p className='text-system-primary-accent my-2 text-base'>
+						You will receive a mail with the forgot password option in the email if an account exists with the given
+						email id.
+					</p>
+					<p className='text-system-secondary-text mb-2 '>
 						Please verify the OTP number received in your registered email.
 					</p>
 					<h1 className='text-system-primary-text font-medium text-lg'>OTP</h1>
