@@ -12,10 +12,10 @@ const HomeDiscussionSec = (props, ref) => {
 	return (
 		<div className='bg-sky-200 h-max flex flex-col items-center ' ref={ref}>
 			<div className='flex items-center justify-center my-20 max-w-screen-2xl w-full'>
-				<div className='w-11/12  md:w-8/12 flex flex-col gap-10'>
+				<div className='w-11/12  md:w-9/12 flex flex-col gap-10'>
 					<div className='flex flex-col items-center justify-between gap-1'>
 						<h1 className='text-3xl text-system-primary-accent'>Community Discussions</h1>
-						<p className='text-system-secondary-text'>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
+						{/* <p className='text-system-secondary-text'>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p> */}
 					</div>
 					<div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'>
 						{guestDiscussions &&
