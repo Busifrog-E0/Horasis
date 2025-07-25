@@ -18,7 +18,7 @@ const ModeOfDevelopment = process.env.ModeOfDevelopment;
  * @type {string}
  */
 // @ts-ignore
-const MongoDB_Host = ModeOfDevelopment === "Debug" ? process.env.MongoDB_Host_Production : process.env.MongoDB_Host_Debug;
+const MongoDB_Host = ModeOfDevelopment === "Production" ? process.env.MongoDB_Host_Production : process.env.MongoDB_Host_Debug;
 
 /**
  * @type {string}
@@ -63,7 +63,7 @@ const GOOGLE_TRANSLATE_KEY = process.env.GOOGLE_TRANSLATE_KEY
  * @type {string}
  */
 // @ts-ignore
-const ZeptoMailToken = ModeOfDevelopment === "Debug" ? process.env.ZeptoProductionMailToken : process.env.ZeptoDebugMailToken;
+const ZeptoMailToken = ModeOfDevelopment === "Production" ? process.env.ZeptoProductionMailToken : process.env.ZeptoDebugMailToken;
 
 /**
  * @type {string}
