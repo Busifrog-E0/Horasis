@@ -1,1 +1,1 @@
-export const AGORA_APP_ID = '206c8a92da8d4676aabfb8314a21fa17'
+export const AGORA_APP_ID = import.meta.env.VITE_AGORA_APP_ID
