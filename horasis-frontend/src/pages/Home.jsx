@@ -6,6 +6,8 @@ import HomeFooter from '../components/Home/HomeFooter'
 import HomeHeader from '../components/Home/HomeHeader'
 import HomeMidSection from '../components/Home/HomeMidSection'
 import HomeUpcomingEvents from '../components/Home/HomeUpcomingEvents'
+import HomeMilestones from '../components/Home/HomeMilestones'
+import HomeAboutFounder from '../components/Home/HomeAboutFounder'
 const Home = () => {
 	const discussionRef = useRef()
 	const eventsRef = useRef()
@@ -21,6 +23,9 @@ const Home = () => {
 				<HeroSection />
 			</div>
 			<HomeMidSection />
+			<HomeMilestones />
+
+			<HomeAboutFounder />
 			<HomeUpcomingEvents ref={eventsRef} />
 			<HomeDiscussionsSection ref={discussionRef} />
 			<HomeFooter ref={contactRef} />
