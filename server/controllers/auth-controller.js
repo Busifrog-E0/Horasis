@@ -2,7 +2,27 @@ import e from "express";
 import jwt from "jsonwebtoken";
 import ENV from "./../Env.js";
 import dataHandling from '../databaseControllers/functions.js';
-const { Read, Create, Delete } = dataHandling;
+import { getOTP } from "./common.js";
+import { ForgotPasswordOTPEmail, SendOTPEmail } from "./emails-controller.js";
+import moment from "moment";
+import { ReadUsers } from "../databaseControllers/users-databaseController.js";
+const { Read, Create, Delete, Update } = dataHandling;
+
+
+/**
+ * @type {Array<{UserId: string, Index: number, Type: "Add" | "Remove",Role : string[] } >}
+ */
+let AdminRoleArray = [];
+let LogoutUsers = [];
+
+
+const TestUsers = [
+    "qwertyui@tgmail.com",
+]
+const MAXIMUM_RETRIES_OF_OTP = 5;
+/**
+ * @typedef {import("../databaseControllers/users-databaseController.js").UserData} UserData
+ */
 
 /**
  * @typedef {object} RefreshTokenData
@@ -10,6 +30,18 @@ const { Read, Create, Delete } = dataHandling;
  * @property {string} Token
  * @property {boolean} Valid
  * @property {string} DocId
+ */
+
+/**
+ * @typedef {object} OTPData
+ * @property {UserData} Data
+ * @property {string} OTP
+ * @property {string} Date
+ * @property {number} Index
+ * @property {number} NoOfRetries
+ * @property {number} NoOfOTPs
+ * @property {number} Email
+ * @property {boolean} EmailVerified
  */
 
 /**
@@ -48,12 +80,25 @@ const RefreshToken = async (req, res) => {
             jwt.decode(RefreshTokenData.Token, { complete: true });
             const responseObject = await GenerateToken(RefreshTokenData.SignObject);
             await Delete("RefreshToken", RefreshTokenData.DocId);
-            res.json(responseObject);
+            res.json({ ...responseObject, CurrentUser: RefreshTokenData.SignObject });
         } catch (error) {
             res.status(445).json(error.message);
         }
     }
 }
+
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ * @returns 
+ */
+const CheckOTP = async (req, res) => {
+    const { OTPId, OTP } = req.body;
+    const OTPData = await VerifyOTP(OTPId, OTP, res);
+    return res.json(true);
+}
+
 /**
  * 
  * @param {object} SignObject 
@@ -65,5 +110,204 @@ const GenerateToken = async (SignObject) => {
     return { "Token": Token, "RefreshToken": RefreshToken };
 }
 
-export { ModelLogin, RefreshToken, GenerateToken };
+/**
+ * @param {string} Email 
+ * @param {UserData} Data 
+ * @param {string} Description
+ * @param {e.Response} res 
+ * @returns {Promise<string|Error>}
+ */
+const SendRegisterOTP = async (Email, Data, Description, res) => {
+    let TestUser = false;
+    if (TestUsers.includes(Email)) {
+        TestUser = true;
+    }
+    const OTP = getOTP(TestUser);
+
+    const ReturnMessage = await SendOTPEmail(Email, OTP, Data.FullName);
+
+    if (ReturnMessage === true) {
+        const Now = moment();
+        const Date = Now.format("YYYY-MM-DD");
+        const Index = `${Now.valueOf()}`;
+        const data = { "OTP": OTP, "Email": Email, EmailVerified: false, Index, Date, Data, "NoOfRetries": 0, "NoOfOTPs": 0 };
+        const OTPId = await Create("OTP", data);
+        return OTPId;
+    }
+    else {
+        res.status(400);
+        throw Error(ReturnMessage);
+    }
+}
+
+
+/**
+ * @param {string} Email 
+ * @param {e.Response} res 
+ * @returns {Promise<string|Error>}
+ */
+const SendPasswordOTP = async (Email, res) => {
+    let TestUser = false;
+    if (TestUsers.includes(Email)) {
+        TestUser = true;
+    }
+    const OTP = getOTP(TestUser);
+    const [User] = (await ReadUsers({ Email }, undefined, 1, undefined));
+    const ReturnMessage = await ForgotPasswordOTPEmail(Email, User.FullName, OTP);
+
+    if (ReturnMessage === true) {
+        const Now = moment();
+        const Date = Now.format("YYYY-MM-DD");
+        const Index = `${Now.valueOf()}`;
+        const data = { "OTP": OTP, "Email": Email, EmailVerified: false, Index, Date, "NoOfRetries": 0, "NoOfOTPs": 0 };
+        const OTPId = await Create("OTP", data);
+        return OTPId;
+    }
+    else {
+        res.status(400);
+        throw Error(ReturnMessage);
+    }
+}
+/**
+ * 
+ * @param {string} OTPId 
+ * @param {string} OTP 
+ * @param {e.Response} res
+ * @returns {Promise<OTPData|Error>}
+ */
+const VerifyOTP = async (OTPId, OTP, res) => {
+    /**
+     * @type {OTPData}
+     */
+    const data = await Read("OTP", OTPId);
+    if (data === null) {
+        res.status(400);
+        throw Error("No OTP Generated");
+    }
+    else if (data.NoOfRetries >= MAXIMUM_RETRIES_OF_OTP) {
+        res.status(400);
+        throw Error("Maximum number of retries finished");
+    }
+    else if (data.OTP !== OTP) {
+        data.NoOfRetries++;
+        await Update("OTP", data, OTPId);
+        res.status(400);
+        throw Error(`OTP Incorrect. Only ${MAXIMUM_RETRIES_OF_OTP - data.NoOfRetries} tries left`);
+    }
+    else if (data.EmailVerified) {
+        res.status(400);
+        throw Error(`OTP Already Verified.`);
+    }
+    else {
+        data.EmailVerified = true;
+        await Update("OTP", data, OTPId);
+        return data;
+    }
+}
+
+
+const UserLogout = async (req, res) => {
+    const { Token, RefreshToken } = req.body;
+    /**
+     * @type {RefreshTokenData}
+     */
+    const RefreshTokenData = await Read("RefreshTokens", RefreshToken);
+    if (!RefreshTokenData || RefreshTokenData.Token !== Token || RefreshTokenData.Valid !== true) {
+        res.status(445).json("InValid");
+    }
+    else {
+        try {
+            jwt.decode(RefreshTokenData.Token, { complete: true });
+            LogoutUsers.push({ Index: moment().valueOf(), token: RefreshTokenData.Token });
+            await Delete("RefreshToken", RefreshTokenData.DocId);
+            res.json(true);
+        }
+        catch (error) {
+            res.status(445).json(error.message);
+        }
+    }
+
+}
+
+/**
+ * 
+ * @param {undefined|object} Where 
+ * @param {undefined|string} NextIndex 
+ * @param {undefined|number} Limit 
+ * @param {undefined|object} orderBy 
+ * @returns {Promise<Array<RefreshTokenData>>} Returns DiscussionData
+ */
+const ReadRefreshTokens = async (Where, NextIndex, Limit, orderBy) => {
+    return await Read("RefreshTokens", undefined, NextIndex, Limit, Where, orderBy);
+}
+
+/**
+ * 
+ * @param {string} DocId 
+ * @param {object} data 
+ * @returns 
+ */
+const UpdateRefreshToken = async (DocId, data) => {
+    return await Update("RefreshTokens", data, DocId);
+}
+
+/**
+ * 
+ * @param {string} UserId 
+ * @param {"Add"|"Remove"} action 
+ */
+const MaintainAdminRoleArray = (UserId, action) => {
+    const Item = AdminRoleArray.find(item => item.UserId === UserId);
+    if (Item) {
+        if (action !== Item.Type) {
+            AdminRoleArray.splice(AdminRoleArray.findIndex(item => item.UserId === UserId), 1);
+        }
+        else {
+            return;
+        }
+    }
+    const Role = action === "Add" ? ["Admin", "User"] : ["User"];
+    AdminRoleArray.push({ UserId, Index: moment().valueOf(), Type: action, Role });
+    return;
+}
+
+const ClearAdminRoleArray = () => {
+    AdminRoleArray = AdminRoleArray.filter(item => moment().valueOf() - item.Index > 2 * 60 * 60 * 1000);
+}
+
+const ClearLogoutUsers = () => {
+    LogoutUsers = LogoutUsers.filter(item => moment().valueOf() - item.Index > 2 * 60 * 60 * 1000);
+}
+
+/**
+ * 
+ * @param {string} OTPId 
+ * @returns {Promise<OTPData>}
+ */
+const ReadOneFromOTP = async (OTPId) => {
+    return await Read("OTP", OTPId);
+}
+/** 
+ * 
+ * @param {object} CurrentUser 
+ * @returns 
+ */
+const TokenData = async (CurrentUser) => {
+    const { Token, RefreshToken } = await GenerateToken(CurrentUser);           //fn in auth
+
+    return {
+        CurrentUser,
+        Token,
+        RefreshToken
+    };
+}
+
+export {
+    ModelLogin, RefreshToken, GenerateToken, UserLogout,
+    VerifyOTP, SendRegisterOTP, TokenData,
+    SendPasswordOTP, ReadOneFromOTP, CheckOTP,
+    ReadRefreshTokens, UpdateRefreshToken,
+    MaintainAdminRoleArray, AdminRoleArray, LogoutUsers,
+    ClearAdminRoleArray, ClearLogoutUsers
+};
 

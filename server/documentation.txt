@@ -1,0 +1,7 @@
+Discarded Codes
+
+In user-controller.js 
+    SendUserEmailVerification
+    VerifyUserEmail
+
+Delete files while patching media files

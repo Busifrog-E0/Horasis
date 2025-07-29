@@ -18,7 +18,7 @@ const ModeOfDevelopment = process.env.ModeOfDevelopment;
  * @type {string}
  */
 // @ts-ignore
-const MongoDB_Host = process.env.MongoDB_Host;
+const MongoDB_Host = ModeOfDevelopment === "Production" ? process.env.MongoDB_Host_Production : process.env.MongoDB_Host_Debug;
 
 /**
  * @type {string}
@@ -53,6 +53,35 @@ const DO_SPACES_SECRET = process.env.DO_SPACES_SECRET;
  */
 // @ts-ignore
 const DO_SPACES_NAME = process.env.DO_SPACES_NAME;
+/**
+ * @type {string}
+ */
+// @ts-ignore
+const GOOGLE_TRANSLATE_KEY = process.env.GOOGLE_TRANSLATE_KEY
+
+/**
+ * @type {string}
+ */
+// @ts-ignore
+const ZeptoMailToken = ModeOfDevelopment === "Production" ? process.env.ZeptoProductionMailToken : process.env.ZeptoDebugMailToken;
+
+/**
+ * @type {string}
+ */
+// @ts-ignore
+const AGORA_APP_ID = process.env.AGORA_APP_ID;
+
+/**
+ * @type {string}
+ */
+// @ts-ignore
+const AGORA_APP_CERTIFICATE = process.env.AGORA_APP_CERTIFICATE;
+
+/**
+ * @type {string}
+ */
+//@ts-ignore
+const { EXTERNAL_SPEAKER_URL } = process.env;
 
 
 export default {
@@ -65,4 +94,9 @@ export default {
     DO_SPACES_KEY,
     DO_SPACES_SECRET,
     DO_SPACES_NAME,
+    ZeptoMailToken,
+    GOOGLE_TRANSLATE_KEY,
+    AGORA_APP_ID,
+    AGORA_APP_CERTIFICATE,
+    EXTERNAL_SPEAKER_URL
 }
