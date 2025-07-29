@@ -1,10 +1,10 @@
 import axios from 'axios'
 import { CURRENTUSERDATA, SUPERUSERDATA, _retrieveData } from '../utils/LocalStorage'
 
-export const DEBUG_API = 'https://deploy.busifrog.com/'
-export const PRODUCTION_API = 'https://deploy.busifrog.com/'
-export const isDebug=false
-export const userLogout = async (Token, RefreshToken,debug=false) => {
+export const DEBUG_API = 'https://socialfb.horasis.org/'
+export const PRODUCTION_API = 'https://socialfb.horasis.org/'
+export const isDebug = false
+export const userLogout = async (Token, RefreshToken, debug = false) => {
 	const API_URL = debug ? DEBUG_API : PRODUCTION_API
 
 	axios
@@ -37,8 +37,8 @@ const refreshToken = async (updateCurrentUser, currentUserData, role, debug) => 
 				? JSON.parse(_retrieveData(CURRENTUSERDATA)).Token
 				: null
 			: _retrieveData(SUPERUSERDATA)
-			? JSON.parse(_retrieveData(SUPERUSERDATA)).Token
-			: null
+				? JSON.parse(_retrieveData(SUPERUSERDATA)).Token
+				: null
 
 	const refreshToken =
 		role === 'user'
@@ -46,8 +46,8 @@ const refreshToken = async (updateCurrentUser, currentUserData, role, debug) => 
 				? JSON.parse(_retrieveData(CURRENTUSERDATA)).RefreshToken
 				: null
 			: _retrieveData(SUPERUSERDATA)
-			? JSON.parse(_retrieveData(SUPERUSERDATA)).RefreshToken
-			: null
+				? JSON.parse(_retrieveData(SUPERUSERDATA)).RefreshToken
+				: null
 
 	const API_URL = debug ? DEBUG_API : PRODUCTION_API
 
@@ -73,7 +73,7 @@ const refreshToken = async (updateCurrentUser, currentUserData, role, debug) => 
 		.catch(async (err) => {
 			if (err.response) {
 				if (err.response.status === 445) {
-					userLogout(tokenToBeRefreshed, refreshToken,debug)
+					userLogout(tokenToBeRefreshed, refreshToken, debug)
 				}
 			}
 		})
@@ -86,7 +86,7 @@ export const postItem = async (
 	errorCallback,
 	updateCurrentUser,
 	currentUserData,
-	toast = { open: () => {}, close: () => {} },
+	toast = { open: () => { }, close: () => { } },
 	role = 'user',
 	debug = false
 ) => {
@@ -97,8 +97,8 @@ export const postItem = async (
 				? JSON.parse(_retrieveData(CURRENTUSERDATA)).Token
 				: null
 			: _retrieveData(SUPERUSERDATA)
-			? JSON.parse(_retrieveData(SUPERUSERDATA)).Token
-			: null
+				? JSON.parse(_retrieveData(SUPERUSERDATA)).Token
+				: null
 	axios
 		.post(API_URL + 'api/' + url, data, {
 			headers: {
@@ -143,7 +143,7 @@ export const postItem = async (
 					}
 					errorCallback(err.response.data)
 				} else if (err.response.status === 445) {
-					userLogout(currentUserData.Token, currentUserData.RefreshToken,debug)
+					userLogout(currentUserData.Token, currentUserData.RefreshToken, debug)
 				} else {
 					errorCallback(err.response.data)
 				}
@@ -160,7 +160,7 @@ export const patchItem = async (
 	errorCallback,
 	updateCurrentUser,
 	currentUserData,
-	toast = { open: () => {}, close: () => {} },
+	toast = { open: () => { }, close: () => { } },
 	role = 'user',
 	debug = false
 ) => {
@@ -171,8 +171,8 @@ export const patchItem = async (
 				? JSON.parse(_retrieveData(CURRENTUSERDATA)).Token
 				: null
 			: _retrieveData(SUPERUSERDATA)
-			? JSON.parse(_retrieveData(SUPERUSERDATA)).Token
-			: null
+				? JSON.parse(_retrieveData(SUPERUSERDATA)).Token
+				: null
 	axios
 		.patch(API_URL + 'api/' + url, data, {
 			headers: {
@@ -206,7 +206,7 @@ export const patchItem = async (
 						toast.open('error', err.response.data.Header, err.response.data.Message)
 					}
 				} else if (err.response.status === 445) {
-					userLogout(currentUserData.Token, currentUserData.RefreshToken,debug)
+					userLogout(currentUserData.Token, currentUserData.RefreshToken, debug)
 				} else {
 					errorCallback(err.response.data)
 				}
@@ -222,7 +222,7 @@ export const deleteItem = async (
 	errorCallback,
 	updateCurrentUser,
 	currentUserData,
-	toast = { open: () => {}, close: () => {} },
+	toast = { open: () => { }, close: () => { } },
 	role = 'user',
 	debug = false
 ) => {
@@ -233,8 +233,8 @@ export const deleteItem = async (
 				? JSON.parse(_retrieveData(CURRENTUSERDATA)).Token
 				: null
 			: _retrieveData(SUPERUSERDATA)
-			? JSON.parse(_retrieveData(SUPERUSERDATA)).Token
-			: null
+				? JSON.parse(_retrieveData(SUPERUSERDATA)).Token
+				: null
 
 	axios
 		.delete(API_URL + 'api/' + url, {
@@ -269,7 +269,7 @@ export const deleteItem = async (
 						toast.open('error', err.response.data.Header, err.response.data.Message)
 					}
 				} else if (err.response.status === 445) {
-					userLogout(currentUserData.Token, currentUserData.RefreshToken,debug)
+					userLogout(currentUserData.Token, currentUserData.RefreshToken, debug)
 				} else {
 					errorCallback(err.response.data)
 				}
@@ -285,7 +285,7 @@ export const getItem = async (
 	errorCallback,
 	updateCurrentUser,
 	currentUserData,
-	toast = { open: () => {}, close: () => {} },
+	toast = { open: () => { }, close: () => { } },
 	role = 'user',
 	debug = false
 ) => {
@@ -296,8 +296,8 @@ export const getItem = async (
 				? JSON.parse(_retrieveData(CURRENTUSERDATA)).Token
 				: null
 			: _retrieveData(SUPERUSERDATA)
-			? JSON.parse(_retrieveData(SUPERUSERDATA)).Token
-			: null
+				? JSON.parse(_retrieveData(SUPERUSERDATA)).Token
+				: null
 	axios
 		.get(API_URL + 'api/' + url, {
 			headers: {
@@ -331,7 +331,7 @@ export const getItem = async (
 						toast.open('error', err.response.data.Header, err.response.data.Message)
 					}
 				} else if (err.response.status === 445) {
-					userLogout(currentUserData.Token, currentUserData.RefreshToken,debug)
+					userLogout(currentUserData.Token, currentUserData.RefreshToken, debug)
 				} else {
 					errorCallback(err.response.data)
 				}
