@@ -84,6 +84,15 @@ const AGORA_APP_CERTIFICATE = process.env.AGORA_APP_CERTIFICATE;
 const { EXTERNAL_SPEAKER_URL } = process.env;
 
 
+const SocketProductionOrigin = ["https://social.horasis.org", "https://socialfb.horasis.org"];
+const SocketDebugOrigin = ["https://localhost:5173", "http://127.0.0.1:5173", "https://hsocial.web.app", "https://hsocialtest.web.app", "https://tcs-networking.web.app"]
+
+/**
+ * @type {Array<string>}
+ */
+const SOCKET_ORIGIN = ModeOfDevelopment === "Production" ? SocketProductionOrigin : SocketDebugOrigin;
+
+
 export default {
     PORT,
     ModeOfDevelopment,
@@ -98,5 +107,6 @@ export default {
     GOOGLE_TRANSLATE_KEY,
     AGORA_APP_ID,
     AGORA_APP_CERTIFICATE,
-    EXTERNAL_SPEAKER_URL
+    EXTERNAL_SPEAKER_URL,
+    SOCKET_ORIGIN
 }

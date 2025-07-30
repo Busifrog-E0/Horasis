@@ -17,7 +17,7 @@ const ConnectSocket = (expressServer) => {
 
     const io = new Server(expressServer, {
         cors: {
-            origin: ["http://localhost:5173", "http://127.0.0.1:5173", "https://hsocial.web.app", "https://hsocialtest.web.app", "https://tcs-networking.web.app"]
+            origin: ENV.SOCKET_ORIGIN
         }
     });
     io.use(decodeSocketIdToken);
@@ -56,7 +56,7 @@ const ConnectSocket = (expressServer) => {
             if (CheckUserInConversation(ConversationData, socket.user.UserId)) {
                 // leave existing rooms?
                 socket.join(ConversationId);
-                
+
             }
 
         });
