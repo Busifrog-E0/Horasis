@@ -1,0 +1,66 @@
+.outgoing_msg,
+.received_msg {
+    display: inline-block;
+    vertical-align: top;
+    width: 100%;
+}
+
+.outgoing_withd_msg p,
+.received_withd_msg p {
+    border-radius: 10px;
+    font-size: 12px;
+    margin: 0;
+    padding: 12px;
+    width: 100%;
+    /* box-shadow: 0px 2px 5px 1px #00000010; */
+}
+
+.outgoing_withd_msg,
+.received_withd_msg {
+    max-width: 90%;
+    /* min-width: 20%; */
+}
+
+@media (min-width:700px) {
+
+    .received_withd_msg,
+    .outgoing_withd_msg {
+        max-width: 60%;
+        /* min-width: 20%; */
+    }
+}
+
+.outgoing_withd_msg p {
+    border: 1px solid var(--system-primary-accent);
+    background: var(--system-primary-accent) none repeat scroll 0 0;
+    border-bottom-right-radius: 0px;
+    color: var(--brand-secondary);
+}
+
+.time_date {
+    color: #999;
+    display: block;
+    font-weight: 500;
+    font-size: 12px;
+    margin-top: 8px;
+    margin-bottom: 15px;
+}
+
+.outgoing_msg .time_date {
+    text-align: end;
+}
+
+.outgoing_withd_msg {
+    float: right;
+}
+
+.received_withd_msg p {
+    border: 1px solid var(--system-file-border);
+    background: var(--system-secondary-bg) none repeat scroll 0 0;
+    border-bottom-left-radius: 0px;
+    color: var(--system-primary-text);
+}
+
+.received_withd_msg {
+    float: left;
+}
