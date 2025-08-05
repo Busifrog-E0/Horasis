@@ -93,6 +93,14 @@ const SocketDebugOrigin = ["https://localhost:5173", "http://127.0.0.1:5173", "h
 const SOCKET_ORIGIN = ModeOfDevelopment === "Production" ? SocketProductionOrigin : SocketDebugOrigin;
 
 
+const ProductionOrigin = ["https://horasis-daef9.web.app", "https://social.horasis.org"];
+const DebugOrigin = ['https://hsocial.web.app', 'http://localhost:5173', "https://tcs-networking.web.app"]
+
+/**
+ * @type {Array<string>}
+ */
+const ALLOWED_ORIGIN = ModeOfDevelopment === "Production" ? ProductionOrigin : DebugOrigin;
+
 export default {
     PORT,
     ModeOfDevelopment,
@@ -108,5 +116,6 @@ export default {
     AGORA_APP_ID,
     AGORA_APP_CERTIFICATE,
     EXTERNAL_SPEAKER_URL,
-    SOCKET_ORIGIN
+    SOCKET_ORIGIN,
+    ALLOWED_ORIGIN,
 }

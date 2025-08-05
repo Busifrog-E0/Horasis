@@ -16,7 +16,7 @@ const app = express();
 
 import router from "./routes/index.js";
 
-const allowedOrigins = ['https://hsocial.web.app', 'http://localhost:5173'];
+const allowedOrigins = ENV.ALLOWED_ORIGIN;
 
 app.use(cors({
     origin: function (origin, callback) {
@@ -60,6 +60,7 @@ import { ClearAdminRoleArray, ClearLogoutUsers, GenerateToken } from "./controll
 import { decodeSocketIdToken } from "./middleware/auth-middleware.js";
 import { ConnectSocket } from "./controllers/socket-controller.js";
 import { CreateActiveUsers } from "./databaseControllers/activeUsers-databaseController.js";
+import Env from "./Env.js";
 
 
 
