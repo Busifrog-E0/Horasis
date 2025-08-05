@@ -18,8 +18,7 @@ const HomeFoot = (props, ref) => {
 					<div className='flex flex-col gap-8'>
 						<h4 className='font-bold text-3xl'>Horasis</h4>
 						<p>
-							Horasis is an independent, international think tank, headquartered in Zurich, Switzerland. Founded in
-							2005, by Frank-Jurgen Ritcher, former director of the World Economic Forum.
+							Horasis is an independent, international think tank, headquartered in Zurich, Switzerland.
 						</p>
 						<div className='flex gap-2 items-end'>
 							<a href='https://www.facebook.com/HorasisOrg' target='_blank' rel='noreferrer'>
@@ -48,17 +47,16 @@ const HomeFoot = (props, ref) => {
 						<div className='flex flex-col gap-4'>
 							<div className='flex gap-2 items-center'>
 								<img src={telephone} alt='' className='h-5' />
-								<h1>: (406) 555-0120</h1>
+								<h1>: +41 79 305 3110</h1>
 							</div>
 							<div className='flex gap-2 items-center'>
 								<img src={mailwhite} alt='' className='h-5' />
-								<h1>: mangcoding123@gmail.com</h1>
+								<h1>: visions@horasis.org</h1>
 							</div>
 							<div className='flex gap-2 items-start'>
 								<img src={locationwhite} alt='' className='h-5' />
 								<h1>
-									: 2972 Horasis Weistheimer Rd,
-									<br /> Zurich, Switzerland 85486
+									: Maurerstrasse 2, CH- 8500 Frauenfeld, Switzerland
 								</h1>
 							</div>
 						</div>

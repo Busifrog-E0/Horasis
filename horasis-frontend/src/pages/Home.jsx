@@ -23,7 +23,7 @@ const Home = () => {
 				<HeroSection />
 			</div>
 			<HomeMidSection />
-			<HomeMilestones />
+			{/* <HomeMilestones /> */}
 
 			<HomeAboutFounder />
 			<HomeUpcomingEvents ref={eventsRef} />

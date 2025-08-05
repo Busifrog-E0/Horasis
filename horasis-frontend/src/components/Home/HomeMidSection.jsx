@@ -11,6 +11,8 @@ const HomeMidSection = () => {
 		<div className='h-max flex flex-col items-center bg-system-secondary-bg'>
 			<div className='flex items-center justify-center -mt-12 mb-10 max-w-screen-2xl w-full z-20'>
 				<div className='grid grid-cols-1 md:grid-cols-3 items-center md:items-baseline gap-10 w-11/12 md:w-9/12'>
+					<div>
+					</div>
 					<div className='bg-system-secondary-bg shadow-md w-full h-full md:max-w-96 rounded-xl p-8 flex flex-col gap-4'>
 						<div className='h-20 w-20 rounded-lg flex items-center justify-center text-white'>
 							<img src={globalmeeting} alt='Global Meeting Icon' />
@@ -19,7 +21,9 @@ const HomeMidSection = () => {
 						<div className='h-1 w-10 bg-system-primary-accent'></div>
 						<p>Annual flagship gatherings and regional meetings in China, India, and Southeast Asia.</p>
 					</div>
-					<div className='bg-system-secondary-bg shadow-md w-full h-full md:max-w-96 rounded-xl p-8 flex flex-col gap-4'>
+					<div>
+					</div>
+					{/* <div className='bg-system-secondary-bg shadow-md w-full h-full md:max-w-96 rounded-xl p-8 flex flex-col gap-4'>
 						<div className='h-20 w-20 rounded-lg flex items-center justify-center text-white'>
 							<img src={experttraining} alt='Visionary Circle Icon' />
 						</div>
@@ -36,7 +40,7 @@ const HomeMidSection = () => {
 						<p>
 							Alliances with governments, corporations, and NGOs to co-create research and community-driven projects.
 						</p>
-					</div>
+					</div> */}
 				</div>
 			</div>
 
@@ -54,10 +58,7 @@ const HomeMidSection = () => {
 							dialogue, and partnership.
 							<br />
 							<br />
-							Founded in 2005 by Frank-Jürgen Richter, Horasis brings together governments, international organizations,
-							and business leaders to transcend boundaries and co-create sustainable, equitable solutions. With a
-							special focus on the Global South, our flagship Global Meeting and regional summits in China, India, and
-							Southeast Asia serve as catalysts for transformative dialogue and collaborative action.
+							Founded in 2005, Horasis brings together governments, international organizations, and business leaders to transcend boundaries and co-create sustainable, equitable solutions. With a special focus on the Global South, our flagship Global Meeting and regional summits in China, India, and Southeast Asia serve as catalysts for transformative dialogue and collaborative action.
 							<br />
 							<br />
 							As an independent, Switzerland-headquartered platform, we foster long-term solutions to complex global
@@ -66,17 +67,19 @@ const HomeMidSection = () => {
 					</div>
 				</div>
 			</div>
-			
+
 
 			{/* Join the Global Event Section */}
 			<div className='w-full bg-[#CFE8FA] flex items-center justify-center py-10 lg:py-20 lg:h-auto mt-20'>
 				<div className='max-w-screen-2xl w-full flex items-end justify-center p-4'>
 					<div className='grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-20 w-11/12 md:w-9/12'>
 						<div className='flex flex-col justify-center gap-6'>
-								<div className='bg-system-primary-accent h-2 w-40'></div>
-							<p className='text-3xl font-bold text-[#252B42]'>Join the Global Event</p>
+							<div className='bg-system-primary-accent h-2 w-40'></div>
+							<p className='text-3xl font-bold text-[#252B42]'>Join Horasis
+							</p>
 							<p className='text-[#747474]'>
-								Apply to attend, join our Visionary Circle, or partner with us to make a global impact.
+								Apply to attend or partner with us to make a global impact.
+
 							</p>
 							<button
 								onClick={() => navigate('/register')}
