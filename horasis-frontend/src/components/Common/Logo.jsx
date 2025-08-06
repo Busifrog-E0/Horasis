@@ -3,7 +3,7 @@ import LogoImage from '../../assets/images/logo-horasis.png'
 import WhiteLogoImage from '../../assets/images/logo-horasis-white.png'
 
 const Logo = ({ height = 50, type = "blue" }) => {
-    return <NavLink to="/" className=" select-none" >
+    return <NavLink to="/" className=" select-none outline-none" >
         {type === "blue" ?
             <img className="table-desktop select-none" src={LogoImage} style={{ height: height }} />
             :
