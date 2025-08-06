@@ -18,7 +18,9 @@ const Home = () => {
 
 	return (
 		<div>
-			<div style={{ backgroundImage: `url(${HeroCoverImage})` }} className='bg-cover bg-no-repeat'>
+			<div style={{
+				backgroundImage: `url(${HeroCoverImage})`
+			}} className='bg-cover bg-no-repeat'>
 				<HomeHeader moveToDiscussions={moveToDiscussions} moveToEvents={moveToEvents} moveToContacts={moveToContacts} />
 				<HeroSection />
 			</div>
