@@ -8,10 +8,10 @@ const HeroSection = () => {
 		<div className="h-screen flex items-center justify-center overflow-hidden relative">
 			<div className="grid grid-cols-1 lg:grid-cols-2 w-full h-full">
 				{/* Left Side */}
-				<div className="flex flex-col gap-10 justify-center order-last md:order-first px-4 sm:px-8 md:px-16 lg:px-20 bg-system-primary-accent-transparent">
+				<div className="flex flex-col gap-2 lg:gap-6 justify-center order-last md:order-first px-4 sm:px-8 md:px-16 lg:px-20 py-8 bg-system-primary-accent-transparent">
 					<div className="flex flex-col gap-4">
 						<div className="flex flex-col gap-1">
-							<h4 className="font-bold text-6xl text-system-secondary-bg">Horasis</h4>
+							<h4 className="font-bold text-3xl md:text-5xl xl:text-6xl text-system-secondary-bg">Horasis</h4>
 							<h4 className="text-xl md:text-2xl text-system-secondary-bg">Global Visions Community</h4>
 						</div>
 						<h4 className="text-base md:text-md text-system-secondary-bg md:w-4/5 lg:w-2/3">
