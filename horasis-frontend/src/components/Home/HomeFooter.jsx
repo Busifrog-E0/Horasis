@@ -12,7 +12,7 @@ import moment from 'moment'
 
 const HomeFoot = (props, ref) => {
 	return (
-		<div className='bg-system-primary-accent h-max flex flex-col items-center' ref={ref}>
+		<div className='bg-system-primary-darker-accent h-max flex flex-col items-center' ref={ref}>
 			<div className='flex flex-col gap-10 items-center justify-center my-10 max-w-screen-2xl w-full'>
 				<div className='w-11/12 md:w-9/12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 text-system-secondary-bg gap-8 md:gap-8 lg:gap-4'>
 					<div className='flex flex-col gap-8'>
