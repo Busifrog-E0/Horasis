@@ -9,6 +9,7 @@ import locationwhite from '../../assets/icons/locationwhite.svg'
 
 import { forwardRef } from 'react'
 import moment from 'moment'
+import Logo from '../Common/Logo'
 
 const HomeFoot = (props, ref) => {
 	return (
@@ -16,9 +17,9 @@ const HomeFoot = (props, ref) => {
 			<div className='flex flex-col gap-10 items-center justify-center my-10 max-w-screen-2xl w-full'>
 				<div className='w-11/12 md:w-9/12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 text-system-secondary-bg gap-8 md:gap-8 lg:gap-4'>
 					<div className='flex flex-col gap-8'>
-						<h4 className='font-bold text-3xl'>Horasis</h4>
+						<Logo type='white' height={40} />
 						<p>
-							Horasis is an independent, international think tank, headquartered in Zurich, Switzerland.
+							Horasis is an independent, international organization, headquartered in Switzerland.
 						</p>
 						<div className='flex gap-2 items-end'>
 							<a href='https://www.facebook.com/HorasisOrg' target='_blank' rel='noreferrer'>

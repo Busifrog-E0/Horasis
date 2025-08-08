@@ -1,4 +1,5 @@
-import heroImage from '../../assets/images/home/B4.jpg'
+import AboutUsImage from '../../assets/images/home/about-us-image.jpg'
+
 const HeroSection = () => {
 	const handleClick = (e, id) => {
 		e.preventDefault()
@@ -8,14 +9,14 @@ const HeroSection = () => {
 		<div className="h-screen flex items-center justify-center overflow-hidden relative">
 			<div className="grid grid-cols-1 lg:grid-cols-2 w-full h-full">
 				{/* Left Side */}
-				<div className="flex flex-col gap-2 lg:gap-6 justify-center order-last md:order-first px-4 sm:px-8 md:px-16 lg:px-20 py-8 bg-system-primary-accent-transparent">
+				<div className="flex flex-col gap-2 lg:gap-6 justify-center order-last md:order-first px-4 sm:px-8 md:px-16 lg:px-20 py-8 bg-system-brand-green-transparent">
 					<div className="flex flex-col gap-4">
 						<div className="flex flex-col gap-1">
 							<h4 className="font-bold text-3xl md:text-5xl xl:text-6xl text-system-secondary-bg">Horasis</h4>
 							<h4 className="text-xl md:text-2xl text-system-secondary-bg">Global Visions Community</h4>
 						</div>
 						<h4 className="text-base md:text-md text-system-secondary-bg md:w-4/5 lg:w-2/3">
-							Horasis exists to unite visionary leaders from government, business and civil society in pursuit of a single goal: forging a more sustainable, equitable and prosperous world. Through boundary‑transcending dialogue and action, we lay the groundwork for decisions today that safeguard our shared tomorrow.
+							Horasis unites visionary leaders from government, business and civil society in pursuit of a single goal: forging a more sustainable, equitable and prosperous world. Through boundary‑transcending dialogue and action, we lay the groundwork for decisions today that safeguard our shared tomorrow.
 						</h4>
 					</div>
 					<div className="flex flex-row flex-wrap gap-6">
@@ -33,7 +34,7 @@ const HeroSection = () => {
 				{/* Right Side */}
 				<div className="w-full h-full relative">
 					<img
-						src={heroImage}
+						src={AboutUsImage}
 						alt=""
 						className="w-full h-full object-cover"
 					/>

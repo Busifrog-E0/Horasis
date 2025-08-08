@@ -1,5 +1,5 @@
 import { useRef } from 'react'
-import HeroCoverImage from '../assets/images/hero-cover-image.png'
+import HeroCoverImage from '../assets/images/hero-cover-image.webp'
 import HeroSection from '../components/Home/HeroSection'
 import HomeDiscussionsSection from '../components/Home/HomeDiscussionsSection'
 import HomeFooter from '../components/Home/HomeFooter'

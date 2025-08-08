@@ -1,9 +1,7 @@
 import { useNavigate } from 'react-router-dom'
-import AboutUsImage from '../../assets/images/home/about-us-image.jpg'
+import HeroImage from '../../assets/images/home/B4.jpg'
 import GlobalEventImage from '../../assets/images/home/global-event-image.jpg'
-import experttraining from '../../assets/images/home/experttraining.svg'
 import globalmeeting from '../../assets/images/home/globalmeeting.svg'
-import wideconnections from '../../assets/images/home/wideconnections.svg'
 
 const HomeMidSection = () => {
 	const navigate = useNavigate()
@@ -17,9 +15,9 @@ const HomeMidSection = () => {
 						<div className='h-20 w-20 rounded-lg flex items-center justify-center text-white'>
 							<img src={globalmeeting} alt='Global Meeting Icon' />
 						</div>
-						<p className='text-xl font-medium'>Global Meeting</p>
+						<p className='text-xl font-medium'>Horasis Global Meeting</p>
 						<div className='h-1 w-10 bg-system-primary-accent'></div>
-						<p>Annual flagship gatherings and regional meetings in China, India, and Southeast Asia.</p>
+						<p>Annual flagship gatherings and regional meetings.</p>
 					</div>
 					<div>
 					</div>
@@ -48,7 +46,7 @@ const HomeMidSection = () => {
 			<div id='about-us' className='py-10 max-w-screen-2xl flex items-center justify-center w-full mt-20'>
 				<div className='grid grid-cols-1 lg:grid-cols-2 gap-10 w-11/12 md:w-9/12 items-center'>
 					<div className=' h-full rounded-xl'>
-						<img src={AboutUsImage} alt='About Horasis' className='rounded-xl shadow-lg h-full object-cover' />
+						<img src={HeroImage} alt='About Horasis' className='rounded-xl shadow-lg h-full object-cover' />
 					</div>
 					<div className='flex flex-col justify-center gap-4'>
 						<div className='bg-system-primary-accent h-2 w-40'></div>
