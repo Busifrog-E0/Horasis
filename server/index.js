@@ -17,6 +17,7 @@ const app = express();
 import router from "./routes/index.js";
 
 const allowedOrigins = ENV.ALLOWED_ORIGIN;
+app.set('trust proxy', 1); // trust the first proxy (Nginx)
 
 app.use(cors({
     origin: function (origin, callback) {
