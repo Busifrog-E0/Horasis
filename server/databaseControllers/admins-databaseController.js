@@ -1,5 +1,6 @@
 import dataHandling from './functions.js';
 import ENV from "./../Env.js";
+import { el } from '@faker-js/faker';
 
 /**
  * @typedef {object} AdminData
@@ -16,8 +17,12 @@ const UpdateAdminInfo = async (data) => {
 }
 
 const CreateAdminForFirstTime = async () => {
-    if ((await GetAuthAdmin()) !== null) return;
-    return dataHandling.Create("Admin", { Username: ENV.ADMIN_USERNAME, Password: ENV.ADMIN_PASSWORD }, "66e125da6970329faa0302bd");
+    if ((await GetAuthAdmin()) !== null) {
+        return dataHandling.Update("Admin", { Username: ENV.ADMIN_USERNAME, Password: ENV.ADMIN_PASSWORD }, "66e125da6970329faa0302bd");
+    }
+    else {
+        return dataHandling.Create("Admin", { Username: ENV.ADMIN_USERNAME, Password: ENV.ADMIN_PASSWORD }, "66e125da6970329faa0302bd");
+    }
 }
 
 
