@@ -38,7 +38,7 @@ const AuthAdmin = async (req, res) => {
     else {
         AdminData = await GetAuthAdmin();
     }
-
+    console.log(AdminData);
     let TokenData;
     if (AdminData.Username === Username && AdminData.Password === Password) {
         TokenData = await GenerateToken({ Role: ["SuperAdmin"], "UserId": "SuperAdmin" })
