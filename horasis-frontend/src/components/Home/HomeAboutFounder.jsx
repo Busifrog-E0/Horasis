@@ -23,16 +23,13 @@ const HomeAboutFounder = () => {
 						<h2 className='text-3xl font-bold text-gray-800 '>Frank-Jürgen Richter</h2>
 						<p className='text-primary-accent mb-2 italic'>Chairman &amp; Founder, Horasis</p>
 						<p className='text-gray-700 mb-4'>
-							Frank-Jürgen Richter founded Horasis in 2005 after serving as Director of the World Economic Forum
-							(2001–2004), where he led the Forum’s Asian initiatives and elevated regional summits into premier
-							platforms for cross-continental dialogue. An acclaimed author and speaker, Richter has written extensively
-							on global strategy, economic development, and the future of leadership.
+							Frank-Jürgen Richter founded Horasis in 2005. Under his guidance, Horasis has become a worldwide community of visionaries, focusing on sustainable and equitable growth, especially within the Global South. Richter's commitment to bold dialogue and lasting solutions drives every Horasis summit and collaboration.
 						</p>
-						<p className='text-gray-700 mb-6'>
+						{/* <p className='text-gray-700 mb-6'>
 							Under his guidance, Horasis has become a worldwide community of visionaries, focusing on sustainable and
 							equitable growth, especially within the Global South. Richter’s commitment to bold, honest dialogue and
 							lasting solutions drives every Horasis summit and collaboration.
-						</p>
+						</p> */}
 					</div>
 				</div>
 			</div>

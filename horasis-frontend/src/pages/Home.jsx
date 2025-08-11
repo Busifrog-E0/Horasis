@@ -1,5 +1,5 @@
 import { useRef } from 'react'
-import HeroCoverImage from '../assets/images/hero-cover-image.png'
+import HeroCoverImage from '../assets/images/hero-cover-image.webp'
 import HeroSection from '../components/Home/HeroSection'
 import HomeDiscussionsSection from '../components/Home/HomeDiscussionsSection'
 import HomeFooter from '../components/Home/HomeFooter'
@@ -18,12 +18,14 @@ const Home = () => {
 
 	return (
 		<div>
-			<div style={{ backgroundImage: `url(${HeroCoverImage})` }} className='bg-cover bg-no-repeat'>
+			<div style={{
+				backgroundImage: `url(${HeroCoverImage})`
+			}} className='bg-cover bg-no-repeat'>
 				<HomeHeader moveToDiscussions={moveToDiscussions} moveToEvents={moveToEvents} moveToContacts={moveToContacts} />
 				<HeroSection />
 			</div>
 			<HomeMidSection />
-			<HomeMilestones />
+			{/* <HomeMilestones /> */}
 
 			<HomeAboutFounder />
 			<HomeUpcomingEvents ref={eventsRef} />

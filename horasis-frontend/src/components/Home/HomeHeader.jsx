@@ -2,6 +2,8 @@ import { useContext, useState } from 'react'
 import { AuthContext } from '../../utils/AuthProvider'
 import { useNavigate } from 'react-router-dom'
 import menu from '../../assets/icons/menu.svg'
+import LogoImage from '../../assets/images/logo-horasis-white.png'
+import Logo from '../Common/Logo'
 
 const HomeHeader = ({ moveToDiscussions, moveToEvents, moveToContacts }) => {
 	const [menuOpen, setMenuOpen] = useState(false)
@@ -12,11 +14,10 @@ const HomeHeader = ({ moveToDiscussions, moveToEvents, moveToContacts }) => {
 	const handleNavigateDiscussions = () => (currentUserData ? navigate('/Discussions') : navigate('/login'))
 
 	return (
-		<div className='flex items-center justify-center bg-system-primary-accent-transparent  px-4 sm:px-8 md:px-16 lg:px-20 py-4'>
-			<div className='flex items-center justify-between w-full max-w-screen-2xl'>
-				<div className='text-3xl font-bold  text-system-secondary-bg'>
-					<h4>Horasis</h4>
-				</div>
+		<div className='flex items-center justify-center bg-system-primary-accent  px-4 sm:px-8 md:px-16 lg:px-20 py-4'>
+			<div className='flex items-center justify-between w-full'>
+				<Logo type='white' height={45} />
+
 				<div className='hidden md:flex gap-10 items-center justify-between'>
 					<nav className='flex text-system-secondary-bg gap-10'>
 						<p className='text-md font-medium cursor-pointer' onClick={moveToEvents}>

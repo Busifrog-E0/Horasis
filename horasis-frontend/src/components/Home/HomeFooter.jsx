@@ -9,17 +9,17 @@ import locationwhite from '../../assets/icons/locationwhite.svg'
 
 import { forwardRef } from 'react'
 import moment from 'moment'
+import Logo from '../Common/Logo'
 
 const HomeFoot = (props, ref) => {
 	return (
-		<div className='bg-system-primary-accent h-max flex flex-col items-center' ref={ref}>
+		<div className='bg-system-primary-darker-accent h-max flex flex-col items-center' ref={ref}>
 			<div className='flex flex-col gap-10 items-center justify-center my-10 max-w-screen-2xl w-full'>
 				<div className='w-11/12 md:w-9/12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 text-system-secondary-bg gap-8 md:gap-8 lg:gap-4'>
 					<div className='flex flex-col gap-8'>
-						<h4 className='font-bold text-3xl'>Horasis</h4>
+						<Logo type='white' height={40} />
 						<p>
-							Horasis is an independent, international think tank, headquartered in Zurich, Switzerland. Founded in
-							2005, by Frank-Jurgen Ritcher, former director of the World Economic Forum.
+							Horasis is an independent, international organization, headquartered in Switzerland.
 						</p>
 						<div className='flex gap-2 items-end'>
 							<a href='https://www.facebook.com/HorasisOrg' target='_blank' rel='noreferrer'>
@@ -48,17 +48,16 @@ const HomeFoot = (props, ref) => {
 						<div className='flex flex-col gap-4'>
 							<div className='flex gap-2 items-center'>
 								<img src={telephone} alt='' className='h-5' />
-								<h1>: (406) 555-0120</h1>
+								<h1>: +41 79 305 3110</h1>
 							</div>
 							<div className='flex gap-2 items-center'>
 								<img src={mailwhite} alt='' className='h-5' />
-								<h1>: mangcoding123@gmail.com</h1>
+								<h1>: visions@horasis.org</h1>
 							</div>
 							<div className='flex gap-2 items-start'>
 								<img src={locationwhite} alt='' className='h-5' />
 								<h1>
-									: 2972 Horasis Weistheimer Rd,
-									<br /> Zurich, Switzerland 85486
+									: Maurerstrasse 2, CH- 8500 Frauenfeld, Switzerland
 								</h1>
 							</div>
 						</div>
