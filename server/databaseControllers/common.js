@@ -11,9 +11,12 @@ import { GetLikes } from "../controllers/likes-controller.js";
 import { GetParentTypeFromEntity } from "../controllers/common.js";
 import { ReadComments, UpdateComments } from "./comments-databaseController.js";
 import databaseHandling from "./functions.js";
+import { CreateAdminForFirstTime } from "./admins-databaseController.js";
 
 
 const FirstTimeSetup = async () => {
+    await CreateAdminForFirstTime()
+
     await databaseHandling.db.collection('Likes').createIndex(
         { UserId: 1, EntityId: 1 },
         { unique: true }
@@ -76,8 +79,10 @@ const OriginalLanguageInActivities = async () => {
 const CreateActiveUsersDocument = async () => {
     const Users = await ReadUsers({}, undefined, -1, undefined);
     await Promise.all(Users.map(async (user) => {
+        //@ts-ignore
         const [ActiveUser] = await ReadActiveUsers({ UserId: user.DocId, Date: moment(user.CreatedIndex).startOf('day').valueOf() }, undefined, 1, undefined);
         if (!ActiveUser) {
+            //@ts-ignore
             await CreateActiveUsers({ UserId: user.DocId, Date: moment(user.CreatedIndex).startOf('day').valueOf() });
         }
     }))

@@ -101,6 +101,21 @@ const DebugOrigin = ['https://hsocial.web.app', 'http://localhost:5173', "https:
  */
 const ALLOWED_ORIGIN = ModeOfDevelopment === "Production" ? ProductionOrigin : DebugOrigin;
 
+/**
+ * @type {string}
+ */
+// @ts-ignore
+const ADMIN_USERNAME = process.env.ADMIN_USERNAME;
+
+/**
+ * @type {string}
+ */
+// @ts-ignore
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
+
+
+
+
 export default {
     PORT,
     ModeOfDevelopment,
@@ -118,4 +133,6 @@ export default {
     EXTERNAL_SPEAKER_URL,
     SOCKET_ORIGIN,
     ALLOWED_ORIGIN,
+    ADMIN_USERNAME,
+    ADMIN_PASSWORD,
 }

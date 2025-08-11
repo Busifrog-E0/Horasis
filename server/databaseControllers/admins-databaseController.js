@@ -1,4 +1,5 @@
-import dataHandling from './functions.js'
+import dataHandling from './functions.js';
+import ENV from "./../Env.js";
 
 /**
  * @typedef {object} AdminData
@@ -14,6 +15,12 @@ const UpdateAdminInfo = async (data) => {
     return dataHandling.Update("Admin", data, "66e125da6970329faa0302bd");
 }
 
+const CreateAdminForFirstTime = async () => {
+    if ((await GetAuthAdmin()) !== null) return;
+    return dataHandling.Create("Admin", { Username: ENV.ADMIN_USERNAME, Password: ENV.ADMIN_PASSWORD }, "66e125da6970329faa0302bd");
+}
+
+
 
 /**
  * @typedef {object} AdminInfoData
@@ -27,5 +34,5 @@ const GetAdminInfo = async () => dataHandling.Read('Admin', "66e125da6970329faa0
 
 
 export {
-    GetAuthAdmin, UpdateAdminInfo, GetAdminInfo
+    GetAuthAdmin, UpdateAdminInfo, GetAdminInfo, CreateAdminForFirstTime,
 }
