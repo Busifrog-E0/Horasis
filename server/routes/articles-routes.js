@@ -21,7 +21,7 @@ router.get('/articles/:ArticleId', decodeIDToken, ensureAuthorized("User"),
     // @ts-ignore
     asyncHandler(GetOneFromArticles));
 
-router.post('/articles', decodeIDToken, ensureAuthorized("User"), ValidatePostArticles, CheckSameUserInBody,
+router.post('/articles', decodeIDToken, ensureAuthorized("User"), ValidatePostArticles,
     SwaggerDocs.post_Articles,
     // @ts-ignore
     asyncHandler(PostArticles));

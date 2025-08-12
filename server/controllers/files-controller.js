@@ -1,7 +1,6 @@
 import { writeFileSync, readFileSync, unlinkSync } from 'fs';
 import { fileTypeFromBuffer } from 'file-type';
-import dotenv from 'dotenv';
-dotenv.config();
+import ENV from '../Env.js';
 
 const fileFormats = {
     document: {
@@ -36,12 +35,12 @@ import e from 'express';
 import moment from 'moment';
 //const fs = readFileSync('./signature.jpg')
 const s3 = new S3({
-    forcePathStyle: true, // Configures to use subdomain/virtual calling format.
-    endpoint: process.env.DO_SPACES_ENDPOINT || "",
-    region: "blr1",
+    // forcePathStyle: true, // Configures to use subdomain/virtual calling format.
+    endpoint: ENV.DO_SPACES_ENDPOINT || "",
+    region: "us-east-2",
     credentials: {
-        accessKeyId: process.env.DO_SPACES_KEY || "",
-        secretAccessKey: process.env.DO_SPACES_SECRET || "",
+        accessKeyId: ENV.DO_SPACES_KEY || "",
+        secretAccessKey: ENV.DO_SPACES_SECRET || "",
     }
 });
 
@@ -55,24 +54,22 @@ const s3 = new S3({
 const SaveFileToSpaces = async (FirstFolderName, FilePath, FileData, ContentType, Response) => {
 
     s3.putObject({
-        "Bucket": FirstFolderName,
-        "Key": FilePath,
+        "Bucket": ENV.DO_SPACES_NAME,
+        "Key": `${FirstFolderName}/${FilePath}`,
         "Body": new Uint8Array(FileData),
-        "ACL": "public-read",
         "ContentType": ContentType,
     }, (err, data) => {
         if (Response) {
             if (err) {
                 return Response.status(400).json(false);
             }
-            return Response.json({ "FileUrl": `${process.env.DO_SPACES_FILEURL}/${FirstFolderName}/${FilePath}?${Date.now()}${Math.floor(Math.random() * 10000) + 1}` });
+            return Response.json({ "FileUrl": `${ENV.DO_SPACES_FILEURL}/${FirstFolderName}/${FilePath}?${Date.now()}${Math.floor(Math.random() * 10000) + 1}` });
         }
         if (err) {
             console.log("An error", err)
             return false;
         }
-        // https://oxydebug.sgp1.cdn.digitaloceanspaces.com/Users/idName/input.pdf
-        return `${process.env.DO_SPACES_FILEURL}/${FirstFolderName}/${FilePath}?${Date.now()}${Math.floor(Math.random() * 10000) + 1}`;
+        return `${ENV.DO_SPACES_FILEURL}/${FirstFolderName}/${FilePath}?${Date.now()}${Math.floor(Math.random() * 10000) + 1}`;
     });
 
 }
@@ -88,10 +85,9 @@ const AsyncSaveFileToSpaces = async (FirstFolderName, FilePath, FileData, Conten
 
     return new Promise(async (resolve, reject) => {
         s3.putObject({
-            "Bucket": FirstFolderName,
-            "Key": FilePath,
+            "Bucket": ENV.DO_SPACES_NAME,
+            "Key": `${FirstFolderName}/${FilePath}`,
             "Body": new Uint8Array(FileData),
-            "ACL": "public-read",
             "ContentType": ContentType,
         }, (err, data) => {
 
@@ -99,8 +95,7 @@ const AsyncSaveFileToSpaces = async (FirstFolderName, FilePath, FileData, Conten
                 console.log("An error", err)
                 reject(false);
             }
-            // https://oxydebug.sgp1.cdn.digitaloceanspaces.com/Users/idName/input.pdf
-            resolve(`${process.env.DO_SPACES_FILEURL}/${FirstFolderName}/${FilePath}?${Date.now()}${Math.floor(Math.random() * 10000) + 1}`);
+            resolve(`${ENV.DO_SPACES_FILEURL}/${FirstFolderName}/${FilePath}?${Date.now()}${Math.floor(Math.random() * 10000) + 1}`);
         });
     })
 

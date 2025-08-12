@@ -52,6 +52,8 @@ const GetArticles = async (req, res) => {
  * @returns {Promise<e.Response<true>>}
  */
 const PostArticles = async (req, res) => {
+    // @ts-ignore
+    req.body.AuthorId = req.user.UserId;
     req.body = ArticleInit(req.body);
     req.body.OriginalLanguage = await DetectLanguage(req.body.Description);
     const ArticleId = await CreateArticles(req.body);

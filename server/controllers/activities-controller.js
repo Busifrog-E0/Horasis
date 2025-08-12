@@ -66,6 +66,7 @@ const GetActivities = async (req, res) => {
  * @returns 
  */
 const GetFilteredActivities = async (req, res) => {
+    //@ts-ignore
     const UserId = req.params.UserId ?? req.user.UserId;
     const { Filter, NextId, Limit, OrderBy, Keyword } = req.query;
     if (Keyword) {
@@ -155,6 +156,7 @@ const DeleteActivities = async (req, res) => {
     //@ts-ignore
     const { UserId } = req.user;
     const Activity = await ReadOneFromActivities(ActivityId);
+    //@ts-ignore
     if (Activity.UserId !== UserId && req.user.Role === "User") {
         return res.status(444).json(AlertBoxObject("Cannot Delete", "Cannot delete other User's Activity"))
     }
@@ -251,7 +253,7 @@ const PostActivityForProfilePatch = async (Data, UserId) => {
         return;
     }
     let Activity = Data.CoverPicture ? { Content: "Updated their Cover Photo", MediaFiles: [{ FileUrl: Data.CoverPicture, Type: "image" }], UserId } :
-        { Content: "Updated their Profile Photo", MediaFiles: [{ FileUrl: Data.ProfilePicture, Type: "image" }], UserId, Type: "Feed" , EntityId : "Feed" };
+        { Content: "Updated their Profile Photo", MediaFiles: [{ FileUrl: Data.ProfilePicture, Type: "image" }], UserId, Type: "Feed", EntityId: "Feed" };
     Activity = ActivityInit(Activity);
     await CreateActivities(Activity);
 }
