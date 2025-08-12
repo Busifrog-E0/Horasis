@@ -2,12 +2,14 @@ import ENV from "../Env.js";
 
 import axios from 'axios';
 
-import {SendMailClient} from 'zeptomail'
+import { SendMailClient } from 'zeptomail'
 
 const url = "api.zeptomail.in/v1.1/email";
 const token = ENV.ZeptoMailToken;
 
 let client = new SendMailClient({ url, token });
+
+const DefaultEmailOrigin = ENV.ModeOfDevelopment === "Production" ? "horasis.org" : "epoqzero.com"
 
 /**
  * 
@@ -18,14 +20,8 @@ let client = new SendMailClient({ url, token });
  * @param {string} from_address
  * @returns {Promise<true|string>}
  */
-const EmailAPI = async (emailid, subject, htmlbody, from_address = "noreply@epoqzero.com", bounce_address = "bounce@support.epoqzero.com",) => {
-    const data = {
-        bounce_address,
-        "from": { 'address': from_address },
-        "to": [{ 'email_address': { 'address': emailid } }],
-        "subject": subject,
-        "htmlbody": htmlbody,
-    };
+const EmailAPI = async (emailid, subject, htmlbody, from_address = `noreply@${DefaultEmailOrigin}`, bounce_address = `bounce@support.${DefaultEmailOrigin}`,) => {
+
     // @ts-ignore
     return client.sendMail({
         "from": { 'address': from_address },
