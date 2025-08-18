@@ -31,6 +31,7 @@ const decodeIDToken = async (req, res, next) => {
         const user = jwt.verify(token, ENV.TOKEN_KEY);
         //@ts-ignore    
         const ChangedAdmin = AdminRoleArray.find(a => a.UserId === user.UserId);
+        //@ts-ignore
         if (ChangedAdmin && (user.Role.length !== ChangedAdmin.Role.length || !user.Role.every(r => ChangedAdmin.Role.some(a => a === r)))) {
             return res.status(401).send("Role Changed")
         }
