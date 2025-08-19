@@ -6,10 +6,10 @@ const HeroSection = () => {
 		document.getElementById(id).scrollIntoView({ behavior: 'smooth', block: 'start' })
 	}
 	return (
-		<div className="h-screen flex items-center justify-center overflow-hidden relative">
+		<div className="h-[100svh] flex items-center justify-center overflow-hidden relative">
 			<div className="grid grid-cols-1 lg:grid-cols-2 w-full h-full">
 				{/* Left Side */}
-				<div className="flex flex-col gap-2 lg:gap-6 justify-center order-last md:order-first px-4 sm:px-8 md:px-16 lg:px-20 py-8 bg-system-brand-green-transparent">
+				<div className="flex flex-col gap-2 lg:gap-6 justify-center px-4 sm:px-8 md:px-16 lg:px-20 py-8 bg-system-brand-green-transparent">
 					<div className="flex flex-col gap-4">
 						<div className="flex flex-col gap-1">
 							<h4 className="font-bold text-3xl md:text-5xl xl:text-6xl text-system-secondary-bg">Horasis</h4>

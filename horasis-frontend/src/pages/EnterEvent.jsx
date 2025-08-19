@@ -24,7 +24,7 @@ const EnterEvent = () => {
 		})
 	}, [])
 	return (
-		<div className='flex flex-col items-center justify-center h-screen gap-2'>
+		<div className='flex flex-col items-center justify-center h-[100svh] gap-2'>
 			<Spinner />
 			<p className='font-medium text-2xl text-system-primary-accent'>Connecting the Horasis Event...</p>
 		</div>

@@ -10,7 +10,7 @@ export default function RouterErrorBoundary() {
 	console.error('RouterErrorBoundary caught an error:', error)
 
 	return (
-		<div className='min-h-screen flex flex-col items-center justify-center bg-system-primary-bg px-4 py-8'>
+		<div className='min-h-[100svh] flex flex-col items-center justify-center bg-system-primary-bg px-4 py-8'>
 			<div className='bg-white border  rounded-2xl p-10 max-w-lg w-full flex flex-col items-center'>
 				{/* Error Title */}
 				<h1 className='text-3xl font-medium text-system-primary-accent mb-4 text-center'>Oops! Something Went Wrong</h1>

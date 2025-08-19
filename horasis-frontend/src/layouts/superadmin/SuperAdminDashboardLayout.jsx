@@ -11,7 +11,7 @@ const SuperAdminDashboardLayout = () => {
 		setIsSidebarOpen(!isSidebarOpen)
 	}
 	return (
-		<div className='h-screen w-full flex items-center justify-center bg-system-primary-bg p-2'>
+		<div className='h-[100svh] w-full flex items-center justify-center bg-system-primary-bg p-2'>
 			<div className='max-w-[1600px] w-full h-full bg-system-secondary-bg flex flex-col rounded-md lg:overflow-hidden'>
 				{/* Header */}
 				<SuperAdminHeader />
@@ -20,9 +20,8 @@ const SuperAdminDashboardLayout = () => {
 				<div className='flex flex-1 overflow-hidden relative'>
 					{/* Sidebar */}
 					<div
-						className={`fixed inset-y-0 left-0 w-64 bg-system-secondary-bg text-system-primary-text transform ${
-							isSidebarOpen ? 'translate-x-0 z-50 lg:z-20' : '-translate-x-full z-10'
-						} transition-transform duration-300 lg:relative lg:translate-x-0 lg:w-64`}>
+						className={`fixed inset-y-0 left-0 w-64 bg-system-secondary-bg text-system-primary-text transform ${isSidebarOpen ? 'translate-x-0 z-50 lg:z-20' : '-translate-x-full z-10'
+							} transition-transform duration-300 lg:relative lg:translate-x-0 lg:w-64`}>
 						<SuperadminSidebar toggleSidebar={toggleSidebar} />
 					</div>
 

@@ -4,7 +4,7 @@ import Button from '../ui/Button'
 const JoinToStream = ({ event, appId, channel, token, setChannel, setToken, setCalling, setAppId }) => {
 	const { timeLeft, formattedTime } = useCountdown(event.StartTime, event.EndTime)
 	return (
-		<div className='w-full h-screen max-w-screen max-h-screen overflow-hidden'>
+		<div className='w-full h-[100svh] max-w-screen max-h-[100svh] overflow-hidden'>
 			{event.DisplayPicture ? (
 				<img src={event.DisplayPicture} className='object-cover w-full h-full' alt='Event Cover' />
 			) : (
