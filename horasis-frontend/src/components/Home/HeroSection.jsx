@@ -13,7 +13,7 @@ const HeroSection = () => {
 					<div className="flex flex-col gap-4">
 						<div className="flex flex-col gap-1">
 							<h4 className="font-bold text-3xl md:text-5xl xl:text-6xl text-system-secondary-bg">Horasis</h4>
-							<h4 className="text-xl md:text-2xl text-system-secondary-bg">Global Visions Community</h4>
+							<h4 className="text-xl md:text-2xl text-system-secondary-bg">The Global Visions Community</h4>
 						</div>
 						<h4 className="text-base md:text-md text-system-secondary-bg md:w-4/5 lg:w-2/3">
 							Horasis unites visionary leaders from government, business and civil society in pursuit of a single goal: forging a more sustainable, equitable and prosperous world. Through boundary‑transcending dialogue and action, we lay the groundwork for decisions today that safeguard our shared tomorrow.
