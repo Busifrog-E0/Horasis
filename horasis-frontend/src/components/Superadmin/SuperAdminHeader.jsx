@@ -36,7 +36,7 @@ const SuperAdminHeader = () => {
 						<Logo />
 					</div>
 					<div className='flex flex-row flex-wrap items-center gap-4 md:gap-4'>
-						<button type='button' className='hidden md:inline-flex justify-center rounded-full border-2 border-system-error bg-system-secondary-bg text-md px-6 py-1 font-medium text-brand-red' onClick={openLogoutModal}>
+						<button type='button' className='inline-flex justify-center rounded-full border-2 border-system-error bg-system-secondary-bg text-md px-6 py-1 font-medium text-brand-red' onClick={openLogoutModal}>
 							Logout
 						</button>
 					</div>

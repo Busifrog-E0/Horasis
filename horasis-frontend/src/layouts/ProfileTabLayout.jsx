@@ -1,13 +1,12 @@
 import { Outlet, useLocation } from 'react-router-dom'
-import CurrentProfileTab from '../components/Profile/CurrentProfileTab'
 import TodaysEventTab from '../components/Events/TodaysEventTab'
 import RecentlyActiveMemebrsTab from '../components/Members/RecentlyActiveMemebrsTab'
-import { useEffect } from 'react'
+import CurrentProfileTab from '../components/Profile/CurrentProfileTab'
 
 const ProfileTabLayout = () => {
 	const location = useLocation()
 	const checkHiddenInMobile = () => {
-		const arr = ['Connections', 'Articles', 'Discussions','Events']
+		const arr = ['Connections', 'Articles', 'Discussions','Events','Podcasts','TagsManager','']
 		let hide = arr.some((item) => location.pathname.includes(item))
 		return hide
 	}

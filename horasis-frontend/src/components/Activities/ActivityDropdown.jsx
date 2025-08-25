@@ -11,12 +11,15 @@ import person from '../../assets/icons/person.svg'
 import viewpost from '../../assets/icons/viewpost.svg'
 import copy from '../../assets/icons/copy.svg'
 import report from '../../assets/icons/report.svg'
+import ReportEntity from '../Report/ReportEntity'
+import useEntityReportManager from '../../hooks/useEntityReportManager'
 
 const ActivityDropdown = ({ activity, onSaveClicked, onRemoveClicked, isSaving }) => {
 	const [isOpen, setIsOpen] = useState(false)
 	const toast = useToast()
 	const dropdownRef = useRef(null)
 	const buttonRef = useRef(null)
+	const modalRef = useRef(null)
 	const navigate = useNavigate()
 
 	const handleClickOutside = (event) => {
@@ -76,105 +79,85 @@ const ActivityDropdown = ({ activity, onSaveClicked, onRemoveClicked, isSaving }
 	}
 
 	const [isModalOpen, setIsModalOpen] = useState(false)
-	const [issueType, setIssueType] = useState('')
 
-	const openReasonsModal = () => {
-		setIsModalOpen(true)
+	const { isReporting, reportData, handleChange, reportEntity, resetState } = useEntityReportManager({
+		EntityId: activity.DocId,
+		Type: 'Activity',
+		successCallback: () => closeReasonModal(),
+		errorCallback: () => {},
+	})
+	const openReasonsModal = () => setIsModalOpen(true)
+	const closeReasonModal = () => {
+		resetState()
+		setIsModalOpen(false)
 	}
-
-	const closeReasonModal = () => setIsModalOpen(false)
 
 	return (
 		<>
-			<Modal isOpen={isModalOpen} maxWidth={`max-w-xl`}>
-				<Modal.Header>
-					<p className='text-lg font-medium'>Report Post</p>
+			<Modal isOpen={isModalOpen} maxWidth='max-w-xl' className='rounded-lg shadow-lg bg-system-primary-bg'>
+				<Modal.Header className='flex items-center justify-between p-6'>
+					<p className='text-xl font-semibold text-system-primary-text'>Report Content</p>
 					<button
-						onClick={() => {
-							setIsModalOpen(false)
-						}}>
-						<img src={close} className='h-6  cursor-pointer' alt='' />
+						onClick={closeReasonModal}
+						aria-label='Close modal'
+						className='p-2 rounded-full hover:bg-gray-100 transition-colors'>
+						<img src={close} className='h-5 w-5' alt='Close' />
 					</button>
 				</Modal.Header>
-				<Modal.Body>
-					<div className='flex flex-col gap-4'>
-						<p className='text-system-secondary-text'>
-							We rely on our community to help us maintain a safe and welcoming environment. Please report any posts
-							that violate our guidelines.
+				<Modal.Body className='p-6'>
+					<div className='flex flex-col space-y-4'>
+						<p className='text-sm text-system-secondary-text leading-relaxed'>
+							We rely on our community to help us maintain a safe and welcoming environment. Please report any content
+							that violates our guidelines.
 						</p>
-						<p className='text'>Report this post for :</p>
-						<div className='mb-4'>
-							<div className='flex flex-col gap-2'>
-								<div>
+						<p className='text-base font-medium text-system-primary-text'>Report this content for:</p>
+						<div className='space-y-3'>
+							{[
+								{ id: 'scam', label: 'Scam or Fraudulent Activity' },
+								{ id: 'misleading', label: 'Misleading Information' },
+								{ id: 'inappropriate', label: 'Inappropriate Content' },
+								{ id: 'suspicious', label: 'Suspicious Content' },
+							].map((option) => (
+								<div key={option.id} className='flex items-center'>
 									<input
 										type='radio'
-										id='scam'
+										id={option.id}
 										name='issueType'
-										value='Scam or Fradulent Activity'
-										checked={issueType === 'Scam or Fradulent Activity'}
-										onChange={() => setIssueType('Scam or Fradulent Activity')}
-										className='mr-2 cursor-pointer'
+										value={option.label}
+										checked={reportData.ReportType === option.id}
+										onChange={() => handleChange('ReportType', option.id)}
+										className='h-4 w-4 accent-system-primary-accent focus:ring focus:ring-system-primary-accent/50'
 									/>
-									<span
-										className='cursor-pointer text-md text-system-primary-text'
-										onClick={() => setIssueType('Scam or Fradulent Activity')}>
-										Scam or Fradulent Activity
-									</span>
+									<label
+										htmlFor={option.id}
+										className='ml-3 text-sm font-medium text-system-primary-text cursor-pointer hover:text-system-primary-accent transition-colors'
+										onClick={() => handleChange('ReportType', option.id)}>
+										{option.label}
+									</label>
 								</div>
-
-								<div>
-									<input
-										type='radio'
-										id='misleading'
-										name='issueType'
-										value='Misleading Information'
-										checked={issueType === 'Misleading Information'}
-										onChange={() => setIssueType('Misleading Information')}
-										className='mr-2 cursor-pointer'
-									/>
-									<span
-										className='cursor-pointer text-md text-system-primary-text'
-										onClick={() => setIssueType('Misleading Information')}>
-										Misleading Information
-									</span>
-								</div>
-								<div>
-									<input
-										type='radio'
-										id='inappropriate'
-										name='issueType'
-										value='Inappropriate Content'
-										checked={issueType === 'Inappropriate Content'}
-										onChange={() => setIssueType('Inappropriate Content')}
-										className='mr-2 cursor-pointer'
-									/>
-									<span
-										className='cursor-pointer text-md text-system-primary-text'
-										onClick={() => setIssueType('Inappropriate Content')}>
-										Inappropriate Content
-									</span>
-								</div>
-								<div>
-									<input
-										type='radio'
-										id='supsicious'
-										name='issueType'
-										value='Suspicious Content'
-										checked={issueType === 'Suspicious Content'}
-										onChange={() => setIssueType('Suspicious Content')}
-										className='mr-2 cursor-pointer'
-									/>
-									<span
-										className='cursor-pointer text-md text-system-primary-text'
-										onClick={() => setIssueType('Suspicious Content')}>
-										Suspicious Content
-									</span>
-								</div>
-							</div>
+							))}
 						</div>
-						<div className='flex items-end justify-end'>
-							<Button size='md' variant='black' className='' onClick={closeReasonModal}>
-								Report Post
+						<div className='mt-6'>
+							<label htmlFor='additionalDetails' className='block text-sm font-medium text-system-primary-text'>
+								Additional Details
+							</label>
+							<textarea
+								id='additionalDetails'
+								name='additionalDetails'
+								value={reportData.Content}
+								onChange={(e) => handleChange('Content', e.target.value)}
+								rows='4'
+								className='w-full mt-2 p-3 border border-gray-300 rounded-lg text-system-primary-text focus:outline-none focus:ring-2 focus:ring-system-primary-accent/50 focus:border-system-primary-accent text-md'
+								placeholder='Provide more information about your report...'></textarea>
+						</div>
+						<div className='flex justify-end mt-4'>
+							<Button
+								disabled={isReporting || reportData.ReportType === '' || reportData.Content === ''}
+								size='md'
+								variant='black'
+								className='bg-system-primary-accent text-system-primary-bg px-5 py-2 rounded-lg hover:bg-system-primary-accent-dark focus:ring-2 focus:ring-offset-2 focus:ring-system-primary-accent-dark transition-all'
+								onClick={reportEntity}>
+								{isReporting ? 'Reporting...' : 'Report'}
 							</Button>
 						</div>
 					</div>
@@ -220,31 +203,29 @@ const ActivityDropdown = ({ activity, onSaveClicked, onRemoveClicked, isSaving }
 								onClick={() => {
 									navigate(`/ViewProfile/${activity.UserId}`)
 								}}>
-									<img src={person} alt='' className='h-6' />
+								<img src={person} alt='' className='h-6' />
 								View this profile
 							</span>
 							<span
 								className='cursor-pointer flex items-center gap-2 px-4 py-2 text-sm text-brand-gray-dim hover:bg-system-primary-bg'
 								role='menuitem'
 								onClick={handleCopyPost}>
-									<img src={copy} alt='' className='h-6' />
-
+								<img src={copy} alt='' className='h-6' />
 								Copy the post
 							</span>
 							<span
 								className='cursor-pointer flex items-center gap-2 px-4 py-2 text-sm text-brand-gray-dim hover:bg-system-primary-bg'
 								role='menuitem'
 								onClick={() => navigate(`/Activities/${activity.DocId}`)}>
-									<img src={viewpost} alt='' className='h-6' />
-
+								<img src={viewpost} alt='' className='h-6' />
 								View the post
 							</span>
+
 							<span
 								onClick={openReasonsModal}
 								className='cursor-pointer flex items-center gap-2 px-4 py-2 text-sm text-brand-gray-dim hover:bg-system-primary-bg'
 								role='menuitem'>
-									<img src={report} alt='' className='h-6' />
-
+								<img src={report} alt='' className='h-6' />
 								Report Post
 							</span>
 						</div>

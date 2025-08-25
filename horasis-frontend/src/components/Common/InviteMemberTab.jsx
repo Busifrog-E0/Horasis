@@ -1,41 +1,33 @@
-import { useContext, useState } from 'react'
-import Button from '../ui/Button'
-import { postItem } from '../../constants/operations'
-import { AuthContext } from '../../utils/AuthProvider'
-import { useToast } from '../Toast/ToastService'
+import { useState } from 'react'
 import avatar from '../../assets/icons/avatar.svg'
+import useEntityOrganizationManager from '../../hooks/useEntityOrganizationManager'
+import Button from '../ui/Button'
 
-const InviteMemberTab = ({ connection, discussionId,from='discussions' }) => {
-	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
-	const toast = useToast()
+const InviteMemberTab = ({ invitee, entityId, from = 'discussions' }) => {
+
 	const [inviteSent, setInviteSent] = useState(false)
+	
+	const types = { discussions: 'Discussion', events: 'Event', podcasts: 'Podcast' }
 
-	const sentInvite = () => {
-		postItem(
-			`${from}/${discussionId}/invite/${connection.DocId}`,
-			{},
-			(result) => {
-				setInviteSent(result)
-			},
-			(err) => {
-				// toast.open('error', 'Invite failed', `Couldn't sent  invite to ${connection.FullName}. Try again.`)
-			},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
-	}
+	const { sendEntityMembershipInvitation: sendInvite } = useEntityOrganizationManager({
+		EntityId: entityId,
+		UserId: invitee.DocId,
+		Type: types[from],
+		successCallback: () => setInviteSent(true),
+		errorCallback: () => {},
+	})
+
 	return (
 		<>
 			<div className='border-b border-system-file-border pb-4 pt-4'>
 				<div className='flex items-center gap-3'>
-					{connection ? (
+					{invitee ? (
 						<>
-							{connection.ProfilePicture ? (
+							{invitee.ProfilePicture ? (
 								<div className='w-11 h-11 rounded-full bg-black'>
 									<img
 										className='w-11 h-11 rounded-full object-cover'
-										src={connection.ProfilePicture}
+										src={invitee.ProfilePicture}
 										alt='Rounded avatar'
 									/>
 								</div>
@@ -52,14 +44,13 @@ const InviteMemberTab = ({ connection, discussionId,from='discussions' }) => {
 					)}
 
 					<div className='flex-1'>
-						<h4 className='font-semibold text-system-primary-accent'>{connection && connection.FullName}</h4>
+						<h4 className='font-semibold text-system-primary-accent'>{invitee && invitee.FullName}</h4>
 						<h4 className='font-medium text-sm text-brand-gray-dim mt-1'>
-							@{connection && connection.Username}, {connection && connection.JobTitle}{' '}
-							{connection && connection.Country}
+							@{invitee && invitee.Username}, {invitee && invitee.JobTitle} {invitee && invitee.Country}
 						</h4>
 					</div>
 					{!inviteSent ? (
-						<Button variant='outline' onClick={() => sentInvite(connection.DocId)}>
+						<Button variant='outline' onClick={sendInvite}>
 							Invite
 						</Button>
 					) : (

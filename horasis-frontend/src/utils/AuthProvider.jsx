@@ -1,6 +1,7 @@
 import React, { useContext } from 'react'
-import { _storeData, _retrieveData, _clearData, CURRENTUSERDATA } from './LocalStorage'
+import { _storeData, _retrieveData, _clearData, CURRENTUSERDATA, _clear } from './LocalStorage'
 import { useRef } from 'react'
+import { isDebug, userLogout } from '../constants/operations'
 
 export const AuthContext = React.createContext()
 export const defaultProfile = {
@@ -51,13 +52,12 @@ export const defaultComment = {
 		CompanyName: 'InnovateTech',
 		About: 'Seasoned product manager with over 10 years of experience in the software industry.',
 		CoverPicture: 'string',
-		ProfilePicture: 'https://flowbite.com/docs/images/people/profile-picture-2.jpg',
+		ProfilePicture: '',
 	},
 }
 export const defaultUserData = {
-	Token:
-		'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJSb2xlIjoiQWRtaW4iLCJVc2VySWQiOiJBZG1pbiIsImlhdCI6MTcyMDMyOTk2MiwiZXhwIjoxNzIwMzM3MTYyfQ.hq3bJ8rzfziGjsgNTMeT7zuvfY3s_uE_6j0ZB1JvPNA',
-	RefreshToken: '668a26eada3c3ba59c4af5c0',
+	Token: '',
+	RefreshToken: '',
 	CurrentUser: {
 		Role: 'Admin',
 		UserId: 'Admin',
@@ -67,27 +67,24 @@ export const defaultUserData = {
 }
 
 export const defaultActivity = {
-	_id: '66979bb131dbe239dd62f58b',
+	_id: '',
 	NoOfLikes: 0,
-	Content: 'hello',
-	UserId: '6691384f0ab9f7e0c053b73a',
+	Content: '',
+	UserId: '',
 	MediaFiles: [
 		{
-			FileUrl:
-				'https://oxydebug.sgp1.cdn.digitaloceanspaces.com/6691384f0ab9f7e0c053b73a/66979bb031dbe239dd62f58a/335850.jpg?17212118255072811',
+			FileUrl: '',
 			Type: 'image',
 		},
 	],
-	Documents: [
-		'https://oxydebug.sgp1.cdn.digitaloceanspaces.com/6691384f0ab9f7e0c053b73a/66979bb031dbe239dd62f58a/Aswin Das R.pdf?17212118256386839',
-	],
+	Documents: [''],
 	NoOfComments: 0,
 	LikedIds: [],
 	Mentions: [],
-	CreatedIndex: 1721211825638,
-	Index: '1721211825639',
-	DocId: '66979bb131dbe239dd62f58b',
-	NextId: '1721211825639--66979bb131dbe239dd62f58b',
+	CreatedIndex: '',
+	Index: '',
+	DocId: '',
+	NextId: '',
 }
 
 export const defaultPostData = (UserId) => ({
@@ -137,8 +134,10 @@ export const AuthProvider = ({ children }) => {
 		setCurrentUserData(User)
 	}
 
-	const logout = () => {
+	const logout = async () => {
+		await userLogout(currentUserData.Token, currentUserData.RefreshToken, isDebug)
 		_clearData(CURRENTUSERDATA)
+		_clear()
 		setCurrentUserData(null)
 		setCurrentUserProfile(defaultProfile)
 	}

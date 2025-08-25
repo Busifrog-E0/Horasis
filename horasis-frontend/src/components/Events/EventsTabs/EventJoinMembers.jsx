@@ -1,43 +1,16 @@
-import { useContext } from 'react'
 import avatar from '../../../assets/icons/avatar.svg'
-import { deleteItem, patchItem } from '../../../constants/operations'
+import useEntityOrganizationManager from '../../../hooks/useEntityOrganizationManager'
 import Button from '../../ui/Button'
-import { AuthContext } from '../../../utils/AuthProvider'
-import { useToast } from '../../Toast/ToastService'
 
-const EventJoinMembers = ({ profile, eventId,fetch }) => {
-	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
-	const toast = useToast()
-	const acceptJoinRequest = () => {
-		patchItem(
-			`events/${eventId}/join/${profile.MemberId}/accept`,
-			{},
-			(result) => {
-				
-				if (result === true) {
-					fetch()
-				}
-			},
-			(err) => {},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
-	}
-	const rejectJoinRequest = () => {
-		deleteItem(
-			`events/${eventId}/join/${profile.MemberId}/reject`,
-			(result) => {
-				if (result === true) {
-					fetch()
-				}
-			},
-			(err) => {},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
-	}
+const EventJoinMembers = ({ profile, eventId, fetch }) => {
+	const { acceptEntityMembershipRequest: acceptJoinRequest, rejectEntityMembershipRequest: rejectJoinRequest } =
+		useEntityOrganizationManager({
+			EntityId: eventId,
+			UserId: profile.MemberId,
+			Type: 'Event',
+			successCallback: fetch,
+			errorCallback: () => {},
+		})
 
 	return (
 		<div className={` cursor-pointer px-2 py-2 rounded-lg flex items-center justify-between gap-2`}>

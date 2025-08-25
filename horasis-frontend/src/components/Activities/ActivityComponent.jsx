@@ -18,14 +18,30 @@ import MentionTextLink from './Mentions/MentionTextLink'
 import ActivityDocuments from './ActivityDocuments'
 import { useNavigate } from 'react-router-dom'
 import { _retrieveData } from '../../utils/LocalStorage'
-const ActivityComponent = ({ titleSize, bordered, activity, activityId, onDelete, className, avatarSize, descriptionSize, timeSize = 'text-base', ShowImage = true, iconSize = '6', openComment = false, onSaveRemoveCallback = () => {} }) => {
+import useTranslation from '../../hooks/useTranslation'
+import useEntityLikeManager from '../../hooks/useEntityLikeManager'
+import useEntitySaveManager from '../../hooks/useEntitySaveManager'
+const ActivityComponent = ({
+	titleSize,
+	bordered,
+	activity,
+	activityId,
+	onDelete,
+	className,
+	avatarSize,
+	descriptionSize,
+	timeSize = 'text-base',
+	ShowImage = true,
+	iconSize = '6',
+	openComment = false,
+	onSaveRemoveCallback = () => {},
+	from = '',
+}) => {
 	const navigate = useNavigate()
 	const [showComment, setShowComment] = useState(openComment)
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
 	const toast = useToast()
 	const [isDeleting, setIsDeleting] = useState(false)
-	const [isSaving, setIsSaving] = useState(false)
-	const [isLiking, setIsLiking] = useState(false)
 	const [isLoading, setIsLoading] = useState(false)
 	const [isLoadingMore, setIsLoadingMore] = useState(false)
 	const [commentsData, setCommentsData] = useState([])
@@ -38,102 +54,6 @@ const ActivityComponent = ({ titleSize, bordered, activity, activityId, onDelete
 	const [isLoadingActivity, setIsLoadingActivity] = useState(true)
 	const [singleActivity, setSingleActivity] = useState(activity)
 
-	const onLikeBtnClicked = () => {
-		const actId = singleActivity ? singleActivity.DocId : activityId
-
-		setIsLiking(true)
-		postItem(
-			`users/${currentUserData.CurrentUser.UserId}/activities/${actId}/like`,
-			{},
-			(result) => {
-				console.log(result)
-				if (result === true) {
-					getSingleActivity()
-				}
-				setIsLiking(false)
-			},
-			(err) => {
-				setIsLiking(false)
-				console.error(err)
-			},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
-	}
-
-	const onSaveClicked = () => {
-		const actId = singleActivity ? singleActivity.DocId : activityId
-
-		setIsSaving(true)
-		postItem(
-			`saves`,
-			{
-				EntityId: actId,
-				Type: 'Activity',
-			},
-			(result) => {
-				console.log(result)
-				if (result === true) {
-					getSingleActivity()
-				}
-				setIsSaving(false)
-			},
-			(err) => {
-				setIsSaving(false)
-				console.error(err)
-			},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
-	}
-
-	const OnRemoveClicked = () => {
-		const actId = singleActivity ? singleActivity.DocId : activityId
-
-		setIsSaving(true)
-		deleteItem(
-			`saves/${actId}`,
-			(result) => {
-				console.log(result)
-				if (result === true) {
-					getSingleActivity()
-					onSaveRemoveCallback()
-				}
-				setIsSaving(false)
-			},
-			(err) => {
-				setIsSaving(false)
-				console.error(err)
-			},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
-	}
-	const onUnLikeBtnClicked = () => {
-		const actId = singleActivity ? singleActivity.DocId : activityId
-
-		setIsLiking(true)
-		deleteItem(
-			`users/${currentUserData.CurrentUser.UserId}/activities/${actId}/disLike`,
-			(result) => {
-				console.log(result)
-				if (result === true) {
-					getSingleActivity()
-				}
-				setIsLiking(false)
-			},
-			(err) => {
-				setIsLiking(false)
-				console.error(err)
-			},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
-	}
 	const onDeleteBtnClicked = () => {
 		const actId = singleActivity ? singleActivity.DocId : activityId
 
@@ -253,67 +173,57 @@ const ActivityComponent = ({ titleSize, bordered, activity, activityId, onDelete
 	// 	</div>
 	// }
 
-	const [translated, setTranslated] = useState(false)
-	const [translating, setTranslating] = useState(false)
-	const storedLanguage = _retrieveData('currentLanguage')
-	const homeLanguage = storedLanguage ? storedLanguage : 'English'
-	const [translationData, setTranslationData] = useState(null)
-	const translateThisPost = () => {
-		if (translationData) {
-			setTranslated((prev) => !prev)
-			setSingleActivity({ ...singleActivity, ...translationData.TranslatedContent })
-		} else {
-			const targetLanguage = homeLanguage
-			if (singleActivity.OriginalLanguage !== targetLanguage) {
-				setTranslating(true)
-				postItem(
-					`translate`,
-					{
-						EntityId: singleActivity.DocId,
-						Type: 'Activity',
-						TargetLanguage: targetLanguage,
-					},
-					(result) => {
-						setTranslating(false)
-						setTranslated((prev) => !prev)
-						setTranslationData(result)
-						setSingleActivity({ ...singleActivity, ...result.TranslatedContent })
-					},
-					(err) => {
-						setTranslating(false)
-					},
-					updateCurrentUser,
-					currentUserData,
-					toast
-				)
-			}
-		}
-	}
+	// CUSTOM HOOKS USED BELOW
 
-	const showOriginal = () => {
-		if (translationData) {
-			setTranslated((prev) => !prev)
-			setSingleActivity({ ...singleActivity, ...translationData.OriginalContent })
-		}
-	}
+	const { isLiking, isUnliking, likeEntity, unlikeEntity } = useEntityLikeManager({
+		EntityId: singleActivity ? singleActivity.DocId : activityId,
+		Type: 'Activity',
+		successCallback: getSingleActivity,
+		errorCallback: () => {},
+	})
+
+	const { isSaving, isUnsaving, saveEntity, unsaveEntity } = useEntitySaveManager({
+		EntityId: singleActivity ? singleActivity.DocId : activityId,
+		Type: 'Activity',
+		successCallback: getSingleActivity,
+		errorCallback: () => {},
+	})
+
+	const {
+		isTranslated,
+		translate: translateActivity,
+		showOriginal,
+		homeLanguage,
+		isTranslating,
+	} = useTranslation({
+		data: singleActivity,
+		setData: setSingleActivity,
+		Type: 'Activity',
+	})
 
 	if (singleActivity)
 		return (
 			<div className={className}>
 				{isLoadingActivity && (
-					<div style={{ zIndex: 1000 }} className='absolute top-0 bottom-0 right-0 left-0 flex flex-col justify-center items-center'>
+					<div
+						style={{ zIndex: 1000 }}
+						className='absolute top-0 bottom-0 right-0 left-0 flex flex-col justify-center items-center'>
 						<Spinner />
 					</div>
 				)}
 
 				<div
-					className='flex items-start gap-2 cursor-pointer'
+					className={`${from === 'podcast' ? 'hidden' : 'flex'} items-start gap-2 cursor-pointer`}
 					onClick={() => {
 						navigate(`/ViewProfile/${singleActivity.UserDetails?.DocId}`)
 					}}>
 					{singleActivity.UserDetails?.ProfilePicture ? (
 						<>
-							<img className={`${avatarSize} rounded-full object-cover`} src={singleActivity.UserDetails?.ProfilePicture} alt='Rounded avatar' />
+							<img
+								className={`${avatarSize} rounded-full object-cover`}
+								src={singleActivity.UserDetails?.ProfilePicture}
+								alt='Rounded avatar'
+							/>
 						</>
 					) : (
 						<>
@@ -333,11 +243,19 @@ const ActivityComponent = ({ titleSize, bordered, activity, activityId, onDelete
 								</h1>
 								{/* <h4 className='text-system-primary-text text-md'>Updated their photo</h4> */}
 							</div>
-							<h4 className={`font-medium ${timeSize} text-brand-gray-dim`}>{relativeTime(singleActivity.CreatedIndex)}</h4>
+							<h4 className={`font-medium ${timeSize} text-brand-gray-dim`}>
+								{relativeTime(singleActivity.CreatedIndex)}
+							</h4>
 						</div>
 					</div>
 				</div>
-				<div className='mt-5'>{translating ? <p className='text-sm text-system-secondary-text'>Translating... </p> : <MentionTextLink descriptionSize={descriptionSize} singleActivity={singleActivity} />}</div>
+				<div className={`${from === 'podcast' ? '' : 'mt-5'}`}>
+					{isTranslating ? (
+						<p className='text-sm text-system-secondary-text'>Translating... </p>
+					) : (
+						<MentionTextLink descriptionSize={descriptionSize} singleActivity={singleActivity} />
+					)}
+				</div>
 				{/* {
 					singleActivity.Mentions?.length > 0 &&
 					<div className='mb-2 mt-1'>
@@ -358,7 +276,7 @@ const ActivityComponent = ({ titleSize, bordered, activity, activityId, onDelete
 				)}
 				{singleActivity.OriginalLanguage !== homeLanguage && (
 					<div className='mt-6 mb-2 select-none'>
-						{translated ? (
+						{isTranslated ? (
 							<>
 								<p className='text-sm text-system-secondary-text cursor-pointer' onClick={showOriginal}>
 									Show Original
@@ -366,26 +284,38 @@ const ActivityComponent = ({ titleSize, bordered, activity, activityId, onDelete
 							</>
 						) : (
 							<>
-								<p className='text-sm text-system-secondary-text cursor-pointer' onClick={translateThisPost}>
-									Translate this post
+								<p className='text-sm text-system-secondary-text cursor-pointer' onClick={translateActivity}>
+									{from === 'podcast' ? 'Translate podcast description' : 'Translate this post'}
 								</p>
 							</>
 						)}
 					</div>
 				)}
-				<div className='flex items-center justify-between gap-10 mt-2'>
+				<div className={`flex items-center justify-between gap-10 mt-2`}>
 					<div className='flex flex-wrap items-start justify-between gap-10'>
-						{isLiking ? (
+						{isLiking || isUnliking ? (
 							<Spinner />
 						) : (
 							<div className='flex items-center gap-2'>
-								{singleActivity.HasLiked ? <img src={liked} className={`h-${iconSize} w-${iconSize} cursor-pointer text-system-error`} onClick={onUnLikeBtnClicked} /> : <img src={like} className={`h-${iconSize} w-${iconSize} cursor-pointer`} onClick={onLikeBtnClicked} />}
-								<ViewLikedMembers activity={singleActivity} timeSize={timeSize} />
+								{singleActivity.HasLiked ? (
+									<img
+										src={liked}
+										className={`h-${iconSize} w-${iconSize} cursor-pointer text-system-error`}
+										onClick={unlikeEntity}
+									/>
+								) : (
+									<img src={like} className={`h-${iconSize} w-${iconSize} cursor-pointer`} onClick={likeEntity} />
+								)}
+								<ViewLikedMembers entity={singleActivity} timeSize={timeSize} />
 							</div>
 						)}
-						<div className='flex items-center gap-2 cursor-pointer' onClick={() => setShowComment((prev) => !prev)}>
+						<div
+							className={`${from === 'podcast' ? 'hidden' : 'flex'} items-center gap-2 cursor-pointer`}
+							onClick={() => setShowComment((prev) => !prev)}>
 							<img src={reply} className={`h-${iconSize} w-${iconSize} `} />
-							<p className={`text-brand-gray-dim mt-1 ${timeSize}`}>{singleActivity.NoOfComments} replies</p>
+							<p className={`text-brand-gray-dim mt-1 ${timeSize}`}>
+								{singleActivity.NoOfComments} {singleActivity.NoOfComments === 1 ? 'reply' : 'replies'}
+							</p>
 						</div>
 						{/* {isDeleting ? (
 							<Spinner />
@@ -395,10 +325,31 @@ const ActivityComponent = ({ titleSize, bordered, activity, activityId, onDelete
 							</div>
 						)} */}
 					</div>
-					<ActivityDropdown onRemoveClicked={OnRemoveClicked} onSaveClicked={onSaveClicked} activity={singleActivity} isSaving={isSaving} />
+					{from !== 'podcast' && (
+						<ActivityDropdown
+							onRemoveClicked={unsaveEntity}
+							onSaveClicked={saveEntity}
+							activity={singleActivity}
+							isSaving={isSaving || isUnsaving}
+						/>
+					)}
 				</div>
 				{showComment && (
-					<ActivityCommentList comments={commentsData} activity={singleActivity} getAllActivityComments={getAllActivityComments} getSingleActivity={getSingleActivity} isLoading={isLoading} isLoadingMore={isLoadingMore} pageDisabled={pageDisabled} fetchMore={fetchMore} setIsLoading={setIsLoading} timeSize={timeSize} titleSize={titleSize} iconSize={iconSize} descriptionSize={descriptionSize} />
+					<ActivityCommentList
+						comments={commentsData}
+						activity={singleActivity}
+						getAllActivityComments={getAllActivityComments}
+						getSingleActivity={getSingleActivity}
+						isLoading={isLoading}
+						isLoadingMore={isLoadingMore}
+						pageDisabled={pageDisabled}
+						fetchMore={fetchMore}
+						setIsLoading={setIsLoading}
+						timeSize={timeSize}
+						titleSize={titleSize}
+						iconSize={iconSize}
+						descriptionSize={descriptionSize}
+					/>
 				)}
 			</div>
 		)

@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import { gettimenow } from '../../utils/date'
+import avatar from '../../assets/icons/avatar.svg'
+import location from '../../assets/icons/location.svg'
 
 const EventsAgenda = ({ event }) => {
-	const [agendas, setAgendas] = useState(event.Agenda);
+	const [agendas, setAgendas] = useState(event.Agenda)
 
 	return (
 		<div className='relative flex flex-col items-center'>
@@ -17,7 +19,12 @@ const EventsAgenda = ({ event }) => {
 					<div className={`w-1/2 text-right pr-4`}>
 						<time className='block mb-2 text-sm font-normal leading-none text-system-primary-text'>
 							{gettimenow(new Date(agenda.StartTime))}
+							{/* <p className='text-xs font-normal text-system-secondary-text'>{agenda.Description}</p> */}
 						</time>
+						<div className='flex justify-end items-center gap-1'>
+							<img className='w-4 h-4 rounded-full object-cover' src={location} alt='Rounded avatar' />
+							<h3 className='text-sm font-medium text-system-primary-text'>{agenda?.Location}</h3>
+						</div>
 					</div>
 
 					{/* Center - Timeline dot */}
@@ -35,13 +42,35 @@ const EventsAgenda = ({ event }) => {
 
 					{/* Left side - Event details */}
 					<div className={`w-1/2 text-left pl-4`}>
-						<h3 className='text-base font-medium text-system-primary-text'>{agenda.Name}</h3>
-						<p className='text-xs font-normal text-system-secondary-text'>{agenda.Description}</p>
+						<div className='flex items-center gap-3'>
+							<h3 className='text-base font-medium text-system-primary-text'>{agenda.Name}</h3>
+							{/* {agenda?.SpeakerData?.UserDetails?.ProfilePicture ? (
+								<img
+									className='w-12 h-12 rounded-full object-cover'
+									src={agenda?.SpeakerData?.UserDetails?.ProfilePicture}
+									alt='Rounded avatar'
+									/>
+									) : (
+										<img className='w-12 h-12 rounded-full object-cover' src={avatar} alt='Rounded avatar' />
+										)} */}
+						</div>
+						<div className='flex-1'>
+							{agenda?.SpeakerData?.UserDetails?.FullName ? (
+								<div className='flex gap-1'>
+									<p className='text-sm '>by</p>
+									<h4 className='font-semibold text-sm text-system-primary-accent'>
+										{agenda?.SpeakerData?.UserDetails?.FullName}
+									</h4>
+								</div>
+							) : (
+								<></>
+							)}
+						</div>
 					</div>
 				</div>
 			))}
 		</div>
-	);
-};
+	)
+}
 
-export default EventsAgenda;
+export default EventsAgenda

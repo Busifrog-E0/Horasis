@@ -1,8 +1,9 @@
 import logger from 'harislogger';
 
 import dbFile from './db.config.js';
-const db = dbFile.getClient().db("Main");
-import { ObjectId } from 'mongodb';
+const dbClient = dbFile.getClient();
+const db = dbClient.db("Horasis");
+import { ObjectId, ClientSession } from 'mongodb';
 import moment from "moment-timezone";
 
 
@@ -15,8 +16,10 @@ import moment from "moment-timezone";
 async function Create(collectionName, data, docName = undefined, index = true) {
     return new Promise(async (resolve, reject) => {
         try {
-            data.CreatedIndex = moment().valueOf();
-            if (data.Index === undefined && index) {
+            if (!data.CreatedIndex) {
+                data.CreatedIndex = moment().valueOf();
+            }
+            if (!data.Index && index) {
                 data.Index = `${Date.now()}`;
             }
             if (docName !== undefined) {
@@ -65,17 +68,23 @@ async function Update(collectionName, data, docName, operation = ["$set"], LastU
  * @param {string} collectionName
  * @param {object} data
  * @param {object} filter
+ * @param {object} updateOptions
+ * @param {object} dataSets
+ * @param {Array<string>} operation
+ * @returns {Promise<true>}
  */
-async function UpdateMany(collectionName, data, filter) {
-    return new Promise(async (resolve, reject) => {
-        try {
-            await db.collection(collectionName).updateMany(filter, data);
-            resolve(true);
-        } catch (error) {
-            logger.log(error);
-            throw new Error(error);
+async function UpdateMany(collectionName, data, filter, operation = ["$set"], updateOptions = {}, ...dataSets) {
+    try {
+        const OperationObject = { [operation[0]]: data }
+        for (let index = 1; index < operation.length; index++) {
+            OperationObject[operation[index]] = dataSets[index - 1];
         }
-    });
+        await db.collection(collectionName).updateMany(filter, OperationObject, updateOptions);
+        return true;
+    } catch (error) {
+        logger.log(error);
+        throw new Error(error);
+    }
 }
 
 /**
@@ -94,92 +103,12 @@ async function Delete(collectionName, docName) {
     });
 }
 
-/**
- * @param {string} collectionName
- * @param {string | number | ObjectId | import("bson").ObjectIdLike | Uint8Array | undefined} docName
- */
-async function Read(collectionName, docName, NextIndex = "", limit = 10, where = {}, orderBy = { "Index": "desc" }) {
+async function DeleteMany(collectionName, filter) {
     return new Promise(async (resolve, reject) => {
-        let query, NextField = "Index";
         try {
-            if (docName === undefined || docName === "") {
-                if (Array.isArray(orderBy)) {
-                    if (limit === -1) {
-                        // @ts-ignore
-                        query = db.collection(collectionName).find(where);
-                    }
-                    else {
-                        // @ts-ignore
-                        query = db.collection(collectionName).find(where).limit(limit);
-                    }
-                }
-                else {
-                    const OrderByKeys = Object.keys(orderBy);
-                    NextField = OrderByKeys[0] || "Index";
-                    for (let index = 0; index < OrderByKeys.length; index++) {
-                        const element = OrderByKeys[index];
-                        if (!where[element]) {
-                            where[element] = { "$exists": true };
-                        }
-                    }
-                    orderBy["_id"] = "desc";
-                    if (!Check(NextIndex)) {
-                        const [Index, nextId] = NextIndex.split('--');
-                        if (where["$or"]) {
-                            const FirstOr = where["$or"];
-                            if (orderBy[NextField] === "desc") {
-                                where["$and"] = [
-                                    { "$or": FirstOr },
-                                    { "$or": [{ [NextField]: { "$lt": Index } }, { [NextField]: Index, "_id": { "$lt": new ObjectId(nextId) } }] },
-                                ]
-                            }
-                            else {
-                                where["$and"] = [
-                                    { "$or": FirstOr },
-                                    { "$or": [{ [NextField]: { "$gt": Index } }, { [NextField]: Index, "_id": { "$lt": new ObjectId(nextId) } }] },
-                                ]
-                            }
-
-                            delete where["$or"];
-                        }
-                        else {
-                            if (orderBy[NextField] === "desc") {
-                                where["$or"] = [{ [NextField]: { "$lt": Index } }, { [NextField]: Index, "_id": { "$lt": new ObjectId(nextId) } }];
-                            }
-                            else {
-                                where["$or"] = [{ [NextField]: { "$gt": Index } }, { [NextField]: Index, "_id": { "$lt": new ObjectId(nextId) } }];
-                            }
-                        }
-                    }
-
-
-                    if (limit === -1) {
-                        // @ts-ignore
-                        query = db.collection(collectionName).find(where).sort(orderBy);
-                    }
-                    else {
-                        // @ts-ignore
-                        query = db.collection(collectionName).find(where).sort(orderBy).limit(limit);
-                    }
-                }
-                const temp = [];
-                const data = await query.toArray();
-                data.forEach((doc, index) => {
-                    temp.push({ ...doc, "DocId": doc._id.toString(), "NextId": `${doc[NextField]}--${doc._id}` });
-                });
-                resolve(temp);
-            }
-            else {
-                const data = await db.collection(collectionName).find({ "_id": new ObjectId(docName) }).toArray();
-                if (data.length === 1) {
-                    resolve({ ...data[0], "DocId": data[0]._id.toString() });
-                }
-                else {
-                    resolve(null);
-                }
-            }
-        }
-        catch (error) {
+            await db.collection(collectionName).deleteMany(filter);
+            resolve(true);
+        } catch (error) {
             logger.log(error);
             throw new Error(error);
         }
@@ -187,13 +116,288 @@ async function Read(collectionName, docName, NextIndex = "", limit = 10, where =
 }
 
 /**
+ * @param {string} collectionName
+ * @param {string | number | ObjectId | import("bson").ObjectIdLike | Uint8Array | undefined} docName
+ * @return {Promise<object|Array<object>|null>}
+ */
+async function Read(collectionName, docName, NextIndex = "", limit = 10, where = {}, orderBy = { "Index": "desc" }) {
+    let query, NextField = "Index";
+    try {
+        if (docName === undefined || docName === "") {
+
+            const OrderByKeys = Object.keys(orderBy);
+            NextField = OrderByKeys[0] || "Index";
+            for (let index = 0; index < OrderByKeys.length; index++) {
+                if (!where[OrderByKeys[index]]) {
+                    where[OrderByKeys[index]] = { "$exists": true };
+                }
+            }
+            orderBy["_id"] = "desc";
+            if (NextIndex) {
+                const [Index, nextId] = NextIndex.split('--');
+                if (where["$or"]) {
+                    const FirstOr = where["$or"];
+                    if (orderBy[NextField] === "desc") {
+                        where["$and"] = [
+                            { "$or": FirstOr },
+                            { "$or": [{ [NextField]: { "$lt": Index } }, { [NextField]: Index, "_id": { "$lt": new ObjectId(nextId) } }] },
+                        ]
+                    }
+                    else {
+                        where["$and"] = [
+                            { "$or": FirstOr },
+                            { "$or": [{ [NextField]: { "$gt": Index } }, { [NextField]: Index, "_id": { "$lt": new ObjectId(nextId) } }] },
+                        ]
+                    }
+
+                    delete where["$or"];
+                }
+                else {
+                    if (orderBy[NextField] === "desc") {
+                        where["$or"] = [{ [NextField]: { "$lt": Index } }, { [NextField]: Index, "_id": { "$lt": new ObjectId(nextId) } }];
+                    }
+                    else {
+                        where["$or"] = [{ [NextField]: { "$gt": Index } }, { [NextField]: Index, "_id": { "$lt": new ObjectId(nextId) } }];
+                    }
+                }
+            }
+
+
+            if (limit === -1) {
+                // @ts-ignore
+                query = db.collection(collectionName).find(where).sort(orderBy);
+            }
+            else {
+                // @ts-ignore
+                query = db.collection(collectionName).find(where).sort(orderBy).limit(limit);
+            }
+
+            const temp = [];
+            const data = await query.toArray();
+            data.forEach((doc, index) => {
+                const NextFieldData = NextField.split(".").reduce((prev, cur) => {
+                    return prev[cur];
+                }, doc);
+                temp.push({ ...doc, "DocId": doc._id.toString(), "NextId": `${NextFieldData}--${doc._id}` });
+            });
+            return temp;
+        }
+        else {
+            const data = await db.collection(collectionName).find({ "_id": new ObjectId(docName) }).toArray();
+            if (data.length === 1) {
+                return { ...data[0], "DocId": data[0]._id.toString() };
+            }
+            else {
+                return null;
+            }
+        }
+    }
+    catch (error) {
+        logger.log(error);
+        throw new Error(error);
+    }
+}
+
+
+
+/**
+ * @param {string} collectionName
+ * @param {object} data
+ * @param {string | number | ObjectId | import("bson").ObjectIdLike | Uint8Array | undefined} docName
+ * @param {ClientSession|undefined} session
+ * @returns {Promise<string>}
+ */
+async function TransactionalCreate(collectionName, data, docName = undefined, index = true, session = undefined) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!data.CreatedIndex) {
+                data.CreatedIndex = moment().valueOf();
+            }
+            if (!data.Index && index) {
+                data.Index = `${Date.now()}`;
+            }
+            if (docName !== undefined) {
+                const done = await db.collection(collectionName).insertOne({ ...data, "_id": new ObjectId(docName) }, { session });
+                resolve(done.insertedId.toString());
+            } else {
+                const done = await db.collection(collectionName).insertOne(data, { session });
+                resolve(done.insertedId.toString());
+            }
+        } catch (error) {
+            logger.log(error);
+            // throw new Error(error);
+            //@ts-ignore
+            resolve(false);
+        }
+    });
+}
+
+
+/**
+ * @param {string} collectionName
+ * @param {Array<string>} operation
+ * @param {{ LastUpdated: number | undefined; }|object} data
+ * @param {object} dataSets
+ * @param {string | number | ObjectId | import("bson").ObjectIdLike | Uint8Array | undefined} docName
+ * @param {ClientSession|undefined} session
+ */
+async function TransactionalUpdate(collectionName, data, docName, operation = ["$set"], session = undefined, LastUpdated = true, ...dataSets) {
+    return new Promise(async (resolve, reject) => {
+        try {
+
+            if (data.LastUpdated === undefined && LastUpdated) {
+                data.LastUpdated = `${Date.now()}`;
+            }
+            delete data._id;
+            const OperationObject = { [operation[0]]: data }
+            for (let index = 1; index < operation.length; index++) {
+                OperationObject[operation[index]] = dataSets[index - 1];
+            }
+            await db.collection(collectionName).updateOne({ "_id": new ObjectId(docName) }, OperationObject, { session });
+            resolve(true);
+        } catch (error) {
+            logger.log(error);
+            throw new Error(error);
+        }
+    });
+}
+
+
+/**
+ * @param {string} collectionName
+ * @param {string | number | ObjectId | import("bson").ObjectIdLike | Uint8Array | undefined} docName
+ * @param {ClientSession|undefined} session
+ */
+async function TransactionalDelete(collectionName, docName, session = undefined) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            await db.collection(collectionName).deleteOne({ "_id": new ObjectId(docName) }, { session });
+            resolve(true);
+        } catch (error) {
+            logger.log(error);
+            throw new Error(error);
+        }
+    });
+}
+
+
+/**
+ * @param {string} collectionName
+ * @param {string | number | ObjectId | import("bson").ObjectIdLike | Uint8Array | undefined} docName
+ * @param {ClientSession|undefined} session
+ * @return {Promise<object|Array<object>|null>}
+ */
+async function TransactionalRead(collectionName, docName, NextIndex = "", limit = 10, where = {}, orderBy = { "Index": "desc" }, session = undefined) {
+    let query, NextField = "Index";
+    try {
+        if (docName === undefined || docName === "") {
+
+            const OrderByKeys = Object.keys(orderBy);
+            NextField = OrderByKeys[0] || "Index";
+            for (let index = 0; index < OrderByKeys.length; index++) {
+                if (!where[OrderByKeys[index]]) {
+                    where[OrderByKeys[index]] = { "$exists": true };
+                }
+            }
+            orderBy["_id"] = "desc";
+            if (NextIndex) {
+                const [Index, nextId] = NextIndex.split('--');
+                if (where["$or"]) {
+                    const FirstOr = where["$or"];
+                    if (orderBy[NextField] === "desc") {
+                        where["$and"] = [
+                            { "$or": FirstOr },
+                            { "$or": [{ [NextField]: { "$lt": Index } }, { [NextField]: Index, "_id": { "$lt": new ObjectId(nextId) } }] },
+                        ]
+                    }
+                    else {
+                        where["$and"] = [
+                            { "$or": FirstOr },
+                            { "$or": [{ [NextField]: { "$gt": Index } }, { [NextField]: Index, "_id": { "$lt": new ObjectId(nextId) } }] },
+                        ]
+                    }
+
+                    delete where["$or"];
+                }
+                else {
+                    if (orderBy[NextField] === "desc") {
+                        where["$or"] = [{ [NextField]: { "$lt": Index } }, { [NextField]: Index, "_id": { "$lt": new ObjectId(nextId) } }];
+                    }
+                    else {
+                        where["$or"] = [{ [NextField]: { "$gt": Index } }, { [NextField]: Index, "_id": { "$lt": new ObjectId(nextId) } }];
+                    }
+                }
+            }
+
+
+            if (limit === -1) {
+                // @ts-ignore
+                query = db.collection(collectionName).find(where, { session }).sort(orderBy);
+            }
+            else {
+                // @ts-ignore
+                query = db.collection(collectionName).find(where, { session }).sort(orderBy).limit(limit);
+            }
+
+            const temp = [];
+            const data = await query.toArray();
+            data.forEach((doc, index) => {
+                const NextFieldData = NextField.split(".").reduce((prev, cur) => {
+                    return prev[cur];
+                }, doc);
+                temp.push({ ...doc, "DocId": doc._id.toString(), "NextId": `${NextFieldData}--${doc._id}` });
+            });
+            return temp;
+        }
+        else {
+            const data = await db.collection(collectionName).find({ "_id": new ObjectId(docName) }, { session }).toArray();
+            if (data.length === 1) {
+                return { ...data[0], "DocId": data[0]._id.toString() };
+            }
+            else {
+                return null;
+            }
+        }
+    }
+    catch (error) {
+        logger.log(error);
+        throw new Error(error);
+    }
+}
+
+/**
  * 
  * @param {string} collectionName 
  * @param {Array<Object>} AggregateArray 
+ * @param {string} NextIndex
+ * @param {number} limit
+ * @param {object} orderBy
  * @returns 
  */
-async function Aggregate(collectionName, AggregateArray) {
+async function Aggregate(collectionName, AggregateArray, NextIndex = "", limit = 10, orderBy = { "Index": "desc" }) {
     const data = [];
+    if (!Check(NextIndex)) {
+        let sortMatchObject = {};
+        const OrderByKeys = Object.keys(orderBy);
+        let NextField = OrderByKeys[0] || "Index";
+        const [Index, nextId] = NextIndex.split('--');
+        if (orderBy[NextField] === "desc") {
+            sortMatchObject["$or"] = [
+                { [NextField]: { "$lt": Index } },
+                { [NextField]: Index, "_id": { "$lt": new ObjectId(nextId) } }]
+        }
+        else {
+            sortMatchObject["$or"] = [
+                { [NextField]: { "$gt": Index } },
+                { [NextField]: Index, "_id": { "$lt": new ObjectId(nextId) } }]
+        }
+        AggregateArray.push({ $match: sortMatchObject });
+    }
+    orderBy = ConvertSortForAggregate(orderBy);
+    AggregateArray.push({ $sort: orderBy });
+    if (limit !== -1) {
+        AggregateArray.push({ $limit: limit });
+    }
     const promise = await db.collection(collectionName).aggregate(AggregateArray).toArray();
     promise.forEach((doc) => {
         data.push({ ...doc, "DocId": doc._id.toString(), "NextId": `${doc.Index}--${doc._id}` });
@@ -202,7 +406,21 @@ async function Aggregate(collectionName, AggregateArray) {
     return data;
 }
 
-
+/**
+ * 
+ * @param {string} collectionName 
+ * @param {string} field 
+ * @param {object} where 
+ */
+async function DistinctValues(collectionName, field, where = {}) {
+    try {
+        const data = await db.collection(collectionName).distinct(field, where);
+        return data;
+    } catch (error) {
+        logger.log(error);
+        throw new Error(error);
+    }
+}
 
 const Check = (/** @type {string | null | undefined} */ Field) => {
     if (Field === null || Field === undefined || Field === "") {
@@ -212,9 +430,6 @@ const Check = (/** @type {string | null | undefined} */ Field) => {
         return false;
     }
 }
-// const increment = admin.firestore.FieldValue.increment
-// const arrayUnion = admin.firestore.FieldValue.arrayUnion;
-
 
 /**
  * @param {number} b
@@ -258,94 +473,15 @@ function substract(b, c) {
     return fv
 }
 
-
-// async function toBase64(ImgUrl) {
-//     const imageToBase64 = require('image-to-base64');
-
-//     return imageToBase64(ImgUrl) // Path to the image
-//         .then((response) => {
-//             return response; // "cGF0aC90by9maWxlLmpwZw=="
-//         })
-//         .catch((error) => {
-//             return error; // Logs an error if there was one
-//         })
-// }
-
-const ParamsToFirestoreFields = (QueryParams = {}, FieldTypes = { "index": "number" }) => {
-    console.log(QueryParams);
-
-    let Limit, OrderBy = {}, Index, Keyword, Where = {};
-
-    if (!Check(QueryParams["limit"])) {
-        if (QueryParams["limit"] === "FALSE") {
-            Limit = false;
-        }
-        else {
-            Limit = Number(QueryParams["limit"]);
-        }
-    }
-    else {
-        Limit = 10;
-    }
-    if (!Check(QueryParams["sort_by"])) {
-        OrderBy[QueryParams["sort_by"]] = 1;
-        if (!Check(QueryParams["order_by"]) && QueryParams["order_by"] === "desc") {
-            OrderBy[QueryParams["sort_by"]] = -1;
-        }
-    }
-    if (!Check(QueryParams["after_id"])) {
-        Index = QueryParams["after_id"];
-    }
-    if (!Check(QueryParams["keyword"])) {
-        Keyword = QueryParams["keyword"];
-    }
-
-    const FixedKeys = ["limit", "sort_by", "after_id", "order_by", "keyword"];
-    const keys = Object.keys(QueryParams);
-    const types = ["$eq", "$lte", "$gte", "$gt", "$lt", ">>"];
-
-    for (let index = 0; index < keys.length; index++) {
-        const element = keys[index];
-        const Flag = !(FixedKeys.includes(element));
-
-        if (!Flag) {
-            continue;
-        }
-        if (Check(QueryParams[element])) {
-            continue;
-        }
-        if (typeof QueryParams[element] !== 'object') {
-            Where[element] = TypeSetting(element, QueryParams[element], FieldTypes);
-            continue;
-        }
-        const type = Object.keys(QueryParams[element]);
-        for (let i = 0; i < type.length; i++) {
-            const elem = type[i];
-            QueryParams[element][elem] = TypeSetting(element, QueryParams[element][elem], FieldTypes);
-            if (types.includes(elem)) {
-                if (elem === ">>") {
-                    Where[element] = QueryParams[element][elem];
-                }
-                else {
-                    Where[element][elem] = QueryParams[element][elem];
-                }
-            }
-        }
-    }
-
-    const orderBy = OrderBy;
-
-    return {
-        Limit,
-        orderBy,
-        Index,
-        Where,
-        Keyword
-    }
+const ConvertSortForAggregate = (orderBy) => {
+    return Object.keys(orderBy).reduce((acc, field) => {
+        acc[field] = orderBy[field] === 'asc' ? 1 : -1;
+        return acc;
+    }, {});
 }
 
 const TypeSetting = (/** @type {string} */ FieldName, /** @type {string} */ FieldData, /** @type {{ [x: string]: any; index?: string; }} */ FieldTypeObj) => {
-    if (Check(FieldTypeObj[FieldName])) {
+    if (!FieldTypeObj[FieldName]) {
         return FieldData;
     }
     switch (FieldTypeObj[FieldName]) {
@@ -361,18 +497,6 @@ const TypeSetting = (/** @type {string} */ FieldName, /** @type {string} */ Fiel
 }
 
 
-const CheckEntityExists = (/** @type {{ status: (arg0: number) => { (): any; new (): any; json: { (arg0: { message: string; success: boolean; }): void; new (): any; }; }; }} */ res, /** @type {any} */ Entity, /** @type {any} */ EntityString) => {
-    if (Check(Entity)) {
-        res.status(403).json({
-            message: `${EntityString} doesn't exists`,
-            success: false,
-        });
-        return true;
-    }
-    else {
-        return false;
-    }
-}
 
 async function ReadCount(collectionName, where = {}) {
 
@@ -394,14 +518,17 @@ export default {
     UpdateMany,
     Delete,
     Read,
+    TransactionalCreate,
+    TransactionalUpdate,
+    TransactionalDelete,
+    TransactionalRead,
     ReadCount,
     Aggregate,
     Check,
-    CheckEntityExists,
     ObjectId,
     db,
-
+    dbClient,
+    DistinctValues,
     substract,
-    ParamsToFirestoreFields,
+    DeleteMany
 };
-// 345577194

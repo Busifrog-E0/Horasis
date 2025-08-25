@@ -1,775 +1,664 @@
-import { memo, useContext, useEffect, useState } from 'react'
-import { AuthContext, useAuth } from '../utils/AuthProvider'
+import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import MiniTab from '../components/ui/MiniTab'
-import SpeakerProfileTab from '../components/Events/SpeakerProfileTab'
-import DropdownMenu from '../components/ui/DropdownMenu'
-import { getDateInWordsFormat, gettimenow, relativeTime } from '../utils/date'
-import Button from '../components/ui/Button'
-import Modal from '../components/ui/Modal'
-import { useToast } from '../components/Toast/ToastService'
-import { deleteItem, getItem, patchItem, postItem } from '../constants/operations'
-import cover from '../assets/icons/cover.svg'
 import arrowback from '../assets/icons/arrowback.svg'
-import camera from '../assets/icons/camera.svg'
 import calendar from '../assets/icons/calendar.svg'
+import camera from '../assets/icons/camera.svg'
+import closeIcon from '../assets/icons/close.svg'
 import clock from '../assets/icons/clock.svg'
-import close from '../assets/icons/close.svg'
-import edit from '../assets/icons/edit.svg'
-import Tab from '../components/ui/Tab'
-import EventParticipantsTab from '../components/Events/EventsTabs/EventParticipantsTab'
-import CreateEventStep5 from '../components/Events/CreateEvent/CreateEventSteps/CreateEventStep5'
-import EventSettings from '../components/Events/EventsTabs/EventSettings'
-import EventsAgenda from '../components/Events/EventsAgenda'
+import cover from '../assets/icons/cover.svg'
 import TimeLineTab from '../components/Activities/TimeLineTab'
-import EventJoinRequest from '../components/Events/EventsTabs/EventJoinRequest'
-import InviteSpeakers from '../components/Events/InviteSpeakers'
-import { _retrieveData } from '../utils/LocalStorage'
 import EmptyMembers from '../components/Common/EmptyMembers'
+import Settings from '../components/Common/PermissionsManagement/Settings'
+import CreateEventStep5 from '../components/Events/CreateEvent/CreateEventSteps/CreateEventStep5'
+import EventsAgenda from '../components/Events/EventsAgenda'
+import EventJoinRequest from '../components/Events/EventsTabs/EventJoinRequest'
+import EventParticipantsTab from '../components/Events/EventsTabs/EventParticipantsTab'
+import InviteSpeakers from '../components/Events/InviteSpeakers'
+import SpeakerProfileTab from '../components/Events/SpeakerProfileTab'
+import Button from '../components/ui/Button'
+import MiniTab from '../components/ui/MiniTab'
+import Spinner from '../components/ui/Spinner'
+import Tab from '../components/ui/Tab'
+import useEntityMembershipManager from '../hooks/useEntityMembershipManager'
+import useGetData from '../hooks/useGetData'
+import useTranslation from '../hooks/useTranslation'
+import { useAuth } from '../utils/AuthProvider'
+import { getDateInWordsFormat, gettimenow } from '../utils/date'
+import TagsList from '../components/Tags/TagsList'
+import Modal from '../components/ui/Modal'
+import PictureUpload from '../components/Profile/EditProfile/PictureUpload'
+import usePostData from '../hooks/usePostData'
+import useUpdateData from '../hooks/useUpdateData'
+import EventsAgendaBig from '../components/Events/EventAgendaBig'
+import ShowMoreText from '../components/Common/ShowMoreText'
 
 const SingleEvent = () => {
-	const [activeTab, setActiveTab] = useState(0)
-	const { updateCurrentUser, currentUserData, scrollToTop } = useAuth()
-	const toast = useToast()
 	const { eventid } = useParams()
-	const [event, setEvent] = useState({})
-	const [isLoading, setIsLoading] = useState(true)
 	const navigate = useNavigate()
-	const handleGoBack = () => {
-		navigate(-1)
-	}
+	const { currentUserData } = useAuth()
 
+	const [activeTab, setActiveTab] = useState(0)
 	const onTabChange = (item) => {
 		setActiveTab(item.key)
 	}
 
-	const getEvent = () => {
-		setIsLoading(true)
-		getItem(
-			`events/${eventid}`,
-			(result) => {
-				setEvent(result)
-				setIsLoading(false)
-			},
-			(err) => {
-				navigate('/NotFound', { replace: true })
-				setIsLoading(false)
-			},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
+	const {
+		isLoading: isLoadingEvent,
+		data: event,
+		getData: getEvent,
+		setData: setEvent,
+	} = useGetData(`events/${eventid}`)
+	const handleGoBack = () => {
+		navigate(-1)
 	}
 
-	useEffect(() => {
-		getEvent()
-	}, [])
-
 	const tabs = (event) => {
-		const isPrivate = event.Privacy === 'Private'
-		const isParticipant = event.IsMember
-		const isAdmin = event?.Permissions?.IsAdmin
-		const hasDiscussion = event?.HasDiscussion
+		const { Privacy, IsMember, Permissions, HasDiscussion, DocId, Date: EventDate } = event // Assuming EventDate is part of the event object
+		const isPrivate = Privacy === 'Private'
+		const isAdmin = Permissions?.IsAdmin
+		const canInvite = Permissions?.CanInviteOthers
+
+		// Convert EventDate to a Date object
+
+		const eventDate = new Date(EventDate)
+		const currentDate = new Date() // Current date at the time of execution
+		const tenDaysBefore = new Date(eventDate)
+		const tenDaysAfter = new Date(eventDate)
+
+		tenDaysBefore.setDate(eventDate.getDate() - 10)
+		tenDaysAfter.setDate(eventDate.getDate() + 10)
+
+		const isWithinTenDays = currentDate >= tenDaysBefore && currentDate <= tenDaysAfter
+
+		const getEventAgendaTab = (key) => ({
+			key: key,
+			title: 'Event Agenda',
+			render: () => {
+				return (
+					<div className='bg-system-secondary-bg p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
+						<EventsAgendaBig event={event} />
+					</div>
+				)
+			},
+		})
+
+		const getParticipantsTab = (key) => ({
+			key: key,
+			title: 'Participants',
+			render: () => (
+				<div className='bg-system-secondary-bg p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
+					{canInvite && (
+						<div>
+							<CreateEventStep5 event={event} eventId={DocId} from='tab' IsAdmin={isAdmin} />
+						</div>
+					)}
+					<div className='my-4 flex flex-col gap-2'>
+						<h1 className='text-system-primary-text font-medium text-lg'>Current Participants</h1>
+						<EventParticipantsTab eventId={DocId} />
+					</div>
+				</div>
+			),
+		})
+
+		const getInviteSpeakersTab = (key) => ({
+			key: key,
+			title: 'Invite Speakers',
+			render: () => (
+				<div className='bg-system-secondary-bg p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
+					<InviteSpeakers eventId={DocId} event={event} />
+				</div>
+			),
+		})
+
+		const getSettingsTab = (key) => ({
+			key: key,
+			title: 'Settings',
+			render: () => (
+				<div className='bg-system-secondary-bg p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
+					<Settings
+						from='settings'
+						EntityId={DocId}
+						Entity={event}
+						permissionsToShow={{
+							Invitation: true,
+							Activity: event?.HasDiscussion,
+							Photo: event?.HasDiscussion,
+							Video: event?.HasDiscussion,
+							Album: event?.HasDiscussion,
+							Admin: true,
+						}}
+						Type='Event'
+					/>
+				</div>
+			),
+		})
+
+		const getActivityTab = (key) => ({
+			key: key,
+			title: 'Updates & Discussions',
+			render: () => (
+				<div className='bg-system-secondary-bg p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
+					<TimeLineTab
+						api={`activities`}
+						gapBnTabs='gap-7'
+						classNameForPost='py-5'
+						bordered={true}
+						permissions={Permissions}
+						entId={DocId}
+						type='Event'
+					/>
+				</div>
+			),
+		})
+
+		const getRegistrationTab = (key) => ({
+			key: key,
+			title: 'Registration Requests',
+			render: () => (
+				<div className='bg-system-secondary-bg p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
+					<EventJoinRequest eventId={DocId} />
+				</div>
+			),
+		})
+
+		const getDicussionNotStarted = (key) => ({
+			key: key,
+			title: 'Updates & Discussions',
+			render: () => (
+				<>
+					<div className='bg-system-secondary-bg p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden h-96'>
+						<div className={`rounded-lg  max-h-96 overflow-hidden relative   h-full`}>
+							<div className='absolute top-0 right-0 left-0 bottom-0 p-4 lg:px-10 lg:py-6 bg-system-primary-accent-light h-100 overflow-hidden overflow-y-auto z-10'>
+								<div className='flex flex-col justify-center items-center mt-6'>
+									<h4 className='font-bold text-center text-3xl text-system-primary-accent mb-3'>
+										Join the Discussions
+									</h4>
+									<h4 className='text-md text-center text-system-primary-accent'>
+										Get ready for insightful conversations! Our discussions platform will be active 10 days
+										before,during and 10 days after the event?. Check in closer to the date to connect with peers, share
+										perspectives and share most of your event experience.
+									</h4>
+									<h4 className='text-md text-center text-system-primary-accent mt-4 mb-6'>
+										Let the anticipation build - meaningful discussions await!
+									</h4>
+								</div>
+							</div>
+						</div>
+					</div>
+				</>
+			),
+		})
+
+		const getSpeakersTab = (key) => ({
+			key: key,
+			title: 'Speaker Details',
+			render: () => (
+				<>
+					<div className='bg-system-secondary-bg p-4 lg:py-8 lg:px-12 rounded-b-lg'>
+						<div className=''>
+							{event?.Speakers?.length > 0 ? (
+								<div className='grid grid-cols-1  gap-6'>
+									{event?.Speakers.map((speaker) => (
+										<SpeakerProfileTab
+											key={speaker.UserDetails.id}
+											profile={speaker.UserDetails}
+											agenda={speaker.Agenda}
+										/>
+									))}
+								</div>
+							) : (
+								<EmptyMembers emptyText='No speakers registered yet.' />
+							)}
+						</div>
+					</div>
+				</>
+			),
+		})
+
+		// Start with key 0
+		let tabsArray = []
+
+		tabsArray.push(getEventAgendaTab(0))
+		tabsArray.push(getSpeakersTab(tabsArray.length))
+
+		// Add activity tab if within the specified date range and has discussion
+		if (isWithinTenDays && HasDiscussion && IsMember) {
+			tabsArray.push(getActivityTab(tabsArray.length)) // Key for Activity tab is 0
+		} else if (!isWithinTenDays && HasDiscussion && IsMember) {
+			tabsArray.push(getDicussionNotStarted(tabsArray.length))
+		}
+
+		// Add other tabs, incrementing keys accordingly
+		if (IsMember) {
+			tabsArray.push(getParticipantsTab(tabsArray.length)) // Participants tab key will be 1
+		}
 
 		if (isAdmin && isPrivate) {
-			if (hasDiscussion) {
-				return [
-					{
-						key: 0,
-						title: 'Activities',
-						render: () => (
-							<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
-								<TimeLineTab api={`events/${event.DocId}/activities`} gapBnTabs='gap-7' classNameForPost='py-5' bordered={true} permissions={event.Permissions} />
-							</div>
-						),
-					},
-					{
-						key: 1,
-						title: 'Participants',
-						render: () => (
-							<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
-								{event?.Permissions?.CanInviteOthers && (
-									<div>
-										<CreateEventStep5 eventId={event.DocId} from='tab' IsAdmin={event?.Permissions?.IsAdmin} />
-									</div>
-								)}
-								<div className='my-4 flex flex-col gap-2'>
-									<h1 className='text-system-primary-text font-medium text-lg'>Current Participants</h1>
-									<EventParticipantsTab eventId={event.DocId} />
-								</div>
-							</div>
-						),
-					},
-					{
-						key: 2,
-						title: 'Registration Requests',
-						render: () => (
-							<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
-								<EventJoinRequest eventId={event.DocId} />
-							</div>
-						),
-					},
-					{
-						key: 3,
-						title: 'Invite Speakers',
-						render: () => (
-							<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
-								<InviteSpeakers eventId={event.DocId} />
-							</div>
-						),
-					},
-					{
-						key: 4,
-						title: 'Settings',
-						render: () => (
-							<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
-								<EventSettings eventId={event.DocId} event={event} />
-							</div>
-						),
-					},
-				]
-			} else {
-				return [
-					{
-						key: 0,
-						title: 'Participants',
-						render: () => (
-							<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
-								{event?.Permissions?.CanInviteOthers && (
-									<div>
-										<CreateEventStep5 eventId={event.DocId} from='tab' IsAdmin={event?.Permissions?.IsAdmin} />
-									</div>
-								)}
-								<div className='my-4 flex flex-col gap-2'>
-									<h1 className='text-system-primary-text font-medium text-lg'>Current Participants</h1>
-									<EventParticipantsTab eventId={event.DocId} />
-								</div>
-							</div>
-						),
-					},
-					{
-						key: 1,
-						title: 'Registration Requests',
-						render: () => (
-							<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
-								<EventJoinRequest eventId={event.DocId} />
-							</div>
-						),
-					},
-					{
-						key: 2,
-						title: 'Invite Speakers',
-						render: () => (
-							<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
-								<InviteSpeakers eventId={event.DocId} />
-							</div>
-						),
-					},
-					{
-						key: 3,
-						title: 'Settings',
-						render: () => (
-							<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
-								<EventSettings eventId={event.DocId} event={event} />
-							</div>
-						),
-					},
-				]
-			}
-		} else if (isAdmin && !isPrivate) {
-			if (hasDiscussion) {
-				return [
-					{
-						key: 0,
-						title: 'Activities',
-						render: () => (
-							<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
-								<TimeLineTab api={`events/${event.DocId}/activities`} gapBnTabs='gap-7' classNameForPost='py-5' bordered={true} permissions={event.Permissions} />
-							</div>
-						),
-					},
-					{
-						key: 1,
-						title: 'Participants',
-						render: () => (
-							<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
-								{event?.Permissions?.CanInviteOthers && (
-									<div>
-										<CreateEventStep5 eventId={event.DocId} from='tab' IsAdmin={event?.Permissions?.IsAdmin} />
-									</div>
-								)}
-								<div className='my-4 flex flex-col gap-2'>
-									<h1 className='text-system-primary-text font-medium text-lg'>Current Participants</h1>
-									<EventParticipantsTab eventId={event.DocId} />
-								</div>
-							</div>
-						),
-					},
-					{
-						key: 2,
-						title: 'Invite Speakers',
-						render: () => (
-							<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
-								<InviteSpeakers eventId={event.DocId} />
-							</div>
-						),
-					},
-					{
-						key: 3,
-						title: 'Settings',
-						render: () => (
-							<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
-								<EventSettings eventId={event.DocId} event={event} />
-							</div>
-						),
-					},
-				]
-			} else {
-				return [
-					{
-						key: 0,
-						title: 'Participants',
-						render: () => (
-							<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
-								{event?.Permissions?.CanInviteOthers && (
-									<div>
-										<CreateEventStep5 eventId={event.DocId} from='tab' IsAdmin={event?.Permissions?.IsAdmin} />
-									</div>
-								)}
-								<div className='my-4 flex flex-col gap-2'>
-									<h1 className='text-system-primary-text font-medium text-lg'>Current Participants</h1>
-									<EventParticipantsTab eventId={event.DocId} />
-								</div>
-							</div>
-						),
-					},
-					{
-						key: 1,
-						title: 'Invite Speakers',
-						render: () => (
-							<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
-								<InviteSpeakers eventId={event.DocId} />
-							</div>
-						),
-					},
-					{
-						key: 2,
-						title: 'Settings',
-						render: () => (
-							<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
-								<EventSettings eventId={event.DocId} event={event} />
-							</div>
-						),
-					},
-				]
-			}
-		} else if (!isPrivate || isParticipant) {
-			if (hasDiscussion) {
-				return [
-					{
-						key: 0,
-						title: 'Activities',
-						render: () => (
-							<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
-								<TimeLineTab api={`events/${event.DocId}/activities`} gapBnTabs='gap-7' classNameForPost='py-5' bordered={true} permissions={event.Permissions} />
-							</div>
-						),
-					},
-					{
-						key: 1,
-						title: 'Participants',
-						render: () => (
-							<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
-								{event?.Permissions?.CanInviteOthers && (
-									<div>
-										<CreateEventStep5 eventId={event.DocId} from='tab' IsAdmin={event?.Permissions?.IsAdmin} />
-									</div>
-								)}
-								<div className='my-4 flex flex-col gap-2'>
-									<h1 className='text-system-primary-text font-medium text-lg'>Current Participants</h1>
-									<EventParticipantsTab eventId={event.DocId} />
-								</div>
-							</div>
-						),
-					},
-				]
-			} else {
-				return [
-					{
-						key: 0,
-						title: 'Participants',
-						render: () => (
-							<div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'>
-								{event?.Permissions?.CanInviteOthers && (
-									<div>
-										<CreateEventStep5 eventId={event.DocId} from='tab' IsAdmin={event?.Permissions?.IsAdmin} />
-									</div>
-								)}
-								<div className='my-4 flex flex-col gap-2'>
-									<h1 className='text-system-primary-text font-medium text-lg'>Current Participants</h1>
-									<EventParticipantsTab eventId={event.DocId} />
-								</div>
-							</div>
-						),
-					},
-				]
-			}
+			tabsArray.push(getRegistrationTab(tabsArray.length)) // Registration Requests key will be 2
+		}
+
+		// Add invite speakers tab and settings tab
+		if (isAdmin) {
+			tabsArray.push(getInviteSpeakersTab(tabsArray.length)) // Invite Speakers key will be 3
+			tabsArray.push(getSettingsTab(tabsArray.length)) // Settings key will be 4
+		}
+
+		// For non-admins or non-private events
+		if (!isPrivate || IsMember) {
+			// Add only the necessary tabs for members or public events
+			return tabsArray
 		} else {
-			return [
-				{
-					key: 0,
-					title: 'Join the event',
-					render: () => <div className='bg-system-secondary-bg  p-4 lg:py-8 lg:px-12 rounded-b-lg overflow-hidden'></div>,
-				},
-			]
+			// If user is not a member and the event is private
+			return []
 		}
 	}
 
-	const [joined, setJoined] = useState(false)
-	const [isModalOpen, setIsModalOpen] = useState(false)
-	const [isRegistered, setIsRegistered] = useState(false)
-
-	const OnClickRegister = () => {
-		OnModalOpen()
-	}
-	const goToGome = () => {
-		OnModalClose()
-		navigate('/events')
-	}
 	const miniEventTabs = (event) => [
 		{
 			title: "Speakers' Profile",
 			render: () => (
 				<div className='py-3 pt-6 flex flex-col gap-8'>
-					{event && (
-						<>
-							{event.Speakers && event.Speakers.length > 0 ? (
-								<>
-									{event.Speakers.map((speaker) => {
-										return <SpeakerProfileTab profile={speaker.UserDetails} />
-									})}
-								</>
-							) : (
-								<>
-									<EmptyMembers emptyText='No speakers registered yet.' />
-								</>
-							)}
-						</>
+					{event?.Speakers?.length > 0 ? (
+						event?.Speakers.map((speaker) => (
+							<SpeakerProfileTab key={speaker.UserDetails.id} profile={speaker.UserDetails} agenda={speaker.Agenda} />
+						))
+					) : (
+						<EmptyMembers emptyText='No speakers registered yet.' />
 					)}
-				</div>
-			),
-		},
-		{
-			title: 'Event Agenda',
-			render: () => (
-				<div className='py-3 pt-6'>
-					<EventsAgenda event={event} />
 				</div>
 			),
 		},
 	]
 
-	const onConfirmRegister = () => {
-		setIsRegistered(true)
+	const successCallback = () => {
+		getEvent()
+		onTabChange(tabs(event)[0])
 	}
 
-	const OnModalClose = () => {
-		setIsModalOpen(false)
-	}
+	const {
+		isLoading,
+		subscribeEntityMembership: joinEvent,
+		unsubscribeEntityMembership: unRegisterEvent,
+		cancelEntityMembershipSubscription: cancelRegistrationRequest,
+		acceptEntityMembershipInvitation: acceptInvite,
+		rejectEntityMembershipInvitation: rejectInvite,
+	} = useEntityMembershipManager({
+		EntityId: event?.DocId,
+		Type: 'Event',
+		successCallback: successCallback,
+		errorCallback: () => {},
+	})
 
-	const OnModalOpen = () => {
-		setIsRegistered(false)
-		setIsModalOpen(true)
-	}
+	const {
+		isTranslated: translated,
+		translate: translateEvent,
+		showOriginal,
+		homeLanguage,
+	} = useTranslation({ data: event, setData: setEvent, Type: 'Event' })
 
-	const acceptInvite = () => {
-		patchItem(
-			`events/${event.DocId}/invite/accept`,
-			{},
-			(result) => {
-				if (result === true) {
-					getEvent()
-					onTabChange(tabs(event)[0])
-				}
-			},
-			(err) => {},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
-	}
-	const joinEvent = () => {
-		postItem(
-			`events/${event.DocId}/join`,
-			{},
-			(result) => {
-				if (result === true) {
-					getEvent()
-					onTabChange(tabs(event)[0])
-				} else if (typeof result === 'object') {
-					getEvent()
-					onTabChange(tabs(event)[0])
-				}
-			},
-			(err) => console.log(err),
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
-	}
-	const unRegisterEvent = () => {
-		deleteItem(
-			`events/${event.DocId}/leave`,
-			(result) => {
-				if (result === true) {
-					getEvent()
-					onTabChange(tabs(event)[0])
-				}
-			},
-			(err) => {},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
-	}
-	const rejectInvite = () => {
-		deleteItem(
-			`events/${event.DocId}/invite/${currentUserData.CurrentUser.UserId}/reject`,
-			(result) => {
-				if (result === true) {
-					getEvent()
-					onTabChange(tabs(event)[0])
-				}
-			},
-			(err) => {},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
-	}
+	// cover photo upload logic
+	const [selectedCoverImage, setSelectedCoverImage] = useState(null)
+	const [coverImageToUpload, setCoverImageToUpload] = useState(null)
+	const [isCoverPictureOpen, setIsCoverPictureOpen] = useState(false)
 
-	const cancelRegistrationRequest = () => {
-		deleteItem(
-			`events/${event.DocId}/join/${currentUserData.CurrentUser.UserId}/cancel`,
-			(result) => {
-				if (result === true) {
-					getEvent()
-					onTabChange(tabs(event)[0])
-				}
-			},
-			(err) => {},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
-	}
-
-	const [translated, setTranslated] = useState(false)
-	const [translating, setTranslating] = useState(false)
-
-	const storedLanguage = _retrieveData('currentLanguage')
-	const homeLanguage = storedLanguage ? storedLanguage : 'English'
-	const [translationData, setTranslationData] = useState(null)
-
-	const translateEvent = () => {
-		if (translationData) {
-			setTranslated((prev) => !prev)
-			setEvent({ ...event, ...translationData.TranslatedContent })
-		} else {
-			const targetLanguage = homeLanguage
-			if (event.OriginalLanguage !== targetLanguage) {
-				setTranslating(true)
-				postItem(
-					'translate',
-					{ EntityId: event.DocId, Type: 'Event', TargetLanguage: targetLanguage },
-					(result) => {
-						setTranslated((prev) => !prev)
-						setTranslating(false)
-						setTranslationData(result)
-						setEvent({ ...event, ...result.TranslatedContent })
-					},
-					(err) => {
-						setTranslating(false)
-					},
-					updateCurrentUser,
-					currentUserData,
-					toast
-				)
+	const { isLoading: isCoverUploading, postData: postCoverUpload } = usePostData({
+		onSuccess: (result) => {
+			onCoverImageSet(result.FileUrl)
+		},
+	})
+	const { isLoading: isCoverPatching, updateData: updateCoverUpload } = useUpdateData({
+		onSuccess: (result) => {
+			if (result === true) {
+				setIsCoverPictureOpen(false)
+				getEvent()
 			}
+		},
+	})
+
+	const onCoverImageSelect = (imageData) => {
+		setCoverImageToUpload({ ...imageData, Type: 'Events' })
+		const tempUrl = URL.createObjectURL(new Blob([new Uint8Array(imageData.FileData)]))
+		setSelectedCoverImage(tempUrl)
+	}
+	const onCoverImageDelete = () => {
+		setCoverImageToUpload(null)
+		setSelectedCoverImage(null)
+	}
+
+	const onCoverImageSet = (url) => {
+		return updateCoverUpload({
+			endpoint: `events/${eventid}/coverPicture`,
+			payload: { CoverPicture: url },
+		})
+	}
+	const onCoverImageUpload = (imageToUpload) => {
+		if (imageToUpload) {
+			postCoverUpload({
+				endpoint: 'files/users',
+				payload: imageToUpload,
+			})
+		} else if (coverImageToUpload) {
+			postCoverUpload({
+				endpoint: 'files/users',
+				payload: coverImageToUpload,
+			})
+		} else {
+			onCoverImageSet('')
 		}
 	}
 
-	const showOriginal = () => {
-		if (translationData) {
-			setTranslated((prev) => !prev)
-			setEvent({ ...event, ...translationData.OriginalContent })
-		}
-	}
+	if (isLoadingEvent || isLoading) return <Spinner />
+
+	// Check if the event has ended
+	const eventEndTime = new Date(event.EndTime)
+	const currentDateTime = new Date()
+	const hasEventEnded = currentDateTime > eventEndTime
+
 
 	return (
 		<>
-			<Modal isOpen={isModalOpen}>
-				{isRegistered && (
-					<Modal.Header className='border-none'>
-						<p></p>
-						<img src={close} onClick={OnModalClose} alt='' className='h-6 cursor-pointer' />
-					</Modal.Header>
-				)}
+			<Modal isOpen={isCoverPictureOpen} maxWidth='max-w-4xl'>
+				<Modal.Header>
+					<div className='p-2 flex items-center justify-between w-full'>
+						<p className='text-lg font-medium'>Cover Photo</p>
+						<button
+							onClick={() => {
+								setIsCoverPictureOpen(false)
+							}}
+							disabled={isCoverPatching || isCoverUploading}>
+							<img src={closeIcon} className='h-6  cursor-pointer' alt='' />
+						</button>
+					</div>
+				</Modal.Header>
 				<Modal.Body>
-					<div className='p-8'>
-						{isRegistered ? (
-							<>
-								<h1 className='text-system-primary-accent text-4xl font-bold text-center mb-6'>Registration Done!</h1>
-								<h1 className='text-system-primary-text text-2xl font-medium text-center leading-9 mb-6'>Thanks for registering for '{event.EventName}'. Details will be sent to your email address 'purvaa@email.com'</h1>
-								<div className='px-8'>
-									<Button type='button' onClick={goToGome} width='full' variant='black' className='mt-4'>
-										Home
-									</Button>
-								</div>
-							</>
-						) : (
-							<>
-								<h1 className='text-system-primary-text text-2xl font-medium text-center leading-9'>Do you want to register for '{event.EventName}'?</h1>
-								<div className='grid grid-cols-2 gap-2 px-4'>
-									<Button type='button' onClick={OnModalClose} width='full' variant='outline' className='mt-4'>
-										No
-									</Button>
-									<Button type='button' onClick={onConfirmRegister} width='full' variant='black' className='mt-4'>
-										Yes
-									</Button>
-								</div>
-							</>
-						)}
+					<p className='text-lg font-medium text-center'>
+						Your cover photo will be used to customize the header of your profile.
+					</p>
+					<div className=' flex flex-col items-center justify-center pt-10'>
+						<PictureUpload
+							altTitle='Cover Picture'
+							selectedImage={selectedCoverImage}
+							setSelectedImage={setSelectedCoverImage}
+							onImageSelect={onCoverImageSelect}
+							onImageDelete={onCoverImageDelete}
+							onUploadImage={onCoverImageUpload}
+							fileFieldName={'CoverPicture'}
+							isUploading={isCoverPatching || isCoverUploading}
+						/>
 					</div>
 				</Modal.Body>
 			</Modal>
-			<div className='overflow-hidden bg-system-primary-bg h-80 lg:h-96 relative'>
-				{event.CoverPicture ? (
-					<>
-						<img src={event.CoverPicture} className='object-cover h-full w-full' />
-					</>
-				) : (
-					<>
+			<div className='p-2 lg:px-20 '>
+				<div className='overflow-hidden bg-system-primary-bg h-48 rounded-t-lg relative'>
+					{event?.CoverPicture ? (
+						<img src={event?.CoverPicture} className='object-cover h-full w-full' />
+					) : (
 						<img src={cover} className='object-cover h-full w-full' />
-					</>
-				)}
-
-				<div className='absolute top-0 right-0 left-0 bottom-0 flex flex-col justify-between items-start p-4 lg:px-10 lg:py-6 bg-black/30 h-100 overflow-hidden overflow-y-auto'>
-					<div className='flex w-full items-start justify-between'>
-						<div className={`inline-flex items-center justify-center w-12 h-12 p-3 overflow-hidden rounded-full border border-white bg-white cursor-pointer`} onClick={handleGoBack}>
-							{/* back arrow */}
-							<img src={arrowback} alt='' className='h-6 cursor-pointer' />
-
-							{/* <h4 className='font-medium text-lg text-brand-secondary'>Back</h4> */}
-						</div>
-						{event?.Permissions?.IsAdmin && (
+					)}
+					<div className='absolute top-0 right-0 left-0 bottom-0 flex flex-col justify-between items-start p-4 lg:px-10 lg:py-6 bg-black/30 h-100 overflow-hidden overflow-y-auto'>
+						<div className='flex w-full items-start justify-between'>
 							<div
-								// onClick={() => {
-								// 	setIsCoverPictureOpen(true)
-								// 	if (event.CoverPicture) {
-								// 		setSelectedCoverImage(event.CoverPicture)
-								// 	} else {
-								// 		setSelectedCoverImage(null)
-								// 	}
-								// }}
-								className={`inline-flex items-center justify-center w-12 h-12 p-3 overflow-hidden rounded-full border border-white bg-white cursor-pointer`}>
-								<img src={camera} alt='' className='h-6 cursor-pointer' />
+								className={`inline-flex items-center justify-center w-6 h-6 md:w-12 md:h-12 md:p-3 overflow-hidden rounded-full border border-white bg-white cursor-pointer`}
+								onClick={handleGoBack}>
+								<img src={arrowback} alt='' className='h-3 md:h-6 cursor-pointer' />
 							</div>
-						)}
-					</div>
-					<div>
-						<h4 className='font-bold text-4xl text-white mb-2'>{event.EventName}</h4>
-						<div className='flex flex-row flex-wrap gap-3'>
-							<h4 className='text-xl text-white'>{event.Type} Event</h4>
-							<h4 className='text-xl text-white'>•</h4>
-							<h4 className='text-xl text-white'>{event.NoOfMembers} Participants</h4>
-							<h4 className='text-xl text-white'>•</h4>
-							<h4 className='text-xl text-white'>{event.Privacy}</h4>
 						</div>
 					</div>
 				</div>
-			</div>
-			<div className='p-2 lg:px-10 lg:py-6'>
-				<div className='grid lg:grid-cols-4 gap-3 lg:gap-12 '>
-					<div>
-						<div className='p-5 bg-system-secondary-bg rounded-lg mb-3 lg:mb-8'>
-							<h4 className='font-semibold text-xl text-system-primary-text mt-1 lg:mt-3'>About</h4>
-							<h4 className='font-medium text-md  text-system-secondary-text my-2 lg:my-2 leading-relaxed'>{event.Description}</h4>
-							{event.OriginalLanguage !== homeLanguage && (
+				<div className='bg-system-secondary-bg rounded-b-2xl p-6 '>
+					<div className='pb-4'>
+						<h4 className='font-bold text-system-primary-accent mb-2 text-3xl '>{event?.EventName}</h4>
+
+						<div className='flex flex-row flex-wrap gap-3'>
+							<h4 className='text-md text-system-primary-accent'>{event?.Type} Event</h4>
+							<h4 className='text-md text-system-primary-accent'>•</h4>
+							<h4 className='text-md text-system-primary-accent'>{event?.NoOfMembers} Participants</h4>
+							<h4 className='text-md text-system-primary-accent'>•</h4>
+							<h4 className='text-md text-system-primary-accent'>{event?.Privacy}</h4>
+							<h4 className='text-md text-system-primary-accent'>•</h4>
+							{event?.Location && (
 								<>
-									{translated ? (
-										<>
-											<p className='text-sm mt-4 text-system-secondary-text cursor-pointer' onClick={showOriginal}>
-												Show Original
-											</p>
-										</>
-									) : (
-										<>
-											<p className='text-sm mt-4 text-system-secondary-text cursor-pointer' onClick={translateEvent}>
-												Translate Event Details
-											</p>
-										</>
-									)}
+									<h4 className='text-md text-system-primary-accent'>{event?.Location},</h4>
 								</>
 							)}
-							<div className='flex items-start gap-4 mt-3'>
-								<img className='w-14 h-14 rounded-full object-cover' src={event?.UserDetails?.ProfilePicture} alt='Rounded avatar' />
-								<div className='flex-1'>
-									<h4 className='text-xs text-brand-gray-dim mt-1'>Organizer</h4>
-									<h4 className='font-semibold text-lg text-system-primary-accent mt-1'>{event?.UserDetails?.FullName}</h4>
-								</div>
-							</div>
-							<div className='flex items-start gap-4 mt-4 lg:mb-6'>
-								<div className='flex items-center flex-1 gap-3'>
-									{/* icon goes here */}
-									<img src={calendar} alt='' className='h-7' />
 
-									<div>
-										<h4 className='text-xs text-brand-gray-dim mb-1'>When</h4>
-										<h4 className='text-sm text-system-primary-text leading-6'>{getDateInWordsFormat(new Date(event.Date))}</h4>
-									</div>
-								</div>
-								<div className='flex items-center flex-1 gap-3'>
-									{/* icon goes here */}
-									<img src={clock} alt='' className='h-7' />
-
-									<div>
-										<h4 className='text-xs text-brand-gray-dim mb-1'>Time</h4>
-										<h4 className='text-sm text-system-primary-text leading-6'>{gettimenow(new Date(event.StartTime))}</h4>
-									</div>
-								</div>
-							</div>
-						</div>
-						{/* <Button onClick={() => OnClickRegister()} width='full' variant='black'>
-							Register
-						</Button> */}
-						<div className='flex gap-2'>
-							{event.IsMember ? (
-								<>
-									<Button width='full' variant='black' onClick={() => navigate('join')}>
-										Join
-									</Button>
-									{currentUserData.CurrentUser.UserId !== event.OrganiserId && (
-										<Button width='full' variant='outline' onClick={() => unRegisterEvent()}>
-											Leave Event
-										</Button>
-									)}
-								</>
-							) : event.MembershipStatus === undefined ? (
-								<Button width='full' variant='black' onClick={() => joinEvent()}>
-									Register
-								</Button>
-							) : event.MembershipStatus === 'Requested' ? (
-								<Button width='full' variant='outline' onClick={() => cancelRegistrationRequest()}>
-									Cancel Registration
-								</Button>
-							) : event.MembershipStatus === 'Invited' ? (
-								<div className='flex flex-col items-start gap-2'>
-									<p className='text-system-secondary-text'>You have been invited to this event</p>
-									<div className='flex gap-2'>
-										<Button width='full' variant='outline' onClick={() => rejectInvite()}>
-											Reject
-										</Button>
-										<Button width='full' variant='black' onClick={() => acceptInvite()}>
-											Accept
-										</Button>
-									</div>
-								</div>
-							) : null}
+							<h4 className='text-md text-system-primary-accent'>{event?.Country}</h4>
 						</div>
 					</div>
-
-					<div className='lg:col-span-2'>
-						{event && event.IsMember && <Tab onTabChange={onTabChange} activeTab={activeTab} name='SingleEvent' tabs={tabs(event)} alignment='justify-start' />}
-						{event && !event.IsMember && (
-							<>
-								<div className={`rounded-lg ${!joined && 'max-h-96 overflow-hidden relative '}`}>
-									{!event.IsMember && (
-										<div className='absolute top-0 right-0 left-0 bottom-0 p-4 lg:px-10 lg:py-6 bg-system-primary-accent-light h-100 overflow-hidden overflow-y-auto z-10'>
-											{/* <div className='flex w-full items-start justify-end'>
-											<img src={edit} alt='' className='h-8 cursor-pointer' />
-										</div> */}
-											<div className='flex flex-col justify-center items-center mt-6'>
-												<h4 className='font-bold text-center text-3xl text-system-primary-accent mb-3'>Join the Event</h4>
-												<h4 className='text-md text-center text-system-primary-accent'>Get ready for insightful conversations! Our discussions platform will be active 10 days before,during and 10 days after the event. Check in closer to the date to connect with peers, share perspectives and share most of your event experience.</h4>
-												<h4 className='text-md text-center text-system-primary-accent mt-4 mb-6'>Let the anticipation build - meaningful discussions await!</h4>
-												{/* {event.MembershipStatus === undefined && (
-													<Button width='full' variant='black' onClick={() => joinEvent()}>
-														Register
-													</Button>
-												)} */}
-												{event.MembershipStatus === 'Requested' && <p className='text-system-secondary-text'>Registration request has been sent</p>}
-											</div>
-										</div>
+					<div className='flex flex-col md:flex-row md:gap-10'>
+						<div className='flex-1'>
+							<h4 className='font-semibold text-xl text-system-primary-text'>About</h4>
+							<ShowMoreText text={event?.Description} />
+							{event.Tags && event.Tags.length > 0 && (
+								<div className='flex my-4 gap-2 flex-wrap'>
+									<TagsList tags={event?.Tags} />
+								</div>
+							)}
+							{event?.OriginalLanguage !== homeLanguage && (
+								<div className='mt-4'>
+									{translated ? (
+										<p className='text-sm text-system-secondary-text cursor-pointer' onClick={showOriginal}>
+											Show Original
+										</p>
+									) : (
+										<p className='text-sm text-system-secondary-text cursor-pointer' onClick={translateEvent}>
+											Translate Event Details
+										</p>
 									)}
-									<div className={`flex flex-col gap-2 ${!event.IsMember && 'blur-lg'}`}>
-										<div className='p-5 bg-system-secondary-bg rounded-lg shadow-md'>
-											<div className='flex items-start gap-2'>
-												<img className='w-12 h-12 rounded-full' src='https://flowbite.com/docs/images/people/profile-picture-2.jpg' alt='Rounded avatar' />
+								</div>
+							)}
+						</div>
+						<div className='grid grid-cols-1 md:grid-cols-1 '>
+							<div className='flex items-center gap-4 mt-6 md:col-span-2'>
+								<img
+									className='w-14 h-14 rounded-full object-cover'
+									src={event?.UserDetails?.ProfilePicture}
+									alt='Rounded avatar'
+								/>
+								<div className='flex-1'>
+									<p className='text-xs text-brand-gray-dim'>Organizer</p>
+									<h4 className='font-semibold text-lg text-system-primary-accent'>{event?.UserDetails?.FullName}</h4>
+								</div>
+							</div>
 
-												<div className='flex-1'>
-													<div className='flex items-start justify-between gap-10'>
-														<h4 className='font-semibold text-md text-system-primary-accent mt-1'>Tejeswara Rao Pedada</h4>
-														<h4 className='font-medium text-xs text-brand-gray-dim'>{relativeTime(new Date().getTime())}</h4>
-													</div>
-												</div>
-											</div>
-											<div className='mt-5'>
-												<h4 className='text-system-primary-text font-medium text-md'>Have a great day!</h4>
-											</div>
-											<div className='flex items-center justify-between gap-10 mt-4'>
-												<div className='flex flex-wrap items-start justify-between gap-10'>
-													<div className='flex items-start gap-1 cursor-pointer'>
-														<p className='text-brand-gray-dim text-base mt-1'>likes</p>
-													</div>
-													<div className='flex items-start gap-1 cursor-pointer'>
-														<p className='text-brand-gray-dim text-base mt-1'>replies</p>
-													</div>
-												</div>
-												<DropdownMenu />
-											</div>
-										</div>
-										<div className='p-5 bg-system-secondary-bg rounded-lg shadow-md'>
-											<div className='flex items-start gap-2'>
-												<img className='w-12 h-12 rounded-full' src='https://flowbite.com/docs/images/people/profile-picture-3.jpg' alt='Rounded avatar' />
-
-												<div className='flex-1'>
-													<div className='flex items-start justify-between gap-10'>
-														<h4 className='font-semibold text-md text-system-primary-accent mt-1'>Lee Wen De</h4>
-														<h4 className='font-medium text-xs text-brand-gray-dim'>{relativeTime(1706194651000)}</h4>
-													</div>
-												</div>
-											</div>
-											<div className='mt-5'>
-												<h4 className='text-system-primary-text font-medium text-md'>Any interesting events coming up?</h4>
-											</div>
-											<div className='flex items-center justify-between gap-10 mt-8'>
-												<div className='flex flex-wrap items-start justify-between gap-10'>
-													<div className='flex items-start gap-1 cursor-pointer'>
-														<p className='text-brand-gray-dim text-base mt-1'>likes</p>
-													</div>
-													<div className='flex items-start gap-1 cursor-pointer'>
-														<p className='text-brand-gray-dim text-base mt-1'>replies</p>
-													</div>
-												</div>
-											</div>
-										</div>
+							<div className='grid grid-cols-2 sm:grid-cols-3  gap-4 mt-6'>
+								<div className='flex items-center gap-3'>
+									<img src={calendar} alt='' className='h-7' />
+									<div>
+										<p className='text-xs text-brand-gray-dim mb-1'>When</p>
+										<p className='text-sm text-system-primary-text leading-6'>
+											{getDateInWordsFormat(new Date(event?.Date))}
+										</p>
 									</div>
 								</div>
+								<div className='flex items-center gap-3'>
+									<img src={clock} alt='' className='h-7' />
+									<div>
+										<p className='text-xs text-brand-gray-dim mb-1'>Time</p>
+										<p className='text-sm text-system-primary-text leading-6'>
+											{gettimenow(new Date(event?.StartTime))}
+										</p>
+									</div>
+								</div>
+								{event?.Capacity && !event.IsMember && !hasEventEnded && (
+									<div className='flex items-center space-x-3 bg-gray-100 p-3 rounded-lg shadow-sm'>
+										<div className='flex flex-col'>
+											{event.Capacity - event.NoOfMembers > 0 ? (
+												<>
+													<span className='font-medium text-gray-700'>{event.Capacity - event.NoOfMembers}</span>
+													<span className='text-xs text-gray-500'>Seats Available</span>
+												</>
+											) : (
+												<span className='text-sm text-gray-700'>No Seats Available</span>
+											)}
+										</div>
+									</div>
+								)}
+							</div>
+						</div>
+					</div>
+					<div className='flex gap-2 mt-10  max-w-sm justify-self-end w-full justify-end items-center'>
+						<ShowJoinButton event={event} />
+						{hasEventEnded ? (
+							<div className='flex flex-col items-center gap-2'>
+								<p className='text-system-primary-accent border py-1 px-4 text-base rounded-md'>Event has ended</p>
+							</div>
+						) : (
+							<>
+								{event?.IsMember ? (
+									<>
+										{currentUserData.CurrentUser.UserId !== event?.OrganiserId && (
+											<Button variant='outline' onClick={() => unRegisterEvent()}>
+												Leave Event
+											</Button>
+										)}
+									</>
+								) : event?.MembershipStatus === undefined ? (
+									<>
+										{event.Capacity && event.Capacity - event.NoOfMembers <= 0 ? null : (
+											<Button width='full' variant='black' onClick={() => joinEvent()}>
+												Register
+											</Button>
+										)}
+									</>
+								) : event?.MembershipStatus === 'Requested' ? (
+									<Button variant='outline' onClick={() => cancelRegistrationRequest()}>
+										Cancel Registration
+									</Button>
+								) : event?.MembershipStatus === 'Invited' ? (
+									<div className='flex flex-col items-start gap-2'>
+										<p className='text-system-secondary-text'>You have been invited to this event</p>
+										<div className='flex gap-2'>
+											<Button width='full' variant='outline' onClick={() => rejectInvite()}>
+												Reject
+											</Button>
+											<Button width='full' variant='black' onClick={() => acceptInvite()}>
+												Accept
+											</Button>
+										</div>
+									</div>
+								) : null}
 							</>
 						)}
 					</div>
-
-					<div>
-						<div className='p-5 bg-system-secondary-bg rounded-lg'>
-							<div className='lg:mt-1'>
-								<MiniTab gap='gap-8' fontSize='text-md xl:text-xl' alignment='justify-center' tabs={miniEventTabs(event)} />
+				</div>
+			</div>
+			<div className='p-2 lg:px-20 '>
+				<div className='grid grid-cols-1 lg:grid-cols-4 gap-3 lg:gap-12 '>
+					<div className='lg:col-span-4'>
+						{event && (
+							<Tab
+								onTabChange={onTabChange}
+								activeTab={activeTab}
+								name='SingleEvent'
+								tabs={tabs(event)}
+								alignment='justify-start'
+							/>
+						)}
+						{event && !event?.IsMember && !hasEventEnded && (
+							<div
+								className={`rounded-lg ${
+									!event?.IsMember &&
+									'max-h-96 overflow-hidden relative h-max  my-8 border border-system-primary-accent'
+								}`}>
+								{!event?.IsMember && (
+									<div className=' top-0 right-0 left-0 bottom-0 p-4 lg:px-10 lg:py-6 bg-system-primary-accent-light h-100 overflow-hidden overflow-y-auto z-10'>
+										<div className='flex flex-col justify-center items-center mt-6'>
+											<h4 className='font-bold text-center text-3xl text-system-primary-accent mb-3'>Join the Event</h4>
+											<h4 className='text-md text-center text-system-primary-accent'>
+												Get ready for insightful conversations! Our discussions platform will be active 10 days
+												before,during and 10 days after the event?. Check in closer to the date to connect with peers,
+												share perspectives and share most of your event experience.
+											</h4>
+											<h4 className='text-md text-center text-system-primary-accent mt-4 mb-6'>
+												Let the anticipation build - meaningful discussions await!
+											</h4>
+											{event?.MembershipStatus === 'Requested' && (
+												<p className='text-system-secondary-text'>Registration request has been sent</p>
+											)}
+											<div>
+												{hasEventEnded ? (
+													<div className='flex flex-col items-center gap-2'>
+														<p className='text-system-primary-accent border py-1 px-4 text-base rounded-md'>Event has ended</p>
+													</div>
+												) : (
+													<>
+														{event?.IsMember ? (
+															<>
+																{currentUserData.CurrentUser.UserId !== event?.OrganiserId && (
+																	<Button variant='outline' onClick={() => unRegisterEvent()}>
+																		Leave Event
+																	</Button>
+																)}
+															</>
+														) : event?.MembershipStatus === undefined ? (
+															<Button width='full' variant='black' onClick={() => joinEvent()}>
+																Register
+															</Button>
+														) : event?.MembershipStatus === 'Requested' ? (
+															<Button variant='outline' onClick={() => cancelRegistrationRequest()}>
+																Cancel Registration
+															</Button>
+														) : event?.MembershipStatus === 'Invited' ? (
+															<div className='flex flex-col items-center gap-2'>
+																<p className='text-system-secondary-text'>You have been invited to this event</p>
+																<div className='flex gap-2'>
+																	<Button width='full' variant='outline' onClick={() => rejectInvite()}>
+																		Reject
+																	</Button>
+																	<Button width='full' variant='black' onClick={() => acceptInvite()}>
+																		Accept
+																	</Button>
+																</div>
+															</div>
+														) : null}
+													</>
+												)}
+											</div>
+										</div>
+									</div>
+								)}
 							</div>
-						</div>
+						)}
 					</div>
 				</div>
 			</div>
 		</>
+	)
+}
+
+const ShowJoinButton = ({ event }) => {
+	// Assuming you have event.StartTime available and it's in a valid date format
+	const { IsMember, StartTime, EndTime } = event
+	const navigate = useNavigate()
+
+	// Convert StartTime to a Date object
+	const eventStartTime = new Date(StartTime) // Ensure StartTime is in a valid format
+	const eventEndTime = new Date(EndTime)
+
+	// Get current date and time
+	const currentDateTime = new Date()
+
+	// Calculate the time limit for showing the Join button (30 minutes before the event)
+	const thirtyMinutesBefore = new Date(eventStartTime)
+	thirtyMinutesBefore.setMinutes(eventStartTime.getMinutes() - 30)
+
+	// Check if the button should be shown
+	const shouldShowJoinButton = event?.IsMember && currentDateTime >= thirtyMinutesBefore
+
+	// Check if the event has ended
+	const hasEventEnded = currentDateTime > eventEndTime
+
+	return (
+		<div className='flex-1'>
+			{hasEventEnded
+				? null
+				: shouldShowJoinButton && (
+						<Button width='full' variant='danger' onClick={() => navigate('join')}>
+							Join
+						</Button>
+					)}
+		</div>
 	)
 }
 

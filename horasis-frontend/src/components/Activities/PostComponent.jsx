@@ -13,7 +13,6 @@ import send from '../../assets/icons/send.svg'
 import deleteIcon from '../../assets/icons/delete.svg'
 import document from '../../assets/icons/document.svg'
 
-
 const PostComponent = ({
 	onSuccess,
 	className = '',
@@ -25,7 +24,10 @@ const PostComponent = ({
 		CanUploadVideo: true,
 		CanCreateAlbum: true,
 	},
-	api = 'activites',
+	api = 'feed',
+	type = '',
+	entId = '',
+	from = '',
 }) => {
 	const { currentUserData, updateCurrentUser, scrollToTop } = useContext(AuthContext)
 	const imageFileInputRef = useRef(null)
@@ -83,111 +85,6 @@ const PostComponent = ({
 			toast
 		)
 	}
-	// const handleImageOrVideoChange = (e) => {
-	// 	const files = Array.from(e.target.files)
-
-	// 	const notAllow = files.some((file) => file.size > 3000000)
-	// 	if (notAllow) {
-	// 		toast.open('error', 'Max File Size', 'File size should be less than 3MB')
-	// 	} else {
-	// 		const promises = files.map((file) => {
-
-	// 			return new Promise((resolve) => {
-	// 				const reader = new FileReader()
-
-	// 				reader.onload = (event) => {
-	// 					const arrayBuffer = event.target.result
-	// 					const fileDataUint8Array = new Uint8Array(arrayBuffer)
-	// 					const fileDataByteArray = Array.from(fileDataUint8Array)
-	// 					const isVideo = file.type.startsWith('video/')
-	// 					resolve({
-	// 						FileType: file.type,
-	// 						FileData: fileDataByteArray,
-	// 						FileName: file.name,
-	// 						FileUrl: URL.createObjectURL(new Blob([new Uint8Array(fileDataByteArray)])),
-	// 					})
-	// 				}
-
-	// 				reader.readAsArrayBuffer(file)
-	// 			})
-	// 		})
-
-	// 		Promise.all(promises)
-	// 			.then((arr) => {
-	// 				if (arr.length === 1) {
-	// 					setNewPost({ ...newPost, ['MediaFiles']: [...newPost['MediaFiles'], arr[0]] })
-	// 				}
-	// 			})
-	// 			.catch((error) => {
-	// 				console.error('An error occurred:', error)
-	// 			})
-	// 	}
-	// }
-
-	// const handleImageOrVideoChange = (e, isAlbum) => {
-	// 	const files = Array.from(e.target.files)
-
-	// 	// Check if any file exceeds the size limit
-	// 	const notAllow = files.some((file) => file.size > 3000000)
-	// 	if (notAllow) {
-	// 		toast.open('error', 'Max File Size', 'File size should be less than 3MB')
-	// 		return
-	// 	}
-
-	// 	// Separate images and videos
-	// 	const images = files.filter((file) => file.type.startsWith('image/'))
-	// 	const videos = files.filter((file) => file.type.startsWith('video/'))
-
-	// 	const processFile = (file) => {
-	// 		return new Promise((resolve) => {
-	// 			const reader = new FileReader()
-
-	// 			reader.onload = (event) => {
-	// 				const arrayBuffer = event.target.result
-	// 				const fileDataUint8Array = new Uint8Array(arrayBuffer)
-	// 				const fileDataByteArray = Array.from(fileDataUint8Array)
-	// 				resolve({
-	// 					FileType: file.type,
-	// 					FileData: fileDataByteArray,
-	// 					FileName: file.name,
-	// 					FileUrl: URL.createObjectURL(new Blob([new Uint8Array(fileDataByteArray)])),
-	// 				})
-	// 			}
-
-	// 			reader.readAsArrayBuffer(file)
-	// 		})
-	// 	}
-
-	// 	const processFiles = (files) => {
-	// 		const promises = files.map(processFile)
-
-	// 		return Promise.all(promises)
-	// 	}
-
-	// 	Promise.all([processFiles(images), processFiles(videos)])
-	// 		.then(([imageResults, videoResults]) => {
-	// 			let newMediaFiles = []
-
-	// 			if (isAlbum) {
-	// 				// If isAlbum flag is true, append files to the existing MediaFiles array
-	// 				newMediaFiles = [...newPost['MediaFiles']]
-	// 				if (images.length > 0) newMediaFiles = [...newMediaFiles, ...imageResults]
-	// 				if (videos.length > 0) newMediaFiles = [...newMediaFiles, ...videoResults]
-	// 			} else {
-	// 				// If isAlbum flag is false, replace MediaFiles with the new files
-	// 				if (images.length > 0) newMediaFiles = [...imageResults]
-	// 				if (videos.length > 0) newMediaFiles = [...videoResults]
-	// 			}
-
-	// 			setNewPost((prevState) => ({
-	// 				...prevState,
-	// 				['MediaFiles']: newMediaFiles,
-	// 			}))
-	// 		})
-	// 		.catch((error) => {
-	// 			console.error('An error occurred:', error)
-	// 		})
-	// }
 
 	const handleImageOrVideoChange = (e, isAlbum, isImageAllowed, isVideoAllowed) => {
 		const files = Array.from(e.target.files)
@@ -212,9 +109,9 @@ const PostComponent = ({
 		})
 
 		// Check if any filtered file exceeds the size limit
-		const notAllow = filteredFiles.some((file) => file.size > 3000000)
+		const notAllow = filteredFiles.some((file) => file.size > 20000000)
 		if (notAllow) {
-			toast.open('error', 'Max File Size', 'File size should be less than 3MB')
+			toast.open('error', 'Max File Size', 'File size should be less than 20MB')
 			return
 		}
 
@@ -303,10 +200,11 @@ const PostComponent = ({
 	}
 
 	const onSendBtnClicked = () => {
+		const dataToPost = type !== '' ? { ...newPost, Type: type, EntityId: entId } : { ...newPost }
 		setIsLoading(true)
 		postItem(
 			api,
-			newPost,
+			dataToPost,
 			(result) => {
 				console.log(result)
 				if (result === true) {
@@ -379,14 +277,19 @@ const PostComponent = ({
 							let isAlbum = false
 							let isImageAllowed = false
 							let isVideoAllowed = false
-
-							if (permissions.IsAdmin || permissions.CanCreateAlbum) {
-								isAlbum = true
-								isImageAllowed = true
-								isVideoAllowed = true
+							if (from === 'podcast') {
+								isAlbum = false
+								isImageAllowed = false
+								isVideoAllowed = permissions?.CanUploadVideo
 							} else {
-								isImageAllowed = permissions.CanUploadPhoto
-								isVideoAllowed = permissions.CanUploadVideo
+								if (permissions.IsAdmin || permissions.CanCreateAlbum) {
+									isAlbum = true
+									isImageAllowed = true
+									isVideoAllowed = true
+								} else {
+									isImageAllowed = permissions.CanUploadPhoto
+									isVideoAllowed = permissions.CanUploadVideo
+								}
 							}
 
 							// Only call handleImageOrVideoChange if any permissions allow uploading
@@ -400,12 +303,16 @@ const PostComponent = ({
 				)}
 
 				{user?.ProfilePicture ? (
-					<div className='w-16 h-16 rounded-full bg-black hidden md:block'>
-						<img className='w-16 h-16  rounded-full object-cover' src={user?.ProfilePicture} alt='avatar' />
+					<div className='w-12 h-12 mt-2 md:mt-0 md:w-16 md:h-16 rounded-full bg-black block'>
+						<img
+							className='w-12 h-12  md:w-16 md:h-16  rounded-full object-cover'
+							src={user?.ProfilePicture}
+							alt='avatar'
+						/>
 					</div>
 				) : (
 					<>
-						<div className='w-16 h-16 rounded-full bg-brand-light-gray hidden md:block'>
+						<div className='w-12 h-12 mt-2 md:mt-0 md:w-16 md:h-16 rounded-full bg-brand-light-gray block'>
 							<img src={avatar} className='object-cover h-full w-full rounded-lg' alt='No avatar' />
 						</div>
 					</>
@@ -423,7 +330,9 @@ const PostComponent = ({
 								handleContentChange={(e) => validateSingle({ Content: e }, 'Content')}
 								newPost={newPost}
 							/>
-							<img src={attach} alt='' className='h-6 cursor-pointer' onClick={handleDocumentUploadClick} />
+							{from !== 'podcast' && (
+								<img src={attach} alt='' className='h-6 cursor-pointer' onClick={handleDocumentUploadClick} />
+							)}
 							{/* <svg
 								onClick={handleDocumentUploadClick}
 								xmlns='http://www.w3.org/2000/svg'
@@ -552,7 +461,7 @@ const PostComponent = ({
 												onClick={() => {
 													handleDocumentDeleteClick(index)
 												}}>
-													<img src={deleteIcon} alt='' className='h-5 cursor-pointer' />
+												<img src={deleteIcon} alt='' className='h-5 cursor-pointer' />
 
 												{/* <svg
 													aria-hidden='true'
@@ -570,8 +479,8 @@ const PostComponent = ({
 												</svg> */}
 											</div>
 											<div className='w-20 h-20 bg-system-secondary-bg rounded-md border border-system-secondary-accent overflow-hidden flex flex-col justify-center items-center'>
-											<img src={document} alt='' className='h-8 cursor-pointer' />
-												
+												<img src={document} alt='' className='h-8 cursor-pointer' />
+
 												{/* <svg
 													xmlns='http://www.w3.org/2000/svg'
 													aria-hidden='true'

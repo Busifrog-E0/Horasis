@@ -7,7 +7,6 @@ import { useNavigate } from 'react-router-dom'
 const NotFoundPage = () => {
 	const navigate = useNavigate()
 	const { currentUserData } = useContext(AuthContext)
-	const handleGoBack = () => navigate(-1)
 
 	return (
 		<div className='flex flex-col h-[100svh] bg-system-secondary-bg'>
@@ -19,7 +18,7 @@ const NotFoundPage = () => {
 				<p className='text-center text-lg p-10 font-medium text-system-secondary-text'>
 					You didn't break the internet, but we can't find what you are looking for.
 				</p>
-				<Button variant='black' className='px-10 py-4' onClick={handleGoBack}>
+				<Button variant='black' className='px-10 py-4' onClick={() => navigate(-1)}>
 					Let's go back
 				</Button>
 			</div>

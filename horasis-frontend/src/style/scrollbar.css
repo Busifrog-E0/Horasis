@@ -1,81 +1,42 @@
 ﻿/* WebKit (Safari/Chrome) */
 ::-webkit-scrollbar {
-	height: 3px;
-	width: 10px;
+    width: 0.5rem;    /* For vertical scrollbar */
+    height: 0.5rem;   /* For horizontal scrollbar */
 }
 
 ::-webkit-scrollbar-track {
-	background: #f1f1f1;
-	/* Track color */
+    background: transparent;
+    margin: 0.5rem auto;
 }
 
 ::-webkit-scrollbar-thumb {
-	background: #8c8c8c99;
-	/* Thumb color */
-	border-radius: 100px;
-	/* Rounded corners */
+    background-color: rgba(126, 126, 126, 0.2);
+    border-radius: 100px;
 }
 
 /* Firefox */
 ::-moz-scrollbar {
-	height: 3px;
-	width: 10px;
+    width: 0.5rem;
+    /* Note: Firefox support for scrollbar styling is limited */
 }
 
-/* Internet Explorer */
+/* Internet Explorer & Edge */
 ::-ms-scrollbar {
-	height: 3px;
-	width: 10px;
-}
-
-/* Edge */
-::-ms-scrollbar {
-	height: 3px;
-	width: 10px;
-}
-
-/* Opera */
-::-o-scrollbar {
-	height: 3px;
-	width: 10px;
+    width: 0.5rem;
+    /* For horizontal scrollbar in these browsers, styling options are limited */
 }
 
 /* Generic */
 scrollbar {
-	height: 3px;
-	width: 10px;
+    width: 0.5rem;
 }
 
 /* Hide scrollbar on mobile screens */
 @media screen and (max-width: 768px) {
-
-	/* WebKit (Safari/Chrome) */
-	::-webkit-scrollbar {
-		display: none;
-	}
-
-	/* Firefox */
-	::-moz-scrollbar {
-		display: none;
-	}
-
-	/* Internet Explorer */
-	::-ms-scrollbar {
-		display: none;
-	}
-
-	/* Edge */
-	::-ms-scrollbar {
-		display: none;
-	}
-
-	/* Opera */
-	::-o-scrollbar {
-		display: none;
-	}
-
-	/* Generic */
-	scrollbar {
-		display: none;
-	}
+    ::-webkit-scrollbar,
+    ::-moz-scrollbar,
+    ::-ms-scrollbar,
+    scrollbar {
+        display: none;
+    }
 }

@@ -1,31 +1,26 @@
-import { useContext, useState } from 'react'
-import TodaysEventTab from '../components/Events/TodaysEventTab'
-import PostTab from '../components/Posts/PostTab'
-import CurrentProfileTab from '../components/Profile/CurrentProfileTab'
-import DropdownMenu from '../components/ui/DropdownMenu'
-import { relativeTime } from '../utils/date'
-import Steps from '../components/ui/Steps'
+import { useContext, useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import Settings from '../components/Common/PermissionsManagement/Settings'
 import CreateDiscussionStep1 from '../components/Discussions/CreateDiscussion/CreateDiscussionSteps/CreateDiscussionStep1'
 import CreateDiscussionStep2 from '../components/Discussions/CreateDiscussion/CreateDiscussionSteps/CreateDiscussionStep2'
 import CreateDiscussionStep3 from '../components/Discussions/CreateDiscussion/CreateDiscussionSteps/CreateDiscussionStep3'
-import CreateDiscussionStep4 from '../components/Discussions/CreateDiscussion/CreateDiscussionSteps/CreateDiscussionStep4'
-import Button from '../components/ui/Button'
-import { patchItem, postItem } from '../constants/operations'
-import { AuthContext } from '../utils/AuthProvider'
-import { useToast } from '../components/Toast/ToastService'
-import Spinner from '../components/ui/Spinner'
-import Modal from '../components/ui/Modal'
-import { PostDiscussionSchema } from '../utils/schema/discussions/discussionValidation'
-import DiscussionSettings from '../components/Discussions/SingleDiscussionTabs/DiscussionSettings'
-import EmptyMembers from '../components/Common/EmptyMembers'
 import SavedDiscussionTab from '../components/Discussions/Saved/SavedDiscussionTab'
+import { useToast } from '../components/Toast/ToastService'
+import Button from '../components/ui/Button'
+import Modal from '../components/ui/Modal'
+import Spinner from '../components/ui/Spinner'
+import Steps from '../components/ui/Steps'
+import { getItem, postItem } from '../constants/operations'
+import { AuthContext } from '../utils/AuthProvider'
+import { PostDiscussionSchema } from '../utils/schema/discussions/discussionValidation'
 
 const CreateDiscussion = () => {
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
 	const toast = useToast()
 	const [activeStep, setActiveStep] = useState(1)
 	const [isModalOpen, setIsModalOpen] = useState(false)
+	const cropRef = useRef(null)
+
 	const navigate = useNavigate()
 	const [errorObj, setErrorObj] = useState({})
 	const [postDiscussionData, setPostDiscussionData] = useState({
@@ -35,6 +30,7 @@ const CreateDiscussion = () => {
 		OrganiserId: currentUserData.CurrentUser.UserId,
 		Privacy: 'Public',
 		CoverPicture: '',
+		Tags: [],
 	})
 	const [discussionId, setDiscussionId] = useState('')
 
@@ -59,9 +55,19 @@ const CreateDiscussion = () => {
 	const isThirdStep = activeStep === 3
 	const isFourthStep = activeStep === 4
 
-	const postDiscussion = () => {
+	const [cropping, setCropping] = useState(false)
+
+	const handleParentCropSave = async () => {
+		if (cropRef.current && cropRef.current.handleCropSave) {
+			const imageToUpload = await cropRef.current.handleCropSave()
+			return imageToUpload
+		}
+	}
+
+	const postDiscussion = async () => {
 		setIsModalOpen(false)
-		onCoverImageUpload()
+		const imageToUpload = await handleParentCropSave()
+		onCoverImageUpload(imageToUpload)
 	}
 
 	const [isImageUploading, setIsImageUploading] = useState(false)
@@ -97,8 +103,24 @@ const CreateDiscussion = () => {
 			toast
 		)
 	}
-	const onCoverImageUpload = () => {
-		if (coverImageToUpload) {
+	const onCoverImageUpload = (imageToUpload) => {
+		if (imageToUpload) {
+			setIsImageUploading(true)
+			postItem(
+				'files/users',
+				imageToUpload,
+				(result) => {
+					onCoverImageSet(result.FileUrl)
+				},
+				(err) => {
+					// console.log(err)
+					setIsImageUploading(false)
+				},
+				updateCurrentUser,
+				currentUserData,
+				toast
+			)
+		} else if (coverImageToUpload) {
 			setIsImageUploading(true)
 			postItem(
 				'files/users',
@@ -153,6 +175,24 @@ const CreateDiscussion = () => {
 			}
 		}
 	}
+
+	const [discussion, setDiscussion] = useState('')
+	const getEvent = () => {
+		getItem(
+			`discussions/${discussionId}`,
+			(result) => {
+				setDiscussion(result)
+			},
+			(err) => {},
+			updateCurrentUser,
+			currentUserData,
+			toast
+		)
+	}
+	useEffect(() => {
+		getEvent()
+	}, [discussionId])
+
 	return (
 		<>
 			<Modal isOpen={isModalOpen}>
@@ -199,13 +239,16 @@ const CreateDiscussion = () => {
 					)}
 					{activeStep === 2 && (
 						<CreateDiscussionStep2
+							ref={cropRef}
 							selectedImage={selectedCoverImage}
 							onImageSelect={onCoverImageSelect}
 							fileFieldName='CoverPicture'
+							cropping={cropping}
+							setCropping={setCropping}
 						/>
 					)}
 					{activeStep === 3 && <CreateDiscussionStep3 discussionId={discussionId} />}
-					{activeStep === 4 && <DiscussionSettings discussionId={discussionId} from='create' />}
+					{activeStep === 4 && <Settings EntityId={discussionId} from='create' Entity={discussion} Type='Discussion' />}
 
 					{/* {activeStep !== 4 && */}
 					<div className='flex justify-end gap-4 py-8'>
@@ -228,7 +271,12 @@ const CreateDiscussion = () => {
 								</Button>
 							)}
 							{isSecondStep && (
-								<Button onClick={() => setIsModalOpen(true)} width='full' className='px-10' variant='black'>
+								<Button
+									onClick={() => setIsModalOpen(true)}
+									width='full'
+									className='px-10'
+									variant='black'
+									disabled={!cropping}>
 									Create Discussion
 								</Button>
 							)}

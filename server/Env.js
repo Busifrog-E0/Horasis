@@ -18,7 +18,7 @@ const ModeOfDevelopment = process.env.ModeOfDevelopment;
  * @type {string}
  */
 // @ts-ignore
-const MongoDB_Host = process.env.MongoDB_Host;
+const MongoDB_Host = ModeOfDevelopment === "Production" ? process.env.MongoDB_Host_Production : process.env.MongoDB_Host_Debug;
 
 /**
  * @type {string}
@@ -53,6 +53,67 @@ const DO_SPACES_SECRET = process.env.DO_SPACES_SECRET;
  */
 // @ts-ignore
 const DO_SPACES_NAME = process.env.DO_SPACES_NAME;
+/**
+ * @type {string}
+ */
+// @ts-ignore
+const GOOGLE_TRANSLATE_KEY = process.env.GOOGLE_TRANSLATE_KEY
+
+/**
+ * @type {string}
+ */
+// @ts-ignore
+const ZeptoMailToken = ModeOfDevelopment === "Production" ? process.env.ZeptoProductionMailToken : process.env.ZeptoDebugMailToken;
+
+/**
+ * @type {string}
+ */
+// @ts-ignore
+const AGORA_APP_ID = process.env.AGORA_APP_ID;
+
+/**
+ * @type {string}
+ */
+// @ts-ignore
+const AGORA_APP_CERTIFICATE = process.env.AGORA_APP_CERTIFICATE;
+
+/**
+ * @type {string}
+ */
+//@ts-ignore
+const { EXTERNAL_SPEAKER_URL } = process.env;
+
+
+const SocketProductionOrigin = ["https://social.horasis.org", "https://socialfb.horasis.org"];
+const SocketDebugOrigin = ["https://localhost:5173", "http://127.0.0.1:5173", "https://hsocial.web.app", "https://hsocialtest.web.app", "https://tcs-networking.web.app"]
+
+/**
+ * @type {Array<string>}
+ */
+const SOCKET_ORIGIN = ModeOfDevelopment === "Production" ? SocketProductionOrigin : SocketDebugOrigin;
+
+
+const ProductionOrigin = ["https://horasis-daef9.web.app", "https://social.horasis.org"];
+const DebugOrigin = ['https://hsocial.web.app', 'http://localhost:5173', "https://tcs-networking.web.app"]
+
+/**
+ * @type {Array<string>}
+ */
+const ALLOWED_ORIGIN = ModeOfDevelopment === "Production" ? ProductionOrigin : DebugOrigin;
+
+/**
+ * @type {string}
+ */
+// @ts-ignore
+const ADMIN_USERNAME = process.env.ADMIN_USERNAME;
+
+/**
+ * @type {string}
+ */
+// @ts-ignore
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
+
+
 
 
 export default {
@@ -65,4 +126,13 @@ export default {
     DO_SPACES_KEY,
     DO_SPACES_SECRET,
     DO_SPACES_NAME,
+    ZeptoMailToken,
+    GOOGLE_TRANSLATE_KEY,
+    AGORA_APP_ID,
+    AGORA_APP_CERTIFICATE,
+    EXTERNAL_SPEAKER_URL,
+    SOCKET_ORIGIN,
+    ALLOWED_ORIGIN,
+    ADMIN_USERNAME,
+    ADMIN_PASSWORD,
 }

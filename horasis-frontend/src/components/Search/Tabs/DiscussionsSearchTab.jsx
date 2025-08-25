@@ -41,6 +41,7 @@ const DiscussionsSearchTab = ({
 					gap={'gap-2 lg:gap-4'}
 					data={data}
 					emptyText={'No discussions'}
+					updateList={setData}
 				/>
 				{isLoadingMore && <Spinner />}
 				{!pageDisabled && (

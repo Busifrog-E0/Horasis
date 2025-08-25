@@ -147,7 +147,7 @@ const ActivityComment = ({
 				<div className='flex-1'>
 					<div className='flex items-start justify-between gap-10'>
 						<div className='flex  flex-col gap-2'>
-							<h4 className={`font-semibold ${titleSize?titleSize:'text-md'} text-system-primary-accent mt-1`}>
+							<h4 className={`font-semibold ${titleSize ? titleSize : 'text-md'} text-system-primary-accent mt-1`}>
 								{comment?.UserDetails?.FullName}
 							</h4>
 							{/* <h4 className='text-system-primary-text text-md'>{comment?.Content}</h4> */}
@@ -155,10 +155,14 @@ const ActivityComment = ({
 
 							<div className='flex items-center gap-2 cursor-pointer' onClick={() => setShowReplies((prev) => !prev)}>
 								{/* <img src={reply} className='h-6 w-6' /> */}
-								<p className={`${timeSize} text-brand-gray-dim mt-1`}>{singleComment.NoOfReplies} replies</p>
+								<p className={`${timeSize} text-brand-gray-dim mt-1`}>
+									{singleComment.NoOfReplies} {singleComment.NoOfReplies === 1 ? 'reply' : 'replies'}
+								</p>
 							</div>
 						</div>
-						<h4 className={`font-medium ${timeSize?timeSize:'text-md'} text-brand-gray-dim`}>{relativeTime(comment.CreatedIndex)}</h4>
+						<h4 className={`font-medium ${timeSize ? timeSize : 'text-md'} text-brand-gray-dim`}>
+							{relativeTime(comment.CreatedIndex)}
+						</h4>
 					</div>
 				</div>
 			</div>

@@ -1,23 +1,19 @@
+import { useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import Logo from '../components/Common/Logo'
-import Button from '../components/ui/Button'
-import Input from '../components/ui/Input'
-import { useState } from 'react'
-import { useAuth } from '../utils/AuthProvider'
-import { useToast } from '../components/Toast/ToastService'
-import { forgotSchema, newPassSchema } from '../utils/schema/forgotValidation'
-import Modal from '../components/ui/Modal'
 import close from '../assets/icons/close.svg'
 import eyeoff from '../assets/icons/eyeoff.svg'
 import eyeon from '../assets/icons/eyeon.svg'
+import HeroCoverImage from '../assets/images/hero-cover-image.png'
+import Logo from '../components/Common/Logo'
 import TimerComponent from '../components/Timer/TimerComponent'
-import { postItem } from '../constants/operations'
+import Button from '../components/ui/Button'
+import Input from '../components/ui/Input'
+import Modal from '../components/ui/Modal'
+import usePostData from '../hooks/usePostData'
+import { forgotSchema, newPassSchema } from '../utils/schema/forgotValidation'
 
 const ForgotPassword = () => {
 	const navigate = useNavigate()
-	const [isLoading, setIsLoading] = useState(false)
-	const { currentUserData, updateCurrentUser } = useAuth()
-	const toast = useToast()
 	const [errorObj, setErrorObj] = useState({})
 	const [forgotFormValue, setForgotFormValue] = useState({ Email: '' })
 
@@ -27,7 +23,6 @@ const ForgotPassword = () => {
 	const [otpOpen, setOtpOpen] = useState(false)
 	const [otpError, setOtpError] = useState({})
 	const [timerValue, setTimerValue] = useState(30)
-	const [verifying, setVerifying] = useState(false)
 	const [otpVerified, setOtpVerified] = useState(false)
 
 	const validateEmailSingle = (value, key, callback) => {
@@ -68,7 +63,19 @@ const ForgotPassword = () => {
 	})
 	const [showpass, setShowpass] = useState(false)
 	const [showConfirmPass, setShowConfirmPass] = useState(false)
-	const [isChanging, setIsChanging] = useState(false)
+
+	const passwordRef = useRef()
+	const confirmPasswordRef = useRef()
+
+	const handlePasswordChange = (e) => {
+		passwordRef.current = e.target.value
+		validateNewPassSingle({ ['Password']: e.target.value }, 'Password')
+	}
+
+	const handleConfirmPasswordChange = (e) => {
+		confirmPasswordRef.current = e.target.value
+		validateConfirmPassword({ ['ConfirmPassword']: e.target.value }, 'ConfirmPassword')
+	}
 
 	const validateNewPassSingle = (value, key, callback) => {
 		setNewPassFormValue({ ...newPassFormValue, ...value })
@@ -129,74 +136,46 @@ const ForgotPassword = () => {
 		}
 	}
 
+	const { isLoading, postData: postPasswordChange } = usePostData({
+		onSuccess: (result) => {
+			setOtpid(result)
+			if (!otpOpen) {
+				setTimerValue(30)
+				setOtpOpen(true)
+			}
+		},
+	})
+
+	const { isLoading: verifying, postData: postVerifyOtp } = usePostData({
+		onSuccess: (result) => {
+			if (result === true) {
+				setOtpVerified(true)
+				setOtpOpen(false)
+			}
+		},
+		onError: (err) => {
+			setOtpError({ OTPERROR: err })
+		},
+	})
+
+	const { isLoading: isChanging, postData: postResetPass } = usePostData({
+		onSuccess: (result) => {
+			if (result === true) {
+				navigate('/Login')
+			}
+		},
+	})
+
 	const changePassword = () => {
-		setIsLoading(true)
-		postItem(
-			`users/forgotPassword`,
-			forgotFormValue,
-			(result) => {
-				setIsLoading(false)
-				setOtpid(result)
-				if (!otpOpen) {
-					setTimerValue(30)
-					setOtpOpen(true)
-				}
-			},
-			(err) => {
-				setIsLoading(false)
-			},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
+		postPasswordChange({ endpoint: 'users/forgotPassword', payload: forgotFormValue })
 	}
 
 	const verifyotp = () => {
-		setVerifying(true)
-		postItem(
-			'users/forgotPassword/verify',
-			{
-				OTPId: otpid,
-				OTP: otp,
-			},
-			(result) => {
-				setVerifying(false)
-				if (result === true) {
-					setOtpVerified(true)
-					setOtpOpen(false)
-				}
-			},
-			(err) => {
-				setVerifying(false)
-				setOtpError({ OTPERROR: err })
-			},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
+		postVerifyOtp({ endpoint: 'users/forgotPassword/verify', payload: { OTPId: otpid, OTP: otp } })
 	}
 
 	const resetPass = () => {
-		setIsChanging(true)
-		postItem(
-			`users/forgotPassword/reset`,
-			{
-				...newPassFormValue,
-				OTPId: otpid,
-			},
-			(result) => {
-				setIsChanging(false)
-				if (result === true) {
-					navigate('/Login')
-				}
-			},
-			(err) => {
-				setIsChanging(false)
-			},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
+		postResetPass({ endpoint: 'users/forgotPassword/reset', payload: { ...newPassFormValue, OTPId: otpid } })
 	}
 
 	return (
@@ -212,7 +191,11 @@ const ForgotPassword = () => {
 					</button>
 				</Modal.Header>
 				<Modal.Body>
-					<p className='text-system-secondary-text mb-2'>
+					<p className='text-system-primary-accent my-2 text-base'>
+						You will receive a mail with the forgot password option in the email if an account exists with the given
+						email id.
+					</p>
+					<p className='text-system-secondary-text mb-2 '>
 						Please verify the OTP number received in your registered email.
 					</p>
 					<h1 className='text-system-primary-text font-medium text-lg'>OTP</h1>
@@ -262,140 +245,150 @@ const ForgotPassword = () => {
 					</div>
 				</Modal.Body>
 			</Modal>
-			<div style={{ height: '100svh' }} className='flex  flex-col  justify-center items-center bg-system-primary-bg'>
+			<div style={{ backgroundImage: `url(${HeroCoverImage})` }} className='bg-cover bg-no-repeat'>
 				<div
-					style={{ borderRadius: 20 }}
-					className='bg-system-secondary-bg flex flex-col gap-4 login-form py-4 px-8 lg:px-16 lg:py-10'>
-					<center className='mb-10'>
-						<Logo height={60} />
-					</center>
-					{otpVerified ? (
-						<>
-							<div>
-								<h1 className='text-2xl font-semibold text-system-primary-accent'>Enter New Password</h1>
-								<p className='text-system-primary-text text-lg font-medium'>Enter your new password</p>
-							</div>
-							<div>
-								<h1 className='text-system-primary-text font-medium text-lg'>
-									Password<span className='text-brand-red'>*</span>
-								</h1>
-								<Input
-									className='py-4 rounded-xl border-2 border-system-file-border-accent'
-									width='full'
-									name='password'
-									placeholder='Enter the password'
-									setValue={(e) => {
-										validateNewPassSingle({ ['Password']: e }, 'Password')
-									}}
-									value={newPassFormValue.Password}
-									type={showpass ? 'text' : 'password'}
-									withIcon='true'
-									icon={
-										showpass ? (
-											<img src={eyeon} className='h-6 cursor-pointer' />
-										) : (
-											<img src={eyeoff} className='h-6 cursor-pointer' />
-										)
-									}
-									iconpos='right'
-									iconClick={() => {
-										setShowpass((prev) => !prev)
-									}}
-								/>
-								{errorObj['Password'] != undefined && <p className='text-brand-red m-0'>{errorObj['Password']}</p>}
-							</div>
-							<div>
-								<h1 className='text-system-primary-text font-medium text-lg'>
-									Confirm Password<span className='text-brand-red'>*</span>
-								</h1>
-								<Input
-									className='py-4 rounded-xl border-2 border-system-file-border-accent'
-									width='full'
-									name='confirmPassword'
-									placeholder='Confirm password'
-									setValue={(e) => {
-										validateConfirmPassword({ ['ConfirmPassword']: e }, 'ConfirmPassword')
-									}}
-									value={newPassFormValue.ConfirmPassword}
-									type={showConfirmPass ? 'text' : 'password'}
-									withIcon='true'
-									icon={
-										showConfirmPass ? (
-											<img src={eyeon} className='h-6 cursor-pointer' />
-										) : (
-											<img src={eyeoff} className='h-6 cursor-pointer' />
-										)
-									}
-									iconpos='right'
-									iconClick={() => {
-										setShowConfirmPass((prev) => !prev)
-									}}
-								/>
-								{errorObj['ConfirmPassword'] != undefined && (
-									<p className='text-brand-red m-0'>{errorObj['ConfirmPassword']}</p>
-								)}
-							</div>
-							<div className='mt-1'>
-								<Button
-									loading={isChanging}
-									onClick={() => {
-										validateNewPass(resetPass)
-										// setOtpOpen(true)
-									}}
-									size='md'
-									variant='black'
-									width='full'
-									disabled={newPassFormValue.Password === '' || newPassFormValue.ConfirmPassword === ''}>
-									Change Password
-								</Button>
-							</div>
-						</>
-					) : (
-						<>
-							<div>
-								<h1 className='text-2xl font-semibold text-system-primary-accent'>Forgot Password</h1>
-								<p className='text-system-primary-text text-lg font-medium'>Enter your email to reset your password</p>
-							</div>
-							<div>
-								<h1 className='text-system-primary-text font-medium text-lg'>Email</h1>
-								<Input
-									className='py-4 rounded-xl border-2 border-system-file-border-accent'
-									width='full'
-									name='email'
-									placeholder='Ex. abc@efg.com'
-									setValue={(e) => {
-										validateEmailSingle({ ['Email']: e }, 'Email')
-									}}
-									value={forgotFormValue.Email}
-									type='text'
-								/>
-								{errorObj['Email'] != undefined && <p className='text-brand-red m-0'>{errorObj['Email']}</p>}
-							</div>
+					style={{ height: '100svh' }}
+					className='p-2 flex  flex-col  justify-center items-center bg-system-primary-accent-transparent '>
+					<div
+						style={{ borderRadius: 20 }}
+						className='bg-system-secondary-bg flex flex-col gap-4 login-form py-4 px-8 lg:px-16 lg:py-10'>
+						<center className='mb-10'>
+							<Logo height={60} />
+						</center>
+						{otpVerified ? (
+							<>
+								<div>
+									<h1 className='text-2xl font-semibold text-system-primary-accent'>Enter New Password</h1>
+									<p className='text-system-primary-text text-lg font-medium'>Enter your new password</p>
+								</div>
+								<div>
+									<h1 className='text-system-primary-text font-medium text-lg'>
+										Password<span className='text-brand-red'>*</span>
+									</h1>
+									<Input
+										ref={passwordRef}
+										onChange={handlePasswordChange}
+										className='py-4 rounded-xl border-2 border-system-file-border-accent'
+										width='full'
+										name='password'
+										placeholder='Enter the password'
+										// setValue={(e) => {
+										// 	validateNewPassSingle({ ['Password']: e }, 'Password')
+										// }}
+										// value={newPassFormValue.Password}
+										type={showpass ? 'text' : 'password'}
+										withIcon='true'
+										icon={
+											showpass ? (
+												<img src={eyeon} className='h-6 cursor-pointer' />
+											) : (
+												<img src={eyeoff} className='h-6 cursor-pointer' />
+											)
+										}
+										iconpos='right'
+										iconClick={() => {
+											setShowpass((prev) => !prev)
+										}}
+									/>
+									{errorObj['Password'] != undefined && <p className='text-brand-red m-0'>{errorObj['Password']}</p>}
+								</div>
+								<div>
+									<h1 className='text-system-primary-text font-medium text-lg'>
+										Confirm Password<span className='text-brand-red'>*</span>
+									</h1>
+									<Input
+										ref={confirmPasswordRef}
+										onChange={handleConfirmPasswordChange}
+										className='py-4 rounded-xl border-2 border-system-file-border-accent'
+										width='full'
+										name='confirmPassword'
+										placeholder='Confirm password'
+										// setValue={(e) => {
+										// 	validateConfirmPassword({ ['ConfirmPassword']: e }, 'ConfirmPassword')
+										// }}
+										// value={newPassFormValue.ConfirmPassword}
+										type={showConfirmPass ? 'text' : 'password'}
+										withIcon='true'
+										icon={
+											showConfirmPass ? (
+												<img src={eyeon} className='h-6 cursor-pointer' />
+											) : (
+												<img src={eyeoff} className='h-6 cursor-pointer' />
+											)
+										}
+										iconpos='right'
+										iconClick={() => {
+											setShowConfirmPass((prev) => !prev)
+										}}
+									/>
+									{errorObj['ConfirmPassword'] != undefined && (
+										<p className='text-brand-red m-0'>{errorObj['ConfirmPassword']}</p>
+									)}
+								</div>
+								<div className='mt-1'>
+									<Button
+										loading={isChanging}
+										onClick={() => {
+											validateNewPass(resetPass)
+											// setOtpOpen(true)
+										}}
+										size='md'
+										variant='black'
+										width='full'
+										disabled={newPassFormValue.Password === '' || newPassFormValue.ConfirmPassword === ''}>
+										Change Password
+									</Button>
+								</div>
+							</>
+						) : (
+							<>
+								<div>
+									<h1 className='text-2xl font-semibold text-system-primary-accent'>Forgot Password</h1>
+									<p className='text-system-primary-text text-lg font-medium'>
+										Enter your email to reset your password
+									</p>
+								</div>
+								<div>
+									<h1 className='text-system-primary-text font-medium text-lg'>Email</h1>
+									<Input
+										className='py-4 rounded-xl border-2 border-system-file-border-accent'
+										width='full'
+										name='email'
+										placeholder='Ex. abc@efg.com'
+										setValue={(e) => {
+											validateEmailSingle({ ['Email']: e }, 'Email')
+										}}
+										value={forgotFormValue.Email}
+										type='text'
+									/>
+									{errorObj['Email'] != undefined && <p className='text-brand-red m-0'>{errorObj['Email']}</p>}
+								</div>
 
-							<div className='mt-1'>
-								<Button
-									loading={isLoading}
+								<div className='mt-1'>
+									<Button
+										loading={isLoading}
+										onClick={() => {
+											validateEmail(changePassword)
+										}}
+										size='md'
+										variant='black'
+										width='full'
+										disabled={forgotFormValue.Email === '' || forgotFormValue.Password === ''}>
+										Send OTP
+									</Button>
+								</div>
+							</>
+						)}
+						<div className='mt-1'>
+							<div className='text-base font-medium text-center'>
+								<span
 									onClick={() => {
-										validateEmail(changePassword)
+										navigate('/login')
 									}}
-									size='md'
-									variant='black'
-									width='full'
-									disabled={forgotFormValue.Email === '' || forgotFormValue.Password === ''}>
-									Send OTP
-								</Button>
+									className='cursor-pointer text-system-primary-accent text-lg font-medium underline'>
+									Back to login
+								</span>
 							</div>
-						</>
-					)}
-					<div className='mt-1'>
-						<div className='text-base font-medium text-center'>
-							<span
-								onClick={() => {
-									navigate('/login')
-								}}
-								className='cursor-pointer text-system-primary-accent text-lg font-medium underline'>
-								Back to login
-							</span>
 						</div>
 					</div>
 				</div>

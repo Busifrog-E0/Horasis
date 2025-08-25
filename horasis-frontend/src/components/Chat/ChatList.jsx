@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useContext } from 'react'
+import { useState, useRef, useEffect, useContext, forwardRef, useImperativeHandle } from 'react'
 
 import ConnectionsForChat from './ConnectionsForChat'
 import { AuthContext } from '../../utils/AuthProvider'
@@ -11,8 +11,7 @@ import Input from '../../components/ui/Input'
 import mail from '../../assets/icons/mail.svg'
 import chaticon from '../../assets/icons/chaticon.svg'
 
-
-const ChatList = () => {
+const ChatList = forwardRef(({}, ref) => {
 	const [isOpen, setIsOpen] = useState(false)
 	const dropdownRef = useRef(null)
 	const [badge, setBadge] = useState(false)
@@ -40,7 +39,7 @@ const ChatList = () => {
 	const [pageDisabled, setPageDisabled] = useState(true)
 	const [filters, setFilters] = useState({
 		OrderBy: 'LatestMessage.CreatedIndex',
-		Limit: 3,
+		Limit: 15,
 		Keyword: '',
 	})
 	const api = `chats`
@@ -125,10 +124,17 @@ const ChatList = () => {
 		return cleanup
 	}, [socket])
 
+	const openMessages = () => {
+		setBadge(false)
+		setIsOpen((prev) => !prev)
+	}
+
+	useImperativeHandle(ref, () => ({ openMessages }), [openMessages])
+
 	return (
 		<>
 			<div className='relative inline-block text-left' ref={dropdownRef}>
-				<div className='relative flex'>
+				<div className='relative hidden lg:flex'>
 					<button
 						type='button'
 						className='inline-flex justify-center rounded-md border-none bg-system-secondary-bg text-md px-0 font-medium text-brand-gray-dim '
@@ -136,8 +142,7 @@ const ChatList = () => {
 							setBadge(false)
 							setIsOpen((prev) => !prev)
 						}}>
-						
-					<img src={chaticon} alt="" className='h-7' />
+						<img src={chaticon} alt='' className='h-7' />
 					</button>
 					<span
 						className={`${
@@ -176,6 +181,6 @@ const ChatList = () => {
 			</div>
 		</>
 	)
-}
+})
 
 export default ChatList

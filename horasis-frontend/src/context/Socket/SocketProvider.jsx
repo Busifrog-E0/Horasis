@@ -5,7 +5,7 @@ import { useToast } from '../../components/Toast/ToastService'
 import { io } from 'socket.io-client'
 import { useChatPopup } from '../ChatPopup/ChatPopupService'
 
-const URL = 'https://deploy.busifrog.com'
+const URL = 'https://socialfb.horasis.org'
 const SocketProvider = ({ children }) => {
 	// context
 	const { currentUserData } = useContext(AuthContext)
@@ -64,7 +64,7 @@ const SocketProvider = ({ children }) => {
 	useEffect(() => {
 		const cleanup = connectSocket()
 		return cleanup
-	}, [currentUserData?.Token,convList])
+	}, [currentUserData?.Token, convList])
 
 	return <SocketContext.Provider value={{ socket, setSocket, connectSocket }}>{children}</SocketContext.Provider>
 }

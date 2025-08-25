@@ -133,7 +133,7 @@ const MentionTextarea = ({ user, newPost, handleContentChange, from = 'activity'
 					setValue={handleInputChange}
 					width={'full'}
 					value={newPost.Content}
-					className='p-0 border-none rounded-none hover:shadow-none no-scrollbar'
+					className='p-0 border-none rounded-none hover:shadow-none '
 					placeholder={`Leave a reply`}
 					rows={1}
 					resizable={false}
@@ -144,7 +144,7 @@ const MentionTextarea = ({ user, newPost, handleContentChange, from = 'activity'
 					setValue={handleInputChange}
 					width={'full'}
 					value={newPost.Content}
-					className='p-0 border-none rounded-none hover:shadow-none no-scrollbar'
+					className='p-0 border-none rounded-none hover:shadow-none '
 					placeholder={`Leave a comment`}
 					rows={2}
 					resizable={false}
@@ -155,7 +155,7 @@ const MentionTextarea = ({ user, newPost, handleContentChange, from = 'activity'
 					setValue={handleInputChange}
 					width={'full'}
 					value={newPost.Content}
-					className='p-0 border-none rounded-none hover:shadow-none no-scrollbar'
+					className='p-0 border-none rounded-none hover:shadow-none '
 					placeholder={`Share what's on your mind, ${user && user?.FullName ? user.FullName : ''}`}
 					rows={1}
 					resizable={false}

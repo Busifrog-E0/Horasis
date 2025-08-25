@@ -1,24 +1,21 @@
-import { useEffect, useState } from 'react'
-import TodaysEventTab from '../components/Events/TodaysEventTab'
-import RecentlyActiveMemebrsTab from '../components/Members/RecentlyActiveMemebrsTab'
-import CurrentProfileTab from '../components/Profile/CurrentProfileTab'
-import { eventSchema, agendaSchema } from '../utils/schema/events/eventSchema'
+import { useEffect, useRef, useState } from 'react'
 import Button from '../components/ui/Button'
 import Steps from '../components/ui/Steps'
+import { agendaSchema, eventSchema } from '../utils/schema/events/eventSchema'
 
 import { useNavigate } from 'react-router-dom'
-import { useAuth } from '../utils/AuthProvider'
+import Settings from '../components/Common/PermissionsManagement/Settings'
 import CreateEventStep1 from '../components/Events/CreateEvent/CreateEventSteps/CreateEventStep1'
 import CreateEventStep2 from '../components/Events/CreateEvent/CreateEventSteps/CreateEventStep2'
 import CreateEventStep3 from '../components/Events/CreateEvent/CreateEventSteps/CreateEventStep3'
 import CreateEventStep4 from '../components/Events/CreateEvent/CreateEventSteps/CreateEventStep4'
 import CreateEventStep5 from '../components/Events/CreateEvent/CreateEventSteps/CreateEventStep5'
-import CreateEventStep6 from '../components/Events/CreateEvent/CreateEventSteps/CreateEventStep6'
-import Modal from '../components/ui/Modal'
-import { getItem, postItem } from '../constants/operations'
-import { useToast } from '../components/Toast/ToastService'
-import EventSettings from '../components/Events/EventsTabs/EventSettings'
 import UpcomingEvents from '../components/Events/UpcomingEvents'
+import { useToast } from '../components/Toast/ToastService'
+import Modal from '../components/ui/Modal'
+import Spinner from '../components/ui/Spinner'
+import { getItem, postItem } from '../constants/operations'
+import { useAuth } from '../utils/AuthProvider'
 
 const CreateEvent = () => {
 	const { currentUserData, updateCurrentUser } = useAuth()
@@ -27,6 +24,7 @@ const CreateEvent = () => {
 	const navigate = useNavigate()
 
 	const changeStep = (step) => {
+		console.log(postEventData)
 		if (step >= 1 && step <= 6) {
 			setActiveStep(step)
 		}
@@ -72,11 +70,13 @@ const CreateEvent = () => {
 		Type: 'Offline',
 		Country: 'United States',
 		HasDiscussion: true,
+		Tags: [],
+		EnableSeatLimit: false,
 	})
 
-	useEffect(() => {
-		console.log(postEventData)
-	}, [postEventData])
+	// useEffect(() => {
+	// 	console.log(postEventData)
+	// }, [postEventData])
 
 	const [event, setEvent] = useState('')
 	const getEvent = () => {
@@ -121,22 +121,33 @@ const CreateEvent = () => {
 	}
 
 	const validate = (callback) => {
-		const { error, warning } = eventSchema.validate(postEventData, {
+		const { error } = eventSchema.validate(postEventData, {
 			abortEarly: false,
 			stripUnknown: true,
 		})
+
+		let errors = {}
+
 		if (error && error.details) {
-			let obj = {}
-			error.details.forEach((val) => (obj[val.context.key] = val.message))
-			setErrorObj(obj)
+			error.details.forEach((detail) => {
+				console.log(detail)
+				// Using full error path ensures agenda errors are distinguished from event errors.
+				const key = detail.path.join('.')
+				errors[key] = detail.message
+			})
+		}
+
+		if (Object.keys(errors).length > 0) {
+			console.log(errors)
+			setErrorObj(errors)
 		} else {
 			setErrorObj({})
 			if (callback) {
 				callback()
 			}
 		}
-		// callback()
 	}
+
 	// const validateSingle = (value, key, callback) => {
 	// 	setPostEventData({ ...postEventData, ...value })
 	// 	const { error, warning } = eventSchema.extract(key).validate(value[key], {
@@ -210,11 +221,30 @@ const CreateEvent = () => {
 			}
 		}
 	}
+	const [displayCropping, setDisplayCropping] = useState(false)
+
+	const step3Ref = useRef(null)
+	const handleStepThreeCrop = async () => {
+		if (step3Ref.current && step3Ref.current.handleCropSave) {
+			const imageToUpload = await step3Ref.current.handleCropSave()
+			return imageToUpload
+		}
+	}
+	const [cropping, setCropping] = useState(false)
+
+	const step4Ref = useRef(null)
+	const handleStepFourCrop = async () => {
+		if (step4Ref.current && step4Ref.current.handleCropSave) {
+			const imageToUpload = await step4Ref.current.handleCropSave()
+			return imageToUpload
+		}
+	}
 
 	const [isModalOpen, setIsModalOpen] = useState(false)
-	const postEvent = () => {
+	const postEvent = async () => {
 		setIsModalOpen(false)
-		onCoverImagesUpload()
+		const imageToUpload = await handleStepFourCrop()
+		onCoverImagesUpload(imageToUpload)
 	}
 
 	const onImageSet = (coverImageUrl, displayImageUrl) => {
@@ -258,8 +288,23 @@ const CreateEvent = () => {
 		}
 	}
 
-	const onCoverImagesUpload = () => {
-		if (coverImageToUpload) {
+	const onCoverImagesUpload = (imageToUpload) => {
+		if (imageToUpload) {
+			setIsImageUploading(true)
+			postItem(
+				'files/users',
+				imageToUpload,
+				(result) => {
+					onDisplayImageUpload(result.FileUrl)
+				},
+				(err) => {
+					setIsImageUploading(false)
+				},
+				updateCurrentUser,
+				currentUserData,
+				toast
+			)
+		} else if (coverImageToUpload) {
 			setIsImageUploading(true)
 			postItem(
 				'files/users',
@@ -312,34 +357,68 @@ const CreateEvent = () => {
 			<div className='lg:col-span-2'>
 				<Steps changeStep={changeStep} activeStep={activeStep} steps={steps} />
 				<h4 className='font-medium text-2xl text-system-primary-accent mt-5 mb-4'>Create an Event</h4>
-				<div className='p-6 bg-system-secondary-bg rounded-lg'>
+				<div className='p-6 bg-system-secondary-bg rounded-lg relative overflow-hidden'>
+					{isImageUploading && (
+						<div className='absolute top-0 left-0 bg-system-secondary-bg-transparent w-full h-full flex items-center justify-center'>
+							<Spinner />
+						</div>
+					)}
 					{activeStep === 1 && (
 						<CreateEventStep1
 							postEventData={postEventData}
 							setPostEventData={setPostEventData}
 							validateSingle={newValidateSingle}
 							errorObj={errorObj}
+							setErrorObj={setErrorObj}
 						/>
 					)}
 					{activeStep === 2 && (
-						<CreateEventStep2 errorObj={errorObj} postEventData={postEventData} setPostEventData={setPostEventData} />
+						<CreateEventStep2
+							errorObj={errorObj}
+							postEventData={postEventData}
+							setPostEventData={setPostEventData}
+							validateSingle={newValidateSingle}
+						/>
 					)}
 					{activeStep === 3 && (
 						<CreateEventStep3
+							ref={step3Ref}
 							selectedImage={selectedDisplayImage}
 							onImageSelect={onDisplayImageSelect}
 							fileFieldName='DisplayPicture'
+							cropping={displayCropping}
+							setCropping={setDisplayCropping}
 						/>
 					)}
 					{activeStep === 4 && (
 						<CreateEventStep4
+							ref={step4Ref}
 							selectedImage={selectedCoverImage}
 							onImageSelect={onCoverImageSelect}
 							fileFieldName='CoverPicture'
+							cropping={cropping}
+							setCropping={setCropping}
 						/>
 					)}
-					{activeStep === 5 && <CreateEventStep5 changeStep={changeStep} activeStep={activeStep} eventId={eventId} />}
-					{activeStep === 6 && <EventSettings from='create' eventId={eventId} event={event} />}
+					{activeStep === 5 && (
+						<CreateEventStep5 changeStep={changeStep} activeStep={activeStep} eventId={eventId} event={event} />
+					)}
+					{activeStep === 6 && (
+						<Settings
+							from='create'
+							EntityId={eventId}
+							Entity={event}
+							permissionsToShow={{
+								Invitation: true,
+								Activity: event?.HasDiscussion,
+								Photo: event?.HasDiscussion,
+								Video: event?.HasDiscussion,
+								Album: event?.HasDiscussion,
+								Admin: true,
+							}}
+							Type='Event'
+						/>
+					)}
 					{/* {activeStep !== 6 && */}
 					<div className='grid grid-cols-2 lg:grid-cols-3 gap-4 py-8'>
 						<div className='hidden lg:block'></div>
@@ -357,12 +436,26 @@ const CreateEvent = () => {
 								</Button>
 							)}
 							{isFourthStep && (
-								<Button onClick={() => setIsModalOpen(true)} width='full' variant='black'>
+								<Button onClick={() => setIsModalOpen(true)} width='full' variant='black' disabled={!cropping}>
 									Create Event
 								</Button>
 							)}
-							{(isFirstStep || isSecondStep || isThirdStep) && (
+							{(isFirstStep || isSecondStep) && (
 								<Button onClick={() => validate(() => changeStep(activeStep + 1))} width='full' variant='black'>
+									Next
+								</Button>
+							)}
+							{isThirdStep && (
+								<Button
+									onClick={() =>
+										validate(() => {
+											handleStepThreeCrop()
+											changeStep(activeStep + 1)
+										})
+									}
+									width='full'
+									variant='black'
+									disabled={selectedDisplayImage ? false : !displayCropping}>
 									Next
 								</Button>
 							)}
@@ -373,7 +466,6 @@ const CreateEvent = () => {
 							)}
 						</div>
 					</div>
-					{/* } */}
 				</div>
 			</div>
 			<div>

@@ -1,80 +1,155 @@
-import React, { useRef, useState } from 'react';
-import RangeInput from './RangeInput'; // Import the custom range input component
+import React, { useRef, useState } from 'react'
+import VideoControls from './VideoControls'
+import play from '../../assets/icons/streaming/play.svg'
+import pause from '../../assets/icons/streaming/pause.svg'
 
 const VideoPlayer = ({ url }) => {
-    const videoRef = useRef(null);
-    const progressRef = useRef(null);
-    const [playing, setPlaying] = useState(false);
-    const [volume, setVolume] = useState(1);
-    const [value, setValue] = useState(0); // Initial value for the range input
+	const videoRef = useRef(null)
+	const containerRef = useRef(null)
+	const [isPlaying, setIsPlaying] = useState(false)
+	const [isMuted, setIsMuted] = useState(false)
+	const [isFullscreen, setIsFullscreen] = useState(false)
+	const [volume, setVolume] = useState(1)
+	const [currentTime, setCurrentTime] = useState(0)
+	const [duration, setDuration] = useState(0)
 
-    // Function to handle range input change
-    const handleRangeChange = (event) => {
-        setValue(event.target.value); // Update the state with the new value
-    };
+	const [showCenterButton, setShowCenterButton] = useState(false)
 
-    // Calculate the percentage value for styling the background gradient
-    const percent = ((value - 0) / (100 - 0)) * 100;
-    console.log(value, percent)
-    // Inline style for the range input background
-    const rangeStyle = {
-        background: `linear-gradient(to right, #4CAF50 0%, #4CAF50 ${percent}%, #ddd ${percent}%, #ddd 100%)`
-    };
+	const togglePlay = (e) => {
+		e.stopPropagation()
+		if (isPlaying) {
+			videoRef.current.pause()
+		} else {
+			videoRef.current.play()
+		}
+		setIsPlaying(!isPlaying)
+		setShowCenterButton(true)
 
-    const togglePlay = () => {
-        if (playing) {
-            videoRef.current.pause();
-        } else {
-            videoRef.current.play();
-        }
-        setPlaying(!playing);
-    };
+		// Hide the center button after 1 second
+		setTimeout(() => setShowCenterButton(false), 1000)
+	}
 
-    const handleProgress = () => {
-        const progress = (videoRef.current.currentTime / videoRef.current.duration) * 100;
-        progressRef.current.value = progress;
-    };
+	const handleVolumeChange = (newVolume) => {
+		setVolume(newVolume)
+		videoRef.current.volume = newVolume
+		if (newVolume === 0) {
+			setIsMuted(true)
+		} else {
+			setIsMuted(false)
+		}
+	}
 
-    const handleVolumeChange = (e) => {
-        const volume = e.target.value;
-        setVolume(volume);
-        videoRef.current.volume = volume;
-    };
+	const handleMute = (e) => {
+		e.stopPropagation()
+		if (isMuted) {
+			setIsMuted(false)
+			setVolume(0.5)
+			videoRef.current.volume = 0.5
+		} else {
+			setIsMuted(true)
+			setVolume(0)
+			videoRef.current.volume = 0
+		}
+	}
 
-    return (
-        <div className="text-white rounded-lg">
-            <video
-                ref={videoRef}
-                onTimeUpdate={handleProgress}
-                className="w-full rounded-lg"
-                src={url}
-                controls={false}
-            />
-            <div className="mt-4 flex items-center justify-between gap-4">
-                <button onClick={togglePlay} className="px-4 py-2 bg-blue-500 rounded">
-                    {playing ? 'Pause' : 'Play'}
-                </button>
-                <input
-                    ref={progressRef}
-                    type="range"
-                    onChange={handleRangeChange}
-                    style={rangeStyle}
-                    className="w-full h-1 bg-brand-orange-transparent rounded-lg appearance-none"
-                    defaultValue="0"
-                    max="100"
-                />
-                <input
-                    type="range"
-                    className="w-24 h-1"
-                    value={volume}
-                    onChange={handleVolumeChange}
-                    step="0.01"
-                    max="1"
-                    min="0"
-                />
-            </div>
-        </div>
-    );
-};
+	const handleTimeUpdate = () => {
+		setCurrentTime(videoRef.current.currentTime)
+	}
 
-export default VideoPlayer;
+	const handleFullscreen = (e) => {
+		e.stopPropagation()
+		if (!isFullscreen) {
+			if (containerRef.current.requestFullscreen) {
+				containerRef.current.requestFullscreen()
+			} else if (containerRef.current.webkitRequestFullscreen) {
+				containerRef.current.webkitRequestFullscreen()
+			} else if (containerRef.current.mozRequestFullScreen) {
+				containerRef.current.mozRequestFullScreen()
+			} else if (containerRef.current.msRequestFullscreen) {
+				containerRef.current.msRequestFullscreen()
+			}
+		} else {
+			if (document.exitFullscreen) {
+				document.exitFullscreen()
+			} else if (document.webkitExitFullscreen) {
+				document.webkitExitFullscreen()
+			} else if (document.mozCancelFullScreen) {
+				document.mozCancelFullScreen()
+			} else if (document.msExitFullscreen) {
+				document.msExitFullscreen()
+			}
+		}
+		setIsFullscreen(!isFullscreen)
+	}
+
+	const handleProgressChange = (newTime) => {
+		videoRef.current.currentTime = newTime
+		setCurrentTime(newTime)
+	}
+
+	const playOnEnter = () => {
+		videoRef.current.play()
+		setIsPlaying(true)
+	}
+
+	const pauseOnLeave = () => {
+		videoRef.current.pause()
+		setIsPlaying(false)
+	}
+
+	return (
+		<div
+			onClick={togglePlay}
+			ref={containerRef}
+			className={`relative bg-black rounded-md overflow-hidden ${
+				isFullscreen ? 'w-full h-full fixed top-0 left-0 z-50' : 'w-full h-full'
+			}`}>
+			{/* Center play/pause button with transition */}
+			<div
+				className={`absolute inset-0 flex items-center justify-center  transition-all duration-700 ease-in-out  ${
+					!showCenterButton ? 'opacity-0 scale-100' : 'opacity-80 scale-[2]'
+				}`}>
+				<button onClick={togglePlay} className='bg-transparent border-none'>
+					{isPlaying ? (
+						<img
+							src={pause}
+							alt='Pause'
+							className={`h-10 w-10 text-white transform transition-all duration-500 ease-in-out scale-150 opacity-100 bg-system-black-transparent rounded-full p-1`}
+						/>
+					) : (
+						<img
+							src={play}
+							alt='Play'
+							className={`h-10 w-10 text-white transform transition-all duration-500 ease-in-out scale-150 opacity-100 bg-system-black-transparent rounded-full p-1`}
+						/>
+					)}
+				</button>
+			</div>
+
+			<video
+				ref={videoRef}
+				src={url}
+				className='w-full h-full'
+				onTimeUpdate={handleTimeUpdate}
+				onLoadedMetadata={() => setDuration(videoRef.current.duration)}
+				controls={false} // Disable default controls
+			/>
+
+			<VideoControls
+				isPlaying={isPlaying}
+				onPlayPause={togglePlay}
+				isMuted={isMuted}
+				onMute={handleMute}
+				volume={volume}
+				onVolumeChange={handleVolumeChange}
+				currentTime={currentTime}
+				duration={duration}
+				onProgressChange={handleProgressChange}
+				onFullscreen={handleFullscreen}
+				isFullscreen={isFullscreen}
+			/>
+		</div>
+	)
+}
+
+export default VideoPlayer

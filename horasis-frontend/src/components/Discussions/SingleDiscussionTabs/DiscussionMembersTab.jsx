@@ -1,6 +1,15 @@
+import { useNavigate } from 'react-router-dom'
 import avatar from '../../../assets/icons/avatar.svg'
+import { useAuth } from '../../../utils/AuthProvider'
 
 const DiscussionMembersTab = ({ profile }) => {
+	const { currentUserData } = useAuth()
+	const navigate = useNavigate()
+	const profileLink =
+		currentUserData?.CurrentUser?.UserId === profile?.UserDetails?.DocId
+			? `/MyProfile`
+			: `/ViewProfile/${profile?.UserDetails?.DocId}`
+
 	return (
 		<div className={` cursor-pointer px-2 py-2 rounded-lg`}>
 			<div className='flex items-start gap-4'>
@@ -33,7 +42,9 @@ const DiscussionMembersTab = ({ profile }) => {
 				)}
 
 				<div className='flex-1'>
-					<h4 className='font-semibold text-lg text-system-primary-accent '>{profile && profile.UserDetails.FullName}</h4>
+					<h4 className='font-semibold text-lg text-system-primary-accent ' onClick={() => navigate(profileLink)}>
+						{profile && profile.UserDetails.FullName}
+					</h4>
 					<h4 className='font-semibold text-sm text-brand-gray-dim'>@{profile && profile.UserDetails.Username}</h4>
 				</div>
 			</div>

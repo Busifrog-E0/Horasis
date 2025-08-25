@@ -1,132 +1,33 @@
-import { useContext, useEffect, useState } from 'react'
-import { deleteItem, getItem, patchItem, postItem } from '../../constants/operations'
+import useEntityMembershipManager from '../../hooks/useEntityMembershipManager'
+import useGetData from '../../hooks/useGetData'
+import { useAuth } from '../../utils/AuthProvider'
 import Button from '../ui/Button'
-import { AuthContext } from '../../utils/AuthProvider'
-import { useToast } from '../Toast/ToastService'
 import Spinner from '../ui/Spinner'
 
 const DiscussionTab = ({ discussion, onClick, fetch, updateList, data }) => {
-	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
-	const toast = useToast()
-	const [isLoading, setIsLoading] = useState(false)
+	const { currentUserData } = useAuth()
 
-	const acceptInvite = () => {
-		setIsLoading(true)
-		patchItem(
-			`discussions/${discussion.DocId}/invite/accept`,
-			{},
-			(result) => {
-				if (result === true) {
-					// fetch()
-					getSingleDiscussion(discussion.DocId)
-				}
-			},
-			(err) => {
-				setIsLoading(false)
-			},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
-	}
-	const joinDiscussion = () => {
-		setIsLoading(true)
-		postItem(
-			`discussions/${discussion.DocId}/join`,
-			{},
-			(result) => {
-				if (result === true) {
-					// fetch()
-					getSingleDiscussion(discussion.DocId)
-				} else if (typeof result === 'object') {
-					// fetch()
-					getSingleDiscussion(discussion.DocId)
-				}
-			},
-			(err) => {
-				setIsLoading(false)
-			},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
-	}
-	const rejectInvite = () => {
-		setIsLoading(true)
-		deleteItem(
-			`discussions/${discussion.DocId}/invite/${currentUserData.CurrentUser.UserId}/reject`,
-			(result) => {
-				if (result === true) {
-					// fetch()
-					getSingleDiscussion(discussion.DocId)
-				}
-			},
-			(err) => {
-				setIsLoading(false)
-			},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
-	}
+	const onsuccess = (result) =>
+		updateList(data.map((dis) => (dis.DocId === discussion.DocId ? { NextId: dis.NextId, ...result } : dis)))
 
-	const unFollowDiscussion = () => {
-		setIsLoading(true)
-		deleteItem(
-			`discussions/${discussion.DocId}/leave`,
-			(result) => {
-				if (result === true) {
-					// fetch()
-					getSingleDiscussion(discussion.DocId)
-				}
-			},
-			(err) => {
-				setIsLoading(false)
-			},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
-	}
-	const cancelJoinRequest = () => {
-		setIsLoading(true)
-		deleteItem(
-			`discussions/${discussion.DocId}/join/${currentUserData.CurrentUser.UserId}/cancel`,
-			(result) => {
-				if (result === true) {
-					// fetch()
-					getSingleDiscussion(discussion.DocId)
-				}
-			},
-			(err) => {
-				setIsLoading(false)
-			},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
-	}
+	const { isLoading: isLoadingDiscussion, getData: getSingleDiscussion } = useGetData(
+		`discussions/${discussion?.DocId}`,
+		{ onSuccess: onsuccess, onError: () => {} },false
+	)
 
-	const getSingleDiscussion = (discussionId) => {
-		setIsLoading(true)
-		getItem(
-			`discussions/${discussionId}`,
-			(result) => {
-				updateList(
-					data.map((discussion) =>
-						discussion.DocId === discussionId ? { NextId: discussion.NextId, ...result } : discussion
-					)
-				)
-				setIsLoading(false)
-			},
-			(err) => {
-				setIsLoading(false)
-			},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
-	}
+	const {
+		isLoading,
+		subscribeEntityMembership: joinDiscussion,
+		unsubscribeEntityMembership: unFollowDiscussion,
+		cancelEntityMembershipSubscription: cancelJoinRequest,
+		acceptEntityMembershipInvitation: acceptInvite,
+		rejectEntityMembershipInvitation: rejectInvite,
+	} = useEntityMembershipManager({
+		EntityId: discussion?.DocId,
+		Type: 'Discussion',
+		successCallback: getSingleDiscussion,
+		errorCallback: () => {},
+	})
 
 	return (
 		<div className='rounded-lg mt-3 pb-2 overflow-hidden h-full bg-system-secondary-bg flex flex-col justify-between shadow-lg'>
@@ -148,7 +49,7 @@ const DiscussionTab = ({ discussion, onClick, fetch, updateList, data }) => {
 			</div>
 
 			<div className='flex items-center justify-center my-2 gap-2'>
-				{isLoading ? (
+				{isLoading || isLoadingDiscussion ? (
 					<Spinner />
 				) : (
 					<>
@@ -199,42 +100,6 @@ const DiscussionTab = ({ discussion, onClick, fetch, updateList, data }) => {
 						)}
 					</>
 				)}
-
-				{/* {discussion.Privacy === 'Private' ? (
-					<>
-						{discussion.Status === 'Invited' ? (
-							<>
-								<Button onClick={() => acceptInvite()} variant='black'>
-									Accept invite
-								</Button>
-							</>
-						) : (
-							<>
-								<Button
-									onClick={() => unFollowDiscussion()}
-									variant='black'
-									className='bg-system-secondary-text border-system-secondary-text'>
-									Unfollow
-								</Button>
-							</>
-						)}
-					</>
-				) : (
-					<>
-						{!discussion.IsMember ? (
-							<Button onClick={() => joinDiscussion()} variant='black'>
-								Follow
-							</Button>
-						) : (
-							<Button
-								onClick={() => unFollowDiscussion()}
-								variant='black'
-								className='bg-system-secondary-text border-system-secondary-text'>
-								Unfollow
-							</Button>
-						)}
-					</>
-				)} */}
 			</div>
 		</div>
 	)

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import TodaysEventTab from '../components/Events/TodaysEventTab'
 import RecentlyActiveMemebrsTab from '../components/Members/RecentlyActiveMemebrsTab'
 import CurrentProfileTab from '../components/Profile/CurrentProfileTab'
@@ -14,10 +14,12 @@ import Modal from '../components/ui/Modal'
 import { PostArticleSchema } from '../utils/schema/articles/articleValidation'
 import { postItem } from '../constants/operations'
 import ArticleMiniSection from '../components/Articles/ArticleMiniSection'
+import Spinner from '../components/ui/Spinner'
 
 const CreateArticle = () => {
 	const [activeStep, setActiveStep] = useState(1)
 	const [isModalOpen, setIsModalOpen] = useState(false)
+	const cropRef = useRef(null)
 
 	const navigate = useNavigate()
 
@@ -47,11 +49,22 @@ const CreateArticle = () => {
 		Description: '',
 		AuthorId: currentUserData.CurrentUser.UserId,
 		CoverPicture: '',
+		Tags: [],
 	})
+	const [cropping, setCropping] = useState(false)
 
-	const postArticle = () => {
+
+	const handleParentCropSave = async () => {
+		if (cropRef.current && cropRef.current.handleCropSave) {
+			const imageToUpload = await cropRef.current.handleCropSave()
+			return imageToUpload
+		}
+	}
+
+	const postArticle = async () => {
 		setIsModalOpen(false)
-		onCoverImageUpload()
+		const imageToUpload = await handleParentCropSave()
+		onCoverImageUpload(imageToUpload)
 	}
 
 	const [isImageUploading, setIsImageUploading] = useState(false)
@@ -86,8 +99,24 @@ const CreateArticle = () => {
 			toast
 		)
 	}
-	const onCoverImageUpload = () => {
-		if (coverImageToUpload) {
+	const onCoverImageUpload = (imageToUpload) => {
+		if (imageToUpload) {
+			setIsImageUploading(true)
+			postItem(
+				'files/users',
+				imageToUpload,
+				(result) => {
+					onCoverImageSet(result.FileUrl)
+				},
+				(err) => {
+					// console.log(err)
+					setIsImageUploading(false)
+				},
+				updateCurrentUser,
+				currentUserData,
+				toast
+			)
+		} else if (coverImageToUpload) {
 			setIsImageUploading(true)
 			postItem(
 				'files/users',
@@ -175,55 +204,63 @@ const CreateArticle = () => {
 				
 				</div>
 			</div> */}
-				<div className='lg:col-span-2'>
-						<Steps changeStep={changeStep} activeStep={activeStep} steps={steps} />
-						<h4 className='font-medium text-2xl text-system-primary-accent mt-5 mb-4'>Create an Article</h4>
-						<div className='p-6 bg-system-secondary-bg rounded-lg'>
-							{activeStep === 1 && (
-								<CreateArticleStep1
-									postArticleData={postArticleData}
-									setPostArticleData={setPostArticleData}
-									validateSingle={validateSingle}
-									errorObj={errorObj}
-								/>
-							)}
-							{activeStep === 2 && (
-								<CreateArticleStep2
-									selectedImage={selectedCoverImage}
-									onImageSelect={onCoverImageSelect}
-									fileFieldName='CoverPicture'
-								/>
-							)}
+			<div className='lg:col-span-2'>
+				<Steps changeStep={changeStep} activeStep={activeStep} steps={steps} />
+				<h4 className='font-medium text-2xl text-system-primary-accent mt-5 mb-4'>Create an Article</h4>
+				<div className='p-6 bg-system-secondary-bg rounded-lg'>
+					{isImageUploading && (
+						<div className='absolute top-0 left-0 bg-system-secondary-bg-transparent w-full h-full flex items-center justify-center'>
+							<Spinner />
+						</div>
+					)}
+					{activeStep === 1 && (
+						<CreateArticleStep1
+							postArticleData={postArticleData}
+							setPostArticleData={setPostArticleData}
+							validateSingle={validateSingle}
+							errorObj={errorObj}
+						/>
+					)}
+					{activeStep === 2 && (
+						<CreateArticleStep2
+							ref={cropRef}
+							selectedImage={selectedCoverImage}
+							onImageSelect={onCoverImageSelect}
+							fileFieldName='CoverPicture'
+							cropping={cropping}
+							setCropping={setCropping}
+						/>
+					)}
 
-							{/* {activeStep !== 2 && */}
-							<div className='grid grid-cols-2 lg:grid-cols-3 gap-4 py-8'>
-								<div className='hidden lg:block'></div>
-								<div className='col-span-1'>
-									{!isFirstStep && (
-										<Button onClick={() => changeStep(activeStep - 1)} variant='outline' width='full'>
-											Back
-										</Button>
-									)}
-								</div>
-								<div className='col-span-1'>
-									{isFirstStep && (
-										<Button onClick={() => validate(() => changeStep(activeStep + 1))} width='full' variant='black'>
-											Next
-										</Button>
-									)}
-									{isSecondStep && (
-										<Button onClick={() => setIsModalOpen(true)} width='full' variant='black'>
-											Publish
-										</Button>
-									)}
-								</div>
-							</div>
-							{/* } */}
+					{/* {activeStep !== 2 && */}
+					<div className='grid grid-cols-2 lg:grid-cols-3 gap-4 py-8'>
+						<div className='hidden lg:block'></div>
+						<div className='col-span-1'>
+							{!isFirstStep && (
+								<Button onClick={() => changeStep(activeStep - 1)} variant='outline' width='full'>
+									Back
+								</Button>
+							)}
+						</div>
+						<div className='col-span-1'>
+							{isFirstStep && (
+								<Button onClick={() => validate(() => changeStep(activeStep + 1))} width='full' variant='black'>
+									Next
+								</Button>
+							)}
+							{isSecondStep && (
+								<Button onClick={() => setIsModalOpen(true)} width='full' variant='black' disabled={!cropping}>
+									Publish
+								</Button>
+							)}
 						</div>
 					</div>
-					<div>
-						<ArticleMiniSection />
-					</div>
+					{/* } */}
+				</div>
+			</div>
+			<div>
+				<ArticleMiniSection />
+			</div>
 		</>
 	)
 }

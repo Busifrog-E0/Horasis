@@ -1,0 +1,29 @@
+name: Pull to DigitalOcean Droplet
+
+on:
+  push:
+    branches:
+      - DebugServer
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Add SSH key
+      uses: webfactory/ssh-agent@v0.7.0
+      with:
+            ssh-private-key: ${{ secrets.DEBUG_SSH_TOKEN }}
+
+    - name: Pull latest changes and update dependencies on DigitalOcean Droplet
+      run: |
+        ssh -o StrictHostKeyChecking=no root@139.59.46.32 << 'EOF'
+          cd Horissa
+          git pull debug DebugServer
+          cd server
+          npm install 
+          pm2 restart Horasis
+        EOF

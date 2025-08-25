@@ -8,7 +8,7 @@ import { getItem } from '../../../constants/operations'
 import EmptyMembers from '../../Common/EmptyMembers'
 import Spinner from '../../ui/Spinner'
 
-const VideosTab = () => {
+const VideosTab = ({ showOther = false, userId = '' }) => {
 	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
 	const toast = useToast()
 	const [isLoading, setIsLoading] = useState(true)
@@ -21,7 +21,7 @@ const VideosTab = () => {
 		Keyword: '',
 		Type: 'video',
 	})
-	const api = `users/${currentUserData.CurrentUser.UserId}/media`
+	const api = showOther === true ? `users/${userId}/media` : `users/${currentUserData.CurrentUser.UserId}/media`
 	const setLoadingCom = (tempArr, value) => {
 		if (tempArr.length > 0) {
 			setIsLoadingMore(value)
@@ -107,7 +107,7 @@ const VideosTab = () => {
 							</>
 						)}
 					</div>
-            
+
 					{isLoadingMore && (
 						<div className='bg-system-secondary-bg p-4 rounded-b-lg '>
 							<Spinner />

@@ -10,6 +10,7 @@ import { jsonToQuery } from '../../../utils/searchParams/extractSearchParams'
 import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import Spinner from '../../ui/Spinner'
 import { getDateMonth } from '../../../utils/date'
+import arrowfor from '../../../assets/icons/arrowfor.svg'
 
 function transformData(data) {
 	if (data) {
@@ -198,7 +199,7 @@ const UserInsightsAnalyticsSection = ({ filters, setFilters }) => {
 						<h4 className='font-semibold text-xl text-system-primary-text'>User Insights</h4>
 					</div>
 					<div className='flex flex-wrap items-center gap-5'>
-						<div className='flex border rounded-md'>
+						<div className='flex border rounded-md items-center'>
 							<DateAndTimePicker
 								dateFormat='MMM dd'
 								selected={new Date(filters.StartDate)}
@@ -210,6 +211,7 @@ const UserInsightsAnalyticsSection = ({ filters, setFilters }) => {
 								placeholder='Start date'
 								className='w-24 border-none'
 							/>
+							<img src={arrowfor} alt="" className='h-6' />
 							<DateAndTimePicker
 								dateFormat='MMM dd'
 								selected={new Date(filters.EndDate)}

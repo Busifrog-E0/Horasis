@@ -11,8 +11,11 @@ import { Description } from '@headlessui/react'
 import countries from '../../../../assets/json/countries-with-coords.json'
 import Select from '../../../ui/Select'
 import SelectDiscussionPrivacy from '../../../Discussions/CreateDiscussion/SelectDiscussionPrivacy'
+import { SearchTags, SelectedTag } from '../../../Profile/AboutProfile'
+import useGetList from '../../../../hooks/useGetList'
+import Checkbox from '../../../ui/Checkbox'
 
-const CreateEventStep1 = ({ postEventData, setPostEventData, validateSingle, errorObj }) => {
+const CreateEventStep1 = ({ postEventData, setPostEventData, validateSingle, errorObj, setErrorObj }) => {
 	const [eventAgendas, setEventAgendas] = useState([1])
 	const [date, setDate] = useState(new Date())
 	const onSelectType = (value) => {
@@ -20,6 +23,23 @@ const CreateEventStep1 = ({ postEventData, setPostEventData, validateSingle, err
 	}
 
 	const [countryOptions, setCountryOptions] = useState(countries.countries.map((item) => item.name))
+
+	const addTag = (tag) => {
+		setPostEventData((prev) => {
+			const tagExists = prev.Tags.some((existingTag) => existingTag.DocId === tag.DocId)
+			if (tagExists) return prev
+
+			return { ...prev, Tags: [...prev.Tags, tag] }
+		})
+	}
+
+	const removeTag = (tag) => {
+		setPostEventData((prev) => {
+			return { ...prev, Tags: prev.Tags.filter((interest) => interest.DocId !== tag.DocId) }
+		})
+	}
+
+	const { data: tagsList } = useGetList('tags', { Limit: -1 })
 	return (
 		<div className='flex flex-col gap-4'>
 			<div>
@@ -58,6 +78,7 @@ const CreateEventStep1 = ({ postEventData, setPostEventData, validateSingle, err
 					Event Date<span className='text-brand-red'>*</span>
 				</h1>
 				<DateAndTimePicker
+					minDate={new Date()}
 					selected={new Date(postEventData.Date)}
 					onChange={(date) => {
 						const selectedStartTime = new Date(postEventData.StartTime)
@@ -102,6 +123,7 @@ const CreateEventStep1 = ({ postEventData, setPostEventData, validateSingle, err
 				<div className='flex flex-col md:flex-row gap-4 md:gap-16 items-center'>
 					<div className='flex-1 w-full'>
 						<DateAndTimePicker
+							minDate={new Date()}
 							showTimeSelect={true}
 							showTimeSelectOnly={true}
 							timeIntervals={15}
@@ -138,6 +160,7 @@ const CreateEventStep1 = ({ postEventData, setPostEventData, validateSingle, err
 					</div>
 					<div className='flex-1 w-full'>
 						<DateAndTimePicker
+							minDate={new Date()}
 							showTimeSelect={true}
 							showTimeSelectOnly={true}
 							timeIntervals={15}
@@ -179,10 +202,10 @@ const CreateEventStep1 = ({ postEventData, setPostEventData, validateSingle, err
 				{postEventData.Agenda.map((item, index) => {
 					return (
 						<div className='flex flex-row gap-4 items-end' key={index}>
-							<div className='self-start lg:self-center'>
-								<p>{index + 1}.</p>
-							</div>
 							<div className='flex-1'>
+								<div className='self-start lg:self-center'>
+									<p className='text-system-primary-accent font-medium'>Agenda {index + 1} :</p>
+								</div>
 								<div className='flex flex-col lg:flex-row gap-4 lg:gap-8 items-center mb-2'>
 									<div className='flex-1 w-full'>
 										<Input
@@ -194,12 +217,10 @@ const CreateEventStep1 = ({ postEventData, setPostEventData, validateSingle, err
 												validateSingle({ ['Name']: e.target.value }, 'Name', index)
 											}}
 										/>
-										{errorObj[`Agenda.${index}.Name`] != undefined && (
-											<p className='text-brand-red m-0'>{errorObj[`Agenda.${index}.Name`]}</p>
-										)}
 									</div>
 									<div className='flex-1 w-full'>
 										<DateAndTimePicker
+											minDate={new Date()}
 											showTimeSelect={true}
 											showTimeSelectOnly={true}
 											timeIntervals={15}
@@ -229,9 +250,6 @@ const CreateEventStep1 = ({ postEventData, setPostEventData, validateSingle, err
 											width='full'
 											variant='primary_outlined'
 										/>
-										{errorObj[`Agenda.${index}.StartTime`] != undefined && (
-											<p className='text-brand-red m-0'>{errorObj[`Agenda.${index}.StartTime`]}</p>
-										)}
 									</div>
 									<div>
 										<img src={arrowfor} alt='' className='h-8 rotate-90 lg:rotate-0' />
@@ -243,6 +261,7 @@ const CreateEventStep1 = ({ postEventData, setPostEventData, validateSingle, err
 											timeIntervals={15}
 											timeCaption='Time'
 											dateFormat='h:mm aa'
+											minDate={new Date()}
 											selected={new Date(item.EndTime)}
 											onChange={(date) => {
 												if (postEventData.Date) {
@@ -267,11 +286,19 @@ const CreateEventStep1 = ({ postEventData, setPostEventData, validateSingle, err
 											width='full'
 											variant='primary_outlined'
 										/>
-										{errorObj[`Agenda.${index}.EndTime`] != undefined && (
-											<p className='text-brand-red m-0'>{errorObj[`Agenda.${index}.EndTime`]}</p>
-										)}
 									</div>
 								</div>
+								{errorObj[`Agenda.${index}.Name`] != undefined && (
+									<p className='text-brand-red m-0'>{errorObj[`Agenda.${index}.Name`]}</p>
+								)}
+
+								{errorObj[`Agenda.${index}.StartTime`] != undefined && (
+									<p className='text-brand-red m-0'>{errorObj[`Agenda.${index}.StartTime`]}</p>
+								)}
+
+								{errorObj[`Agenda.${index}.EndTime`] != undefined && (
+									<p className='text-brand-red m-0'>{errorObj[`Agenda.${index}.EndTime`]}</p>
+								)}
 								<div className=''>
 									<TextArea
 										rows={2}
@@ -285,6 +312,21 @@ const CreateEventStep1 = ({ postEventData, setPostEventData, validateSingle, err
 									/>
 									{errorObj[`Agenda.${index}.Description`] != undefined && (
 										<p className='text-brand-red m-0'>{errorObj[`Agenda.${index}.Description`]}</p>
+									)}
+								</div>
+
+								<div className='flex-1 w-full mt-2'>
+									<Input
+										placeholder='Agenda Location'
+										width='full'
+										variant='primary_outlined'
+										value={item.Location}
+										onChange={(e) => {
+											validateSingle({ ['Location']: e.target.value }, 'Location', index)
+										}}
+									/>
+									{errorObj[`Agenda.${index}.Location`] != undefined && (
+										<p className='text-brand-red m-0'>{errorObj[`Agenda.${index}.Location`]}</p>
 									)}
 								</div>
 							</div>
@@ -333,16 +375,42 @@ const CreateEventStep1 = ({ postEventData, setPostEventData, validateSingle, err
 					/>
 				</div>
 			</div>
+
+			<div>
+				<h1 className='text-system-primary-text font-medium text-lg'>Tags</h1>
+				{postEventData.Tags && postEventData.Tags.length > 0 && (
+					<div className='flex gap-4 px-0 pb-4 my-2 flex-wrap'>
+						{postEventData.Tags.map((interest) => {
+							return <SelectedTag tag={interest} removeTag={removeTag} key={interest.DocId} />
+						})}
+					</div>
+				)}
+
+				<div className='px-0'>
+					<SearchTags data={tagsList} addTag={addTag} placeholder='Add tags to event' />
+				</div>
+			</div>
+
 			<div>
 				<h1 className='text-system-primary-text font-medium text-lg'>
 					Event Type<span className='text-brand-red'>*</span>
 				</h1>
-				<SelectEventTypeList multiSelect={false} onSelect={onSelectType} selectedValue={postEventData.Type} />
+				{/* <SelectEventTypeList multiSelect={false} onSelect={onSelectType} selectedValue={postEventData.Type} /> */}
+				<Select
+					className='rounded-xl border-2 border-system-file-border-accent'
+					width='full'
+					placeholder='Select a country'
+					setValue={(item) => {
+						validateSingle({ ['Type']: item }, 'Type')
+					}}
+					value={postEventData.Type}
+					options={['Offline', 'Virtual']}
+				/>
 				{errorObj['Type'] != undefined && <p className='text-brand-red m-0'>{errorObj['Type']}</p>}
 			</div>
 			<div>
 				<h1 className='text-system-primary-text font-medium text-lg'>
-					Country Location<span className='text-brand-red'>*</span>
+					Country<span className='text-brand-red'>*</span>
 				</h1>
 				<Select
 					className='rounded-xl border-2 border-system-file-border-accent'
@@ -353,8 +421,68 @@ const CreateEventStep1 = ({ postEventData, setPostEventData, validateSingle, err
 					}}
 					value={postEventData.Country}
 					options={countryOptions}
+					isSearchable={true}
 				/>
 				{errorObj['Country'] != undefined && <p className='text-brand-red m-0'>{errorObj['Country']}</p>}
+				{/* <SelectEventCountry /> */}
+			</div>
+			<div>
+				<h1 className='text-system-primary-text font-medium text-lg'>
+					Location<span className='text-brand-red'>*</span>
+				</h1>
+				<Input
+					placeholder='Event Location'
+					width='full'
+					variant='primary_outlined'
+					value={postEventData.Location}
+					onChange={(e) => {
+						validateSingle({ ['Location']: e.target.value }, 'Location')
+					}}
+				/>
+				{errorObj['Location'] != undefined && <p className='text-brand-red m-0'>{errorObj['Location']}</p>}
+				{/* <SelectEventCountry /> */}
+			</div>
+
+			<div>
+				<div>
+					<Checkbox
+						onChange={(e) => {
+							const enabled = e.target.checked
+							validateSingle({ ['EnableSeatLimit']: enabled }, 'EnableSeatLimit')
+							if (!enabled) {
+								// Remove Capacity from postEventData when disabling seat limit
+								setPostEventData((prevData) => {
+									const newData = { ...prevData }
+									delete newData.Capacity
+									return newData
+								})
+								// Optionally clear Capacity errors
+								setErrorObj((prevErrors) => {
+									const newErrors = { ...prevErrors }
+									delete newErrors['Capacity']
+									return newErrors
+								})
+							}
+						}}
+						checked={postEventData.EnableSeatLimit}
+						label={<span>Limit Seating Capacity</span>}
+					/>
+				</div>
+				<h1 className='text-system-primary-text font-medium text-lg'>
+					Seat Limit<span className='text-brand-red'></span>
+				</h1>
+				<Input
+					placeholder='Seat Limit (Optional)'
+					width='full'
+					variant='primary_outlined'
+					disabled={!postEventData.EnableSeatLimit}
+					value={postEventData.Capacity}
+					type='number'
+					onChange={(e) => {
+						validateSingle({ ['Capacity']: Number(e.target.value) }, 'Capacity')
+					}}
+				/>
+				{errorObj['Capacity'] != undefined && <p className='text-brand-red m-0'>{errorObj['Capacity']}</p>}
 				{/* <SelectEventCountry /> */}
 			</div>
 		</div>

@@ -1,42 +1,47 @@
-import { useContext, useState } from 'react'
-import FollowContext from './FollowService'
-import { AuthContext } from '../../utils/AuthProvider'
-import { deleteItem, getItem, postItem } from '../../constants/operations'
 import { useToast } from '../../components/Toast/ToastService'
+import useDeleteData from '../../hooks/useDeleteData'
+import useGetData from '../../hooks/useGetData'
+import usePostData from '../../hooks/usePostData'
+import { useAuth } from '../../utils/AuthProvider'
+import FollowContext from './FollowService'
 
 const FollowProvider = ({ children }) => {
-	const { updateCurrentUser, currentUserData } = useContext(AuthContext)
+	const { currentUserData } = useAuth()
 	const toast = useToast()
 
-	const [followCount, setFollowCount] = useState()
+	const {
+		isLoading: isCountLoading,
+		data: followCount,
+		getData: getFollowCount,
+	} = useGetData(`users/${currentUserData?.CurrentUser?.UserId}/follow/count`, {}, false)
+
+	const { isLoading: isFollowLoading, postData: postFollow } = usePostData()
+	const { isLoading: isUnfollowLoading, deleteData: deleteUnfollow } = useDeleteData()
+
 	const followUser = (profile, followCallback = () => {}, setLoading = () => {}) => {
 		setLoading(true)
-		postItem(
-			'follow',
-			{ FolloweeId: profile.DocId },
-			(result) => {
+		postFollow({
+			endpoint: `follow`,
+			payload: { FolloweeId: profile.DocId },
+			onsuccess: (result) => {
 				if (result === true) {
+					setLoading(false)
 					followCallback()
 					getFollowCount()
 					toast.open('success', 'Started following', `You have started following ${profile.FullName}`)
 				}
+			},
+			onerror: (err) => {
 				setLoading(false)
 			},
-			(err) => {
-				// toast.open('error','Follow',`Some error happened while following`)
-				setLoading(false)
-			},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
+		})
 	}
 
 	const unFollowUser = (profile, unFollowCallback = () => {}, setLoading = () => {}) => {
 		setLoading(true)
-		deleteItem(
-			`users/${currentUserData.CurrentUser.UserId}/follow/${profile.DocId}`,
-			(result) => {
+		deleteUnfollow({
+			endPoint: `users/${currentUserData?.CurrentUser?.UserId}/follow/${profile.DocId}`,
+			onsuccess: (result) => {
 				if (result === true) {
 					unFollowCallback()
 					getFollowCount()
@@ -44,35 +49,23 @@ const FollowProvider = ({ children }) => {
 				}
 				setLoading(false)
 			},
-			(err) => {
-				// toast.open('error','Unfollow',`Some error happened while unfollowing`)
+			onerror: (err) => {
 				setLoading(false)
 			},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
-	}
-
-	const getFollowCount = (setLoading = () => {}) => {
-		setLoading(true)
-		getItem(
-			`users/${currentUserData.CurrentUser.UserId}/follow/count`,
-			(result) => {
-				setLoading(false)
-				setFollowCount(result)
-			},
-			(err) => {
-				setLoading(false)
-			},
-			updateCurrentUser,
-			currentUserData,
-			toast
-		)
+		})
 	}
 
 	return (
-		<FollowContext.Provider value={{ followCount, getFollowCount, followUser, unFollowUser }}>
+		<FollowContext.Provider
+			value={{
+				followCount,
+				getFollowCount,
+				followUser,
+				unFollowUser,
+				isCountLoading,
+				isFollowLoading,
+				isUnfollowLoading,
+			}}>
 			{children}
 		</FollowContext.Provider>
 	)
