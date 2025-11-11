@@ -45,6 +45,7 @@ import dataHandling from './functions.js'
  */
 const ReadUsers = async (Where, NextIndex, Limit, orderBy, RemovePassword = true) => {
     /**@type {Array<UserData>} */
+    // @ts-ignore
     let UserDataArray = await dataHandling.Read('Users', undefined, NextIndex, Limit, Where, orderBy);
     if (RemovePassword) {
         UserDataArray = UserDataArray.map(data => {
@@ -63,6 +64,7 @@ const ReadUsers = async (Where, NextIndex, Limit, orderBy, RemovePassword = true
  */
 const ReadOneFromUsers = async (DocId, RemovePassword = true) => {
     /**@type {UserData} */
+    // @ts-ignore
     const UserData = await dataHandling.Read('Users', DocId);
     if (RemovePassword && UserData !== null) {
         // @ts-ignore
@@ -113,6 +115,10 @@ const RemoveUsers = async (DocId) => {
     return dataHandling.Delete('Users', DocId);
 }
 
+/**
+ * 
+ * @param {object} where 
+ */
 const CountUsers = async (where) => {
     return dataHandling.ReadCount('Users', where);
 }
@@ -126,14 +132,28 @@ const CountUsers = async (where) => {
  * @returns 
  */
 const AggregateUsers = async (AggregateArray, NextId, Limit, OrderBy) => {
+    // @ts-ignore
     return dataHandling.Aggregate('Users', AggregateArray, NextId, Limit, OrderBy);
 }
 
+/**
+ * 
+ * @param {object} data 
+ * @param {object} [where] 
+ * @param {object} [updateOptions] 
+ * @returns 
+ */
 const UpdateManyUsers = async (data, where = {}, updateOptions = {}) => {
     return dataHandling.UpdateMany('Users', data, where, ["$set"], updateOptions);
 }
 
-
+/**
+ * 
+ * @param {object} data 
+ * @param {object} [where] 
+ * @param {object} [updateOptions] 
+ * @returns 
+ */
 const PullFromManyUsers = async (data, where = {}, updateOptions = {}) => {
     return dataHandling.UpdateMany('Users', data, where, ["$pull"], updateOptions);
 }
