@@ -475,7 +475,7 @@ const NewStreaming = () => {
 	}
 
 	// initialize rtc
-	const {} = useJoin(
+	const { } = useJoin(
 		{ uid: currentUserData.CurrentUser.UserId, appid: appId, channel: channel, token: rtcToken ? rtcToken : null },
 		isCalling,
 		rtcClient ? rtcClient : null
@@ -499,8 +499,8 @@ const NewStreaming = () => {
 					</div>
 				</>
 			) : isConnected ? (
-				<div className='h-screen overflow-hidden relative'>
-					<div className='bg-system-primary-darker-accent h-full overflow-hidden max-h-screen max-w-screen'>
+				<div className='h-[100svh] overflow-hidden relative'>
+					<div className='bg-system-primary-darker-accent h-full overflow-hidden max-h-[100svh] max-w-screen'>
 						<div className='h-full grid grid-cols-4 '>
 							<div className='col-span-4 md:col-span-2 lg:col-span-3 p-4 overflow-hidden h-full '>
 								<NewStreamUsersList
@@ -535,7 +535,7 @@ const NewStreaming = () => {
 									setMessages={setMessages}
 									speakers={speakers}
 									role={role}
-									onRoleChange={() => {}}
+									onRoleChange={() => { }}
 								/>
 							</div>
 
@@ -560,7 +560,7 @@ const NewStreaming = () => {
 										setMessages={setMessages}
 										speakers={speakers}
 										role={role}
-										onRoleChange={() => {}}
+										onRoleChange={() => { }}
 									/>
 								</Modal.Body>
 							</Modal>

@@ -31,19 +31,17 @@ const NewStreamParticipantList = ({
 		scrollToBottom()
 	}, [messages, activeTab]) // Run this effect every time messages update
 	return (
-		<div className='flex flex-col h-[95vh] max-h-screen relative  overflow-hidden p-4 bg-system-primary-accent-dim shadow-lg rounded-lg'>
+		<div className='flex flex-col h-[95vh] max-h-[100svh] relative  overflow-hidden p-4 bg-system-primary-accent-dim shadow-lg rounded-lg'>
 			<div className='flex gap-2'>
 				<p
-					className={`text-gray-100 cursor-pointer text-center flex-1 ${
-						activeTab === 'participants' && 'bg-system-primary-accent-transparent'
-					} p-4 rounded-md`}
+					className={`text-gray-100 cursor-pointer text-center flex-1 ${activeTab === 'participants' && 'bg-system-primary-accent-transparent'
+						} p-4 rounded-md`}
 					onClick={() => setActiveTab('participants')}>
 					Participants{' '}
 				</p>
 				<p
-					className={`text-gray-100 cursor-pointer text-center flex-1 ${
-						activeTab === 'messages' && 'bg-system-primary-accent-transparent'
-					} p-4 rounded-md`}
+					className={`text-gray-100 cursor-pointer text-center flex-1 ${activeTab === 'messages' && 'bg-system-primary-accent-transparent'
+						} p-4 rounded-md`}
 					onClick={() => setActiveTab('messages')}>
 					Messages{' '}
 				</p>
@@ -72,7 +70,7 @@ const NewStreamParticipantList = ({
 											<div
 												key={user?.UserId}
 												className='flex flex-col items-center cursor-pointer'
-												// onClick={() => onRoleChange(user?.UserId, user?.Role)}
+											// onClick={() => onRoleChange(user?.UserId, user?.Role)}
 											>
 												<img
 													src={user?.UserAvatar ? user?.UserAvatar : avatar}
@@ -107,7 +105,7 @@ const NewStreamParticipantList = ({
 											<div
 												key={user?.UserId}
 												className='flex flex-col items-center cursor-pointer'
-												// onClick={() => onRoleChange(user?.UserId, user?.Role)}
+											// onClick={() => onRoleChange(user?.UserId, user?.Role)}
 											>
 												<img
 													src={user?.UserAvatar ? user?.UserAvatar : avatar}

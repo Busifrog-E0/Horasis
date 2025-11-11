@@ -19,7 +19,7 @@ const HomeFoot = (props, ref) => {
 					<div className='flex flex-col gap-8'>
 						<Logo type='white' height={40} />
 						<p>
-							Horasis is an independent, international organization, headquartered in Switzerland.
+							Horasis is an independent international privately-held organization, headquartered in Switzerland.
 						</p>
 						<div className='flex gap-2 items-end'>
 							<a href='https://www.facebook.com/HorasisOrg' target='_blank' rel='noreferrer'>
