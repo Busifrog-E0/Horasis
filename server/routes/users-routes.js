@@ -41,7 +41,7 @@ router.get('/users/:UserId', decodeIDToken, ensureAuthorized("User", "Admin", "S
     // @ts-ignore
     asyncHandler(GetOneFromUsers));
 
-router.get('/users', decodeIDToken, ensureAuthorized("User"), ValidateGetUsers, QueryParameterFormatting,
+router.get('/users', decodeIDToken, ensureAuthorized("User", "Admin", "SuperAdmin"), ValidateGetUsers, QueryParameterFormatting,
     SwaggerDocs.get_Users,
     //@ts-ignore
     asyncHandler(GetUsers));
