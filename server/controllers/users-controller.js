@@ -80,7 +80,6 @@ const GetUsers = async (req, res) => {
  * 
  * @param {e.Request} req 
  * @param {e.Response} res 
- * @returns {Promise<e.Response<true>>}
  */
 const PostUsersRegister = async (req, res) => {
 
@@ -95,6 +94,27 @@ const PostUsersRegister = async (req, res) => {
     const User = await UserInit(req.body);
     const OTPId = await SendRegisterOTP(User.Email, User, 'Verify Your Email', res);
     return res.json(OTPId);
+}
+
+
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ */
+const PostUsers = async (req, res) => {
+
+    const Users = await ReadUsers({ Username: req.body.Username }, undefined, 1, undefined);
+    if (Users.length > 0) {
+        return res.status(444).json(AlertBoxObject("Username already in use", "This username is already taken"));
+    }
+    const CheckEmailExists = await ReadUsers({ Email: req.body.Email }, undefined, 1, undefined);
+    if (CheckEmailExists.length > 0) {
+        return res.status(444).json(AlertBoxObject("User with Email already exists", "An account with this email already exists"));
+    }
+    const User = await UserInit(req.body);
+    await CreateUsers(User);
+    return res.json(true);
 }
 
 /**
@@ -232,6 +252,7 @@ const ViewOtherUserData = async (UserId, OtherUserId, NextIdObject = {}) => {
         ReadOneFromUsers(OtherUserId),
         ViewOtherUserRelations(UserId, OtherUserId)
     ]);
+    // @ts-ignore
     return { ...PromiseData[0], ...PromiseData[1], NextId: NextIdObject.NextId };
 }
 
@@ -269,7 +290,11 @@ const PatchPassword = async (req, res) => {
     await UpdateUsers({ Password: HashedPassword }, User.DocId);
     return res.json(true);
 }
-
+/**
+ * 
+ * @param {string} Email 
+ * @returns 
+ */
 const CheckIfUserWithMailExists = async (Email) => {
     const [User] = await ReadUsers({ Email }, undefined, 1, undefined);
     return User ? true : false;
@@ -339,7 +364,8 @@ const RemoveConnectionsToUser = async (UserId, ConnectionId) => {
  * @returns 
  */
 const AddUserAsAdmin = async (req, res) => {
-    const { UserIds } = req.body;
+    /**@type {string[]} */
+    const UserIds = req.body.UserIds;
     const objectIds = await Promise.all(UserIds.map(async id => {
         const [RefreshToken] = await ReadRefreshTokens({ 'SignObject.UserId': id }, undefined, 1, { Index: "desc" })
         await UpdateRefreshToken(RefreshToken.DocId, { 'SignObject.Role': ["Admin", "User"] });
@@ -405,7 +431,7 @@ const UserInit = async (User) => {
 }
 
 export {
-    GetOneFromUsers, GetUsers, PostUsersRegister, PatchUsers,
+    GetOneFromUsers, GetUsers, PostUsersRegister, PostUsers, PatchUsers,
     UserLogin, VerifyRegistrationOTP, CheckUsernameAvailability,
     ViewOtherUserRelations, ViewOtherUserData, SendForgotPasswordOTP,
     PatchPassword, CheckIfUserWithMailExists, AddUserAsAdmin, RemoveUserAsAdmin,

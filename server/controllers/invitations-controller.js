@@ -90,6 +90,7 @@ const InviteUserToCreateAccount = async (req, res) => {
     const { ActionType, EntityId, InvitationData } = req.body;
     //@ts-ignore
     const { UserId } = req.user;
+    // @ts-ignore
     await Promise.all(InvitationData.map(async Data => {
         const [checkUser] = await ReadUsers({ Email: Data.EmailId }, undefined, 1, undefined);
         if (checkUser) {
@@ -113,7 +114,14 @@ const InviteUserToCreateAccount = async (req, res) => {
     return res.json(true);
 }
 
+/**
+ * 
+ * @param {UserData} UserData 
+ * @param {string} UserId 
+ * @returns 
+ */
 const AddUserDetailsAfterInvited = async (UserData, UserId) => {
+    // @ts-ignore
     delete UserData.Password;
     const { Email } = UserData;
     const checkInvitedUser = await ReadInvitations({ Email }, undefined, 1, undefined);
@@ -122,7 +130,8 @@ const AddUserDetailsAfterInvited = async (UserData, UserId) => {
     }
     const [InvitedUser] = checkInvitedUser;
     await Promise.all(InvitedUser.OnCreate.map(async OnCreateObject =>
-        await CreateEntitiesBasedOnActionType(OnCreateObject.ActionType, OnCreateObject.EntityId, UserData, UserId, OnCreateObject.SentUserId, OnCreateObject.Data)))
+        // @ts-ignore
+        await CreateEntitiesBasedOnActionType(OnCreateObject.ActionType, OnCreateObject.EntityId, UserData, UserId, OnCreateObject.SentUserId, OnCreateObject.Data)));
     RemoveInvitations(InvitedUser.DocId);
 }
 
@@ -159,7 +168,10 @@ const CreateEntitiesBasedOnActionType = async (ActionType, EntityId, UserData, U
                 if (Member) {
                     break;
                 }
-                await CreateMembers(MemberInit({ EntityId, MemberId: UserId, UserDetails: UserData, Type: ActionType.split("-")[0] }), "Invited");
+                /**@type {"Discussion" | "Event" | "Podcast"} */
+                // @ts-ignore
+                const ActionTypeSplit = ActionType.split("-")[0];
+                await CreateMembers(MemberInit({ EntityId, MemberId: UserId, UserDetails: UserData, Type: ActionTypeSplit }), "Invited");
                 //@ts-ignore
                 await SendNotificationForMemberInvitation(ActionType.split("-")[0], EntityId, UserId, SendUserId)
                 break;

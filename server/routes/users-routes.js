@@ -4,7 +4,7 @@ import {
     CheckUsernameAvailability,
     GetUsers,
     SendForgotPasswordOTP,
-    PatchPassword,
+    PatchPassword, PostUsers,
 } from '../controllers/users-controller.js';
 import asyncHandler from 'express-async-handler';
 import { rateLimit } from 'express-rate-limit'
@@ -14,7 +14,11 @@ import { decodeIDToken, ensureAuthorized } from '../middleware/auth-middleware.j
 import SwaggerDocs from '../swaggerDocs/users-swaggerDocs.js'
 import e from 'express';
 import { CheckSameUser, QueryParameterFormatting, ValidateGetEntity } from '../middleware/common.js';
-import { ValidateCheckUsername, ValidatePatchUsers, ValidateUserLogin, ValidatePatchUserPictures, ValidateUserRegister, ValidateVerifyOTP, ValidateGetUserMedia, ValidatePostForgotPassword, ValidatePasswordReset, ValidatePostUsersInvite, ValidateMailCheck, ValidateGetUsers } from '../validations/users-validations.js';
+import {
+    ValidateCheckUsername, ValidatePatchUsers, ValidateUserLogin, ValidatePatchUserPictures,
+    ValidateUserRegister, ValidateVerifyOTP, ValidateGetUserMedia, ValidatePostForgotPassword,
+    ValidatePasswordReset, ValidatePostUsersInvite, ValidateMailCheck, ValidateGetUsers
+} from '../validations/users-validations.js';
 import { GetMedias } from '../controllers/medias-controller.js';
 import { CheckOTP } from '../controllers/auth-controller.js';
 import { GetNotifications, GetOneFromNotifications, GetUnreadNotification } from '../controllers/notifications-controller.js';
@@ -46,6 +50,10 @@ router.get('/users/:UserId/suggested', decodeIDToken, ensureAuthorized("User"), 
     SwaggerDocs.get_Users_Suggested,
     //@ts-ignore
     asyncHandler(GetUsers));
+
+router.post('/users', decodeIDToken, ensureAuthorized("Admin", "SuperAdmin"), ValidateUserRegister, SwaggerDocs.post_Users_Register,
+    // @ts-ignore
+    asyncHandler(PostUsers));
 
 router.post('/users/register', ValidateUserRegister, SwaggerDocs.post_Users_Register,
     // @ts-ignore
