@@ -286,7 +286,7 @@ const SingleEvent = () => {
 		EntityId: event?.DocId,
 		Type: 'Event',
 		successCallback: successCallback,
-		errorCallback: () => {},
+		errorCallback: () => { },
 	})
 
 	const {
@@ -462,21 +462,25 @@ const SingleEvent = () => {
 							</div>
 
 							<div className='grid grid-cols-2 sm:grid-cols-3  gap-4 mt-6'>
-								<div className='flex items-center gap-3'>
+								<div className='flex items-start gap-3'>
 									<img src={calendar} alt='' className='h-7' />
 									<div>
 										<p className='text-xs text-brand-gray-dim mb-1'>When</p>
 										<p className='text-sm text-system-primary-text leading-6'>
-											{getDateInWordsFormat(new Date(event?.Date))}
+											{getDateInWordsFormat(new Date(event?.Date))}<br />
+											to<br />
+											{getDateInWordsFormat(new Date(event?.EndDate))}
 										</p>
 									</div>
 								</div>
-								<div className='flex items-center gap-3'>
+								<div className='flex items-start gap-3'>
 									<img src={clock} alt='' className='h-7' />
 									<div>
 										<p className='text-xs text-brand-gray-dim mb-1'>Time</p>
 										<p className='text-sm text-system-primary-text leading-6'>
-											{gettimenow(new Date(event?.StartTime))}
+											{gettimenow(new Date(event?.StartTime))}<br />
+											to<br />
+											{gettimenow(new Date(event?.EndTime))}
 										</p>
 									</div>
 								</div>
@@ -557,10 +561,9 @@ const SingleEvent = () => {
 						)}
 						{event && !event?.IsMember && !hasEventEnded && (
 							<div
-								className={`rounded-lg ${
-									!event?.IsMember &&
+								className={`rounded-lg ${!event?.IsMember &&
 									'max-h-96 overflow-hidden relative h-max  my-8 border border-system-primary-accent'
-								}`}>
+									}`}>
 								{!event?.IsMember && (
 									<div className=' top-0 right-0 left-0 bottom-0 p-4 lg:px-10 lg:py-6 bg-system-primary-accent-light h-100 overflow-hidden overflow-y-auto z-10'>
 										<div className='flex flex-col justify-center items-center mt-6'>
@@ -654,10 +657,10 @@ const ShowJoinButton = ({ event }) => {
 			{hasEventEnded
 				? null
 				: shouldShowJoinButton && (
-						<Button width='full' variant='danger' onClick={() => navigate('join')}>
-							Join
-						</Button>
-					)}
+					<Button width='full' variant='danger' onClick={() => navigate('join')}>
+						Join
+					</Button>
+				)}
 		</div>
 	)
 }

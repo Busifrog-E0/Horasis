@@ -10,6 +10,10 @@ export const agendaSchema = Joi.object({
 		'string.empty': 'Please provide a description for the agenda item.',
 		'any.required': 'The agenda item description is required.',
 	}),
+	Date: Joi.number().integer().required().messages({
+		'number.base': 'Please provide a valid Agenda Start Date',
+		'any.required': 'The agenda item start date is required.',
+	}),
 	StartTime: Joi.number().integer().required().messages({
 		'number.base': 'Please provide a valid timestamp for the agenda item start time.',
 		'any.required': 'The agenda item start time is required.',
@@ -41,8 +45,12 @@ export const eventSchema = Joi.object({
 	}),
 
 	Date: Joi.number().integer().required().messages({
-		'number.base': 'Please provide a valid Event Date',
-		'any.required': 'The agenda item date is required.',
+		'number.base': 'Please provide a valid Event Start Date',
+		'any.required': 'The agenda item start date is required.',
+	}),
+	EndDate: Joi.number().integer().required().messages({
+		'number.base': 'Please provide a valid Event End Date',
+		'any.required': 'The agenda item end date is required.',
 	}),
 
 	StartTime: Joi.number().integer().required().messages({
