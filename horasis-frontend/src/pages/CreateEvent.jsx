@@ -56,12 +56,14 @@ const CreateEvent = () => {
 		EventName: '',
 		Description: '',
 		Date: new Date().getTime(),
+		EndDate: new Date().getTime(),
 		StartTime: new Date().getTime(),
 		EndTime: new Date().getTime(),
 		Agenda: [
 			{
 				Name: '',
 				Description: '',
+				Date: new Date().getTime(),
 				StartTime: new Date().getTime(),
 				EndTime: new Date().getTime(),
 			},
@@ -85,7 +87,7 @@ const CreateEvent = () => {
 			(result) => {
 				setEvent(result)
 			},
-			(err) => {},
+			(err) => { },
 			updateCurrentUser,
 			currentUserData,
 			toast
@@ -169,6 +171,8 @@ const CreateEvent = () => {
 	const newValidateSingle = (value, key, index = null, callback = null) => {
 		let schema
 
+		console.log(value, key)
+
 		// Determine which schema to use based on whether the field is in the main event or an agenda item
 		if (index !== null) {
 			schema = agendaSchema
@@ -210,8 +214,8 @@ const CreateEvent = () => {
 				...prevData,
 				...(index !== null
 					? {
-							Agenda: prevData.Agenda.map((item, i) => (i === index ? { ...item, ...value } : item)),
-					  }
+						Agenda: prevData.Agenda.map((item, i) => (i === index ? { ...item, ...value } : item)),
+					}
 					: { ...prevData, ...value }),
 			}))
 

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import avatar from '../../assets/icons/avatar.svg'
 import location from '../../assets/icons/location.svg'
-import { gettimenow } from '../../utils/date'
+import { getDateInWordsFormat, gettimenow } from '../../utils/date'
 import ShowMoreText from '../Common/ShowMoreText'
 import Modal from '../ui/Modal'
 import closeIcon from '../../assets/icons/close.svg'
@@ -79,7 +79,7 @@ const EventsAgendaBig = ({ event }) => {
 									<h3 className='text-xl font-medium text-system-primary-accent mb-4'>{agenda.Name}</h3>
 									<div className='flex flex-col gap-1'>
 										<time className='block text-base font-semibold text-system-primary-text'>
-											{gettimenow(new Date(agenda.StartTime))} - {gettimenow(new Date(agenda.EndTime))}
+											{getDateInWordsFormat(new Date(agenda?.Date))}, {gettimenow(new Date(agenda.StartTime))} - {gettimenow(new Date(agenda.EndTime))}
 										</time>
 										<div className='flex items-center gap-1'>
 											<img className='w-4 h-4 object-contain' src={location} alt='Location icon' />
