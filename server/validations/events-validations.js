@@ -2,6 +2,7 @@ import Joi from 'joi';
 import { QueryParametersSchema } from './common.js';
 import moment from 'moment';
 import { TagsSchema } from './tags-validations.js';
+import e from 'express';
 
 const AgendaDataSchema = Joi.object({
     Name: Joi.string().required(),
@@ -18,6 +19,7 @@ const EventDataSchema = Joi.object({
     Description: Joi.string().required(),
     Date: Joi.number().required(),  // Assume it's a timestamp (milliseconds since epoch)
     StartTime: Joi.number().required(),  // Timestamp in milliseconds
+    EndDate: Joi.number().required(),  // Assume it's a timestamp (milliseconds since epoch)
     EndTime: Joi.number().required(),  // Timestamp in milliseconds
     Agenda: Joi.array().items(AgendaDataSchema).required(),
     Location: Joi.string().required(),
@@ -50,6 +52,13 @@ const EventDataSchema = Joi.object({
     return value;
 });
 
+
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ * @param {e.NextFunction} next 
+ */
 const ValidatePostEvents = async (req, res, next) => {
     const Result = EventDataSchema.validate(req.body, { stripUnknown: true });
     if (Result.error) {
@@ -62,6 +71,13 @@ const ValidatePostEvents = async (req, res, next) => {
     }
 };
 
+
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ * @param {e.NextFunction} next 
+ */
 const ValidatePatchEventCoverPhoto = async (req, res, next) => {
     const Result = Joi.object({
         CoverPicture: Joi.string().required()
@@ -76,6 +92,13 @@ const ValidatePatchEventCoverPhoto = async (req, res, next) => {
     }
 }
 
+
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ * @param {e.NextFunction} next 
+ */
 const ValidateGetEvents = async (req, res, next) => {
     const Result = QueryParametersSchema.keys({
         StartTime: Joi.object({
@@ -102,6 +125,13 @@ const ValidateGetEvents = async (req, res, next) => {
     }
 }
 
+
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ * @param {e.NextFunction} next 
+ */
 const ValidatePostSpeakers = async (req, res, next) => {
     const Result = Joi.object({
         Agenda: AgendaDataSchema.keys({
@@ -118,6 +148,13 @@ const ValidatePostSpeakers = async (req, res, next) => {
     }
 }
 
+
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ * @param {e.NextFunction} next 
+ */
 const ValidatePostSpeakerMailInvite = async (req, res, next) => {
     const Result = Joi.object({
         InvitationData: Joi.array().items(
