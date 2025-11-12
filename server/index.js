@@ -18,16 +18,17 @@ import router from "./routes/index.js";
 
 const allowedOrigins = ENV.ALLOWED_ORIGIN;
 app.set('trust proxy', 1); // trust the first proxy (Nginx)
+app.use(cors({ origin: true }));
 
-app.use(cors({
-    origin: function (origin, callback) {
-        if (!origin || allowedOrigins.includes(origin)) {
-            callback(null, true);
-        } else {
-            callback(new Error('Not allowed by CORS'));
-        }
-    },
-}));
+// app.use(cors({
+//     origin: function (origin, callback) {
+//         if (!origin || allowedOrigins.includes(origin)) {
+//             callback(null, true);
+//         } else {
+//             callback(new Error('Not allowed by CORS'));
+//         }
+//     },
+// }));
 
 app.use(express.json({ "limit": "60mb" }));
 
