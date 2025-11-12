@@ -1,8 +1,8 @@
 import axios from 'axios'
 import { CURRENTUSERDATA, SUPERUSERDATA, _retrieveData } from '../utils/LocalStorage'
 
-export const DEBUG_API = 'https://deploy.busifrog.com/'
-export const PRODUCTION_API = 'https://deploy.busifrog.com/'
+export const DEBUG_API = 'https://socialfb.horasis.org/'
+export const PRODUCTION_API = 'https://socialfb.horasis.org/'
 export const isDebug = false
 export const userLogout = async (Token, RefreshToken, debug = false) => {
 	const API_URL = debug ? DEBUG_API : PRODUCTION_API
