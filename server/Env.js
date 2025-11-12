@@ -113,8 +113,10 @@ const ADMIN_USERNAME = process.env.ADMIN_USERNAME;
 // @ts-ignore
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
 
-
-
+/**
+ * @type {"https://social.horasis.org"|"https://hsocial.web.app"}
+ */
+const NEW_USER_WITH_REGISTRATION_CODE = ModeOfDevelopment === "Production" ? "https://social.horasis.org" : "https://hsocial.web.app";
 
 export default {
     PORT,
@@ -135,4 +137,5 @@ export default {
     ALLOWED_ORIGIN,
     ADMIN_USERNAME,
     ADMIN_PASSWORD,
+    NEW_USER_WITH_REGISTRATION_CODE,
 }

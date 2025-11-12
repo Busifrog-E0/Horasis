@@ -65,6 +65,21 @@ const ValidateUserRegister = async (req, res, next) => {
 
 }
 
+const ValidateNewUserCode = async (req, res, next) => {
+    const Result = Joi.object({
+        UserSchema:
+    }).validate(req.body, { stripUnknown: true, convert: true });
+    if (Result.error) {
+        const message = Result.error.details.map((detail) => detail.message).join(', ');
+        return res.status(400).json(message);
+    }
+    else {
+        req.body = Result.value;
+        return next();
+    }
+
+}
+
 const ValidateUserLogin = async (req, res, next) => {
     const Result = Joi.object({
         Email: Joi.string().email().lowercase().required(),

@@ -11,6 +11,8 @@ import { UpdateManyMembers } from '../databaseControllers/members-databaseContro
 import { ObjectId } from 'mongodb';
 import { CreateUserExtendedProperties, MAX_CONNECTIONLIST_SIZE, PullUserExtendedProperties, PushOnceInUserExtendedProperties, ReadUserExtendedProperties, UserExtendedPropertiesInit } from '../databaseControllers/userExtendedProperties-databaseController.js';
 import { PullManyActivityExtendedProperties, PushOnceInManyActivityExtendedProperties } from '../databaseControllers/activityExtendedProperties-databaseController.js';
+import { CreateUserRegistrations, ReadUserRegistrations } from '../databaseControllers/userRegistrations-databaseController.js';
+import Env from '../Env.js';
 
 
 
@@ -389,6 +391,55 @@ const RemoveUserAsAdmin = async (req, res) => {
     MaintainAdminRoleArray(UserId, "Remove");
     await UpdateUsers({ Roles: ["User"] }, UserId);
     return res.json(true);
+}
+
+
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ * @returns 
+ */
+const GetNewUserCode = async (req, res) => {
+
+    /**
+     * 
+     * @param {string[]} AlreadyGeneratedCodes 
+     * @returns 
+     */
+    const GenerateRegistrationCode = async (AlreadyGeneratedCodes = []) => {
+
+        let generator = '';
+        let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyskiouhjnmbhj'
+
+        for (let i = 0; i < 5; i++) {
+            generator += characters.charAt(Math.floor(Math.random() * characters.length))
+        }
+        if (AlreadyGeneratedCodes.includes(generator)) {
+            return GenerateRegistrationCode(AlreadyGeneratedCodes);
+        }
+        const [checkUserExists] = await ReadUserRegistrations({ "RegistrationCode": generator }, undefined, 1, undefined);
+        if (checkUserExists) {
+            return GenerateRegistrationCode();
+        }
+        return generator;
+
+    }
+
+
+    /**@type {UserData[]} */
+    const UserDatas = req.body.UserDatas;
+
+    /**@type {string[]} */
+    const generatedCodes = [];
+    for (let i = 0; i < UserDatas.length; i++) {
+        generatedCodes.push(await GenerateRegistrationCode(generatedCodes));
+    }
+    await Promise.all(UserDatas.map(async (User, index) => {
+        // @ts-ignore
+        return CreateUserRegistrations({ UserData: User, RegistrationCode: generatedCodes[index], RegistrationLink: `${Env.NEW_USER_WITH_REGISTRATION_CODE}?${new URLSearchParams(User).toString()}` });
+    }));
+
 }
 
 /**
