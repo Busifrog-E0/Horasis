@@ -6,6 +6,7 @@ import { TagsSchema } from './tags-validations.js';
 const AgendaDataSchema = Joi.object({
     Name: Joi.string().required(),
     Description: Joi.string(),
+    Date: Joi.number().required(),  // Assume it's a timestamp (milliseconds since epoch)
     StartTime: Joi.number().required(),
     EndTime: Joi.number().required(),
     Location: Joi.string().required()
@@ -27,7 +28,7 @@ const EventDataSchema = Joi.object({
     CoverPicture: Joi.string().required(),
     HasDiscussion: Joi.boolean().required(),
     Tags: Joi.array().items(TagsSchema).default([]),
-    Capacity : Joi.number()
+    Capacity: Joi.number()
 }).custom((value, helpers) => {
     const currentTime = moment().valueOf();
 
