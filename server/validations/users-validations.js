@@ -67,7 +67,7 @@ const ValidateUserRegister = async (req, res, next) => {
 
 const ValidateNewUserCode = async (req, res, next) => {
     const Result = Joi.object({
-        UserSchema:
+        // UserSchema:
     }).validate(req.body, { stripUnknown: true, convert: true });
     if (Result.error) {
         const message = Result.error.details.map((detail) => detail.message).join(', ');
