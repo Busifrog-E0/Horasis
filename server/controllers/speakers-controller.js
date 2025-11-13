@@ -157,9 +157,12 @@ const InviteSpeakersThroughEmail = async (req, res) => {
         const { Agenda: AgendaData } = Event;
         const updatedAgenda = AgendaData.map(item => {
             if (item.AgendaId === Agenda.AgendaId) {
-                return { ...item, SpeakerData: { SpeakerId, UserDetails } };
+                if (!item.SpeakerData || item.SpeakerData.length === 0) {
+                    item.SpeakerData = [];
+                }
+                item.SpeakerData.push({ SpeakerId, UserDetails });
             }
-            return item;
+            return { ...item };
         });
         await PushArrayEvents({ Speakers: { SpeakerId, UserDetails: SpeakerData.UserDetails, Agenda } }, EventId);
         await CreateSpeakers(SpeakerData);

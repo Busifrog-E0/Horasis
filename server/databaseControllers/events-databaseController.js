@@ -15,7 +15,10 @@ import dataHandling from './functions.js'
  * @property {number} StartTime
  * @property {number} EndTime
  * @property {string} Location
+ * @property {Array<{SpeakerId:string,UserDetails:{FullName:string,About:string,Email:string,ProfilePicture:string}}>} [SpeakerData]
  */
+
+
 
 /**
  * @typedef {object} SpeakerData

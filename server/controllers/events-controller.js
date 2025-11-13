@@ -163,9 +163,9 @@ const PostEvents = async (req, res) => {
     req.body.OrganiserId = OrganiserId;
     const UserDetails = await ReadOneFromUsers(OrganiserId);
     const { Agenda } = req.body;
-    req.body.Agenda = Agenda.map(Agenda => {
+    req.body.Agenda = Agenda.map(AgendaValues => {
         const AgendaId = (new ObjectId()).toString();
-        return { ...Agenda, AgendaId };
+        return { ...AgendaValues, AgendaId, SpeakerData: [] };
     })
     req.body = EventInit(req.body);
     const EventId = await CreateEvents({ ...req.body, OrganiserId });
@@ -235,15 +235,6 @@ const SetEventDataForGet = async (Event, UserId) => {
     Event.SpeakerStatus = Speaker ? Speaker.MembershipStatus : "None";
     //@ts-ignore
     Event = GetPermissionOfMember(Member[0], Event);
-    const Speakers = Event.Agenda.map((agenda, index) => {
-        const speaker = Event.Speakers?.find(speaker => speaker.Agenda.AgendaId === agenda.AgendaId);
-        if (speaker) {
-            return speaker
-        } else {
-            return null;
-        }
-    }).filter(agenda => agenda !== null);
-    Event.Speakers = Speakers;
     return { ...Event, UserDetails };
 }
 
