@@ -4,7 +4,7 @@ import axios from 'axios';
 
 import { SendMailClient } from 'zeptomail'
 
-const url = "api.zeptomail.com/";
+const url = ENV.ZeptoMailURL;
 const token = ENV.ZeptoMailToken;
 
 let client = new SendMailClient({ url, token });
