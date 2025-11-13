@@ -184,10 +184,10 @@ const PatchEvents = async (req, res) => {
     //@ts-ignore
     const { UserId } = req.user
     const { EventId } = req.params;
-    // const [Member] = await ReadMembers({ EntityId: EventId, MemberId: UserId }, undefined, 1, undefined);
-    // if (!Member.Permissions.IsAdmin) {
-    //     return res.status(444).json(AlertBoxObject("Cannot Edit", "You are not an admin of this discussion"))
-    // }
+    const [Member] = await ReadMembers({ EntityId: EventId, MemberId: UserId }, undefined, 1, undefined);
+    if (!Member.Permissions.IsAdmin) {
+        return res.status(444).json(AlertBoxObject("Cannot Edit", "You are not an admin of this discussion"))
+    }
     if (req.body.Description) {
         req.body.OriginalLanguage = await DetectLanguage(req.body.Description);
         req.body.Languages = {};

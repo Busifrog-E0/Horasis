@@ -38,7 +38,7 @@ router.post('/events', decodeIDToken, ensureAuthorized("Admin"), ValidatePostEve
     // @ts-ignore
     asyncHandler(PostEvents));
 
-router.patch('/events/:EventId', decodeIDToken,
+router.patch('/events/:EventId',
     // @ts-ignore
     asyncHandler(PatchEvents));
 
