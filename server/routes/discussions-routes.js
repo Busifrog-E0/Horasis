@@ -22,6 +22,7 @@ import { ValidatePostActivities } from '../validations/activities-validations.js
 import { MemberPostActivityMiddleware } from '../middleware/members-middleware.js';
 import { DeleteSaves, GetSaves, PostSaves } from '../controllers/saves-controller.js';
 import { ValidateGetMembers, ValidateInviteMembers } from '../validations/members-validations.js';
+import { ReadOneFromDiscussions } from '../databaseControllers/discussions-databaseController.js';
 const router = e.Router();
 
 
@@ -38,7 +39,7 @@ router.post('/discussions', decodeIDToken, ensureAuthorized("User", "Admin"), Va
     asyncHandler(PostDiscussions));
 
 router.patch('/discussions/:DiscussionId/coverPicture', decodeIDToken, ensureAuthorized("User", "Admin"),
-    CheckSameUserInEntity(GetOneFromDiscussions, "DiscussionId"), ValidatePatchDiscussionCoverPhoto,
+    CheckSameUserInEntity(ReadOneFromDiscussions, "DiscussionId"), ValidatePatchDiscussionCoverPhoto,
     SwaggerDocs.patch_Discussion_DiscussionId_CoverPicture,
     // @ts-ignore
     asyncHandler(PatchDiscussions));
@@ -49,7 +50,7 @@ router.get('/guest/discussions/', ValidateGetEntity, QueryParameterFormatting, S
 
 
 router.patch('/discussions/:DiscussionId/member/permissions/everyone', decodeIDToken, ensureAuthorized("User", "Admin"), ValidateAddPermissionForEveryone,
-    CheckSameUserInEntity(GetOneFromDiscussions, "DiscussionId"), SwaggerDocs.patch_Discussions_EntityId_Member_Permissions_Everyone,
+    CheckSameUserInEntity(ReadOneFromDiscussions, "DiscussionId"), SwaggerDocs.patch_Discussions_EntityId_Member_Permissions_Everyone,
     //@ts-ignore
     asyncHandler(PatchDiscussions));
 

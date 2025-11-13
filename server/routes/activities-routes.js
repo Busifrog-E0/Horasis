@@ -9,6 +9,7 @@ import SwaggerDocs from '../swaggerDocs/activities-swaggerDocs.js'
 import e from 'express';
 import { CheckSameUserInBody, CheckSameUserInEntity, QueryParameterFormatting, ValidateGetEntity } from '../middleware/common.js';
 import { GetFeedActivitiesMiddleware, GetMentionedActivitiesMiddleware, GetUserActivitiesMiddleware, InsertActivityTypeMiddleware, PostActivitiesLikeMiddleware, PostFeedActivitiesMiddleware } from '../middleware/activities-middleware.js';
+import { ReadOneFromActivities } from '../databaseControllers/activities-databaseController.js';
 
 const router = e.Router();
 
@@ -43,13 +44,13 @@ router.post('/activities', decodeIDToken, ensureAuthorized("User"), ValidatePost
     asyncHandler(PostActivities));
 
 router.patch('/activities/:ActivityId', decodeIDToken, ensureAuthorized("User"), ValidatePatchActivities,
-    CheckSameUserInEntity(GetOneFromActivities, "ActivityId"), SwaggerDocs.patch_Activities,
+    CheckSameUserInEntity(ReadOneFromActivities, "ActivityId"), SwaggerDocs.patch_Activities,
     // @ts-ignore
     asyncHandler(PatchActivities));
 
 
 router.delete('/activities/:ActivityId', decodeIDToken, ensureAuthorized("User", "Admin", "SuperAdmin"),
-    CheckSameUserInEntity(GetOneFromActivities, "ActivityId"), SwaggerDocs.delete_Activities_ActivityId,
+    CheckSameUserInEntity(ReadOneFromActivities, "ActivityId"), SwaggerDocs.delete_Activities_ActivityId,
     // @ts-ignore
     asyncHandler(DeleteActivities));
 

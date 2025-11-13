@@ -134,7 +134,8 @@ const CheckSameOrganizerInBody = (req, res, next) => {
 
 const CheckSameUserInEntity = (ReadFn, FieldName) => async (req, res, next) => {
     const Entity = await ReadFn(req.params[FieldName]);
-    if (Entity.UserId !== req.user.UserId) {
+    const CheckId = Entity.UserId ?? Entity.OrganiserId;
+    if (CheckId !== req.user.UserId) {
         return res.status(402).json("No Access")
     }
     return next();
