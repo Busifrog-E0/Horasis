@@ -73,181 +73,162 @@ const CreateEventStep1 = ({ postEventData, setPostEventData, validateSingle, err
 				/>
 				{errorObj['Description'] != undefined && <p className='text-brand-red m-0'>{errorObj['Description']}</p>}
 			</div>
-			<div>
-				<h1 className='text-system-primary-text font-medium text-lg'>
-					Event Start Date<span className='text-brand-red'>*</span>
-				</h1>
-				<DateAndTimePicker
-					minDate={new Date()}
-					selected={new Date(postEventData.Date)}
-					onChange={(date) => {
-						const selectedStartTime = new Date(postEventData.StartTime)
-						const eventDate = new Date(date)
+			<div className='grid grid-cols-1 gap-6'>
+				{/* Event Start Date + Time */}
+				<div className='flex flex-col w-full'>
+					<h1 className='text-system-primary-text font-medium text-lg'>
+						Event Start Date<span className='text-brand-red'>*</span>
+					</h1>
+					<div className='flex flex-col md:flex-row items-center gap-4 mt-2'>
+						{/* Start Date */}
+						<div className='flex-1 w-full'>
+							<DateAndTimePicker
+								minDate={new Date()}
+								selected={new Date(postEventData.Date)}
+								onChange={(date) => {
+									const selectedStartTime = new Date(postEventData.StartTime)
+									const eventDate = new Date(date)
 
-						const combinedStartTime = new Date(
-							eventDate.getFullYear(),
-							eventDate.getMonth(),
-							eventDate.getDate(),
-							selectedStartTime.getHours(),
-							selectedStartTime.getMinutes(),
-							selectedStartTime.getSeconds()
-						)
-
-						const combinedStartEpoch = combinedStartTime.getTime()
-
-						validateSingle(
-							{ ['Date']: combinedStartEpoch, ['StartTime']: combinedStartEpoch },
-							'Date'
-						)
-					}}
-					placeholder='Event start date'
-					width='full'
-					variant='primary_outlined'
-				/>
-				{errorObj['Date'] != undefined && <p className='text-brand-red m-0'>{errorObj['Date']}</p>}
-			</div>
-			<div>
-				<h1 className='text-system-primary-text font-medium text-lg'>
-					Event End Date<span className='text-brand-red'>*</span>
-				</h1>
-				<DateAndTimePicker
-					minDate={new Date()}
-					selected={new Date(postEventData.EndDate)}
-					onChange={(date) => {
-						const selectedEndTime = new Date(postEventData.EndTime)
-						const eventDate = new Date(date)
-
-						const combinedEndTime = new Date(
-							eventDate.getFullYear(),
-							eventDate.getMonth(),
-							eventDate.getDate(),
-							selectedEndTime.getHours(),
-							selectedEndTime.getMinutes(),
-							selectedEndTime.getSeconds()
-						)
-
-						const combinedEndEpoch = combinedEndTime.getTime()
-
-						validateSingle(
-							{ ['EndDate']: combinedEndEpoch, ['EndTime']: combinedEndEpoch },
-							'EndDate'
-						)
-					}}
-					placeholder='Event end date'
-					width='full'
-					variant='primary_outlined'
-				/>
-				{errorObj['EndDate'] != undefined && <p className='text-brand-red m-0'>{errorObj['EndDate']}</p>}
-			</div>
-			<div>
-				<h1 className='text-system-primary-text font-medium text-lg'>
-					Event Time<span className='text-brand-red'>*</span>
-				</h1>
-				<div className='flex flex-col md:flex-row gap-4 md:gap-16 items-center'>
-					<div className='flex-1 w-full'>
-						<DateAndTimePicker
-							minDate={new Date()}
-							showTimeSelect={true}
-							showTimeSelectOnly={true}
-							timeIntervals={15}
-							timeCaption='Time'
-							dateFormat='h:mm aa'
-							selected={new Date(postEventData.StartTime)}
-							onChange={(date) => {
-								if (postEventData.Date) {
-									const eventDate = new Date(postEventData.Date)
-									const selectedTime = new Date(date)
-
-									const combinedDateTime = new Date(
+									const combinedStartTime = new Date(
 										eventDate.getFullYear(),
 										eventDate.getMonth(),
 										eventDate.getDate(),
-										selectedTime.getHours(),
-										selectedTime.getMinutes(),
-										selectedTime.getSeconds()
+										selectedStartTime.getHours(),
+										selectedStartTime.getMinutes(),
+										selectedStartTime.getSeconds()
 									)
-									const combinedEpoch = combinedDateTime.getTime()
-									validateSingle({ ['Date']: combinedEpoch, ['StartTime']: combinedEpoch }, 'Date')
-								} else {
-									console.error('Please select the event date first.')
-								}
-							}}
-							placeholder='Event start time'
-							width='full'
-							variant='primary_outlined'
-						/>
-						{errorObj['StartTime'] != undefined && <p className='text-brand-red m-0'>{errorObj['StartTime']}</p>}
+
+									const combinedStartEpoch = combinedStartTime.getTime()
+									validateSingle(
+										{ ['Date']: combinedStartEpoch, ['StartTime']: combinedStartEpoch },
+										'Date'
+									)
+								}}
+								placeholder='Start date'
+								width='full'
+								variant='primary_outlined'
+							/>
+							{errorObj['Date'] && <p className='text-brand-red m-0'>{errorObj['Date']}</p>}
+						</div>
+
+						{/* Start Time */}
+						<div className='flex-1 w-full'>
+							<DateAndTimePicker
+								minDate={new Date()}
+								showTimeSelect
+								showTimeSelectOnly
+								timeIntervals={15}
+								timeCaption='Time'
+								dateFormat='h:mm aa'
+								selected={new Date(postEventData.StartTime)}
+								onChange={(date) => {
+									if (postEventData.Date) {
+										const eventDate = new Date(postEventData.Date)
+										const selectedTime = new Date(date)
+										const combinedDateTime = new Date(
+											eventDate.getFullYear(),
+											eventDate.getMonth(),
+											eventDate.getDate(),
+											selectedTime.getHours(),
+											selectedTime.getMinutes(),
+											selectedTime.getSeconds()
+										)
+										const combinedEpoch = combinedDateTime.getTime()
+										validateSingle(
+											{ ['Date']: combinedEpoch, ['StartTime']: combinedEpoch },
+											'Date'
+										)
+									} else {
+										console.error('Please select the event date first.')
+									}
+								}}
+								placeholder='Start time'
+								width='full'
+								variant='primary_outlined'
+							/>
+							{errorObj['StartTime'] && <p className='text-brand-red m-0'>{errorObj['StartTime']}</p>}
+						</div>
 					</div>
-					<div>
-						<img src={arrowfor} alt='' className='h-8 rotate-90 md:rotate-0' />
-					</div>
-					<div className='flex-1 w-full'>
-						{/* <DateAndTimePicker
-							minDate={new Date()}
-							showTimeSelect={true}
-							showTimeSelectOnly={true}
-							timeIntervals={15}
-							timeCaption='Time'
-							dateFormat='h:mm aa'
-							selected={new Date(postEventData.EndTime)}
-							onChange={(date) => {
-								if (postEventData.Date) {
-									const eventDate = new Date(postEventData.Date)
-									const selectedTime = new Date(date)
+				</div>
 
-									const combinedDateTime = new Date(
+				{/* Event End Date + Time */}
+				<div className='flex flex-col w-full'>
+					<h1 className='text-system-primary-text font-medium text-lg'>
+						Event End Date<span className='text-brand-red'>*</span>
+					</h1>
+					<div className='flex flex-col md:flex-row items-center gap-4 mt-2'>
+						{/* End Date */}
+						<div className='flex-1 w-full'>
+							<DateAndTimePicker
+								minDate={new Date()}
+								selected={new Date(postEventData.EndDate)}
+								onChange={(date) => {
+									const selectedEndTime = new Date(postEventData.EndTime)
+									const eventDate = new Date(date)
+
+									const combinedEndTime = new Date(
 										eventDate.getFullYear(),
 										eventDate.getMonth(),
 										eventDate.getDate(),
-										selectedTime.getHours(),
-										selectedTime.getMinutes(),
-										selectedTime.getSeconds()
+										selectedEndTime.getHours(),
+										selectedEndTime.getMinutes(),
+										selectedEndTime.getSeconds()
 									)
-									const combinedEpoch = combinedDateTime.getTime()
-									validateSingle({ ['EndTime']: combinedEpoch }, 'EndTime')
-								} else {
-									console.error('Please select the event date first.')
-								}
-							}}
-							placeholder='Event end time'
-							width='full'
-							variant='primary_outlined'
-						/> */}
-						<DateAndTimePicker
-							minDate={new Date()}
-							showTimeSelect={true}
-							showTimeSelectOnly={true}
-							timeIntervals={15}
-							timeCaption='Time'
-							dateFormat='h:mm aa'
-							selected={new Date(postEventData.EndTime)}
-							onChange={(date) => {
-								if (postEventData.Date) {
-									const eventDate = new Date(postEventData.EndDate)
-									const selectedTime = new Date(date)
 
-									const combinedDateTime = new Date(
-										eventDate.getFullYear(),
-										eventDate.getMonth(),
-										eventDate.getDate(),
-										selectedTime.getHours(),
-										selectedTime.getMinutes(),
-										selectedTime.getSeconds()
+									const combinedEndEpoch = combinedEndTime.getTime()
+									validateSingle(
+										{ ['EndDate']: combinedEndEpoch, ['EndTime']: combinedEndEpoch },
+										'EndDate'
 									)
-									const combinedEpoch = combinedDateTime.getTime()
-									validateSingle({ ['EndDate']: combinedEpoch, ['EndTime']: combinedEpoch }, 'EndTime')
-								} else {
-									console.error('Please select the event end date first.')
-								}
-							}}
-							placeholder='Event end time'
-							width='full'
-							variant='primary_outlined'
-						/>
-						{errorObj['EndTime'] != undefined && <p className='text-brand-red m-0'>{errorObj['EndTime']}</p>}
+								}}
+								placeholder='End date'
+								width='full'
+								variant='primary_outlined'
+							/>
+							{errorObj['EndDate'] && <p className='text-brand-red m-0'>{errorObj['EndDate']}</p>}
+						</div>
+
+						{/* End Time */}
+						<div className='flex-1 w-full'>
+							<DateAndTimePicker
+								minDate={new Date()}
+								showTimeSelect
+								showTimeSelectOnly
+								timeIntervals={15}
+								timeCaption='Time'
+								dateFormat='h:mm aa'
+								selected={new Date(postEventData.EndTime)}
+								onChange={(date) => {
+									if (postEventData.EndDate) {
+										const eventDate = new Date(postEventData.EndDate)
+										const selectedTime = new Date(date)
+										const combinedDateTime = new Date(
+											eventDate.getFullYear(),
+											eventDate.getMonth(),
+											eventDate.getDate(),
+											selectedTime.getHours(),
+											selectedTime.getMinutes(),
+											selectedTime.getSeconds()
+										)
+										const combinedEpoch = combinedDateTime.getTime()
+										validateSingle(
+											{ ['EndDate']: combinedEpoch, ['EndTime']: combinedEpoch },
+											'EndTime'
+										)
+									} else {
+										console.error('Please select the event end date first.')
+									}
+								}}
+								placeholder='End time'
+								width='full'
+								variant='primary_outlined'
+							/>
+							{errorObj['EndTime'] && <p className='text-brand-red m-0'>{errorObj['EndTime']}</p>}
+						</div>
 					</div>
 				</div>
 			</div>
+
 
 			<div className='flex flex-col gap-4'>
 				<h1 className='text-system-primary-text font-medium text-lg'>
@@ -273,33 +254,7 @@ const CreateEventStep1 = ({ postEventData, setPostEventData, validateSingle, err
 										/>
 									</div>
 
-									<div className='flex-1 w-full'>
-										<DateAndTimePicker
-											minDate={new Date()}
-											selected={new Date(item.Date)}
-											onChange={(date) => {
-												const selectedStartTime = new Date(item.StartTime)
-												const eventDate = new Date(date)
 
-												const combinedStartTime = new Date(
-													eventDate.getFullYear(),
-													eventDate.getMonth(),
-													eventDate.getDate(),
-													selectedStartTime.getHours(),
-													selectedStartTime.getMinutes(),
-													selectedStartTime.getSeconds()
-												)
-
-												const combinedStartEpoch = combinedStartTime.getTime()
-
-												validateSingle(
-													{ ['Date']: combinedStartEpoch, ['StartTime']: combinedStartEpoch }, 'Date', index)
-											}}
-											placeholder='Agenda end date'
-											width='full'
-											variant='primary_outlined'
-										/>
-									</div>
 									<div className='flex-1 w-full'>
 										<DateAndTimePicker
 											minDate={new Date()}
@@ -378,13 +333,42 @@ const CreateEventStep1 = ({ postEventData, setPostEventData, validateSingle, err
 									<p className='text-brand-red m-0'>{errorObj[`Agenda.${index}.StartTime`]}</p>
 								)}
 
-								{errorObj[`Agenda.${index}.Date`] != undefined && (
-									<p className='text-brand-red m-0'>{errorObj[`Agenda.${index}.Date`]}</p>
-								)}
 
 								{errorObj[`Agenda.${index}.EndTime`] != undefined && (
 									<p className='text-brand-red m-0'>{errorObj[`Agenda.${index}.EndTime`]}</p>
 								)}
+
+								<div className=''>
+									<DateAndTimePicker
+										minDate={new Date()}
+										selected={new Date(item.Date)}
+										onChange={(date) => {
+											const selectedStartTime = new Date(item.StartTime)
+											const eventDate = new Date(date)
+
+											const combinedStartTime = new Date(
+												eventDate.getFullYear(),
+												eventDate.getMonth(),
+												eventDate.getDate(),
+												selectedStartTime.getHours(),
+												selectedStartTime.getMinutes(),
+												selectedStartTime.getSeconds()
+											)
+
+											const combinedStartEpoch = combinedStartTime.getTime()
+
+											validateSingle(
+												{ ['Date']: combinedStartEpoch, ['StartTime']: combinedStartEpoch }, 'Date', index)
+										}}
+										placeholder='Agenda end date'
+										width='full'
+										variant='primary_outlined'
+									/>
+								</div>
+								{errorObj[`Agenda.${index}.Date`] != undefined && (
+									<p className='text-brand-red m-0'>{errorObj[`Agenda.${index}.Date`]}</p>
+								)}
+
 								<div className=''>
 									<TextArea
 										rows={2}
