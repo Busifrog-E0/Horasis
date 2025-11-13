@@ -44,27 +44,30 @@ const EventsAgenda = ({ event }) => {
 					<div className={`w-1/2 text-left pl-4`}>
 						<div className='flex items-center gap-3'>
 							<h3 className='text-base font-medium text-system-primary-text'>{agenda.Name}</h3>
-							{/* {agenda?.SpeakerData?.UserDetails?.ProfilePicture ? (
-								<img
-									className='w-12 h-12 rounded-full object-cover'
-									src={agenda?.SpeakerData?.UserDetails?.ProfilePicture}
-									alt='Rounded avatar'
-									/>
-									) : (
-										<img className='w-12 h-12 rounded-full object-cover' src={avatar} alt='Rounded avatar' />
-										)} */}
+
 						</div>
 						<div className='flex-1'>
-							{agenda?.SpeakerData?.UserDetails?.FullName ? (
-								<div className='flex gap-1'>
-									<p className='text-sm '>by</p>
-									<h4 className='font-semibold text-sm text-system-primary-accent'>
-										{agenda?.SpeakerData?.UserDetails?.FullName}
-									</h4>
+							{agenda?.SpeakerData?.length > 0 && (
+								<div className="w-full mt-3">
+
+									{/* Horizontal Line */}
+									<hr className="my-3 border-system-secondary-accent/40" />
+
+									{/* Speaker Names */}
+									<div className="flex gap-1 flex-wrap">
+										<p className="text-sm">by</p>
+
+										<h4 className="font-semibold text-sm text-system-primary-accent flex flex-wrap gap-1">
+											{agenda.SpeakerData
+												.map((speaker) => speaker?.UserDetails?.FullName)
+												.filter(Boolean)
+												.join(", ")}
+										</h4>
+									</div>
+
 								</div>
-							) : (
-								<></>
 							)}
+
 						</div>
 					</div>
 				</div>
