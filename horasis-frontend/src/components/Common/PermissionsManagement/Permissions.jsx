@@ -7,6 +7,8 @@ import Button from '../../ui/Button'
 import Spinner from '../../ui/Spinner'
 import Switch from '../../ui/Switch'
 import deleteIcon from '../../../assets/icons/delete.svg'
+import avatar from '../../../assets/icons/avatar.svg'
+
 
 const EntityTypes = {
 	Discussion: { api: 'discussions', navigationPath: '/Discussions/', label: 'Discussion' },
@@ -64,7 +66,7 @@ const Permissions = ({ PermissionType, Entity, EntityId, EntityType }) => {
 					getEntityMembers([])
 				}
 			},
-			onerror: (err) => {},
+			onerror: (err) => { },
 		})
 
 	const removePermissionForEveryone = () =>
@@ -77,7 +79,7 @@ const Permissions = ({ PermissionType, Entity, EntityId, EntityType }) => {
 				setIsEveryoneOpen(false)
 				setPermitEveryone(false)
 			},
-			onerror: (err) => {},
+			onerror: (err) => { },
 		})
 
 	const addPermissionForEveryone = () =>
@@ -90,7 +92,7 @@ const Permissions = ({ PermissionType, Entity, EntityId, EntityType }) => {
 				setIsEveryoneOpen(false)
 				setPermitEveryone(true)
 			},
-			onerror: (err) => {},
+			onerror: (err) => { },
 		})
 
 	const {
@@ -252,11 +254,10 @@ const Permissions = ({ PermissionType, Entity, EntityId, EntityType }) => {
 						)}
 						{PermissionType !== 'IsAdmin' && (
 							<div
-								className={`flex items-center gap-2 border-2 ${
-									permitEveryone
+								className={`flex items-center gap-2 border-2 ${permitEveryone
 										? 'border-system-primary-accent-light text-system-primary-accent '
 										: 'border-system-primary-bg text-system-secondary-text '
-								} py-1 px-4 rounded-xl cursor-pointer`}
+									} py-1 px-4 rounded-xl cursor-pointer`}
 								onClick={(e) => {
 									e.stopPropagation()
 									setIsEveryoneOpen(true)
@@ -297,7 +298,7 @@ const Permissions = ({ PermissionType, Entity, EntityId, EntityType }) => {
 	)
 }
 
-export const MemberTab = ({ member, lastItem, hideDelete = true, onAddClick = () => {}, onDeleteClick = () => {} }) => {
+export const MemberTab = ({ member, lastItem, hideDelete = true, onAddClick = () => { }, onDeleteClick = () => { } }) => {
 	return (
 		<div className={`${!lastItem ? 'border-b border-system-file-border' : ''} pb-4 pt-4`}>
 			<div className='flex items-center gap-3'>
