@@ -65,6 +65,7 @@ const GOOGLE_TRANSLATE_KEY = process.env.GOOGLE_TRANSLATE_KEY
 // @ts-ignore
 const ZeptoMailToken = ModeOfDevelopment === "Production" ? process.env.ZeptoProductionMailToken : process.env.ZeptoDebugMailToken;
 
+const ZeptoMailURL = ModeOfDevelopment === "Production" ? "api.zeptomail.com/" : "api.zeptomail.in/";
 /**
  * @type {string}
  */
@@ -129,6 +130,7 @@ export default {
     DO_SPACES_SECRET,
     DO_SPACES_NAME,
     ZeptoMailToken,
+    ZeptoMailURL,
     GOOGLE_TRANSLATE_KEY,
     AGORA_APP_ID,
     AGORA_APP_CERTIFICATE,
