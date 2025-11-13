@@ -28,7 +28,7 @@ router.get('/events', decodeIDToken, ensureAuthorized("User"), ValidateGetEvents
     // @ts-ignore
     asyncHandler(GetEvents));
 
-router.get('/events/:EventId', decodeIDToken, ensureAuthorized("User","Admin", "SuperAdmin"),
+router.get('/events/:EventId', decodeIDToken, ensureAuthorized("User", "Admin", "SuperAdmin"),
     SwaggerDocs.get_Events_EventsId,
     // @ts-ignore
     asyncHandler(GetOneFromEvents));
@@ -38,7 +38,7 @@ router.post('/events', decodeIDToken, ensureAuthorized("Admin"), ValidatePostEve
     // @ts-ignore
     asyncHandler(PostEvents));
 
-router.patch('/events/:EventId',
+router.patch('/events/:EventId', decodeIDToken,
     // @ts-ignore
     asyncHandler(PatchEvents));
 
