@@ -92,30 +92,53 @@ const EventsAgendaBig = ({ event }) => {
 										</div>
 									)}
 
-									{agenda?.SpeakerData?.UserDetails?.FullName && (
-										<div className='flex flex-col items-start border p-4 rounded-lg'>
-											<p className='text-system-secondary-text mb-4 text-sm'>Speaker Details</p>
-											<div className='flex items-center gap-4'>
-												<div className='w-11 h-11 rounded-full overflow-hidden'>
-													<img
-														className='w-full h-full object-cover'
-														src={agenda?.SpeakerData?.UserDetails?.ProfilePicture || avatar}
-														alt='Speaker avatar'
-													/>
+									{agenda?.SpeakerData?.length > 0 && (
+										<div className="flex flex-col items-start border p-4 rounded-lg">
+
+											{/* Title moved OUTSIDE the repeated blocks */}
+											<p className="text-system-secondary-text mb-4 text-sm">
+												Speaker Details
+											</p>
+
+											{agenda.SpeakerData.map((speaker, index) => (
+												<div key={speaker.SpeakerId || index} className="w-full">
+
+													{/* Speaker Block */}
+													<div className="flex flex-col mb-4">
+														<div className="flex items-center gap-4">
+															<div className="w-11 h-11 rounded-full overflow-hidden">
+																<img
+																	className="w-full h-full object-cover"
+																	src={speaker?.UserDetails?.ProfilePicture || avatar}
+																	alt="Speaker avatar"
+																/>
+															</div>
+
+															<div className="flex flex-col">
+																<p
+																	onClick={() => openSpeakerModal(speaker?.UserDetails)}
+																	className="text-lg font-medium text-system-primary-text cursor-pointer"
+																>
+																	{speaker?.UserDetails?.FullName}
+																</p>
+															</div>
+														</div>
+
+														{speaker?.UserDetails?.About && (
+															<ShowMoreText text={speaker?.UserDetails?.About} />
+														)}
+													</div>
+
+													{/* Horizontal line after each speaker except last */}
+													{index !== agenda.SpeakerData.length - 1 && (
+														<hr className="my-4 border-system-secondary-accent/40" />
+													)}
 												</div>
-												<div className='flex flex-col'>
-													<p
-														onClick={() => openSpeakerModal(agenda?.SpeakerData?.UserDetails)}
-														className='text-lg font-medium text-system-primary-text cursor-pointer'>
-														{agenda?.SpeakerData?.UserDetails?.FullName}
-													</p>
-												</div>
-											</div>
-											{agenda?.SpeakerData?.UserDetails?.About && (
-												<ShowMoreText text={agenda?.SpeakerData?.UserDetails?.About} />
-											)}
+											))}
 										</div>
 									)}
+
+
 								</div>
 							</div>
 						</div>

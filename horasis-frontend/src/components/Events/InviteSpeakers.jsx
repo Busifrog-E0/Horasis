@@ -15,6 +15,8 @@ import deleteIcon from '../../assets/icons/delete-white.svg'
 import Joi from 'joi'
 import Select from '../ui/Select'
 import TextArea from '../ui/TextArea'
+import Modal from '../ui/Modal'
+import closeIcon from '../../assets/icons/close.svg'
 
 const InviteSpeakers = ({ eventId, event }) => {
 	const { updateCurrentUser, currentUserData } = useAuth()
@@ -23,6 +25,7 @@ const InviteSpeakers = ({ eventId, event }) => {
 	const [isLoadingMore, setIsLoadingMore] = useState(false)
 	const [pageDisabled, setPageDisabled] = useState(true)
 	const [connections, setConnections] = useState([])
+	const [showSuccessAfterInvitePopup, setShowSuccessAfterInvitePopup] = useState(false)
 	const [filters, setFilters] = useState({
 		OrderBy: 'Index',
 		Limit: 2,
@@ -194,6 +197,8 @@ const InviteSpeakers = ({ eventId, event }) => {
 			(result) => {
 				setEmailInvitationData([])
 				setIsInviting(false)
+				toast.open('success', 'Invitation Sent', 'Your invitation has been sent. The speaker will receive an email shortly')
+				setShowSuccessAfterInvitePopup(true)
 			},
 			(err) => {
 				setIsInviting(false)
@@ -206,6 +211,29 @@ const InviteSpeakers = ({ eventId, event }) => {
 
 	return (
 		<div className='flex flex-col gap-0'>
+			<Modal isOpen={showSuccessAfterInvitePopup} maxWidth=''>
+
+				<Modal.Body>
+					<div className="bg-white flex flex-col items-center rounded-xl p-6 m-auto w-full text-center">
+						<h2 className="text-lg font-semibold mb-2">Invitation Sent</h2>
+						<p className="text-gray-600 mb-6">
+							Your invitation has been sent successfully.
+						</p>
+						<Button
+							width="full"
+							size="md"
+							variant="black"
+							onClick={() => {
+								setShowSuccessAfterInvitePopup(false)
+								window.location.reload() // reload page after closing
+							}}
+						>
+							Done
+						</Button>
+					</div>
+				</Modal.Body>
+			</Modal>
+
 			<div className='mb-4'>
 				<div className='flex-1'>
 					<h1 className='text-system-primary-text font-medium text-lg'>Register Speakers</h1>
@@ -322,8 +350,16 @@ const InviteSpeakers = ({ eventId, event }) => {
 							size='md'
 							variant='black'
 							disabled={isSubmitDisabled || isInviting}
-							onClick={postInviteByEmail}>
-							{isInviting ? 'Sending emails...' : 'Send email to speakers'}
+							onClick={postInviteByEmail}
+						>
+							{isInviting ? (
+								<div className="flex items-center gap-2">
+									<SmallLoader />
+									<span>Sending emails...</span>
+								</div>
+							) : (
+								'Send email to speakers'
+							)}
 						</Button>
 					</div>
 				</>
@@ -331,5 +367,9 @@ const InviteSpeakers = ({ eventId, event }) => {
 		</div>
 	)
 }
+
+const SmallLoader = () => (
+	<div className="w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
+);
 
 export default InviteSpeakers
