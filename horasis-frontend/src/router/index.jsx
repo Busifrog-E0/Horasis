@@ -55,6 +55,7 @@ import AdminContentReports from '../pages/superadmin/AdminContentReports'
 import AdminPlatformUsers from '../pages/superadmin/AdminPlatformUsers'
 import ManagementLayout from '../layouts/manage/ManagementLayout'
 import PlatformUsersPage from '../pages/PlatformUsersPage'
+import RegisterProtected from '../layouts/RegisterProtected'
 
 export const router = createBrowserRouter(
 	createRoutesFromElements(
@@ -154,7 +155,14 @@ export const router = createBrowserRouter(
 				<Route index element={<LogIn />} />
 			</Route>
 			<Route path='register' element={<UnAuthLayout />}>
-				<Route index element={<Register />} />
+				<Route
+					index
+					element={
+						<RegisterProtected>
+							<Register />
+						</RegisterProtected>
+					}
+				/>
 			</Route>
 			<Route path='welcome' element={<UnAuthLayout />}>
 				<Route index element={<WelcomePage />} />

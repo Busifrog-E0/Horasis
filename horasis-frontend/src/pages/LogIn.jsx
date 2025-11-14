@@ -189,7 +189,7 @@ const LogIn = () => {
 							Login
 						</Button>
 					</div>
-					<div className='mt-1'>
+					{/* <div className='mt-1'>
 						<div className='text-base font-medium text-center'>
 							Don't have an account?{' '}
 							<span
@@ -200,7 +200,7 @@ const LogIn = () => {
 								Register
 							</span>
 						</div>
-					</div>
+					</div> */}
 				</div>
 			</div>
 		</div>
