@@ -3,7 +3,13 @@ import { QueryParametersSchema } from './common.js';
 import { AgendaDataSchema } from './events-validations.js';
 import { TagsSchema } from './tags-validations.js';
 import sanitizeHtml from 'sanitize-html';
+import e from 'express';
 
+/**
+ * 
+ * @param {string} value 
+ * @returns 
+ */
 const sanitize = (value) => {
     return sanitizeHtml(value, {
         allowedTags: [],          // No HTML tags allowed
@@ -31,6 +37,7 @@ const UserSchema = Joi.object({
     Interests: Joi.array().items(TagsSchema).default([]),
     LinkedIn: Joi.string().allow(""),
     IsPrivate: Joi.boolean(),
+    RegisterCode: Joi.string().allow("").optional(),
 });
 
 const InvitationDataSchema = Joi.object({
@@ -38,6 +45,14 @@ const InvitationDataSchema = Joi.object({
     Agenda: AgendaDataSchema
 })
 
+
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ * @param {e.NextFunction} next 
+ * @returns 
+ */
 const ValidateGetUsers = async (req, res, next) => {
     const Result = QueryParametersSchema.keys({
         Roles: Joi.string().valid("User", "Admin"),
@@ -52,6 +67,14 @@ const ValidateGetUsers = async (req, res, next) => {
     }
 }
 
+
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ * @param {e.NextFunction} next 
+ * @returns 
+ */
 const ValidateUserRegister = async (req, res, next) => {
     const Result = UserSchema.validate(req.body, { stripUnknown: true, convert: true });
     if (Result.error) {
@@ -65,6 +88,14 @@ const ValidateUserRegister = async (req, res, next) => {
 
 }
 
+
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ * @param {e.NextFunction} next 
+ * @returns 
+ */
 const ValidateNewUserCode = async (req, res, next) => {
     const Result = Joi.object({
         // UserSchema:
@@ -80,6 +111,14 @@ const ValidateNewUserCode = async (req, res, next) => {
 
 }
 
+
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ * @param {e.NextFunction} next 
+ * @returns 
+ */
 const ValidateUserLogin = async (req, res, next) => {
     const Result = Joi.object({
         Email: Joi.string().email().lowercase().required(),
@@ -96,6 +135,14 @@ const ValidateUserLogin = async (req, res, next) => {
 
 }
 
+
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ * @param {e.NextFunction} next 
+ * @returns 
+ */
 const ValidateVerifyOTP = async (req, res, next) => {
     const Result = Joi.object({
         OTP: Joi.string().length(6).required(),
@@ -112,6 +159,14 @@ const ValidateVerifyOTP = async (req, res, next) => {
 
 }
 
+
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ * @param {e.NextFunction} next 
+ * @returns 
+ */
 const ValidateCheckUsername = async (req, res, next) => {
     const Result = Joi.object({
         Username: Joi.string().required(),
@@ -127,6 +182,14 @@ const ValidateCheckUsername = async (req, res, next) => {
 
 }
 
+
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ * @param {e.NextFunction} next 
+ * @returns 
+ */
 const ValidatePatchUsers = async (req, res, next) => {
     const Result = Joi.object({
         FullName: UserSchema.extract("FullName"),
@@ -152,6 +215,14 @@ const ValidatePatchUsers = async (req, res, next) => {
 
 }
 
+
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ * @param {e.NextFunction} next 
+ * @returns 
+ */
 const ValidatePatchUserPictures = async (req, res, next) => {
     const Result = Joi.object({
         CoverPicture: Joi.string().allow(""),
@@ -167,6 +238,14 @@ const ValidatePatchUserPictures = async (req, res, next) => {
     }
 }
 
+
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ * @param {e.NextFunction} next 
+ * @returns 
+ */
 const ValidateGetUserMedia = async (req, res, next) => {
     const Result = QueryParametersSchema.keys({
         Type: Joi.string().valid("image", "video", "document").required(),
@@ -181,6 +260,14 @@ const ValidateGetUserMedia = async (req, res, next) => {
     }
 }
 
+
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ * @param {e.NextFunction} next 
+ * @returns 
+ */
 const ValidatePostForgotPassword = async (req, res, next) => {
     const Result = Joi.object({
         Email: Joi.string().email().required(),
@@ -195,6 +282,14 @@ const ValidatePostForgotPassword = async (req, res, next) => {
     }
 }
 
+
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ * @param {e.NextFunction} next 
+ * @returns 
+ */
 const ValidatePasswordReset = async (req, res, next) => {
     const Result = Joi.object({
         Password: Joi.string().min(8).required(),
@@ -210,6 +305,14 @@ const ValidatePasswordReset = async (req, res, next) => {
     }
 }
 
+
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ * @param {e.NextFunction} next 
+ * @returns 
+ */
 const ValidatePostUsersInvite = (req, res, next) => {
     const Result = Joi.object({
         ActionType: Joi.string().valid("Discussion-Invite-Member", "Event-Invite-Member", "Event-Invite-Speaker", "Podcast-Invite-Member").required(),
@@ -226,6 +329,14 @@ const ValidatePostUsersInvite = (req, res, next) => {
     }
 }
 
+
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ * @param {e.NextFunction} next 
+ * @returns 
+ */
 const ValidateMailCheck = (req, res, next) => {
     const Result = Joi.object({
         UserRole: Joi.string().valid("Member", "Speaker").required(),

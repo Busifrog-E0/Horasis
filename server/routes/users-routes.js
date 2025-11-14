@@ -5,6 +5,8 @@ import {
     GetUsers,
     SendForgotPasswordOTP,
     PatchPassword, PostUsers,
+    PostUsersRegisterWithCode,
+    PostCheckIfRegisterCodeExists,
 } from '../controllers/users-controller.js';
 import asyncHandler from 'express-async-handler';
 import { rateLimit } from 'express-rate-limit'
@@ -55,13 +57,10 @@ router.post('/users', decodeIDToken, ensureAuthorized("Admin", "SuperAdmin"), Va
     // @ts-ignore
     asyncHandler(PostUsers));
 
-router.post('/users/register', ValidateUserRegister, SwaggerDocs.post_Users_Register,
-    // @ts-ignore
-    asyncHandler(PostUsersRegister));
+router.post('/users/registerWithCode', ValidateUserRegister, SwaggerDocs.post_Users_Register,
+    PostUsersRegisterWithCode);
 
-router.post('/users/verify', ValidateVerifyOTP, SwaggerDocs.post_Users_Verify,
-    //@ts-ignore
-    asyncHandler(VerifyRegistrationOTP))
+router.post('/users/verifyCode', PostCheckIfRegisterCodeExists);
 
 router.post('/users/login', singleApiLimiter, ValidateUserLogin, SwaggerDocs.post_Users_Login,
     // @ts-ignore

@@ -84,7 +84,6 @@ const GetUsers = async (req, res) => {
  * @param {e.Response} res 
  */
 const PostUsersRegister = async (req, res) => {
-
     const Users = await ReadUsers({ Username: req.body.Username }, undefined, 1, undefined);
     if (Users.length > 0) {
         return res.status(444).json(AlertBoxObject("Username already in use", "This username is already taken"));
@@ -98,6 +97,47 @@ const PostUsersRegister = async (req, res) => {
     return res.json(OTPId);
 }
 
+
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ */
+const PostCheckIfRegisterCodeExists = async (req, res) => {
+    return res.json((await CheckIfRegisterCodeExists(req.body.RegisterCode)));
+}
+
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ */
+const PostUsersRegisterWithCode = async (req, res) => {
+
+    if (!(await CheckIfRegisterCodeExists(req.body.RegisterCode))) {
+        return res.status(444).json(AlertBoxObject("Invalid Code", "This Code is InValid"));
+    }
+
+    const Users = await ReadUsers({ Username: req.body.Username }, undefined, 1, undefined);
+    if (Users.length > 0) {
+        return res.status(444).json(AlertBoxObject("Username already in use", "This username is already taken"));
+    }
+    const CheckEmailExists = await ReadUsers({ Email: req.body.Email }, undefined, 1, undefined);
+    if (CheckEmailExists.length > 0) {
+        return res.status(444).json(AlertBoxObject("User with Email already exists", "An account with this email already exists"));
+    }
+    const User = await UserInit(req.body);
+    const UserId = await CreateUsers(User);
+    AddUserDetailsAfterInvited(User, UserId)
+    AddConnectionstoUser(UserId, UserId);
+
+    const CurrentUser = {
+        Role: ["User"],
+        UserId
+    }
+    const LoginData = await TokenData(CurrentUser);
+    return res.json(LoginData);
+}
 
 /**
  * 
@@ -304,6 +344,19 @@ const CheckIfUserWithMailExists = async (Email) => {
 
 /**
  * 
+ * @param {string} RegisterCode 
+ * @returns {Promise<boolean>}
+ */
+const CheckIfRegisterCodeExists = async (RegisterCode) => {
+    const RegisterCodes = ["1234", "qwerty", "testing"];
+    if (RegisterCodes.includes(RegisterCode)) {
+        return true;
+    }
+    return false;
+}
+
+/**
+ * 
  * @param {string} UserId 
  * @returns 
  */
@@ -486,5 +539,6 @@ export {
     UserLogin, VerifyRegistrationOTP, CheckUsernameAvailability,
     ViewOtherUserRelations, ViewOtherUserData, SendForgotPasswordOTP,
     PatchPassword, CheckIfUserWithMailExists, AddUserAsAdmin, RemoveUserAsAdmin,
-    GetUsersByRole, AddConnectionstoUser, RemoveConnectionsToUser
+    GetUsersByRole, AddConnectionstoUser, RemoveConnectionsToUser,
+    PostCheckIfRegisterCodeExists, PostUsersRegisterWithCode,
 }
