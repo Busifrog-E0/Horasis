@@ -54,6 +54,7 @@ import UniversalSearchDetails from '../pages/UniversalSearchDetails'
 import AdminContentReports from '../pages/superadmin/AdminContentReports'
 import AdminPlatformUsers from '../pages/superadmin/AdminPlatformUsers'
 import ManagementLayout from '../layouts/manage/ManagementLayout'
+import PlatformUsersPage from '../pages/PlatformUsersPage'
 
 export const router = createBrowserRouter(
 	createRoutesFromElements(
@@ -120,7 +121,7 @@ export const router = createBrowserRouter(
 							}
 						/>
 						<Route path='Moderation' element={<ReportsPage />} />
-						<Route path='PlatformUsers' element={<></>} />
+						<Route path='PlatformUsers' element={<PlatformUsersPage />} />
 					</Route>
 
 					<Route path='/MyProfile' element={<MyProfile />} />
