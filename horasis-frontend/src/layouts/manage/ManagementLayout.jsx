@@ -1,10 +1,10 @@
-import React, { useState } from 'react'
-import SuperAdminHeader from '../../components/Superadmin/SuperAdminHeader'
-import { Outlet } from 'react-router-dom'
-import SuperadminSidebar from '../../components/Superadmin/SuperadminSidebar'
-import menu from '../../assets/icons/menu_black.svg'
+import { useState } from 'react'
 
-const SuperAdminDashboardLayout = () => {
+import { Outlet } from 'react-router-dom'
+import menu from '../../assets/icons/menu_black.svg'
+import ManagementSidebar from '../../components/Management/ManagementSidebar'
+
+const ManagementLayout = () => {
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false)
 
 	const toggleSidebar = () => {
@@ -14,16 +14,15 @@ const SuperAdminDashboardLayout = () => {
 		<div className='h-[100svh] w-full flex items-center justify-center bg-system-primary-bg p-2'>
 			<div className='max-w-[1600px] w-full h-full bg-system-secondary-bg flex flex-col rounded-md lg:overflow-hidden'>
 				{/* Header */}
-				<SuperAdminHeader />
 
 				{/* Main Content with Sidebar */}
-				
 				<div className='flex flex-1 overflow-hidden relative'>
 					{/* Sidebar */}
 					<div
-						className={`fixed inset-y-0 left-0 w-64 bg-system-secondary-bg text-system-primary-text transform ${isSidebarOpen ? 'translate-x-0 z-50 lg:z-20' : '-translate-x-full z-10'
-							} transition-transform duration-300 lg:relative lg:translate-x-0 lg:w-64`}>
-						<SuperadminSidebar toggleSidebar={toggleSidebar} />
+						className={`fixed inset-y-0 left-0 w-64 bg-system-secondary-bg text-system-primary-text transform ${
+							isSidebarOpen ? 'translate-x-0 z-50 lg:z-20' : '-translate-x-full z-10'
+						} transition-transform duration-300 lg:relative lg:translate-x-0 lg:w-64`}>
+						<ManagementSidebar toggleSidebar={toggleSidebar} />
 					</div>
 
 					{/* Main Content */}
@@ -49,4 +48,4 @@ const SuperAdminDashboardLayout = () => {
 	)
 }
 
-export default SuperAdminDashboardLayout
+export default ManagementLayout

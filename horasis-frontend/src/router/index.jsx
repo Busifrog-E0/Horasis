@@ -53,6 +53,7 @@ import Tags from '../pages/Tags'
 import UniversalSearchDetails from '../pages/UniversalSearchDetails'
 import AdminContentReports from '../pages/superadmin/AdminContentReports'
 import AdminPlatformUsers from '../pages/superadmin/AdminPlatformUsers'
+import ManagementLayout from '../layouts/manage/ManagementLayout'
 
 export const router = createBrowserRouter(
 	createRoutesFromElements(
@@ -88,14 +89,6 @@ export const router = createBrowserRouter(
 						<Route path='/Articles/Create/New' element={<CreateArticle />} />
 						<Route path='/Events' element={<Events />} />
 						<Route
-							path='/TagsManager'
-							element={
-								<AdminProtected>
-									<Tags />
-								</AdminProtected>
-							}
-						/>
-						<Route
 							path='/Events/Create/New'
 							element={
 								<AdminProtected>
@@ -109,6 +102,26 @@ export const router = createBrowserRouter(
 						<Route path='/Podcasts/Create/New' element={<CreatePodcast />} />
 						<Route path='/Podcasts/:podcastid' element={<SinglePodcast />} />
 					</Route>
+					<Route
+						path='/Manage'
+						element={
+							<AdminProtected>
+								<ManagementLayout />
+							</AdminProtected>
+						}>
+						<Route index element={<Navigate to='Tags' />} />
+						<Route
+							index
+							path='Tags'
+							element={
+								<AdminProtected>
+									<Tags />
+								</AdminProtected>
+							}
+						/>
+						<Route path='Moderation' element={<ReportsPage />} />
+						<Route path='PlatformUsers' element={<></>} />
+					</Route>
 
 					<Route path='/MyProfile' element={<MyProfile />} />
 					<Route path='/ViewProfile/:userid' element={<ShowUserProfile />} />
@@ -120,15 +133,6 @@ export const router = createBrowserRouter(
 						element={
 							<AdminProtected>
 								<Analytics />
-							</AdminProtected>
-						}
-					/>
-
-					<Route
-						path='/Moderation'
-						element={
-							<AdminProtected>
-								<ReportsPage />
 							</AdminProtected>
 						}
 					/>
