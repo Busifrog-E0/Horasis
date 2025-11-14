@@ -24,7 +24,7 @@ const HomeDiscussionSec = (props, ref) => {
 								return <HomeDiscussionItem discussion={discussion} key={discussion.DocId} />
 							})}
 					</div>
-					<div className=' w-full  flex items-center justify-center'>
+					{/* <div className=' w-full  flex items-center justify-center'>
 						<button
 							className='border border-system-primary-accent bg-system-secondary-bg text-system-primary-accent px-8 py-3 rounded-full cursor-pointer'
 							onClick={() => {
@@ -36,7 +36,7 @@ const HomeDiscussionSec = (props, ref) => {
 							}}>
 							View More
 						</button>
-					</div>
+					</div> */}
 				</div>
 			</div>
 		</div>
