@@ -39,6 +39,16 @@ const SuperadminSidebar = ({ toggleSidebar = () => {} }) => {
 						}>
 						Content Reports
 					</NavLink>
+					<NavLink
+						onClick={() => toggleSidebar()}
+						to='platform-users'
+						className={({ isActive }) =>
+							isActive
+								? 'block p-3 rounded-lg bg-system-primary-accent text-system-secondary-bg'
+								: 'block p-3 rounded-lg hover:bg-system-primary-accent-light hover:text-system-primary-text transition duration-200'
+						}>
+						Users
+					</NavLink>
 				</nav>
 			</div>
 		</>

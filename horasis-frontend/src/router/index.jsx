@@ -52,6 +52,7 @@ import SuperAdminLogin from '../pages/SuperAdminLogin'
 import Tags from '../pages/Tags'
 import UniversalSearchDetails from '../pages/UniversalSearchDetails'
 import AdminContentReports from '../pages/superadmin/AdminContentReports'
+import AdminPlatformUsers from '../pages/superadmin/AdminPlatformUsers'
 
 export const router = createBrowserRouter(
 	createRoutesFromElements(
@@ -63,6 +64,7 @@ export const router = createBrowserRouter(
 						<Route path='admin-users' element={<AdminUsers />} />
 						<Route path='tags' element={<AdminTags />} />
 						<Route path='content-moderation' element={<AdminContentReports />} />
+						<Route path='platform-users' element={<AdminPlatformUsers />} />
 					</Route>
 				</Route>
 				<Route path='Login' element={<SuperAdminUnauthLayout />}>
