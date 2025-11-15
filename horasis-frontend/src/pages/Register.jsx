@@ -1,5 +1,5 @@
 import { useContext, useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import Logo from '../components/Common/Logo'
 import Button from '../components/ui/Button'
 import Checkbox from '../components/ui/Checkbox'
@@ -34,6 +34,7 @@ const branding = {
 
 const Register = () => {
 	const navigate = useNavigate()
+	const [searchParams] = useSearchParams()
 	const { updateCurrentUser } = useAuth()
 
 	const [showpass, setShowpass] = useState(false)
@@ -53,13 +54,14 @@ const Register = () => {
 		CompanyName: '',
 		About: '',
 		IsPrivate: false,
+		RegisterCode:searchParams.get('code')
 	})
 
 	const [usernameAvailable, setUsernameAvailable] = useState()
-	const [otpid, setOtpid] = useState('')
-	const [otp, setOtp] = useState('')
-	const [otpOpen, setOtpOpen] = useState(false)
-	const [timerValue, setTimerValue] = useState(30)
+	// const [otpid, setOtpid] = useState('')
+	// const [otp, setOtp] = useState('')
+	// const [otpOpen, setOtpOpen] = useState(false)
+	// const [timerValue, setTimerValue] = useState(30)
 
 	const [termsChecked, setTermsChecked] = useState(false)
 	const [countryOptions, setCountryOptions] = useState(countries.countries.map((item) => item.name))
@@ -69,21 +71,22 @@ const Register = () => {
 
 	const { isLoading, postData: submitRegister } = usePostData({
 		onSuccess: (result) => {
-			setOtpid(result)
-			if (!otpOpen) {
-				setTimerValue(30)
-				setOtpOpen(true)
-			}
-		},
-	})
-	const { isVerifying, postData: submitOtp } = usePostData({
-		onSuccess: (result) => {
 			updateCurrentUser(result)
-		},
-		onError: (err) => {
-			setOtpError({ OTPERROR: err })
+			// setOtpid(result)
+			// if (!otpOpen) {
+			// 	setTimerValue(30)
+			// 	setOtpOpen(true)
+			// }
 		},
 	})
+	// const { isVerifying, postData: submitOtp } = usePostData({
+	// 	onSuccess: (result) => {
+	// 		updateCurrentUser(result)
+	// 	},
+	// 	onError: (err) => {
+	// 		setOtpError({ OTPERROR: err })
+	// 	},
+	// })
 	const { postData: checkUsername } = usePostData({
 		onSuccess: (result) => {
 			if (result === true) {
@@ -150,6 +153,7 @@ const Register = () => {
 		}
 	}
 	const validate = (callback) => {
+		console.log(registerFormValue)
 		const { error, warning } = registerValidation.validate(registerFormValue, {
 			abortEarly: false,
 			stripUnknown: true,
@@ -169,17 +173,17 @@ const Register = () => {
 
 	const register = () => {
 		submitRegister({
-			endpoint: 'users/register',
+			endpoint: 'users/registerWithCode',
 			payload: registerFormValue,
 		})
 	}
 
-	const verifyotp = () => {
-		submitOtp({
-			endpoint: 'users/verify',
-			payload: { OTPId: otpid, OTP: otp },
-		})
-	}
+	// const verifyotp = () => {
+	// 	submitOtp({
+	// 		endpoint: 'users/verify',
+	// 		payload: { OTPId: otpid, OTP: otp },
+	// 	})
+	// }
 
 	const checkUsernameAvailability = async (value) => {
 		checkUsername({
@@ -190,7 +194,7 @@ const Register = () => {
 
 	return (
 		<>
-			<Modal isOpen={otpOpen}>
+			{/* <Modal isOpen={otpOpen}>
 				<Modal.Header>
 					<p className='font-medium'>Verify OTP</p>
 					<button
@@ -250,7 +254,7 @@ const Register = () => {
 						</Button>
 					</div>
 				</Modal.Body>
-			</Modal>
+			</Modal> */}
 			<div style={{ backgroundImage: `url(${HeroCoverImage})` }} className='bg-cover bg-no-repeat'>
 				<div
 					style={{ minHeight: '100svh' }}
