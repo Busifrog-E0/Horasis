@@ -2,13 +2,14 @@ import { useToast } from '../components/Toast/ToastService'
 import { postItem } from '../constants/operations'
 import { useAuth } from '../utils/AuthProvider'
 import { useState } from 'react'
+import { runOnce } from '../utils/runOnce'
 
-export default function usePostData({ onSuccess = () => {}, onError = () => {} } = {}) {
+export default function usePostData({ onSuccess = () => {}, onError = () => {}, initialLoading = false } = {}) {
 	const { updateCurrentUser, currentUserData } = useAuth()
 	const toast = useToast()
-	const [isLoading, setIsLoading] = useState(false)
+	const [isLoading, setIsLoading] = useState(initialLoading)
 
-	const postData = ({ endpoint, payload, onsuccess = () => {}, onerror = () => {} }) => {
+	const postData = runOnce(({ endpoint, payload, onsuccess = () => {}, onerror = () => {} }) => {
 		setIsLoading(true)
 		postItem(
 			`${endpoint}`,
@@ -28,10 +29,11 @@ export default function usePostData({ onSuccess = () => {}, onError = () => {} }
 			currentUserData,
 			toast
 		)
-	}
+	})
 
 	return {
 		isLoading,
 		postData,
+		setIsLoading,
 	}
 }
