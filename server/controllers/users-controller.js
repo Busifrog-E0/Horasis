@@ -447,20 +447,14 @@ const RemoveUserAsAdmin = async (req, res) => {
 }
 
 
-/**
- * 
- * @param {e.Request} req 
- * @param {e.Response} res 
- * @returns 
- */
-const GetNewUserCode = async (req, res) => {
+const GenerateRegistrationCode = async () => {
 
     /**
      * 
      * @param {string[]} AlreadyGeneratedCodes 
      * @returns 
      */
-    const GenerateRegistrationCode = async (AlreadyGeneratedCodes = []) => {
+    const RegCodeCreator = async (AlreadyGeneratedCodes = []) => {
 
         let generator = '';
         let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyskiouhjnmbhj'
@@ -469,29 +463,23 @@ const GetNewUserCode = async (req, res) => {
             generator += characters.charAt(Math.floor(Math.random() * characters.length))
         }
         if (AlreadyGeneratedCodes.includes(generator)) {
-            return GenerateRegistrationCode(AlreadyGeneratedCodes);
+            return RegCodeCreator(AlreadyGeneratedCodes);
         }
         const [checkUserExists] = await ReadUserRegistrations({ "RegistrationCode": generator }, undefined, 1, undefined);
         if (checkUserExists) {
-            return GenerateRegistrationCode();
+            return RegCodeCreator();
         }
         return generator;
 
     }
 
-
-    /**@type {UserData[]} */
-    const UserDatas = req.body.UserDatas;
-
     /**@type {string[]} */
     const generatedCodes = [];
-    for (let i = 0; i < UserDatas.length; i++) {
-        generatedCodes.push(await GenerateRegistrationCode(generatedCodes));
+    for (let i = 0; i < 250; i++) {
+        const code = await RegCodeCreator(generatedCodes);
+        await CreateUserRegistrations({ RegistrationCode: code, RegistrationLink: `${Env.NEW_USER_WITH_REGISTRATION_CODE}?code=${code}` });
     }
-    await Promise.all(UserDatas.map(async (User, index) => {
-        // @ts-ignore
-        return CreateUserRegistrations({ UserData: User, RegistrationCode: generatedCodes[index], RegistrationLink: `${Env.NEW_USER_WITH_REGISTRATION_CODE}?${new URLSearchParams(User).toString()}` });
-    }));
+
 
 }
 

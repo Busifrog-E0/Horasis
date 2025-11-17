@@ -2,7 +2,8 @@ import dataHandling from './functions.js'
 
 /**
  * @typedef {object} UserRegistrationData
- * @property {import('./users-databaseController.js').UserData} UserData
+ * @property {import('./users-databaseController.js').UserData} [UserData]
+ * @property {boolean} AlreadyUsed
  * @property {string} RegistrationCode
  * @property {string} DocId
  * @property {number} CreatedIndex
