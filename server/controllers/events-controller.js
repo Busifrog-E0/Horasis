@@ -260,7 +260,7 @@ const SetEventDataForGet = async (Event, UserId) => {
     ]);
     //@ts-ignore
     Event.SpeakerStatus = Speaker ? Speaker.MembershipStatus : "None";
-    Event.Speakers = Event.Speakers.filter(speaker => {
+    Event.Speakers = (Event.Speakers ?? []).filter(speaker => {
         return (Event.Agenda.findIndex(agenda => agenda.AgendaId === speaker.Agenda.AgendaId) !== -1);
     })
     //@ts-ignore
