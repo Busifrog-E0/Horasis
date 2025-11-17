@@ -28,11 +28,11 @@ const HomeDiscussionSec = (props, ref) => {
 						<button
 							className='border border-system-primary-bg  text-system-primary-bg px-8 py-3 rounded-full cursor-pointer'
 							onClick={() => {
-								if (currentUserData) {
-									navigate('/Discussions')
-								} else {
-									navigate('/Login')
-								}
+								// if (currentUserData) {
+								// 	navigate('/Discussions')
+								// } else {
+								// }
+								navigate('/Login')
 							}}>
 							Login to know more details
 						</button>
