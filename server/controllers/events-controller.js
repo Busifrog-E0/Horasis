@@ -195,6 +195,8 @@ const PostEvents = async (req, res) => {
  * @returns {Promise<e.Response<true>>}
  */
 const PatchEvents = async (req, res) => {
+    return res.status(444).json(AlertBoxObject("Cannot Edit", "Not Implemented Yet."))
+
     //@ts-ignore
     const { UserId } = req.user
     const { EventId } = req.params;
@@ -206,6 +208,17 @@ const PatchEvents = async (req, res) => {
         req.body.OriginalLanguage = await DetectLanguage(req.body.Description);
         req.body.Languages = {};
     }
+
+    const { Agenda } = req.body;
+    // @ts-ignore
+    req.body.Agenda = Agenda.map(AgendaValues => {
+        if (AgendaValues.AgendaId) {
+            return AgendaValues;
+        }
+        const AgendaId = (new ObjectId()).toString();
+        return { ...AgendaValues, AgendaId, SpeakerData: [] };
+    })
+
     await UpdateEvents(req.body, EventId);
     return res.json(true);
 }
