@@ -98,8 +98,8 @@ const AdminContentReport = () => {
 					<p className='text-system-primary-text text-center'>No reports found.</p>
 				</div>
 			) : (
-				<div className='flex flex-col flex-1'>
-					<div className='overflow-x-auto rounded-lg flex-1'>
+				<>
+					<div className='overflow-x-auto rounded-lg show-scrollbar'>
 						<table className='min-w-full divide-y divide-gray-200 bg-system-secondary-bg'>
 							<thead className='bg-gray-100'>
 								<tr>
@@ -245,7 +245,7 @@ const AdminContentReport = () => {
 							</Button>
 						) : null}
 					</div>
-				</div>
+				</>
 			)}
 		</div>
 	)

@@ -52,6 +52,11 @@ import SuperAdminLogin from '../pages/SuperAdminLogin'
 import Tags from '../pages/Tags'
 import UniversalSearchDetails from '../pages/UniversalSearchDetails'
 import AdminContentReports from '../pages/superadmin/AdminContentReports'
+import AdminPlatformUsers from '../pages/superadmin/AdminPlatformUsers'
+import ManagementLayout from '../layouts/manage/ManagementLayout'
+import PlatformUsersPage from '../pages/PlatformUsersPage'
+import RegisterProtected from '../layouts/RegisterProtected'
+import EditEvent from '../pages/EditEvent'
 
 export const router = createBrowserRouter(
 	createRoutesFromElements(
@@ -63,6 +68,7 @@ export const router = createBrowserRouter(
 						<Route path='admin-users' element={<AdminUsers />} />
 						<Route path='tags' element={<AdminTags />} />
 						<Route path='content-moderation' element={<AdminContentReports />} />
+						<Route path='platform-users' element={<AdminPlatformUsers />} />
 					</Route>
 				</Route>
 				<Route path='Login' element={<SuperAdminUnauthLayout />}>
@@ -86,14 +92,6 @@ export const router = createBrowserRouter(
 						<Route path='/Articles/Create/New' element={<CreateArticle />} />
 						<Route path='/Events' element={<Events />} />
 						<Route
-							path='/TagsManager'
-							element={
-								<AdminProtected>
-									<Tags />
-								</AdminProtected>
-							}
-						/>
-						<Route
 							path='/Events/Create/New'
 							element={
 								<AdminProtected>
@@ -101,11 +99,33 @@ export const router = createBrowserRouter(
 								</AdminProtected>
 							}
 						/>
+						<Route path='/Events/:eventid/edit' element={<EditEvent />} />
+
 						<Route path='/Search' element={<UniversalSearchDetails />} />
 
 						<Route path='/Podcasts' element={<Podcasts />} />
 						<Route path='/Podcasts/Create/New' element={<CreatePodcast />} />
 						<Route path='/Podcasts/:podcastid' element={<SinglePodcast />} />
+					</Route>
+					<Route
+						path='/Manage'
+						element={
+							<AdminProtected>
+								<ManagementLayout />
+							</AdminProtected>
+						}>
+						<Route index element={<Navigate to='Tags' />} />
+						<Route
+							index
+							path='Tags'
+							element={
+								<AdminProtected>
+									<Tags />
+								</AdminProtected>
+							}
+						/>
+						<Route path='Moderation' element={<ReportsPage />} />
+						<Route path='PlatformUsers' element={<PlatformUsersPage />} />
 					</Route>
 
 					<Route path='/MyProfile' element={<MyProfile />} />
@@ -118,15 +138,6 @@ export const router = createBrowserRouter(
 						element={
 							<AdminProtected>
 								<Analytics />
-							</AdminProtected>
-						}
-					/>
-
-					<Route
-						path='/Moderation'
-						element={
-							<AdminProtected>
-								<ReportsPage />
 							</AdminProtected>
 						}
 					/>
@@ -147,7 +158,14 @@ export const router = createBrowserRouter(
 				<Route index element={<LogIn />} />
 			</Route>
 			<Route path='register' element={<UnAuthLayout />}>
-				<Route index element={<Register />} />
+				<Route
+					index
+					element={
+						<RegisterProtected>
+							<Register />
+						</RegisterProtected>
+					}
+				/>
 			</Route>
 			<Route path='welcome' element={<UnAuthLayout />}>
 				<Route index element={<WelcomePage />} />

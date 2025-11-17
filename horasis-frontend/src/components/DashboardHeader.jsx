@@ -177,25 +177,7 @@ const DashboardHeader = () => {
 										: 'bg-transparent'
 								}`}></div>
 						</div>
-						{isPermitted && (
-							<div className='w-max flex flex-col items-center'>
-								<a
-									className={`cursor-pointer  font-medium text-md  ${
-										location.pathname.includes('/TagsManager') || location.pathname.includes('/tagsmanager')
-											? 'text-system-primary-accent'
-											: 'text-system-primary-text'
-									}`}
-									onClick={() => onClickItem('/TagsManager')}>
-									Tags
-								</a>
-								<div
-									className={`h-1 w-10 rounded-full ${
-										location.pathname.includes('/TagsManager') || location.pathname.includes('/tagsmanager')
-											? 'bg-system-primary-accent'
-											: 'bg-transparent'
-									}`}></div>
-							</div>
-						)}
+				
 						{isPermitted && (
 							<div className='w-max flex flex-col items-center'>
 								<a
@@ -220,16 +202,16 @@ const DashboardHeader = () => {
 							<div className='w-max flex flex-col items-center'>
 								<a
 									className={`cursor-pointer  font-medium text-md  ${
-										location.pathname.includes('/Moderation') || location.pathname.includes('/moderation')
+										location.pathname.includes('/Manage') || location.pathname.includes('/manage')
 											? 'text-system-primary-accent'
 											: 'text-system-primary-text'
 									}`}
-									onClick={() => onClickItem('/Moderation')}>
-									Moderation
+									onClick={() => onClickItem('/Manage')}>
+									Manage
 								</a>
 								<div
 									className={`h-1 w-10 rounded-full ${
-										location.pathname.includes('/Moderation') || location.pathname.includes('/moderation')
+										location.pathname.includes('/Manage') || location.pathname.includes('/manage')
 											? 'bg-system-primary-accent'
 											: 'bg-transparent'
 									}`}></div>
@@ -375,10 +357,10 @@ const UserProfile = ({
 											<p
 												onClick={() => {
 													handleDropdownToggle()
-													OnClickMenu('/TagsManager')
+													OnClickMenu('/Manage')
 												}}
 												className='block px-4 py-2 text-system-primary-text hover:bg-gray-100 border-b cursor-pointer'>
-												Tags
+												Manage
 											</p>
 										</>
 									)}

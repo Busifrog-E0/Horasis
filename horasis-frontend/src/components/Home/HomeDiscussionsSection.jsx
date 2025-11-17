@@ -26,15 +26,15 @@ const HomeDiscussionSec = (props, ref) => {
 					</div>
 					<div className=' w-full  flex items-center justify-center'>
 						<button
-							className='border border-system-primary-accent bg-system-secondary-bg text-system-primary-accent px-8 py-3 rounded-full cursor-pointer'
+							className='border border-system-primary-bg  text-system-primary-bg px-8 py-3 rounded-full cursor-pointer'
 							onClick={() => {
-								if (currentUserData) {
-									navigate('/Discussions')
-								} else {
-									navigate('/Login')
-								}
+								// if (currentUserData) {
+								// 	navigate('/Discussions')
+								// } else {
+								// }
+								navigate('/Login')
 							}}>
-							View More
+							Login to know more details
 						</button>
 					</div>
 				</div>
@@ -52,7 +52,7 @@ const HomeDiscussionItem = ({ discussion }) => {
 			{discussion.DiscussionName && (
 				<p className='font-bold text-lg text-white'>{discussion.DiscussionName}</p>
 			)}
-			{discussion.Description && <p className='text-sm line-clamp-3 flex-1'>{discussion.Description}</p>}
+			{discussion.Description && <p className='text-sm line-clamp-3 flex-1 text-white'>{discussion.Description}</p>}
 			{discussion.UserDetails && (
 				<p className='text-white text-sm'>
 					{relativeTime(discussion.CreatedIndex)}- {discussion.UserDetails.FullName}

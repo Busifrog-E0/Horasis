@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import deleteIcon from '../../assets/icons/delete.svg'
-import EmptyMembers from '../../components/Common/EmptyMembers'
+import EmptyMembers from '../Common/EmptyMembers'
 import { deleteItem, postItem } from '../../constants/operations'
 import useGetList from '../../hooks/useGetList'
 import { useAuth } from '../../utils/AuthProvider'
@@ -12,7 +12,7 @@ const AdminTagsManage = () => {
 
 	const [tagInput, setTagInput] = useState('')
 
-	const { data: tags, isLoading, getList: getTags, setData: setTags } = useGetList('tags', { Limit: -1 },false)
+	const { data: tags, isLoading, getList: getTags, setData: setTags } = useGetList('tags', { Limit: -1 }, false)
 
 	const addTag = (e) => {
 		e.preventDefault()

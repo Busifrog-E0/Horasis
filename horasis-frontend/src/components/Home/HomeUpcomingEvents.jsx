@@ -66,7 +66,7 @@ const HomeUpcomingEvent = (props, ref) => {
 							)
 						})}
 					</div>
-					<div className=' w-full  flex items-center justify-center'>
+					{/* <div className=' w-full  flex items-center justify-center'>
 						<button
 							className='border border-system-primary-accent text-system-primary-accent px-10 py-4 rounded-full'
 							onClick={() => {
@@ -78,7 +78,7 @@ const HomeUpcomingEvent = (props, ref) => {
 							}}>
 							Load More
 						</button>
-					</div>
+					</div> */}
 				</div>
 			</div>
 		</div>

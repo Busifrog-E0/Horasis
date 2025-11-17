@@ -99,7 +99,7 @@ const ReportsPage = () => {
 				</div>
 			) : (
 				<>
-					<div className='overflow-x-auto rounded-lg'>
+					<div className='overflow-x-auto rounded-lg show-scrollbar'>
 						<table className='min-w-full divide-y divide-gray-200 bg-system-secondary-bg'>
 							<thead className='bg-gray-100'>
 								<tr>

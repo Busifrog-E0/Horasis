@@ -1,15 +1,14 @@
 import { useToast } from '../components/Toast/ToastService'
 import { postItem } from '../constants/operations'
-import { useAuth } from '../utils/AuthProvider'
+import { useSuperAuth } from '../context/SuperAdmin/SuperAuthService'
 import { useState } from 'react'
-import { runOnce } from '../utils/runOnce'
 
-export default function usePostData({ onSuccess = () => {}, onError = () => {}, initialLoading = false } = {}) {
-	const { updateCurrentUser, currentUserData } = useAuth()
+export default function usePostDataSuperadmin({ onSuccess = () => {}, onError = () => {} } = {}) {
+	const { updateCurrentUser, currentUserData } = useSuperAuth()
 	const toast = useToast()
-	const [isLoading, setIsLoading] = useState(initialLoading)
+	const [isLoading, setIsLoading] = useState(false)
 
-	const postData = runOnce(({ endpoint, payload, onsuccess = () => {}, onerror = () => {} }) => {
+	const postData = ({ endpoint, payload, onsuccess = () => {}, onerror = () => {} }) => {
 		setIsLoading(true)
 		postItem(
 			`${endpoint}`,
@@ -27,13 +26,13 @@ export default function usePostData({ onSuccess = () => {}, onError = () => {}, 
 			},
 			updateCurrentUser,
 			currentUserData,
-			toast
+			toast,
+			'admin'
 		)
-	})
+	}
 
 	return {
 		isLoading,
 		postData,
-		setIsLoading,
 	}
 }

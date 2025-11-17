@@ -21,12 +21,12 @@ const HeroSection = () => {
 					</div>
 					<div className="flex flex-row flex-wrap gap-6">
 						<div className="rounded-full p-4 px-12 border border-system-secondary-bg bg-system-secondary-bg">
-							<p
+							<a href='https://horasis.org' target='_blank'
 								className="text-system-primary-accent text-xl font-bold cursor-pointer"
-								onClick={(e) => handleClick(e, 'about-us')}
+								// onClick={(e) => handleClick(e, 'about-us')}
 							>
 								Learn More
-							</p>
+							</a>
 						</div>
 					</div>
 				</div>

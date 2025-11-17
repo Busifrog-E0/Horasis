@@ -1,6 +1,6 @@
 import { NavLink } from 'react-router-dom'
 
-const SuperadminSidebar = ({ toggleSidebar = () => {} }) => {
+const ManagementSidebar = ({ toggleSidebar = () => {} }) => {
 	return (
 		<>
 			{/* Sidebar */}
@@ -9,18 +9,7 @@ const SuperadminSidebar = ({ toggleSidebar = () => {} }) => {
 				<nav className='space-y-4 font-medium'>
 					<NavLink
 						onClick={() => toggleSidebar()}
-						to='admin-users'
-						className={({ isActive }) =>
-							isActive
-								? 'block p-3 rounded-lg bg-system-primary-accent text-system-secondary-bg'
-								: 'block p-3 rounded-lg hover:bg-system-primary-accent-light hover:text-system-primary-text transition duration-200'
-						}>
-						Admin Users
-					</NavLink>
-
-					<NavLink
-						onClick={() => toggleSidebar()}
-						to='tags'
+						to='Tags'
 						className={({ isActive }) =>
 							isActive
 								? 'block p-3 rounded-lg bg-system-primary-accent text-system-secondary-bg'
@@ -31,17 +20,17 @@ const SuperadminSidebar = ({ toggleSidebar = () => {} }) => {
 
 					<NavLink
 						onClick={() => toggleSidebar()}
-						to='content-moderation'
+						to='Moderation'
 						className={({ isActive }) =>
 							isActive
 								? 'block p-3 rounded-lg bg-system-primary-accent text-system-secondary-bg'
 								: 'block p-3 rounded-lg hover:bg-system-primary-accent-light hover:text-system-primary-text transition duration-200'
 						}>
-						Content Reports
+						Moderation
 					</NavLink>
 					<NavLink
 						onClick={() => toggleSidebar()}
-						to='platform-users'
+						to='PlatformUsers'
 						className={({ isActive }) =>
 							isActive
 								? 'block p-3 rounded-lg bg-system-primary-accent text-system-secondary-bg'
@@ -55,4 +44,4 @@ const SuperadminSidebar = ({ toggleSidebar = () => {} }) => {
 	)
 }
 
-export default SuperadminSidebar
+export default ManagementSidebar

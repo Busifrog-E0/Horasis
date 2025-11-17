@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import arrowback from '../assets/icons/arrowback.svg'
 import calendar from '../assets/icons/calendar.svg'
-import camera from '../assets/icons/camera.svg'
+import edit from '../assets/icons/edit-light.svg'
 import closeIcon from '../assets/icons/close.svg'
 import clock from '../assets/icons/clock.svg'
 import cover from '../assets/icons/cover.svg'
@@ -286,7 +286,7 @@ const SingleEvent = () => {
 		EntityId: event?.DocId,
 		Type: 'Event',
 		successCallback: successCallback,
-		errorCallback: () => { },
+		errorCallback: () => {},
 	})
 
 	const {
@@ -354,7 +354,6 @@ const SingleEvent = () => {
 	const currentDateTime = new Date()
 	const hasEventEnded = currentDateTime > eventEndTime
 
-
 	return (
 		<>
 			<Modal isOpen={isCoverPictureOpen} maxWidth='max-w-4xl'>
@@ -402,6 +401,15 @@ const SingleEvent = () => {
 								onClick={handleGoBack}>
 								<img src={arrowback} alt='' className='h-3 md:h-6 cursor-pointer' />
 							</div>
+							{event?.Permissions?.IsAdmin && (
+								<div
+									onClick={() => {
+										navigate(`/Events/${event.DocId}/edit`)
+									}}
+									className={`inline-flex items-center justify-center w-12 h-12 p-3 overflow-hidden rounded-full border border-white bg-white cursor-pointer`}>
+									<img src={edit} alt='' className='h-6 cursor-pointer' />
+								</div>
+							)}
 						</div>
 					</div>
 				</div>
@@ -448,7 +456,7 @@ const SingleEvent = () => {
 								</div>
 							)}
 						</div>
-						<div className='grid grid-cols-1 md:grid-cols-1 '>
+						<div className='grid grid-cols-1 md:grid-cols-1 md:self-end'>
 							<div className='flex items-center gap-4 mt-6 md:col-span-2'>
 								<img
 									className='w-14 h-14 rounded-full object-cover'
@@ -461,14 +469,16 @@ const SingleEvent = () => {
 								</div>
 							</div>
 
-							<div className='grid grid-cols-2 sm:grid-cols-3  gap-4 mt-6'>
+							<div className='grid  grid-cols-2 sm:grid-cols-3  gap-4 mt-6'>
 								<div className='flex items-start gap-3'>
 									<img src={calendar} alt='' className='h-7' />
 									<div>
 										<p className='text-xs text-brand-gray-dim mb-1'>When</p>
 										<p className='text-sm text-system-primary-text leading-6'>
-											{getDateInWordsFormat(new Date(event?.Date))}<br />
-											to<br />
+											{getDateInWordsFormat(new Date(event?.Date))}
+											<br />
+											to
+											<br />
 											{getDateInWordsFormat(new Date(event?.EndDate))}
 										</p>
 									</div>
@@ -478,8 +488,10 @@ const SingleEvent = () => {
 									<div>
 										<p className='text-xs text-brand-gray-dim mb-1'>Time</p>
 										<p className='text-sm text-system-primary-text leading-6'>
-											{gettimenow(new Date(event?.StartTime))}<br />
-											to<br />
+											{gettimenow(new Date(event?.StartTime))}
+											<br />
+											to
+											<br />
 											{gettimenow(new Date(event?.EndTime))}
 										</p>
 									</div>
@@ -561,9 +573,10 @@ const SingleEvent = () => {
 						)}
 						{event && !event?.IsMember && !hasEventEnded && (
 							<div
-								className={`rounded-lg ${!event?.IsMember &&
+								className={`rounded-lg ${
+									!event?.IsMember &&
 									'max-h-96 overflow-hidden relative h-max  my-8 border border-system-primary-accent'
-									}`}>
+								}`}>
 								{!event?.IsMember && (
 									<div className=' top-0 right-0 left-0 bottom-0 p-4 lg:px-10 lg:py-6 bg-system-primary-accent-light h-100 overflow-hidden overflow-y-auto z-10'>
 										<div className='flex flex-col justify-center items-center mt-6'>
@@ -582,7 +595,9 @@ const SingleEvent = () => {
 											<div>
 												{hasEventEnded ? (
 													<div className='flex flex-col items-center gap-2'>
-														<p className='text-system-primary-accent border py-1 px-4 text-base rounded-md'>Event has ended</p>
+														<p className='text-system-primary-accent border py-1 px-4 text-base rounded-md'>
+															Event has ended
+														</p>
 													</div>
 												) : (
 													<>
@@ -657,10 +672,10 @@ const ShowJoinButton = ({ event }) => {
 			{hasEventEnded
 				? null
 				: shouldShowJoinButton && (
-					<Button width='full' variant='danger' onClick={() => navigate('join')}>
-						Join
-					</Button>
-				)}
+						<Button width='full' variant='danger' onClick={() => navigate('join')}>
+							Join
+						</Button>
+				  )}
 		</div>
 	)
 }

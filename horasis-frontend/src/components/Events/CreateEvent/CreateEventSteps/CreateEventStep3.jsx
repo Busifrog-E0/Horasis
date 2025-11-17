@@ -40,28 +40,30 @@ const CreateEventStep3 = forwardRef(({ selectedImage, onImageSelect, fileFieldNa
 	}
 
 	const handleCropSave = async () => {
-		try {
-			const croppedImage = await getCroppedImg(imageSrc, croppedAreaPixels)
-			const fileDataUint8Array = await blobToUint8Array(croppedImage)
-			const fileDataByteArray = Array.from(fileDataUint8Array)
+		if (cropping) {
+			try {
+				const croppedImage = await getCroppedImg(imageSrc, croppedAreaPixels)
+				const fileDataUint8Array = await blobToUint8Array(croppedImage)
+				const fileDataByteArray = Array.from(fileDataUint8Array)
 
-			onImageSelect({
-				FileType: 'image/jpeg',
-				FileData: fileDataByteArray,
-				FileName: 'cropped-image.jpg',
-				FileFieldName: fileFieldName,
-			})
-			setImageSrc(null)
-			setCropping(false) // Exit cropping mode
-			return {
-				FileType: 'image/jpeg',
-				FileData: fileDataByteArray,
-				FileName: 'cropped-image.jpg',
-				FileFieldName: fileFieldName,
+				onImageSelect({
+					FileType: 'image/jpeg',
+					FileData: fileDataByteArray,
+					FileName: 'cropped-image.jpg',
+					FileFieldName: fileFieldName,
+				})
+				setImageSrc(null)
+				setCropping(false) // Exit cropping mode
+				return {
+					FileType: 'image/jpeg',
+					FileData: fileDataByteArray,
+					FileName: 'cropped-image.jpg',
+					FileFieldName: fileFieldName,
+				}
+			} catch (e) {
+				console.error(e)
+				toast.open('error', 'Crop Error', 'An error occurred while cropping the image')
 			}
-		} catch (e) {
-			console.error(e)
-			toast.open('error', 'Crop Error', 'An error occurred while cropping the image')
 		}
 	}
 

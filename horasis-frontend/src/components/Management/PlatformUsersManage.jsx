@@ -1,104 +1,87 @@
 import { useContext, useRef, useState } from 'react'
-import { useNavigate, useSearchParams } from 'react-router-dom'
-import Logo from '../components/Common/Logo'
-import Button from '../components/ui/Button'
-import Checkbox from '../components/ui/Checkbox'
-import Input from '../components/ui/Input'
-import Modal from '../components/ui/Modal'
-import TextArea from '../components/ui/TextArea'
-import { postItem } from '../constants/operations'
-import { AuthContext, useAuth } from '../utils/AuthProvider'
-import { registerValidation } from '../utils/schema/users/registerValidation'
-import { useToast } from '../components/Toast/ToastService'
-import TimerComponent from '../components/Timer/TimerComponent'
-import countries from '../assets/json/countries-with-coords.json'
-import Select from '../components/ui/Select'
-import close from '../assets/icons/close.svg'
-import eyeon from '../assets/icons/eyeon.svg'
-import eyeoff from '../assets/icons/eyeoff.svg'
-import HeroCoverImage from '../assets/images/hero-cover-image.png'
-import usePostData from '../hooks/usePostData'
 
-const logoText = {
-	fontSize: '1.7rem',
-	fontWeight: '700',
-	margin: 0,
-	marginLeft: '10px',
+import usePostData from '../../hooks/usePostData'
+import useGetList from '../../hooks/useGetList'
+
+import { AuthContext } from '../../utils/AuthProvider'
+
+import Spinner from '../ui/Spinner'
+import EmptyMembers from '../Common/EmptyMembers'
+import Button from '../ui/Button'
+import Modal from '../ui/Modal'
+import Input from '../ui/Input'
+import Select from '../ui/Select'
+import TextArea from '../ui/TextArea'
+
+import { registerValidation } from '../../utils/schema/users/registerValidation'
+import { relativeTime } from '../../utils/date'
+
+import avatar from '../../assets/icons/avatar.svg'
+import close from '../../assets/icons/close.svg'
+import eyeon from '../../assets/icons/eyeon.svg'
+import eyeoff from '../../assets/icons/eyeoff.svg'
+import countries from '../../assets/json/countries-with-coords.json'
+
+const PlatformUsersManage = () => {
+	const [addUserModalOpen, setAddUserModalOpen] = useState(false)
+
+	const { data: users, isLoading, isLoadingMore, isPageDisabled, getList: getUsers } = useGetList('users')
+
+	const { postData: addUser, isLoading: isAddingUser } = usePostData()
+
+	const addNewUser = (user) => {
+		addUser({
+			endpoint: 'users',
+			payload: user,
+			onsuccess: (result) => {
+				setAddUserModalOpen(false)
+				getUsers([])
+			},
+		})
+	}
+
+	return (
+		<>
+			<AddPlatformUserModal
+				addUserModalOpen={addUserModalOpen}
+				setAddUserModalOpen={setAddUserModalOpen}
+				isAddingUser={isAddingUser}
+				addNewUser={addNewUser}
+			/>
+
+			<div className='flex gap-4 px-1 md:px-4 py-2 items-center  justify-between '>
+				<h1 className='text-system-primary-text font-medium text-lg'>Users</h1>
+				<Button
+					variant='outline'
+					size='md'
+					onClick={() => {
+						setAddUserModalOpen(true)
+					}}>
+					Add User
+				</Button>
+			</div>
+			<UsersList
+				users={users}
+				isLoadingMore={isLoadingMore}
+				isLoading={isLoading}
+				pageDisabled={isPageDisabled}
+				fetchMore={() => getUsers(users, false)}
+			/>
+		</>
+	)
 }
-const branding = {
-	display: 'flex',
-	justifyContent: 'center',
-	alignItems: 'center',
-	marginBottom: 20,
-}
 
-const Register = () => {
-	const navigate = useNavigate()
-	const [searchParams] = useSearchParams()
-	const { updateCurrentUser } = useAuth()
+export default PlatformUsersManage
 
+const AddPlatformUserModal = ({ isAddingUser, addUserModalOpen, setAddUserModalOpen, addNewUser = () => {} }) => {
+	const [usernameAvailable, setUsernameAvailable] = useState()
+	const [countryOptions, setCountryOptions] = useState(countries.countries.map((item) => item.name))
+	const [errorObj, setErrorObj] = useState({})
 	const [showpass, setShowpass] = useState(false)
 	const [showConfirmPass, setShowConfirmPass] = useState(false)
-	const [errorObj, setErrorObj] = useState({})
-	const [otpError, setOtpError] = useState({})
-	const [registerFormValue, setRegisterFormValue] = useState({
-		FullName: '',
-		Username: '',
-		Password: '',
-		ConfirmPassword: '',
-		Email: '',
-		Country: '',
-		City: '',
-		JobTitle: '',
-		Industry: '',
-		CompanyName: '',
-		About: '',
-		IsPrivate: false,
-		RegisterCode:searchParams.get('code')
-	})
-
-	const [usernameAvailable, setUsernameAvailable] = useState()
-	// const [otpid, setOtpid] = useState('')
-	// const [otp, setOtp] = useState('')
-	// const [otpOpen, setOtpOpen] = useState(false)
-	// const [timerValue, setTimerValue] = useState(30)
-
-	const [termsChecked, setTermsChecked] = useState(false)
-	const [countryOptions, setCountryOptions] = useState(countries.countries.map((item) => item.name))
 
 	const passwordRef = useRef()
 	const confirmPasswordRef = useRef()
-
-	const { isLoading, postData: submitRegister } = usePostData({
-		onSuccess: (result) => {
-			updateCurrentUser(result)
-			// setOtpid(result)
-			// if (!otpOpen) {
-			// 	setTimerValue(30)
-			// 	setOtpOpen(true)
-			// }
-		},
-	})
-	// const { isVerifying, postData: submitOtp } = usePostData({
-	// 	onSuccess: (result) => {
-	// 		updateCurrentUser(result)
-	// 	},
-	// 	onError: (err) => {
-	// 		setOtpError({ OTPERROR: err })
-	// 	},
-	// })
-	const { postData: checkUsername } = usePostData({
-		onSuccess: (result) => {
-			if (result === true) {
-				setUsernameAvailable({
-					available: result,
-					message: 'Username  available',
-				})
-			} else if (result === false) {
-				setUsernameAvailable({ available: result, message: 'Username not available' })
-			}
-		},
-	})
 
 	const handlePasswordChange = (e) => {
 		passwordRef.current = e.target.value
@@ -152,8 +135,8 @@ const Register = () => {
 			}
 		}
 	}
+
 	const validate = (callback) => {
-		console.log(registerFormValue)
 		const { error, warning } = registerValidation.validate(registerFormValue, {
 			abortEarly: false,
 			stripUnknown: true,
@@ -168,22 +151,35 @@ const Register = () => {
 				callback()
 			}
 		}
-		// callback()
 	}
 
-	const register = () => {
-		submitRegister({
-			endpoint: 'users/registerWithCode',
-			payload: registerFormValue,
-		})
-	}
+	const [registerFormValue, setRegisterFormValue] = useState({
+		FullName: '',
+		Username: '',
+		Password: '',
+		ConfirmPassword: '',
+		Email: '',
+		Country: '',
+		City: '',
+		JobTitle: '',
+		Industry: '',
+		CompanyName: '',
+		About: '',
+		IsPrivate: false,
+	})
 
-	// const verifyotp = () => {
-	// 	submitOtp({
-	// 		endpoint: 'users/verify',
-	// 		payload: { OTPId: otpid, OTP: otp },
-	// 	})
-	// }
+	const { postData: checkUsername } = usePostData({
+		onSuccess: (result) => {
+			if (result === true) {
+				setUsernameAvailable({
+					available: result,
+					message: 'Username  available',
+				})
+			} else if (result === false) {
+				setUsernameAvailable({ available: result, message: 'Username not available' })
+			}
+		},
+	})
 
 	const checkUsernameAvailability = async (value) => {
 		checkUsername({
@@ -191,92 +187,28 @@ const Register = () => {
 			payload: { Username: value },
 		})
 	}
-
 	return (
-		<>
-			{/* <Modal isOpen={otpOpen}>
-				<Modal.Header>
-					<p className='font-medium'>Verify OTP</p>
-					<button
-						onClick={() => {
-							setOtpOpen(false)
-						}}>
-						<img src={close} className='h-6  cursor-pointer' alt='' />
-					</button>
-				</Modal.Header>
-				<Modal.Body>
-					<p className='text-system-secondary-text mb-2'>
-						Please verify the OTP number received in your registered email.
-					</p>
-					<h1 className='text-system-primary-text font-medium text-lg'>OTP</h1>
-					<Input
-						className='py-4 rounded-xl border-2 border-system-file-border-accent'
-						width='full'
-						placeholder='Enter OTP recieved in registered email'
-						setValue={(e) => {
-							setOtpError({})
-							setOtp(e)
-						}}
-						type='number'
-					/>
-					{otpError['OTPERROR'] != undefined && <p className='text-brand-red m-0'>{otpError['OTPERROR']}</p>}
-					<div className='my-2'>
-						{timerValue !== 0 ? (
-							<TimerComponent timerValue={timerValue} setTimerValue={setTimerValue} />
-						) : (
-							<>
-								<p className='text-md'>
-									Didn't receive an OTP?{' '}
-									<span
-										className='text-system-primary-accent cursor-pointer font-medium'
-										onClick={() => {
-											setTimerValue(30)
-											validate(register)
-										}}
-										style={{}}>
-										RESEND OTP
-									</span>
-								</p>
-							</>
-						)}
-					</div>
-					<div className='mt-4'>
-						<Button
-							loading={isVerifying}
-							onClick={() => {
-								verifyotp()
-							}}
-							size='md'
-							variant='black'
-							width='full'
-							disabled={otp === ''}>
-							Verify OTP
-						</Button>
-					</div>
-				</Modal.Body>
-			</Modal> */}
-			<div style={{ backgroundImage: `url(${HeroCoverImage})` }} className='bg-cover bg-no-repeat'>
-				<div
-					style={{ minHeight: '100svh' }}
-					className='p-2 flex flex-col justify-center items-center bg-system-primary-accent-transparent'>
+		<Modal isOpen={addUserModalOpen}>
+			<Modal.Header>
+				<p className='font-medium'>Add New User</p>
+				<button
+					onClick={() => {
+						setAddUserModalOpen(false)
+					}}>
+					<img src={close} className='h-6  cursor-pointer' alt='' />
+				</button>
+			</Modal.Header>
+			<Modal.Body>
+				<div className=' flex flex-col justify-center items-center'>
 					<div
 						style={{ borderRadius: 20 }}
-						className='bg-system-secondary-bg flex flex-col gap-4 login-form py-4 px-8 lg:px-16 lg:py-10 bg-red-500'>
-						<center>
-							<Logo height={80} />
-						</center>
-						<div>
-							<h1 className='text-3xl font-semibold text-system-primary-accent'>Register</h1>
-							<p className='text-system-primary-text text-lg font-medium'>
-								Login to your account to access all the features of Horasis!
-							</p>
-						</div>
+						className='bg-system-secondary-bg flex flex-col gap-4 login-form  px-8 lg:px-16 '>
 						{/* Name */}
 						<div>
 							<h1 className='text-system-primary-text font-medium text-lg'>
-								Your Name<span className='text-brand-red'>*</span>
+								Full Name<span className='text-brand-red'>*</span>
 							</h1>
-							{/* {errorObj[field] != undefined ? { borderColor: 'red' } : {}} */}
+
 							<Input
 								className='py-4 rounded-xl border-2 border-system-file-border-accent'
 								width='full'
@@ -296,15 +228,12 @@ const Register = () => {
 							<h1 className='text-system-primary-text font-medium text-lg'>
 								Username<span className='text-brand-red'>*</span>
 							</h1>
-							{/* {errorObj[field] != undefined ? { borderColor: 'red' } : {}} */}
+
 							<Input
 								className='py-4 rounded-xl border-2 border-system-file-border-accent'
 								width='full'
 								name='name'
 								placeholder='Ex. Saul Ramirez'
-								// setValue={(e) => {
-								//   validateSingle({ ['Username']: e }, 'Username')
-								// }}
 								onChange={(e) => {
 									validateSingle({ ['Username']: e.target.value }, 'Username')
 									if (e.target.value.length > 3) checkUsernameAvailability(e.target.value)
@@ -325,7 +254,7 @@ const Register = () => {
 							<h1 className='text-system-primary-text font-medium text-lg'>
 								Email<span className='text-brand-red'>*</span>
 							</h1>
-							{/* {errorObj[field] != undefined ? { borderColor: 'red' } : {}} */}
+
 							<Input
 								className='py-4 rounded-xl border-2 border-system-file-border-accent'
 								width='full'
@@ -345,7 +274,7 @@ const Register = () => {
 							<h1 className='text-system-primary-text font-medium text-lg'>
 								Job Title<span className='text-brand-red'>*</span>
 							</h1>
-							{/* {errorObj[field] != undefined ? { borderColor: 'red' } : {}} */}
+
 							<Input
 								className='py-4 rounded-xl border-2 border-system-file-border-accent'
 								width='full'
@@ -365,7 +294,7 @@ const Register = () => {
 							<h1 className='text-system-primary-text font-medium text-lg'>
 								Company Name<span className='text-brand-red'>*</span>
 							</h1>
-							{/* {errorObj[field] != undefined ? { borderColor: 'red' } : {}} */}
+
 							<Input
 								className='py-4 rounded-xl border-2 border-system-file-border-accent'
 								width='full'
@@ -385,7 +314,7 @@ const Register = () => {
 							<h1 className='text-system-primary-text font-medium text-lg'>
 								Industry<span className='text-brand-red'>*</span>
 							</h1>
-							{/* {errorObj[field] != undefined ? { borderColor: 'red' } : {}} */}
+
 							<Input
 								className='py-4 rounded-xl border-2 border-system-file-border-accent'
 								width='full'
@@ -422,7 +351,7 @@ const Register = () => {
 							<h1 className='text-system-primary-text font-medium text-lg'>
 								City<span className='text-brand-red'>*</span>
 							</h1>
-							{/* {errorObj[field] != undefined ? { borderColor: 'red' } : {}} */}
+
 							<Input
 								className='py-4 rounded-xl border-2 border-system-file-border-accent'
 								width='full'
@@ -447,10 +376,6 @@ const Register = () => {
 								width='full'
 								name='password'
 								placeholder='Enter the password'
-								// setValue={(e) => {
-								// 	validateSingle({ ['Password']: e }, 'Password')
-								// }}
-								// value={registerFormValue.Password}
 								onChange={handlePasswordChange}
 								type={showpass ? 'text' : 'password'}
 								withIcon='true'
@@ -479,10 +404,6 @@ const Register = () => {
 								width='full'
 								name='confirmPassword'
 								placeholder='Confirm password'
-								// setValue={(e) => {
-								// 	validateConfirmPassword({ ['ConfirmPassword']: e }, 'ConfirmPassword')
-								// }}
-								// value={registerFormValue.ConfirmPassword}
 								onChange={handleConfirmPasswordChange}
 								type={showConfirmPass ? 'text' : 'password'}
 								withIcon='true'
@@ -505,8 +426,8 @@ const Register = () => {
 
 						{/* Bio */}
 						<div>
-							<h1 className='text-system-primary-text font-medium text-lg'>About Yourself</h1>
-							{/* {errorObj[field] != undefined ? { borderColor: 'red' } : {}} */}
+							<h1 className='text-system-primary-text font-medium text-lg'>About</h1>
+
 							<TextArea
 								className='py-4 rounded-xl border-2 border-system-file-border-accent'
 								name='about'
@@ -525,84 +446,130 @@ const Register = () => {
 								}}
 								value={registerFormValue.About}
 								rows={6}
-								placeholder='Enter something about you....'
+								placeholder='Enter something about user....'
 								width='full'
 								variant='primary_outlined'
 							/>
 							{errorObj['About'] != undefined && <p className='text-brand-red m-0'>{errorObj['About']}</p>}
 						</div>
 
-						<div className='mt-4'>
-							<Checkbox
-								onChange={() => {
-									setTermsChecked((prev) => !prev)
-								}}
-								checked={termsChecked}
-								label={
-									<div className='text-brand-gray-dim text-base font-medium'>
-										By registering, you are agreeing with our{' '}
-										<a href='#' target='_blank' className='text-system-primary-accent text-base font-medium underline'>
-											Terms of Use
-										</a>{' '}
-										and{' '}
-										<a href='#' target='_blank' className='text-system-primary-accent text-base font-medium underline'>
-											Privacy Policy
-										</a>
-									</div>
-								}
-							/>
-						</div>
 						<div className='mt-1'>
 							<Button
-								loading={isLoading}
+								loading={isAddingUser}
 								onClick={() => {
-									validate(register)
-									// setOtpOpen(true)
+									validate(() => addNewUser(registerFormValue))
 								}}
 								size='md'
 								variant='black'
 								width='full'
-								disabled={!termsChecked || (usernameAvailable && !usernameAvailable.available)}>
-								Register
+								disabled={isAddingUser || (usernameAvailable && !usernameAvailable.available)}>
+								Add User
 							</Button>
 						</div>
-						<div className='mt-1'>
-							<div className='text-base font-medium text-center'>
-								Already have an account?{' '}
-								<span
-									onClick={() => {
-										navigate('/login')
-									}}
-									className='cursor-pointer text-system-primary-accent text-lg font-medium underline'>
-									Login
-								</span>
-							</div>
-						</div>
 					</div>
-				</div>{' '}
-			</div>
-		</>
+				</div>
+			</Modal.Body>
+		</Modal>
 	)
 }
 
-export default Register
+const UsersList = ({ users = [], isLoadingMore, pageDisabled, fetchMore, isLoading }) => {
+	if (isLoading)
+		return (
+			<div className='bg-system-secondary-bg p-4 rounded-b-lg '>
+				<Spinner />
+			</div>
+		)
+	return (
+		<div className='bg-system-secondary-bg  py-4 md:px-4 rounded-b-lg '>
+			<div className='flex flex-col gap-5 border p-4 rounded-md'>
+				{users ? (
+					<>
+						{users.length > 0 ? (
+							<>
+								{users.map((item, index) => {
+									let lastElement = users.length === index + 1
+									return <UserCard key={index} profile={item} lastElement={lastElement} />
+								})}
+							</>
+						) : (
+							<>
+								<EmptyMembers emptyText={'No Users'} />
+							</>
+						)}
+					</>
+				) : (
+					<></>
+				)}
+			</div>
+			{isLoadingMore && (
+				<div className='bg-system-secondary-bg p-4 rounded-b-lg '>
+					<Spinner />
+				</div>
+			)}
+			{!pageDisabled && (
+				<div onClick={fetchMore} className='flex flex-row justify-end mt-4 mb-2'>
+					<div className='cursor-pointer flex items-center gap-2'>
+						<h4 className='font-semibold text-xl text-system-primary-accent'>Load More</h4>
+					</div>
+				</div>
+			)}
+		</div>
+	)
+}
 
-{
-	/* <div>
-						<h1 className='text-system-primary-text font-medium text-lg'>
-							Country<span className='text-brand-red'>*</span>
-						</h1>
-						<Input
-							className='py-4 rounded-xl border-2 border-system-file-border-accent'
-							width='full'
-							name='country'
-							placeholder='Ex. Australia'
-							setValue={(e) => {
-								validateSingle({ ['Country']: e }, 'Country')
-							}}
-							value={registerFormValue.Country}
-							type='text'
+const UserCard = ({ profile, lastElement }) => {
+	const { currentUserData } = useContext(AuthContext)
+	const goToProfile = () => {
+		if (profile && currentUserData) {
+			if (profile.DocId === currentUserData.CurrentUser.UserId) {
+				window.open('/MyProfile')
+			} else {
+				window.open(`/ViewProfile/${profile.DocId}`)
+			}
+		}
+	}
+	return (
+		<div className={`bg-system-secondary-bg ${lastElement === true ? '' : 'border-b border-system-file-border pb-2'}`}>
+			<div className='flex items-start gap-4'>
+				{profile ? (
+					<>
+						{profile.ProfilePicture ? (
+							<div className='w-11 h-11 rounded-full bg-black'>
+								<img
+									className='w-11 h-11 rounded-full object-cover'
+									src={profile.ProfilePicture}
+									alt='Rounded avatar'
+								/>
+							</div>
+						) : (
+							<>
+								<div className='w-11 h-11 rounded-full bg-brand-light-gray'>
+									<img src={avatar} className='object-cover h-full w-full rounded-lg' />
+								</div>
+							</>
+						)}
+					</>
+				) : (
+					<>
+						<img
+							className='w-11 h-11 rounded-full'
+							src='https://flowbite.com/docs/images/people/profile-picture-1.jpg'
+							alt='Rounded avatar'
 						/>
-						{errorObj['Country'] != undefined && <p className='text-brand-red m-0'>{errorObj['Country']}</p>}
-					</div> */
+					</>
+				)}
+
+				<div className='flex-1'>
+					<h4 className='font-semibold text-lg text-system-primary-accent cursor-pointer' onClick={goToProfile}>
+						{profile && profile?.FullName}
+					</h4>
+					<h4 className='font-semibold text-sm text-brand-gray-dim'>@{profile && profile?.Username}</h4>
+				</div>
+				<div className='flex flex-col items-end'>
+					<h4 className='font-medium text-base text-brand-gray-dim mb-3'>{relativeTime(profile?.CreatedIndex)}</h4>
+				</div>
+			</div>
+		</div>
+	)
 }
