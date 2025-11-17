@@ -100,6 +100,11 @@ const GetUserEvents = async (req, res) => {
     return res.json(data);
 }
 
+/** 
+ * @param { e.Request } req
+ * @param { e.Response } res
+ * @returns
+ */
 const GetInvitedEvents = async (req, res) => {
     //@ts-ignore
     const { UserId } = req.user;
@@ -131,6 +136,7 @@ const GetInvitedEvents = async (req, res) => {
         { $unwind: "$Member" },
         {
             $match: {
+                // @ts-ignore
                 ...Filter,
                 "Member.MemberId": UserId,
                 "Member.MembershipStatus": "Invited"
@@ -143,8 +149,15 @@ const GetInvitedEvents = async (req, res) => {
     return res.json(data);
 }
 
+/** 
+ * @param { e.Request } req
+ * @param { e.Response } res
+ * @returns
+ */
 const GetPublicEvents = async (req, res) => {
+    // @ts-ignore
     const { Filter, NextId, Keyword, Limit, OrderBy } = req.query;
+    // @ts-ignore
     Filter.Privacy = "Public";
     // @ts-ignore
     const data = await ReadEvents(Filter, NextId, Limit, OrderBy);
@@ -163,6 +176,7 @@ const PostEvents = async (req, res) => {
     req.body.OrganiserId = OrganiserId;
     const UserDetails = await ReadOneFromUsers(OrganiserId);
     const { Agenda } = req.body;
+    // @ts-ignore
     req.body.Agenda = Agenda.map(AgendaValues => {
         const AgendaId = (new ObjectId()).toString();
         return { ...AgendaValues, AgendaId, SpeakerData: [] };
@@ -233,6 +247,9 @@ const SetEventDataForGet = async (Event, UserId) => {
     ]);
     //@ts-ignore
     Event.SpeakerStatus = Speaker ? Speaker.MembershipStatus : "None";
+    Event.Speakers = Event.Speakers.filter(speaker => {
+        return (Event.Agenda.findIndex(agenda => agenda.AgendaId === speaker.Agenda.AgendaId) !== -1);
+    })
     //@ts-ignore
     Event = GetPermissionOfMember(Member[0], Event);
     return { ...Event, UserDetails };
@@ -248,6 +265,7 @@ const CheckIfMailAvailableToInviteInEvent = async (Email, Type) => {
     switch (Type) {
         case "Speaker": {
             const [SpeakerInvitation] = await ReadInvitations({ Email }, undefined, 1, undefined);
+            // @ts-ignore
             if (SpeakerInvitation && SpeakerInvitation.OnCreate.some(object => object.ActionType === "Event-Invite-Speaker")) {
                 return AlertBoxObject("Already Invited", "User with this email has already been invited")
             }
@@ -255,6 +273,7 @@ const CheckIfMailAvailableToInviteInEvent = async (Email, Type) => {
         }
         case "Member": {
             const [MemberInvitation] = await ReadInvitations({ Email }, undefined, 1, undefined);
+            // @ts-ignore
             if (MemberInvitation && MemberInvitation.OnCreate.some(object => object.ActionType === "Event-Invite-Member")) {
                 return AlertBoxObject("Already Invited", "User with this email has already been invited")
             }
@@ -266,6 +285,7 @@ const CheckIfMailAvailableToInviteInEvent = async (Email, Type) => {
     return true;
 }
 
+// @ts-ignore
 const EventInit = (Event) => {
     return {
         ...Event,
