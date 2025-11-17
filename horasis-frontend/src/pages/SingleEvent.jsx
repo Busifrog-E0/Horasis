@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import arrowback from '../assets/icons/arrowback.svg'
 import calendar from '../assets/icons/calendar.svg'
-import camera from '../assets/icons/camera.svg'
+import edit from '../assets/icons/edit-light.svg'
 import closeIcon from '../assets/icons/close.svg'
 import clock from '../assets/icons/clock.svg'
 import cover from '../assets/icons/cover.svg'
@@ -401,6 +401,15 @@ const SingleEvent = () => {
 								onClick={handleGoBack}>
 								<img src={arrowback} alt='' className='h-3 md:h-6 cursor-pointer' />
 							</div>
+							{event?.Permissions?.IsAdmin && (
+								<div
+									onClick={() => {
+										navigate(`/Events/${event.DocId}/edit`)
+									}}
+									className={`inline-flex items-center justify-center w-12 h-12 p-3 overflow-hidden rounded-full border border-white bg-white cursor-pointer`}>
+									<img src={edit} alt='' className='h-6 cursor-pointer' />
+								</div>
+							)}
 						</div>
 					</div>
 				</div>
@@ -447,7 +456,7 @@ const SingleEvent = () => {
 								</div>
 							)}
 						</div>
-						<div className='grid grid-cols-1 md:grid-cols-1 '>
+						<div className='grid grid-cols-1 md:grid-cols-1 md:self-end'>
 							<div className='flex items-center gap-4 mt-6 md:col-span-2'>
 								<img
 									className='w-14 h-14 rounded-full object-cover'
@@ -460,7 +469,7 @@ const SingleEvent = () => {
 								</div>
 							</div>
 
-							<div className='grid grid-cols-2 sm:grid-cols-3  gap-4 mt-6'>
+							<div className='grid  grid-cols-2 sm:grid-cols-3  gap-4 mt-6'>
 								<div className='flex items-start gap-3'>
 									<img src={calendar} alt='' className='h-7' />
 									<div>

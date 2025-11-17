@@ -10,14 +10,14 @@ const ShowMoreText = ({ text, maxLength = 100 }) => {
   };
 
   if (text.length <= maxLength) {
-    return <p className="text-md text-system-secondary-text my-4 leading-relaxed">{text}</p>;
+    return <p className="text-md text-system-secondary-text my-4 leading-relaxed whitespace-pre-line">{text}</p>;
   }
 
   const displayedText = isExpanded ? text : text.substring(0, maxLength) + '...';
 
   return (
     <div>
-      <p className="text-md text-system-secondary-text my-4 leading-relaxed">
+      <p className="text-md text-system-secondary-text my-4 leading-relaxed whitespace-pre-line">
         {displayedText}
       </p>
       <button onClick={toggleExpanded} className="text-sm text-system-primary-accent hover:underline">

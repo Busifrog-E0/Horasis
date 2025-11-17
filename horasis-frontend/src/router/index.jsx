@@ -56,6 +56,7 @@ import AdminPlatformUsers from '../pages/superadmin/AdminPlatformUsers'
 import ManagementLayout from '../layouts/manage/ManagementLayout'
 import PlatformUsersPage from '../pages/PlatformUsersPage'
 import RegisterProtected from '../layouts/RegisterProtected'
+import EditEvent from '../pages/EditEvent'
 
 export const router = createBrowserRouter(
 	createRoutesFromElements(
@@ -98,6 +99,8 @@ export const router = createBrowserRouter(
 								</AdminProtected>
 							}
 						/>
+						<Route path='/Events/:eventid/edit' element={<EditEvent />} />
+
 						<Route path='/Search' element={<UniversalSearchDetails />} />
 
 						<Route path='/Podcasts' element={<Podcasts />} />
