@@ -85,20 +85,24 @@ const PostSpeakers = async (req, res) => {
     }
     const Event = await ReadOneFromEvents(EventId);
     const UserDetails = await ReadOneFromUsers(SpeakerId);
+
     const { Agenda: AgendaData } = Event;
     const updatedAgenda = AgendaData.map(item => {
         if (item.AgendaId === Agenda.AgendaId) {
-            return { ...item, SpeakerData: { SpeakerId, UserDetails } }
+            if (!item.SpeakerData || item.SpeakerData.length === 0) {
+                item.SpeakerData = [];
+            }
+            item.SpeakerData.push({ SpeakerId, UserDetails });
         }
-        return item;
-    })
+        return { ...item };
+    });
     const MembershipStatus = "Invited";
+    await PushArrayEvents({ Speakers: { SpeakerId, UserDetails: UserDetails, Agenda: Agenda } }, EventId);
+    await UpdateEvents({ Agenda: updatedAgenda }, EventId);
 
     await Promise.all([
         CreateSpeakers({ EventId, SpeakerId, MembershipStatus, UserDetails, Agenda }),
         SendNotificationForSpeaker(EventId, SpeakerId, UserId),
-        PushArrayEvents({ Speakers: { SpeakerId, UserDetails: UserDetails, Agenda: Agenda } }, EventId),
-        UpdateEvents({ Agenda: updatedAgenda }, EventId)
     ])
 
     return res.json(true);
