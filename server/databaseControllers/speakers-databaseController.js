@@ -29,6 +29,7 @@ import dataHandling from './functions.js'
  * @returns {Promise<Array<SpeakerData>>} Returns SpeakerData
  */
 const ReadSpeakers = async (Where, NextIndex, Limit, orderBy) => {
+    // @ts-ignore
     return dataHandling.Read('Speakers', undefined, NextIndex, Limit, Where, orderBy);
 }
 
@@ -38,6 +39,7 @@ const ReadSpeakers = async (Where, NextIndex, Limit, orderBy) => {
  * @returns {Promise<SpeakerData>}
  */
 const ReadOneFromSpeakers = async (DocId) => {
+    // @ts-ignore
     return dataHandling.Read('Speakers', DocId);
 }
 
@@ -71,7 +73,14 @@ const RemoveSpeakers = async (DocId) => {
     return dataHandling.Delete('Speakers', DocId);
 }
 
-
+/**
+ * 
+ * @param {object} where 
+ * @returns 
+ */
+const RemoveManySpeakers = async (where) => {
+    return dataHandling.DeleteMany('Speakers', where);
+}
 
 
 export {
@@ -79,5 +88,6 @@ export {
     ReadOneFromSpeakers,
     UpdateSpeakers,
     CreateSpeakers,
-    RemoveSpeakers
+    RemoveSpeakers,
+    RemoveManySpeakers
 }
