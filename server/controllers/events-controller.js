@@ -8,7 +8,7 @@ import { RemoveNotificationForEntity } from './notifications-controller.js';
 import { AlertBoxObject } from './common.js';
 import { DetectLanguage } from './translations-controller.js';
 import { ReadInvitations } from '../databaseControllers/invitations-databaseController.js';
-import { ReadSpeakers } from '../databaseControllers/speakers-databaseController.js';
+import { ReadSpeakers, RemoveManySpeakers } from '../databaseControllers/speakers-databaseController.js';
 import { ObjectId } from 'mongodb';
 
 /**
@@ -195,7 +195,7 @@ const PostEvents = async (req, res) => {
  * @returns {Promise<e.Response<true>>}
  */
 const PatchEvents = async (req, res) => {
-    return res.status(444).json(AlertBoxObject("Cannot Edit", "Not Implemented Yet."))
+    // return res.status(444).json(AlertBoxObject("Cannot Edit", "Not Implemented Yet."))
 
     //@ts-ignore
     const { UserId } = req.user
@@ -208,16 +208,28 @@ const PatchEvents = async (req, res) => {
         req.body.OriginalLanguage = await DetectLanguage(req.body.Description);
         req.body.Languages = {};
     }
+    /**@type {import('./invitations-controller.js').AgendaData[]} */
+    const Agenda = req.body.Agenda;
 
-    const { Agenda } = req.body;
-    // @ts-ignore
-    req.body.Agenda = Agenda.map(AgendaValues => {
-        if (AgendaValues.AgendaId) {
-            return AgendaValues;
+    if (Agenda) {
+        const Event = await ReadOneFromEvents(EventId);
+        const promise = [];
+        for (let index = 0; index < Event.Agenda.length; index++) {
+            const curSingleAgenda = Event.Agenda[index];
+            const ifAgendaExists = Agenda.findIndex((value) => value.AgendaId === curSingleAgenda.AgendaId);
+            if (ifAgendaExists === -1) {
+                promise.push(RemoveManySpeakers({ "Agenda.AgendaId": curSingleAgenda.AgendaId }));
+            }
         }
-        const AgendaId = (new ObjectId()).toString();
-        return { ...AgendaValues, AgendaId, SpeakerData: [] };
-    })
+        req.body.Agenda = Agenda.map(AgendaValues => {
+            if (AgendaValues.AgendaId) {
+                return AgendaValues;
+            }
+            const AgendaId = (new ObjectId()).toString();
+            return { ...AgendaValues, AgendaId, SpeakerData: [] };
+        })
+
+    }
 
     await UpdateEvents(req.body, EventId);
     return res.json(true);
