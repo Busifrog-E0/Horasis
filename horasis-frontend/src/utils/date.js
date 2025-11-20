@@ -112,6 +112,19 @@ export function gettimenow(orgDate) {
 	} else return ''
 }
 
+export function getTimezone() {
+	const now = new Date()
+
+	const tzFormatter = new Intl.DateTimeFormat(undefined, {
+		timeZoneName: 'short',
+	})
+
+	const parts = tzFormatter.formatToParts(now)
+	const tzName = parts.find((part) => part.type === 'timeZoneName').value
+
+	return tzName
+}
+
 export function convertDateStrToDateObj(dateStr) {
 	return null
 }
