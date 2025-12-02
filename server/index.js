@@ -63,6 +63,7 @@ import { decodeSocketIdToken } from "./middleware/auth-middleware.js";
 import { ConnectSocket } from "./controllers/socket-controller.js";
 import { CreateActiveUsers } from "./databaseControllers/activeUsers-databaseController.js";
 import Env from "./Env.js";
+import { CreateNewCodes } from "./controllers/users-controller.js";
 
 
 
@@ -99,6 +100,11 @@ const expressServer = app.listen(PORT, async (err) => {
         Subscription: null
     }
     GenerateToken(CurrentUser);
+
+    console.log("start codes");
+    await CreateNewCodes();
+    console.log("end codes");
+
 });
 
 ConnectSocket(expressServer);

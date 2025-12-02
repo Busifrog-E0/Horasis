@@ -11,7 +11,7 @@ import { UpdateManyMembers } from '../databaseControllers/members-databaseContro
 import { ObjectId } from 'mongodb';
 import { CreateUserExtendedProperties, MAX_CONNECTIONLIST_SIZE, PullUserExtendedProperties, PushOnceInUserExtendedProperties, ReadUserExtendedProperties, UserExtendedPropertiesInit } from '../databaseControllers/userExtendedProperties-databaseController.js';
 import { PullManyActivityExtendedProperties, PushOnceInManyActivityExtendedProperties } from '../databaseControllers/activityExtendedProperties-databaseController.js';
-import { CreateUserRegistrations, ReadUserRegistrations, UpdateUserRegistrations } from '../databaseControllers/userRegistrations-databaseController.js';
+import { CreateUserRegistrations, ReadOneFromUserRegistrations, ReadUserRegistrations, UpdateUserRegistrations } from '../databaseControllers/userRegistrations-databaseController.js';
 import Env from '../Env.js';
 
 
@@ -741,9 +741,16 @@ const CreateNewCodes = async () => {
         "4Fe50hBibRQl1Yairo4ocjphl",
         "oqoiTGj4kj2EjqMyQZoMlAuQU"
     ];
+    const checkAlready = await ReadOneFromUserRegistrations(Codes250[0]);
+    if (checkAlready) {
+        const Lengeth = await ReadUserRegistrations({}, undefined, -1, undefined);
+        console.log(Lengeth.length);
+        return;
+    }
     for (let i = 0; i < Codes250.length; i++) {
         const code = Codes250[i];
         await CreateUserRegistrations({ RegistrationCode: code, AlreadyUsed: false, RegistrationLink: `https://social.horasis.org/register?code=${code}` });
+        console.log(i);
     }
 }
 
@@ -793,5 +800,5 @@ export {
     ViewOtherUserRelations, ViewOtherUserData, SendForgotPasswordOTP,
     PatchPassword, CheckIfUserWithMailExists, AddUserAsAdmin, RemoveUserAsAdmin,
     GetUsersByRole, AddConnectionstoUser, RemoveConnectionsToUser,
-    PostCheckIfRegisterCodeExists, PostUsersRegisterWithCode,
+    PostCheckIfRegisterCodeExists, PostUsersRegisterWithCode, CreateNewCodes,
 }
