@@ -23,7 +23,7 @@ import useEntityMembershipManager from '../hooks/useEntityMembershipManager'
 import useGetData from '../hooks/useGetData'
 import useTranslation from '../hooks/useTranslation'
 import { useAuth } from '../utils/AuthProvider'
-import { getDateInWordsFormat, gettimenow } from '../utils/date'
+import { getDateInWordsFormat, gettimenow, getTimezone } from '../utils/date'
 import TagsList from '../components/Tags/TagsList'
 import Modal from '../components/ui/Modal'
 import PictureUpload from '../components/Profile/EditProfile/PictureUpload'
@@ -492,7 +492,8 @@ const SingleEvent = () => {
 											<br />
 											to
 											<br />
-											{gettimenow(new Date(event?.EndTime))}
+											{gettimenow(new Date(event?.EndTime))} <br />
+											<span className='text-brand-gray-dim text-xs'>({getTimezone()})</span>
 										</p>
 									</div>
 								</div>
