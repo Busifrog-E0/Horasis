@@ -742,7 +742,7 @@ const CreateNewCodes = async () => {
         "oqoiTGj4kj2EjqMyQZoMlAuQU"
     ];
     const checkAlready = await ReadUserRegistrations({ "RegistrationCode": Codes250[0] }, undefined, 1, undefined);
-    if (checkAlready) {
+    if (checkAlready.length > 0) {
         const Lengeth = await ReadUserRegistrations({}, undefined, -1, undefined);
         console.log(Lengeth.length);
         return;
