@@ -101,9 +101,9 @@ const expressServer = app.listen(PORT, async (err) => {
     }
     GenerateToken(CurrentUser);
 
-    console.log("start codes");
-    await CreateNewCodes();
-    console.log("end codes");
+    // console.log("start codes");
+    // await CreateNewCodes();
+    // console.log("end codes");
 
 });
 
