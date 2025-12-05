@@ -61,9 +61,9 @@ import { FirstTimeSetup } from "./databaseControllers/common.js";
 import { ClearAdminRoleArray, ClearLogoutUsers, GenerateToken } from "./controllers/auth-controller.js";
 import { decodeSocketIdToken } from "./middleware/auth-middleware.js";
 import { ConnectSocket } from "./controllers/socket-controller.js";
-import { CreateActiveUsers } from "./databaseControllers/activeUsers-databaseController.js";
-import Env from "./Env.js";
-import { CreateNewCodes } from "./controllers/users-controller.js";
+// import { CreateActiveUsers } from "./databaseControllers/activeUsers-databaseController.js";
+// import Env from "./Env.js";
+// import { CreateNewCodes } from "./controllers/users-controller.js";
 
 
 
@@ -71,7 +71,14 @@ import { CreateNewCodes } from "./controllers/users-controller.js";
 app.use('/doc', swaggerUi.serve, swaggerUi.setup(swaggerFile));
 
 app.use((req, res, next) => {
-    console.log(req.method, req.originalUrl);
+    const logEntry = {
+        timestamp: new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' }).format(new Date()),
+        method: req.method,
+        path: req.originalUrl || req.url,
+        statusCode: res.statusCode,
+        body: req.body,
+    };
+    console.log(JSON.stringify(logEntry));
     return next();
 })
 
