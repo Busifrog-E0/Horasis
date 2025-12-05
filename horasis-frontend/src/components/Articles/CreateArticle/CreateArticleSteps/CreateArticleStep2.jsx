@@ -18,10 +18,10 @@ const CreateArticleStep2 = forwardRef(({ selectedImage, onImageSelect, fileField
 	// Handle image change (selecting a new image)
 	const handleImageChange = (e) => {
 		const files = Array.from(e.target.files)
-		const notAllow = files.some((file) => file.size > 3000000)
+		const notAllow = files.some((file) => file.size > 6000000)
 
 		if (notAllow) {
-			toast.open('error', 'Max File Size', 'File size should be less than 3MB')
+			toast.open('error', 'Max File Size', 'File size should be less than 6MB')
 		} else {
 			const file = files[0]
 			const reader = new FileReader()
