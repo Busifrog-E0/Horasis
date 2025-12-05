@@ -73,7 +73,11 @@ const Select = ({
 				{extra && <div className='hidden lg:block lg:m-0 text-sm'>{extra}</div>}
 			</div>
 
-			<div className='relative outline-none focus:outline-none ' onKeyDown={handleKeyDown} tabIndex={0} ref={dropdownRef}>
+			<div
+				className='relative outline-none focus:outline-none '
+				onKeyDown={handleKeyDown}
+				tabIndex={0}
+				ref={dropdownRef}>
 				<div
 					onClick={() => setShowOptions((prev) => !prev)}
 					className={
@@ -82,7 +86,11 @@ const Select = ({
 					}>
 					{value === '' && placeholder ? (
 						<>
-							<p className='w-full text-system-secondary-text text-base'>{placeholder}</p>
+							{searchTerm ? (
+								<p className='w-full text-base'>{searchTerm}</p>
+							) : (
+								<p className='w-full text-system-secondary-text text-base'>{placeholder}</p>
+							)}
 						</>
 					) : (
 						<>
