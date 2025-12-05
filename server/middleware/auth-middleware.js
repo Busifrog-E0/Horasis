@@ -52,17 +52,25 @@ const decodeIDToken = async (req, res, next) => {
 * @param  {...("Admin"|"User"|"SuperAdmin")} Roles 
  * @returns 
  */
-const ensureAuthorized = (...Roles) => (req, res, next) => {
-    // @ts-ignore
-    const { Role } = req.user;
-    const hasValidRole = Role.some(role => Roles.includes(role));
-    if (!hasValidRole) {
-        return res.status(402).json({ 'message': 'invalid roles' });
+const ensureAuthorized = (...Roles) =>
+    /**
+     * 
+     * @param {e.Request} req 
+     * @param {e.Response} res 
+     * @param {e.NextFunction} next 
+     */
+    (req, res, next) => {
+        // @ts-ignore
+        const { Role } = req.user;
+        // @ts-ignore
+        const hasValidRole = Role.some(role => Roles.includes(role));
+        if (!hasValidRole) {
+            return res.status(402).json({ 'message': 'invalid roles' });
+        }
+        else {
+            return next();
+        }
     }
-    else {
-        return next();
-    }
-}
 
 
 
@@ -73,6 +81,7 @@ const ensureAuthorized = (...Roles) => (req, res, next) => {
  * @returns 
  */
 const decodeSocketIdToken = (socket, next) => {
+    // @ts-ignore
     const authHeader = socket.handshake.auth.token || "";
     const token = authHeader.split(" ")[1];
     if (!token) {

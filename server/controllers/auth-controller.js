@@ -13,6 +13,7 @@ const { Read, Create, Delete, Update } = dataHandling;
  * @type {Array<{UserId: string, Index: number, Type: "Add" | "Remove",Role : string[] } >}
  */
 let AdminRoleArray = [];
+/** @type {Array<{Index:number,token:string}>} */
 let LogoutUsers = [];
 
 
