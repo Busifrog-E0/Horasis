@@ -1,6 +1,7 @@
 // styles
 import './style/global.css'
 import './style/scrollbar.css'
+import './style/custom-scrollbar.css'
 import './style/chat.css'
 import './style/date.css'
 // import './style/streaming.css'

@@ -255,13 +255,13 @@ const Register = () => {
 					</div>
 				</Modal.Body>
 			</Modal> */}
-			<div style={{ backgroundImage: `url(${HeroCoverImage})` }} className='bg-cover bg-no-repeat'>
+			<div style={{ backgroundImage: `url(${HeroCoverImage})` }} className='bg-cover bg-no-repeat '>
 				<div
 					style={{ minHeight: '100svh' }}
 					className='p-2 flex flex-col justify-center items-center bg-system-primary-accent-transparent'>
 					<div
 						style={{ borderRadius: 20 }}
-						className='bg-system-secondary-bg flex flex-col gap-4 login-form py-4 px-8 lg:px-16 lg:py-10 bg-red-500'>
+						className='bg-system-secondary-bg flex flex-col gap-4 login-form py-4 px-8 lg:px-16 lg:py-10 show-scrollbar custom-scrollbar '>
 						<center>
 							<Logo height={80} />
 						</center>
@@ -541,11 +541,11 @@ const Register = () => {
 								label={
 									<div className='text-brand-gray-dim text-base font-medium'>
 										By registering, you are agreeing with our{' '}
-										<a href='#' target='_blank' className='text-system-primary-accent text-base font-medium underline'>
+										<a className='text-system-primary-accent text-base font-medium underline'>
 											Terms of Use
 										</a>{' '}
 										and{' '}
-										<a href='#' target='_blank' className='text-system-primary-accent text-base font-medium underline'>
+										<a className='text-system-primary-accent text-base font-medium underline'>
 											Privacy Policy
 										</a>
 									</div>

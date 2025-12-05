@@ -296,7 +296,9 @@ input[type='range']::-ms-thumb {
 
 .login-form {
 	width: 100%;
-	max-height: 'max-content';
+	max-height: 90svh;
+	overflow: hidden;
+	overflow-y: auto;
 }
 
 @media (min-width: 680px) {

@@ -1,0 +1,44 @@
+/* WebKit (Safari/Chrome) */
+.custom-scrollbar::-webkit-scrollbar {
+	width: 0.7rem; /* For vertical scrollbar */
+	height: 0.5rem; /* For horizontal scrollbar */
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+	background: transparent;
+	margin: 0.5rem auto;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+	background-color: #061d3644;
+	border-radius: 100px;
+
+}
+
+/* Firefox */
+.custom-scrollbar::-moz-scrollbar {
+	width: 0.5rem;
+	/* Note: Firefox support for scrollbar styling is limited */
+}
+
+/* Internet Explorer & Edge */
+.custom-scrollbar::-ms-scrollbar {
+	width: 0.5rem;
+	/* For horizontal scrollbar in these browsers, styling options are limited */
+}
+
+/* Generic */
+scrollbar {
+	width: 0.5rem;
+}
+
+/* Hide scrollbar on mobile screens */
+@media (max-width: 768px) {
+	.custom-scrollbar::-webkit-scrollbar,
+	.custom-scrollbar::-moz-scrollbar,
+	.custom-scrollbar::-ms-scrollbar {
+		width: 0.4rem;
+	}
+
+
+}
