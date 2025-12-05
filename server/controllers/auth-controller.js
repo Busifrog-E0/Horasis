@@ -58,6 +58,7 @@ const ModelLogin = async (req, res) => {
         return res.status(403).json({ "status": "error", "message": "Invaid Credentials" });
     }
     const { Token, RefreshToken } = await GenerateToken({ EnrollmentId, PhoneNumber });
+    // @ts-ignore
     UserData.Token = Token;
     return res.json({ Token, RefreshToken });
 };
@@ -72,6 +73,7 @@ const RefreshToken = async (req, res) => {
     /**
      * @type {RefreshTokenData}
      */
+    // @ts-ignore
     const RefreshTokenData = await Read("RefreshTokens", RefreshToken);
     if (!RefreshTokenData || RefreshTokenData.Token !== Token || RefreshTokenData.Valid !== true) {
         res.status(445).json("InValid");
@@ -83,6 +85,7 @@ const RefreshToken = async (req, res) => {
             await Delete("RefreshToken", RefreshTokenData.DocId);
             res.json({ ...responseObject, CurrentUser: RefreshTokenData.SignObject });
         } catch (error) {
+            // @ts-ignore
             res.status(445).json(error.message);
         }
     }
@@ -206,12 +209,17 @@ const VerifyOTP = async (OTPId, OTP, res) => {
     }
 }
 
-
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ */
 const UserLogout = async (req, res) => {
     const { Token, RefreshToken } = req.body;
     /**
      * @type {RefreshTokenData}
      */
+    // @ts-ignore
     const RefreshTokenData = await Read("RefreshTokens", RefreshToken);
     if (!RefreshTokenData || RefreshTokenData.Token !== Token || RefreshTokenData.Valid !== true) {
         res.status(445).json("InValid");
@@ -224,6 +232,7 @@ const UserLogout = async (req, res) => {
             res.json(true);
         }
         catch (error) {
+            // @ts-ignore
             res.status(445).json(error.message);
         }
     }
@@ -239,6 +248,7 @@ const UserLogout = async (req, res) => {
  * @returns {Promise<Array<RefreshTokenData>>} Returns DiscussionData
  */
 const ReadRefreshTokens = async (Where, NextIndex, Limit, orderBy) => {
+    // @ts-ignore
     return await Read("RefreshTokens", undefined, NextIndex, Limit, Where, orderBy);
 }
 
