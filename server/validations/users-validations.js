@@ -33,7 +33,7 @@ const UserSchema = Joi.object({
     JobTitle: Joi.string(),
     Industry: Joi.string(),
     CompanyName: Joi.string(),
-    About: Joi.string().max(500).allow(""),
+    About: Joi.string().max(1500).allow(""),
     Interests: Joi.array().items(TagsSchema).default([]),
     LinkedIn: Joi.string().allow(""),
     IsPrivate: Joi.boolean(),
