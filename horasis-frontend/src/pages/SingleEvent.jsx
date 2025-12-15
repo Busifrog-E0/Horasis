@@ -419,8 +419,8 @@ const SingleEvent = () => {
 
 						<div className='flex flex-row flex-wrap gap-3'>
 							<h4 className='text-md text-system-primary-accent'>{event?.Type} Event</h4>
-							<h4 className='text-md text-system-primary-accent'>•</h4>
-							<h4 className='text-md text-system-primary-accent'>{event?.NoOfMembers} Participants</h4>
+							{/* <h4 className='text-md text-system-primary-accent'>•</h4>
+							<h4 className='text-md text-system-primary-accent'>{event?.NoOfMembers} Participants</h4> */}
 							<h4 className='text-md text-system-primary-accent'>•</h4>
 							<h4 className='text-md text-system-primary-accent'>{event?.Privacy}</h4>
 							<h4 className='text-md text-system-primary-accent'>•</h4>
@@ -434,7 +434,7 @@ const SingleEvent = () => {
 						</div>
 					</div>
 					<div className='flex flex-col md:flex-row md:gap-10'>
-						<div className='flex-1'>
+						{/* <div className='flex-1'>
 							<h4 className='font-semibold text-xl text-system-primary-text'>About</h4>
 							<ShowMoreText text={event?.Description} />
 							{event.Tags && event.Tags.length > 0 && (
@@ -455,9 +455,9 @@ const SingleEvent = () => {
 									)}
 								</div>
 							)}
-						</div>
+						</div> */}
 						<div className='grid grid-cols-1 md:grid-cols-1 md:self-end'>
-							<div className='flex items-center gap-4 mt-6 md:col-span-2'>
+							{/* <div className='flex items-center gap-4 mt-6 md:col-span-2'>
 								<img
 									className='w-14 h-14 rounded-full object-cover'
 									src={event?.UserDetails?.ProfilePicture}
@@ -467,7 +467,7 @@ const SingleEvent = () => {
 									<p className='text-xs text-brand-gray-dim'>Organizer</p>
 									<h4 className='font-semibold text-lg text-system-primary-accent'>{event?.UserDetails?.FullName}</h4>
 								</div>
-							</div>
+							</div> */}
 
 							<div className='grid  grid-cols-2 sm:grid-cols-3  gap-4 mt-6'>
 								<div className='flex items-start gap-3'>
@@ -476,9 +476,9 @@ const SingleEvent = () => {
 										<p className='text-xs text-brand-gray-dim mb-1'>When</p>
 										<p className='text-sm text-system-primary-text leading-6'>
 											{getDateInWordsFormat(new Date(event?.Date))}
-											<br />
-											to
-											<br />
+											{/* <br /> */} {' '}
+											to {' '}
+											{/* <br /> */}
 											{getDateInWordsFormat(new Date(event?.EndDate))}
 										</p>
 									</div>
@@ -489,10 +489,11 @@ const SingleEvent = () => {
 										<p className='text-xs text-brand-gray-dim mb-1'>Time</p>
 										<p className='text-sm text-system-primary-text leading-6'>
 											{gettimenow(new Date(event?.StartTime))}
-											<br />
-											to
-											<br />
-											{gettimenow(new Date(event?.EndTime))} <br />
+											{/* <br /> */} {' '}
+											to {' '}
+											{/* <br /> */}
+											{gettimenow(new Date(event?.EndTime))} {' '}
+											 {/* <br /> */}
 											<span className='text-brand-gray-dim text-xs'>({getTimezone()})</span>
 										</p>
 									</div>

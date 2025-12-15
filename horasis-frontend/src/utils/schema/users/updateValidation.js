@@ -27,9 +27,9 @@ export const updateValidation = Joi.object({
     'string.empty': 'Company Name is required',
     'any.required': 'Company Name is required',
   }),
-  About: Joi.string().max(500).optional().allow('').messages({
+  About: Joi.string().max(1000).optional().allow('').messages({
     'string.base': 'About should be a type of text',
-    'string.max': 'About must be at most 500 characters long',
+    'string.max': 'About must be at most 1000 characters long',
     'string.empty': 'About is required',
     'any.required': 'About is required',
   }),
