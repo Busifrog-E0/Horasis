@@ -4,9 +4,10 @@ import { decodeIDToken, ensureAuthorized } from "../middleware/auth-middleware.j
 import asyncHandler from 'express-async-handler';
 import { QueryParameterFormatting } from '../middleware/common.js';
 import { AddUserAsAdmin, GetUsersByRole, RemoveUserAsAdmin } from "../controllers/users-controller.js";
-import { ValidateAdmin, ValidateGetUsersByRole, ValidateAddAdmin, ValidateRemoveAdmin } from "../validations/admins-validations.js";
+import { ValidateAdmin, ValidateGetUsersByRole, ValidateAddAdmin, ValidateRemoveAdmin, ValidateSendNotificationToAllUsersByAdmin } from "../validations/admins-validations.js";
 const router = Router();
 import SwaggerDocs from '../swaggerDocs/admins-swaggerDocs.js'
+import { SendNotificationToAllUsersByAdmin } from "../controllers/notifications-controller.js";
 
 router.post('/admin/login', ValidateAdmin,
     //@ts-ignore
@@ -27,6 +28,9 @@ router.patch('/admin/addAdmin', decodeIDToken, ensureAuthorized("SuperAdmin"), V
 router.patch('/admin/removeAdmin', decodeIDToken, ensureAuthorized("SuperAdmin"), ValidateRemoveAdmin, SwaggerDocs.patch_Admin_RemoveAdmin,
     //@ts-ignore
     asyncHandler(RemoveUserAsAdmin));
+
+router.post('/admin/sendNotification/all', decodeIDToken, ensureAuthorized("SuperAdmin", "Admin"),
+    ValidateSendNotificationToAllUsersByAdmin, SendNotificationToAllUsersByAdmin);
 
 export default router;
 
