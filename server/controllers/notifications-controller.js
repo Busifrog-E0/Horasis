@@ -39,7 +39,7 @@ const GetNotifications = async (req, res) => {
     const Notifications = await ReadNotifications(Filter, NextId, Limit, OrderBy);
     const data = await Promise.all(Notifications.map(async Notification => await AddContentAndStatusToNotification(Notification)));
     if (!NextId && UserId === RecipientId) {
-        UpdateManyNotifications({ HasSeen: true, RecipientId }, { HasSeen: false });
+        UpdateManyNotifications({ HasSeen: true, }, { HasSeen: false, RecipientId });
     }
     return res.json(data);
 }
