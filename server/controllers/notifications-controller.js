@@ -1,7 +1,7 @@
 import e from 'express';
 
 import { ReadOneFromNotifications, ReadNotifications, UpdateNotifications, CreateNotifications, RemoveNotifications, UpdateManyNotifications, CountNotifications, TransactionalReadNotifications, TransactionalRemoveNotifications, } from './../databaseControllers/notifications-databaseController.js';
-import { ReadOneFromUsers } from '../databaseControllers/users-databaseController.js';
+import { ReadOneFromUsers, ReadUsers } from '../databaseControllers/users-databaseController.js';
 import { ReadOneFromActivities } from '../databaseControllers/activities-databaseController.js';
 import { ReadLikes } from '../databaseControllers/likes-databaseController.js';
 import { ReadOneFromDiscussions } from '../databaseControllers/discussions-databaseController.js';
@@ -9,6 +9,7 @@ import { ConnectionStatus } from './connections-controller.js';
 import { ReadMembers } from '../databaseControllers/members-databaseController.js';
 import { ReadOneFromEvents } from '../databaseControllers/events-databaseController.js';
 import { ReadSpeakers } from '../databaseControllers/speakers-databaseController.js';
+import { VersionUpdate } from '../databaseControllers/common.js';
 /**
  * @typedef {import('./../databaseControllers/notifications-databaseController.js').NotificationData} NotificationData 
  */
@@ -79,6 +80,43 @@ const GetUnreadNotification = async (req, res) => {
     const { UserId } = req.user;
     const Count = await CountNotifications({ HasSeen: false, RecipientId: UserId });
     return res.json(Count);
+}
+
+
+/************************************************************************FOLLOW********************************************************************************************************* */
+
+
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ * @returns {Promise<e.Response<true>>}
+ */
+const SendNotificationToAllUsersByAdmin = async (req, res) => {
+
+    const { Description } = req.body;
+
+    await VersionUpdate(ReadUsers,
+        /**
+         * 
+         * @param {import('./users-controller.js').UserData} User 
+         * @returns 
+         */
+        async (User) => {
+            const NotificationObject = {
+                NotifierId: User.DocId,
+                EntityId: User.DocId,
+                EntityType: "User",
+                Content: Description,
+                Link: "",
+                Type: "Admin",
+                ContentLinks: [],
+                UserDetails: User
+            }
+            return await SendNotificationToUser(NotificationObject, User.DocId);
+        })
+
+    return res.json(true);
 }
 
 /**
@@ -192,6 +230,8 @@ const PatchNotificationToUser = async (NotificationObject, NotificationId) => {
 /**
  * 
  * @param {{Username : string,UserId : string , FullName : string}[]} Mentions 
+ * @param {string} UserId
+ * @param {string} ActivityId
  */
 const SendNotificationstoActivityMentions = async (Mentions, UserId, ActivityId) => {
     const UserDetails = await ReadOneFromUsers(UserId);
@@ -385,6 +425,12 @@ const SendNotificationsForConnectionAccept = async (ConnectionId, SenderId, Rece
 
 /************************************************************************FOLLOW********************************************************************************************************* */
 
+/**
+ * 
+ * @param {string} FollowerId 
+ * @param {string} FolloweeId 
+ * @returns 
+ */
 const SendNotificationsForFollow = async (FollowerId, FolloweeId) => {
     const Follower = await ReadOneFromUsers(FollowerId);
     const NotificationObject = {
@@ -404,6 +450,7 @@ const SendNotificationsForFollow = async (FollowerId, FolloweeId) => {
 /**
  * 
  * @param {string} FollowerId 
+ * @param {string} FolloweeId 
  * @returns 
  */
 const RemoveNotificationsForFollow = async (FollowerId, FolloweeId) => {
@@ -498,6 +545,7 @@ const SendNotificationForMemberRequest = async (Type, EntityId, UserId) => {
  * @param {string} EntityId 
  * @param {string} UserId 
  * @param {"Accepted" | "Rejected"} Status 
+ * @param {string} NotifierId 
  * @returns 
  */
 const SendNotificationForMemberRequestStatus = async (Type, EntityId, UserId, Status, NotifierId) => {
@@ -598,6 +646,13 @@ const TransactionalRemoveNotificationForMember = async (EntityId, UserId, Sessio
 
 /**************************************************SPEAKERS*************************************************************************************************************** */
 
+/**
+ * 
+ * @param {string} EntityId 
+ * @param {string} UserId 
+ * @param {string} SendUserId 
+ * @returns 
+ */
 const SendNotificationForSpeaker = async (EntityId, UserId, SendUserId) => {
     const UserDetails = await ReadOneFromUsers(SendUserId);
     const Event = await ReadOneFromEvents(EntityId);
@@ -620,12 +675,22 @@ const SendNotificationForSpeaker = async (EntityId, UserId, SendUserId) => {
     return await SendNotificationToUser(NotificationObject, UserId);
 }
 
+/**
+ * 
+ * @param {string} EventId 
+ * @param {string} UserId 
+ * @returns 
+ */
 const RemoveNotificationForSpeaker = async (EventId, UserId) => {
     const [Notifications] = await ReadNotifications({ EntityId: EventId, RecipientId: UserId, Type: "Invitation-Speaker" }, undefined, -1, undefined);
     return RemoveNotifications(Notifications.DocId);
 }
 
-
+/**
+ * 
+ * @param {string} EntityId 
+ * @returns 
+ */
 const RemoveNotificationForEntity = async (EntityId) => {
     const Notifications = await ReadNotifications({ EntityId }, undefined, -1, undefined);
     return Promise.all(Notifications.map(Notification => RemoveNotifications(Notification.DocId)));
@@ -641,4 +706,5 @@ export {
     RemoveNotificationsForFollow, RemoveNotificationForMember, TransactionalRemoveNotificationForMember,
     SendNotificationToUserOnCommentPost, RemoveNotificationForEntity,
     SendNotificationForSpeaker, RemoveNotificationForSpeaker, RemoveNotificationForActivityLikes,
+    SendNotificationToAllUsersByAdmin,
 }
