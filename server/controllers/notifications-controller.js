@@ -191,7 +191,7 @@ const AddContentAndStatusToNotification = async (Notification) => {
     }
     if (Notification.Type === "Invitation") {
         const Member = await ReadMembers({ MemberId: Notification.RecipientId, EntityId: Notification.EntityId }, undefined, 1, undefined);
-        switch (Member[0].MembershipStatus) {
+        switch (Member[0]?.MembershipStatus) {
             case "Invited":
                 Notification.Content = `@${Notification.UserDetails.FullName}@ has send you an invitation to ${Notification.EntityType} : @${Notification.EntityName}@`;
                 break;
@@ -201,7 +201,7 @@ const AddContentAndStatusToNotification = async (Notification) => {
             default:
                 break;
         }
-        Notification.Status = Member[0].MembershipStatus;
+        Notification.Status = Member[0]?.MembershipStatus;
     }
     return Notification;
 }
