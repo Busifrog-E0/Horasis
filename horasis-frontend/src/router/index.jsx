@@ -57,6 +57,8 @@ import ManagementLayout from '../layouts/manage/ManagementLayout'
 import PlatformUsersPage from '../pages/PlatformUsersPage'
 import RegisterProtected from '../layouts/RegisterProtected'
 import EditEvent from '../pages/EditEvent'
+import SendNotificationsPage from '../pages/SendNotificationsPage'
+import AdminSendNotificationsPage from '../pages/superadmin/AdminSendNotificationsPage'
 
 export const router = createBrowserRouter(
 	createRoutesFromElements(
@@ -69,6 +71,7 @@ export const router = createBrowserRouter(
 						<Route path='tags' element={<AdminTags />} />
 						<Route path='content-moderation' element={<AdminContentReports />} />
 						<Route path='platform-users' element={<AdminPlatformUsers />} />
+						<Route path='send-notifications' element={<AdminSendNotificationsPage />} />
 					</Route>
 				</Route>
 				<Route path='Login' element={<SuperAdminUnauthLayout />}>
@@ -126,6 +129,8 @@ export const router = createBrowserRouter(
 						/>
 						<Route path='Moderation' element={<ReportsPage />} />
 						<Route path='PlatformUsers' element={<PlatformUsersPage />} />
+						<Route path='PlatformUsers' element={<PlatformUsersPage />} />
+						<Route path='SendNotifications' element={<SendNotificationsPage />} />
 					</Route>
 
 					<Route path='/MyProfile' element={<MyProfile />} />
