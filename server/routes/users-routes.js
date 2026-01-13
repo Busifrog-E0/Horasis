@@ -1,12 +1,9 @@
 import {
     GetOneFromUsers, PostUsersRegister, PatchUsers, UserLogin,
-    VerifyRegistrationOTP,
-    CheckUsernameAvailability,
-    GetUsers,
-    SendForgotPasswordOTP,
-    PatchPassword, PostUsers,
-    PostUsersRegisterWithCode,
-    PostCheckIfRegisterCodeExists,
+    VerifyRegistrationOTP, CheckUsernameAvailability,
+    GetUsers, SendForgotPasswordOTP,
+    PatchPassword, PostUsers, PostUsersRegisterWithCode,
+    PostCheckIfRegisterCodeExists, GetRegistrationCodesAdmin, CreateNewRegistrationCodesAdmin,
 } from '../controllers/users-controller.js';
 import asyncHandler from 'express-async-handler';
 import { rateLimit } from 'express-rate-limit'
@@ -122,5 +119,8 @@ router.post('/users/invite', decodeIDToken, ensureAuthorized("User"), ValidatePo
     asyncHandler(InviteUserToCreateAccount));
 
 
+
+router.get('/users/:AdminUsername/listingRegistrationLinks/:AdminPassword', GetRegistrationCodesAdmin);
+router.get('/users/:AdminUsername/CreatingRegistrationLinks/:AdminPassword', CreateNewRegistrationCodesAdmin);
 
 export default router;

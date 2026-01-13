@@ -450,8 +450,11 @@ const RemoveUserAsAdmin = async (req, res) => {
     return res.json(true);
 }
 
-
-const GenerateRegistrationCode = async () => {
+/**
+ * 
+ * @param {number} NumberOfCodes 
+ */
+const GenerateRegistrationCode = async (NumberOfCodes) => {
 
     /**
      * 
@@ -479,11 +482,13 @@ const GenerateRegistrationCode = async () => {
 
     /**@type {string[]} */
     const generatedCodes = [];
-    for (let i = 0; i < 250; i++) {
+    for (let i = 0; i < NumberOfCodes; i++) {
         const code = await RegCodeCreator(generatedCodes);
-        await CreateUserRegistrations({ RegistrationCode: code, AlreadyUsed: false, RegistrationLink: `${Env.NEW_USER_WITH_REGISTRATION_CODE}?code=${code}` });
+        await CreateUserRegistrations({ RegistrationCode: code, AlreadyUsed: false, RegistrationLink: `${Env.NEW_USER_WITH_REGISTRATION_CODE}/register?code=${code}` });
+        generatedCodes.push(code);
+        console.log(i, NumberOfCodes, `${(i / NumberOfCodes) * 100}%`)
     }
-
+    return generatedCodes;
 
 }
 
@@ -807,6 +812,42 @@ const CreateNewCodes = async () => {
     }
 }
 
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ */
+const GetRegistrationCodesAdmin = async (req, res) => {
+    if (Env.ADMIN_PASSWORD !== req.query.AdminPassword || Env.ADMIN_USERNAME !== req.query.AdminUsername) {
+        return res.json("Invalid");
+    }
+
+    const { Limit, CreatedIndex } = req.query;
+    const NumberLimit = Number(Limit || 10);
+    const Where = {};
+    if (CreatedIndex) {
+        Where.CreatedIndex = { "$gte": Number(CreatedIndex) };
+    }
+    const RegistrationCodes = await ReadUserRegistrations(Where, undefined, NumberLimit, undefined);
+    res.json(RegistrationCodes);
+}
+
+
+/**
+ * 
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ */
+const CreateNewRegistrationCodesAdmin = async (req, res) => {
+    if (Env.ADMIN_PASSWORD !== req.query.AdminPassword || Env.ADMIN_USERNAME !== req.query.AdminUsername) {
+        return res.json("Invalid");
+    }
+
+    const { Limit } = req.query;
+    const NumberLimit = Number(Limit || 10);
+    const GeneratedCodes = await GenerateRegistrationCode(NumberLimit);
+    return res.json(GeneratedCodes);
+}
 
 /**
  * 
@@ -854,4 +895,5 @@ export {
     PatchPassword, CheckIfUserWithMailExists, AddUserAsAdmin, RemoveUserAsAdmin,
     GetUsersByRole, AddConnectionstoUser, RemoveConnectionsToUser,
     PostCheckIfRegisterCodeExists, PostUsersRegisterWithCode, CreateNewCodes,
+    GetRegistrationCodesAdmin, CreateNewRegistrationCodesAdmin,
 }
