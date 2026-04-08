@@ -17,7 +17,7 @@ const HomeUpcomingEvent = (props, ref) => {
 			<div className='flex items-center justify-center my-20 max-w-screen-2xl w-full '>
 				<div className='w-11/12  md:w-9/12 flex flex-col gap-6 '>
 					<div className='flex flex-col lg:flex-row justify-between gap-6 '>
-						<h1 className='text-xl font-medium text-system-primary-accent'>Upcoming Events</h1>
+						<h1 className='text-xl font-medium text-system-primary-accent'>Events</h1>
 						{/* <div className='flex flex-wrap gap-4'>
 							<button className='px-6 py-3 bg-blue-100 rounded-full text-md font-medium text-system-primary-accent'>
 								Weekdays
@@ -62,6 +62,8 @@ const HomeUpcomingEvent = (props, ref) => {
 									title={event.EventName}
 									description={event.Description}
 									coverPicture={event.CoverPicture}
+									startTime={event.StartTime}
+									endTime={event.EndTime}
 								/>
 							)
 						})}
@@ -85,18 +87,39 @@ const HomeUpcomingEvent = (props, ref) => {
 	)
 }
 
-const HomeEventItem = ({ date, month, title, description, coverPicture }) => {
+const HomeEventItem = ({ date, month, title, description, coverPicture, startTime, endTime }) => {
+	const today = moment()
+	const start = moment(startTime)
+	const end = moment(endTime)
+
+	let status = 'Upcoming Event'
+	let statusColor = 'bg-[#007AFF]'
+
+	if (today.isBetween(start, end, null, '[]')) {
+		status = 'Ongoing Event'
+		statusColor = 'bg-[#34C759]'
+	} else if (today.isAfter(end)) {
+		status = 'Past Event'
+		statusColor = 'bg-[#FF3B30]'
+	}
+
 	return (
 		<div className='w-full flex flex-col rounded-xl overflow-hidden shadow-sm shadow-system-file-border bg-system-secondary-bg'>
-			{coverPicture ? (
-				<>
-					<img src={coverPicture} className='object-cover w-full h-32' />
-				</>
-			) : (
-				<>
-					<img src={cover} className='object-cover w-full h-32' />
-				</>
-			)}
+			<div className='relative'>
+				<div
+					className={`absolute top-3 right-3 ${statusColor} text-white px-3 py-1 rounded-full text-xs font-semibold z-10 shadow-md`}>
+					{status}
+				</div>
+				{coverPicture ? (
+					<>	
+						<img src={coverPicture} className='object-cover w-full h-32' />
+					</>
+				) : (
+					<>
+						<img src={cover} className='object-cover w-full h-32' />
+					</>
+				)}
+			</div>
 			<div className='flex gap-4 justify-start px-4 py-4'>
 				<div>
 					<p className='text-system-primary-accent font-bold text-sm'>{month}</p>
